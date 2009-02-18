@@ -4,44 +4,75 @@
 # Bootlock v0.1 - by Tomas Pollak (bootlog.org)
 # URL : http://bootlock.bootlog.org
 # License: GPLv3
-# Requisites: UUencode (sharutils) and Sendmail or Mailx
+# Requisites for Linux: UUencode (sharutils), Sendmail or Mailx and Streamer (for webcam capture)
 ####################################################################
 
 ####################################################################
-# configuracion
+# configuracion primaria
 ####################################################################
 
-# lo basico
-url=PON AQUI TU URL
+url='URL'
+image_path=/tmp/bootlock.jpg
+
+####################################################################
+# configuracion secundaria, esto en teoria se puede modificar desde fuera
+####################################################################
+
 alertuser=0
 killx=0
 
 # mail
 from='no-reply@dominio.com'
-emailtarget='tucorreo@dominio.com'
+emailtarget='casilla@dominio.com'
 subject="Bootlock status report"
 
 # transcurso de tiempo en que fueron modificados los archivos, en minutos
 minutos=100
 
-#archivos
-attachment_path=/tmp/bootlock.jpg
+# de donde obtener el listado de archivos modificados. por defecto home
+ruta_archivos=~/
 
 # backup ?
 # backup_path=~/.bootlock
 
 ####################################################################
-# primero revisemos el status, si estamos ok o no
+# ok, demosle. eso si veamos si estamos en Linux o Mac
+####################################################################
+
+platform=`uname`
+# en teoria se puede usar la variable OSTYPE de bash, pero no lo he probado
+# posibles: Linux, Darwin, FreeBSD, CygWin?
+
+####################################################################
+# primero revisemos si buscamos url, y si existe o no
 ####################################################################
 if [ -n "$url" ]; then
 	echo 'Revisando URL...'
-	status=`wget -q -O - $url`
-	if [ "${status// /}" = "OK" ]; then
-		echo $status
-		exit
-	else
-		echo "$status... HOLY SHIT!"
+
+	if [ $platform == 'Darwin' ]; then
+
+		status=`curl -s -I $url | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'` # ni idea por que puse tantos status codes, deberia ser 200 o 400
+
+		if [ $status == '200' ]; then
+			config=`curl -s $url`
+		fi
+
+#	elif [ $platform == 'Linux' ]; then
+	else # ya agregaremos otras plataformas
+
+		config=`wget -q -O - $url`
+
 	fi
+
+	# ok, ahora si el config tiene ALGO, significa que tenemos que hacer la pega
+#	if [ "${status// /}" = "OK" ]; then
+	if [ -n "$config" ]; then
+		echo "HOLY SHIT!!"
+	else
+		echo 'Nada de que preocuparse'
+		exit
+	fi
+
 fi
 
 ####################################################################
@@ -63,15 +94,43 @@ interno=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk 
 ####################################################################
 echo "Obteniendo enrutamiento interno..."
 
-routes=`route -n`
+if [ $platform == 'Darwin' ]; then
+	routes=`netstat -rn | grep default | cut -c20-35`
+else
+	routes=`route -n`
+fi
+
+####################################################################
+# direccion mac?
+####################################################################
+
+if [ $platform == 'Darwin' ]; then
+	mac=`arp -n $routes | cut -f4 -d' '`
+else
+	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
+fi
+
+####################################################################
+# usando WiFI? a que red esta conectado?
+####################################################################
+
+# TODO: terminar esta shit
+
+if [ $platform == 'Darwin' ]; then
+	wifi='Moya'
+else
+	wifi='Moya'
+	# wifi=`iwconfig`
+fi
 
 ####################################################################
 # ahora veamos que archivos ha tocado el idiota
 ####################################################################
 echo "Obteniendo listado de archivos modificados..."
 
-archivos=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos` # no incluimos los archivos y carpetas ocultas
-# archivos=`find . \( ! -regex '.*/\..*' \) -type f -mmin -$tiempo | awk '{sed -e "s/\n/\\n/g" $1}'`
+# no incluimos los archivos carpetas ocultas ni los archivos weones de Mac OS
+archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minutos`
+# archivos=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos`
 
 ####################################################################
 # ahora veamos que programas esta corriendo
@@ -99,9 +158,9 @@ Datos de conexion
 --------------------------------------------------------------------
 IP Publico: $publico. IP interno: $interno.
 
-Enrutado de red
+Enrutado de red (la primera)
 --------------------------------------------------------------------
-$routes
+Direccion MAC: $mac. Gateway: $routes
 
 En los ultimos $minutos minutos ha modificado los siguientes archivos
 --------------------------------------------------------------------
@@ -119,7 +178,8 @@ $connections
 Ahora a agarrar al maldito!
 
 --
-Tu humilde servidor, Bootlock! :)
+Con mucho carino,
+El programa del que nunca quisiste recibir un mail, Bootlock. :)
 "
 
 ####################################################################
@@ -128,17 +188,41 @@ Tu humilde servidor, Bootlock! :)
 ####################################################################
 echo "Obteniendo imagen para delatarlo..."
 
-if [ -f "isightcapture" ]; then
-	./isightcapture $attachment_path
+if [ $platform == 'Darwin' ]; then
+
+	# muy bien, veamos si el tarro puede sacar una imagen con la webcam
+	./isightcapture $image_path
+
 else
 
-	# ahora veamos si tenemos import para poder sacar pantallazo
-	type 'import' > /dev/null 2>&1
-	if [ $? -gt 0 ]; then
-		echo "No tenemos como sacar el pantallazo"
-		# TODO: intentar con otro?
-	else
-		import -window root $attachment_path
+	# probablemente esto lo usemos mas abajo
+	import=`which import`
+
+	# veamos si tenemos como sacar una imagen con la webcam
+	streamer=`which streamer`
+	if [ -n "$streamer" ]; then # excelente
+
+		$streamer -o imagen.jpeg &> /dev/null # streamer necesita que sea JPEG (con la E) para detectar el formato
+
+		if [ -f '/tmp/imagen.jpeg' ]; then
+			mv /tmp/imagen.jpeg $image_path
+		else
+			# TODO: aca estamos duplicando codigo que esta mas abajo, esto deberia ser una funcion
+			if [ -n "$import" ]; then
+				import -window root $image_path
+			fi
+
+		fi
+
+	else # sacamos un pantallazo nomas
+
+		if [ -n "$import" ]; then
+			echo "No tenemos como sacar el pantallazo"
+			# TODO: intentar con otro?
+		else
+			import -window root $image_path
+		fi
+
 	fi
 
 fi
@@ -149,8 +233,8 @@ echo "Foto sacada!"
 # La comprimimos?
 ####################################################################
 # echo "Comprimiento imagen..."
-# tar zcf $attachment_path.tar.gz $attachment_path
-# attachment_path=$attachment_path.tar.gz
+# tar zcf $image_path.tar.gz $image_path
+# image_path=$image_path.tar.gz
 
 ####################################################################
 # ahora la estocada final: mandemos el mail
@@ -161,9 +245,9 @@ CONTENT=$texto
 msgdate=`date +"%a, %e %Y %T %z"`
 boundary=GvXjxJ+pjyke8COw
 archdate=`date +%F`
-attachment=`basename "$attachment_path"`
+attachment=`basename "$image_path"`
 archattachment="${archdate}-${attachment}"
-mimetype=`file -i $attachment_path | awk '{ print $2 }'`
+mimetype=`file -i $image_path | awk '{ print $2 }'`
 
 daemail=$(cat <<!
 Date: $msgdate
@@ -190,9 +274,9 @@ Content-Transfer-Encoding: base64
 echo "$daemail" > msg.tmp
 echo  >> msg.tmp
 if [ "$attachment" = "text/plain" ]; then
-        cat "$attachment_path" >> msg.tmp
+        cat "$image_path" >> msg.tmp
 else
-        uuencode -m $attachment_path $attachment | sed '1d' >> msg.tmp
+        uuencode -m $image_path $attachment | sed '1d' >> msg.tmp
 fi
 
 echo  >> msg.tmp
@@ -200,15 +284,13 @@ echo "--$boundary--" >> msg.tmp
 email=`cat msg.tmp`
 
 sendmail=`which sendmail`
+mailx=`which mailx`
 if [ -n "$sendmail" ]; then
-	mailprog=$sendmail
-else
-	mailx=`which mailx`
-	mailprog=$mailx
-fi
-
-if [ "$mailprog" != "" ]; then
-	echo "$email" | $mailprog -t
+	echo "$email" | $sendmail -t
+elif [ -n "$mailx" ]; then
+	$mailx -n -s "$subject @ $msgdate" $emailtarget < msg.tmp
+# mailx through SMTP
+# env MAILRC=/dev/null from=sending_account@gmail.com smtp=smtp.gmail.com smtp-auth-user=sending_account smtp-use-starttls=yes smtp-auth-password=password smtp-auth=login mailx -n -s "subject" some_other_account@gmail(or_some_else).com </root/test.txt
 fi
 
 ####################################################################
@@ -217,7 +299,7 @@ fi
 echo "Eliminando la evidencia..."
 
 rm msg.tmp
-rm $attachment_path
+rm $image_path
 
 ####################################################################
 # le avisamos al ladron que esta cagado?
