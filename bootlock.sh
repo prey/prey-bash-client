@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ####################################################################
-# Whippet v0.1 - by Tomas Pollak (bootlog.org)
-# URL : http://whippet.bootlog.org
+# Bootlock v0.1 - by Tomas Pollak (bootlog.org)
+# URL : http://bootlock.bootlog.org
 # License: GPLv3
 # Requisites: UUencode (sharutils) and Sendmail or Mailx
 ####################################################################
@@ -19,16 +19,16 @@ killx=0
 # mail
 from='no-reply@dominio.com'
 emailtarget='tucorreo@dominio.com'
-subject="Whippet status report"
+subject="Bootlock status report"
 
 # transcurso de tiempo en que fueron modificados los archivos, en minutos
 minutos=100
 
 #archivos
-attachment_path=/tmp/whippet.jpg
+attachment_path=/tmp/bootlock.jpg
 
 # backup ?
-backup_path=~/.whippet
+# backup_path=~/.bootlock
 
 ####################################################################
 # primero revisemos el status, si estamos ok o no
@@ -93,7 +93,7 @@ connections=`netstat | grep -i established`
 echo "Redactando el correo..."
 
 texto="
-WHIPPET REPORT!
+Bootlock report!
 
 Datos de conexion
 --------------------------------------------------------------------
@@ -119,7 +119,7 @@ $connections
 Ahora a agarrar al maldito!
 
 --
-Tu humilde servidor, Whippet! :)
+Tu humilde servidor, Bootlock! :)
 "
 
 ####################################################################
