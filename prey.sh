@@ -1,31 +1,28 @@
 #!/bin/bash
 
 ####################################################################
-# Bootlock v0.1 - by Tomas Pollak (bootlog.org)
-# URL : http://bootlock.bootlog.org
+# Prey v0.1 - by Tomas Pollak (bootlog.org)
+# URL : http://Prey.bootlog.org
 # License: GPLv3
 # Requisites for Linux: UUencode (sharutils), Sendmail or Mailx and Streamer (for webcam capture)
 ####################################################################
 
 ####################################################################
-# configuracion primaria, necesaria para que funcione bootlock
+# configuracion primaria, necesaria para que funcione Prey
 ####################################################################
 
 # url de verificacion, por defecto nada para que corra completo
-url='http://myserver.com/bootlock_check_url'
+url=''
 
 # mail
 emailtarget='mailbox@domain.com'
 
-# wifi interface, if you have one put it in here (eth1, ath0)
-wifi_interface=''
-
-####################################################################
+###################################################################
 # encabezado del correo
 ####################################################################
 
 from='no-reply@domain.com'
-subject="Bootlock status report"
+subject="Prey status report"
 
 ####################################################################
 # configuracion secundaria, esto en teoria se puede modificar desde fuera
@@ -41,10 +38,10 @@ minutos=100
 ruta_archivos=~/
 
 # donde guardamos la imagen temporal
-image_path=/tmp/bootlock.jpg
+image_path=/tmp/prey.jpg
 
 # backup ?
-# backup_path=~/.bootlock
+# backup_path=~/.prey
 
 ####################################################################
 # ok, demosle. eso si veamos si estamos en Linux o Mac
@@ -102,39 +99,29 @@ echo "Obteniendo IP privado..."
 interno=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
 
 ####################################################################
-# ahora el gateway, solo por si aca
+# gateway, mac e informacion de wifi (nombre red, canal, etc)
 ####################################################################
-echo "Obteniendo enrutamiento interno..."
+echo "Obteniendo enrutamiento interno y direccion MAC..."
 
 if [ $platform == 'Darwin' ]; then
 	routes=`netstat -rn | grep default | cut -c20-35`
+	mac=`arp -n $routes | cut -f4 -d' '`
+	# vaya a saber uno porque apple escondio tanto este archivo!
+	wifi_info='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I'
 else
 	routes=`route -n`
-fi
-
-####################################################################
-# direccion mac?
-####################################################################
-
-if [ $platform == 'Darwin' ]; then
-	mac=`arp -n $routes | cut -f4 -d' '`
-else
 	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
+	wifi_info=`iwconfig`
 fi
 
 ####################################################################
-# usando WiFI? a que red esta conectado?
+# rastreemos la ruta completa hacia Google
 ####################################################################
 
-if [ -n "$wifi_interface" ]; then
-
-	if [ $platform == 'Darwin' ]; then
-		# TODO: Add this
-		wifi_network=' '
-	else
-		wifi_network=`iwconfig $wifi_interface | grep ESSID | cut -d\" -f2`
-	fi
-
+traceroute=`which traceroute`
+if [ -n "$traceroute" ]; then
+	echo "Rastreando la ruta de acceso hacia Google..."
+	complete_trace=`$traceroute -q1 www.google.com`
 fi
 
 ####################################################################
@@ -149,8 +136,9 @@ archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minut
 ####################################################################
 # ahora veamos que programas esta corriendo
 ####################################################################
-echo "Obteniendo listado de programas en ejecucion..."
+echo "Obteniendo tiempo de uso y listado de programas en ejecucion..."
 
+uptime=`uptime`
 programas=`ps ux`
 
 ####################################################################
@@ -166,7 +154,7 @@ connections=`netstat | grep -i established`
 echo "Redactando el correo..."
 
 texto="
-Bootlock report!
+Prey report!
 
 Datos de conexion
 --------------------------------------------------------------------
@@ -176,9 +164,9 @@ Enrutado de red (la primera)
 --------------------------------------------------------------------
 Direccion MAC: $mac. Gateway: $routes
 
-Red WiFi
+Datos sobre red WiFi
 --------------------------------------------------------------------
-Nombre: $wifi_network.
+$wifi_info
 
 En los ultimos $minutos minutos ha modificado los siguientes archivos
 --------------------------------------------------------------------
@@ -188,7 +176,7 @@ Ahora esta corriendo los siguientes programas
 --------------------------------------------------------------------
 $programas
 
-Y esta conectado a los siguientes lugares
+Y tiene las siguientes conexiones abiertas
 --------------------------------------------------------------------
 $connections
 
@@ -197,7 +185,7 @@ Ahora a agarrar al maldito!
 
 --
 Con mucho carino,
-El programa del que nunca quisiste recibir un mail, Bootlock. :)
+El programa del que nunca quisiste recibir un mail, Prey. :)
 "
 
 ####################################################################

@@ -1,4 +1,4 @@
-Bootlock is a small script for tracking your stolen laptop. 
+Prey is a small script for tracking your stolen laptop. 
 It is licenced by the GPLv3 which means you can do just 
 about anything with it.
 
@@ -18,10 +18,10 @@ configuration values and then add an entry in your users' (or root)
 crontab. For example, if you wish the script to run at an interval
 of one hour, the crontab line would look like:
 
-0 * * * * /usr/local/bin/bootlock > /dev/null
+0 * * * * /usr/local/bin/prey.sh > /dev/null
 
 3. Usage
 
 The idea is that when your laptop gets stolen -- hopefully never, that is --
-you should immediately put a file in the URL you specified in Bootlock's
+you should immediately put a file in the URL you specified in Prey's
 configuration. And that's it.

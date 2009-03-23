@@ -1,20 +1,20 @@
 #!/bin/bash
 
 ####################################################################
-# Bootlock v0.1 - by Tomas Pollak (bootlog.org)
-# URL : http://bootlock.bootlog.org
+# Prey v0.1 - by Tomas Pollak (bootlog.org)
+# URL : http://Prey.bootlog.org
 # License: GPLv3
 # Requisites for Linux: UUencode (sharutils), Sendmail or Mailx and Streamer (for webcam capture)
 ####################################################################
 
-filename=bootlock.sh
+filename=Prey.sh
 separator="----------------------------------------"
 platform=`uname`
 
 	# first we should ask the neccesary questions so as to generate the config automatically
 
 	echo -e "\n########################################"
-	echo "### Bootlock 0.1 installation script ###"
+	echo "### Prey 0.1 installation script ###"
 	echo "### By Tomas Pollak, www.bootlog.org ###"
 	echo -e "########################################\n"
 
@@ -42,13 +42,13 @@ platform=`uname`
 
 	# setup URL check
 	echo $separator
-	echo -n "2) Would you like Bootlock to check a URL? (No means the report is generated each time the program runs) [n] "
+	echo -n "2) Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
 	read CHECK
 	case "$CHECK" in
 	[yY] )
 		# which url then
 		echo $separator
-		echo -n "2.a) Ok, which URL would it be then? [i.e. http://myserver.com/bootlock_check_url] "
+		echo -n "2.a) Ok, which URL would it be then? [i.e. http://myserver.com/Prey_check_url] "
 		read URL
 		if [ "$URL" == "" ]; then
 			echo " -- You need to define a URL. Exiting..."
@@ -68,7 +68,7 @@ platform=`uname`
 
 	# run interval
 	echo $separator
-	echo -n "3) Ok, last one. How frequent (in minutes) would you like Bootlock to run? [10] "
+	echo -n "3) Ok, last one. How frequent (in minutes) would you like Prey to be ran? [10] "
 	read TIMING
 	if [ "$TIMING" == "" ]; then
 		TIMING=10
@@ -81,21 +81,24 @@ platform=`uname`
 	sed -i -e "s/-SLASH-/\//g" $filename
 
 
-	echo $separator
-	echo -e " -- Ok, installing necesary software..."
-	sudo apt-get install sharutils mailx streamer
+	if [ $platform == 'Linux' ]; then
 
-	echo $separator
-	echo -e " -- Copying Bootlock to $INSTALLPATH..."
-	sudo cp $filename $INSTALLPATH
+		echo $separator
+		echo -e " -- Ok, installing necesary software..."
+		sudo apt-get install sharutils mailx streamer
 
-	if [ $platform == 'Darwin' ]; then
+	elif [ $platform == 'Darwin' ]; then
 
 		echo $separator
 		echo -e " -- Copying ISightCapture to $INSTALLPATH..."
 		sudo cp isightcapture $INSTALLPATH
 
 	fi
+
+	echo $separator
+	echo -e " -- Copying Prey to $INSTALLPATH..."
+	sudo cp $filename $INSTALLPATH
+
 
 	echo $separator
 	echo -e " -- Setting permissions..."
@@ -106,5 +109,5 @@ platform=`uname`
 	(sudo crontab -l; echo "*/$TIMING * * * * $INSTALLPATH/$filename") | sudo crontab -
 
 	echo $separator
-	echo -e " -- Everything OK! Bootlock is up and running now. You can now delete this directory safely. "
-	echo -e " -- If you ever want to uninstall Bootlock, remove the file in $INSTALLPATH and the last line in root's crontab. \n\n"
+	echo -e " -- Everything OK! Prey is up and running now. You can now delete this directory safely. "
+	echo -e " -- If you ever want to uninstall Prey, remove the file in $INSTALLPATH and the last line in root's crontab. \n\n"
