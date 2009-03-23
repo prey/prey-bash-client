@@ -7,10 +7,9 @@
 # Requisites for Linux: UUencode (sharutils), Sendmail or Mailx and Streamer (for webcam capture)
 ####################################################################
 
+filename=bootlock.sh
 separator="----------------------------------------"
 platform=`uname`
-
-if [ $platform == 'Linux' ]; then
 
 	# first we should ask the neccesary questions so as to generate the config automatically
 
@@ -41,14 +40,15 @@ if [ $platform == 'Linux' ]; then
 		exit
 	fi
 
-	# setup URL
+	# setup URL check
 	echo $separator
 	echo -n "2) Would you like Bootlock to check a URL? (No means the report is generated each time the program runs) [n] "
 	read CHECK
 	case "$CHECK" in
 	[yY] )
+		# which url then
 		echo $separator
-		echo -n "3) Ok, which URL would it be then? [i.e. http://myserver.com/bootlock_check_url] "
+		echo -n "2.a) Ok, which URL would it be then? [i.e. http://myserver.com/bootlock_check_url] "
 		read URL
 		if [ "$URL" == "" ]; then
 			echo " -- You need to define a URL. Exiting..."
@@ -57,13 +57,6 @@ if [ $platform == 'Linux' ]; then
 		# URL=`echo $URL | sed -f urlencode.sed`
 		# urlencoding no nos sirve, porque despues wget no puede resolver la direccion. dirty hack entonces.
 		URL=`echo $URL | sed "s/\//-SLASH-/g"`
-		# get the email
-		echo $separator
-		echo -n "4) How frequent (in minutes) would you like Bootlock to run? [10] "
-		read TIMING
-		if [ "$TIMING" == "" ]; then
-			TIMING=10
-		fi
 		;;
 	[nN] ) # echo "OK, no URL check then."
 		URL=""
@@ -73,11 +66,19 @@ if [ $platform == 'Linux' ]; then
 	;;
 	esac
 
+	# run interval
+	echo $separator
+	echo -n "3) Ok, last one. How frequent (in minutes) would you like Bootlock to run? [10] "
+	read TIMING
+	if [ "$TIMING" == "" ]; then
+		TIMING=10
+	fi
+
 	echo $separator
 	echo -e " -- Ok, setting up configuration values..."
-	sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" bootlock.sh
-	sed -i -e "s/url='.*'/url='$URL'/" bootlock.sh
-	sed -i -e "s/-SLASH-/\//g" bootlock.sh
+	sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $filename
+	sed -i -e "s/url='.*'/url='$URL'/" $filename
+	sed -i -e "s/-SLASH-/\//g" $filename
 
 
 	echo $separator
@@ -85,15 +86,25 @@ if [ $platform == 'Linux' ]; then
 	sudo apt-get install sharutils mailx streamer
 
 	echo $separator
-	echo -e " -- Copying Bootlock to /usr/local/bin..."
-	sudo cp bootlock.sh /usr/local/bin
+	echo -e " -- Copying Bootlock to $INSTALLPATH..."
+	sudo cp $filename $INSTALLPATH
+
+	if [ $platform == 'Darwin' ]; then
+
+		echo $separator
+		echo -e " -- Copying ISightCapture to $INSTALLPATH..."
+		sudo cp isightcapture $INSTALLPATH
+
+	fi
 
 	echo $separator
 	echo -e " -- Setting permissions..."
-	sudo chmod 750 /usr/local/bin/bootlock.sh # no read access to other users, for security
+	sudo chmod 750 $INSTALLPATH/$filename # no read access to other users, for security
 
 	echo $separator
 	echo -e " -- Adding crontab "
-	(sudo crontab -l; echo "*/$TIMING * * * * /usr/local/bin/bootlock") | sudo crontab -
+	(sudo crontab -l; echo "*/$TIMING * * * * $INSTALLPATH/$filename") | sudo crontab -
 
-fi
+	echo $separator
+	echo -e " -- Everything OK! Bootlock is up and running now. You can now delete this directory safely. "
+	echo -e " -- If you ever want to uninstall Bootlock, remove the file in $INSTALLPATH and the last line in root's crontab. \n\n"

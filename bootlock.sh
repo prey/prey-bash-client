@@ -12,10 +12,13 @@
 ####################################################################
 
 # url de verificacion, por defecto nada para que corra completo
-url='http://myserver.com_bootlock_check_url'
+url='http://myserver.com/bootlock_check_url'
 
 # mail
 emailtarget='mailbox@domain.com'
+
+# wifi interface, if you have one put it in here (eth1, ath0)
+wifi_interface=''
 
 ####################################################################
 # encabezado del correo
@@ -123,12 +126,15 @@ fi
 # usando WiFI? a que red esta conectado?
 ####################################################################
 
-# TODO: terminar esta shit
+if [ -n "$wifi_interface" ]; then
 
-if [ $platform == 'Darwin' ]; then
-	wifi='Moya'
-else
-	wifi=`iwconfig eth0 | grep ESSID | cut -d\" -f2`
+	if [ $platform == 'Darwin' ]; then
+		# TODO: Add this
+		wifi_network=' '
+	else
+		wifi_network=`iwconfig $wifi_interface | grep ESSID | cut -d\" -f2`
+	fi
+
 fi
 
 ####################################################################
@@ -172,7 +178,7 @@ Direccion MAC: $mac. Gateway: $routes
 
 Red WiFi
 --------------------------------------------------------------------
-Nombre: $wifi.
+Nombre: $wifi_network.
 
 En los ultimos $minutos minutos ha modificado los siguientes archivos
 --------------------------------------------------------------------
@@ -362,7 +368,7 @@ echo "...todo listo!"
 ####################################################################
 if [ $killx == 1 ]; then
 
-	echo "Botandolo del servidor grafico..."
+	echo "Botandolo del servidor grafico!"
 	killall gdm
 
 fi
