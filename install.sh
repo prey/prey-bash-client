@@ -2,12 +2,12 @@
 
 ####################################################################
 # Prey v0.1 - by Tomas Pollak (bootlog.org)
-# URL : http://Prey.bootlog.org
+# URL : http://github.com/tomas/prey
 # License: GPLv3
 # Requisites for Linux: UUencode (sharutils), Sendmail or Mailx and Streamer (for webcam capture)
 ####################################################################
 
-filename=Prey.sh
+filename=prey.sh
 separator="----------------------------------------"
 platform=`uname`
 
@@ -48,7 +48,7 @@ platform=`uname`
 	[yY] )
 		# which url then
 		echo $separator
-		echo -n "2.a) Ok, which URL would it be then? [i.e. http://myserver.com/Prey_check_url] "
+		echo -n "2.a) Ok, which URL would it be then? [i.e. http://myserver.com/prey_check_url] "
 		read URL
 		if [ "$URL" == "" ]; then
 			echo " -- You need to define a URL. Exiting..."

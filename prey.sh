@@ -2,7 +2,7 @@
 
 ####################################################################
 # Prey v0.1 - by Tomas Pollak (bootlog.org)
-# URL : http://Prey.bootlog.org
+# URL : http://github.com/tomas/prey
 # License: GPLv3
 # Requisites for Linux: UUencode (sharutils), Sendmail or Mailx and Streamer (for webcam capture)
 ####################################################################
