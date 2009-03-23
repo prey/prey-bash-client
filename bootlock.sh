@@ -8,11 +8,21 @@
 ####################################################################
 
 ####################################################################
-# configuracion primaria
+# configuracion primaria, necesaria para que funcione bootlock
 ####################################################################
 
-url='URL'
-image_path=/tmp/bootlock.jpg
+# url de verificacion, por defecto nada para que corra completo
+url='http://myserver.com_bootlock_check_url'
+
+# mail
+emailtarget='mailbox@domain.com'
+
+####################################################################
+# encabezado del correo
+####################################################################
+
+from='no-reply@domain.com'
+subject="Bootlock status report"
 
 ####################################################################
 # configuracion secundaria, esto en teoria se puede modificar desde fuera
@@ -21,16 +31,14 @@ image_path=/tmp/bootlock.jpg
 alertuser=0
 killx=0
 
-# mail
-from='no-reply@dominio.com'
-emailtarget='casilla@dominio.com'
-subject="Bootlock status report"
-
 # transcurso de tiempo en que fueron modificados los archivos, en minutos
 minutos=100
 
 # de donde obtener el listado de archivos modificados. por defecto home
 ruta_archivos=~/
+
+# donde guardamos la imagen temporal
+image_path=/tmp/bootlock.jpg
 
 # backup ?
 # backup_path=~/.bootlock
@@ -49,6 +57,7 @@ platform=`uname`
 if [ -n "$url" ]; then
 	echo 'Revisando URL...'
 
+	# Mac OS viene con curl por defecto, asi que tenemos que checkear
 	if [ $platform == 'Darwin' ]; then
 
 		status=`curl -s -I $url | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'` # ni idea por que puse tantos status codes, deberia ser 200 o 400
@@ -119,8 +128,7 @@ fi
 if [ $platform == 'Darwin' ]; then
 	wifi='Moya'
 else
-	wifi='Moya'
-	# wifi=`iwconfig`
+	wifi=`iwconfig eth0 | grep ESSID | cut -d\" -f2`
 fi
 
 ####################################################################
@@ -162,6 +170,10 @@ Enrutado de red (la primera)
 --------------------------------------------------------------------
 Direccion MAC: $mac. Gateway: $routes
 
+Red WiFi
+--------------------------------------------------------------------
+Nombre: $wifi.
+
 En los ultimos $minutos minutos ha modificado los siguientes archivos
 --------------------------------------------------------------------
 $archivos
@@ -202,7 +214,7 @@ else
 	streamer=`which streamer`
 	if [ -n "$streamer" ]; then # excelente
 
-		$streamer -o imagen.jpeg &> /dev/null # streamer necesita que sea JPEG (con la E) para detectar el formato
+		$streamer -o /tmp/imagen.jpeg &> /dev/null # streamer necesita que sea JPEG (con la E) para detectar el formato
 
 		if [ -f '/tmp/imagen.jpeg' ]; then
 			mv /tmp/imagen.jpeg $image_path
@@ -289,7 +301,7 @@ if [ -n "$sendmail" ]; then
 	echo "$email" | $sendmail -t
 elif [ -n "$mailx" ]; then
 	$mailx -n -s "$subject @ $msgdate" $emailtarget < msg.tmp
-# mailx through SMTP
+# mailx through SMTP (gmail) --> puede ser una opcion si el servidor de la casilla llega a alegar por envio de spam
 # env MAILRC=/dev/null from=sending_account@gmail.com smtp=smtp.gmail.com smtp-auth-user=sending_account smtp-use-starttls=yes smtp-auth-password=password smtp-auth=login mailx -n -s "subject" some_other_account@gmail(or_some_else).com </root/test.txt
 fi
 
@@ -343,7 +355,7 @@ if [ $alertuser == 1 ]; then
 
 fi
 
-echo "...listaylor!"
+echo "...todo listo!"
 
 ####################################################################
 # reiniciamos X para wevearlo mas aun?

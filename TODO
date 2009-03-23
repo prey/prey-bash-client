@@ -1,0 +1,3 @@
+- Check install script in Mac OS
+- Enable some configuration to be set up remotely (from the check file)
+- Add Windows support (via Cygwin?)
