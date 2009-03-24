@@ -9,14 +9,22 @@ and checks for a specified URL in the web. If the URL exists
 it means the computer/laptop has been stolen, and thus
 goes through the information-gathering routine and sends
 all that info through to a previously defined email address.
+You can also not define a URL and in that case the program
+sends the data every time it runs.
 
 2. Installation
 
 For Mac & Ubuntu/Debian users: just download the package and run the
-install script.
+install script:
+
+$ chmod +x install.sh
+$ ./install.sh
 
 For all other distros: download the files, put them anywhere you want,
-change the configuration values and then add an entry in root's crontab.
+change the configuration values and then add an entry in root's crontab:
+
+$ sudo crontab -e
+
 For example, if you wish the script to run at an interval
 of ten minutes, the crontab line would look like:
 
@@ -30,3 +38,13 @@ configuration. You actually don't need to put anything in it, since what
 triggers the application is the status code 200.
 
 That's it! Feel free to fork the repo and contribute if you want to.
+
+4. Acknowledgements
+
+Prey works thanks to Michal Ludvig's excellent command-line SMTP client
+and Axel Bauer's iSightCapture program for capturing pictures on the
+Mac. And of course, a bunch of powerful open source utilities!
+
+Command line SMTP client: http://www.logix.cz/michal/devel/smtp/index.xp?show_selected=1&msgid=31
+iSightCapture: http://www.intergalactic.de/pages/iSight.html
+ 
