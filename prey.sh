@@ -168,7 +168,7 @@ connections=`netstat | grep -i established`
 echo " -- Redactando el correo..."
 
 texto="
-Prey report!
+Hey-o, hey-o! These are the whereabouts of the prey!
 
 Status general del computador (uptime)
 --------------------------------------------------------------------
@@ -329,9 +329,20 @@ fi
 # reiniciamos X para wevearlo mas aun?
 ####################################################################
 if [ $killx == 1 ]; then
-
 	echo " -- Botandolo del servidor grafico!"
-	killall gdm
+
+	gnome=`ps x | grep `ps o ppid,fname | grep bash | grep -v grep | head -1 | awk '{print $1}'` | grep 'gnome-session' | wc -l`
+
+	if [ $gnome == 1 ]; then
+
+		# muahahaha
+		killall gdm
+
+	else # vamos a asumir que esta usando KDE (TODO: revisar bien y aplicar tambien para XFCE, Fluxbox, etc)
+
+		killall kdm
+
+	fi
 
 fi
 
