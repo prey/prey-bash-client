@@ -1,10 +1,10 @@
 #!/bin/bash
 
 ####################################################################
-# Prey v0.1 - by Tomas Pollak (bootlog.org)
+# Prey v0.1 Installation Script - by Tomas Pollak (bootlog.org)
 # URL : http://github.com/tomas/prey
 # License: GPLv3
-# Requisites for Linux: UUencode (sharutils), Sendmail or Mailx and Streamer (for webcam capture)
+# Requisites: UUencode (sharutils), Sendmail or Mailx, Traceroute and Streamer (for webcam capture in Linux)
 ####################################################################
 
 filename=prey.sh
@@ -85,7 +85,7 @@ platform=`uname`
 
 		echo $separator
 		echo -e " -- Ok, installing necesary software..."
-		sudo apt-get install sharutils mailx streamer
+		sudo apt-get install sharutils mailx streamer traceroute
 
 	elif [ $platform == 'Darwin' ]; then
 

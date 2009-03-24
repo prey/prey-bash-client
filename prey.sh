@@ -4,7 +4,7 @@
 # Prey v0.1 - by Tomas Pollak (bootlog.org)
 # URL : http://github.com/tomas/prey
 # License: GPLv3
-# Requisites for Linux: UUencode (sharutils), Sendmail or Mailx and Streamer (for webcam capture)
+# Requisites: UUencode (sharutils), Sendmail or Mailx, Traceroute and Streamer (for webcam capture in Linux)
 ####################################################################
 
 ####################################################################
@@ -48,6 +48,13 @@ image_path=/tmp/prey.jpg
 ####################################################################
 
 platform=`uname`
+
+if [ $platform == 'Darwin' ]; then
+	getter='curl -s'
+else
+	getter='wget -q -O -'
+fi
+
 # en teoria se puede usar la variable OSTYPE de bash, pero no lo he probado
 # posibles: Linux, Darwin, FreeBSD, CygWin?
 
@@ -63,13 +70,13 @@ if [ -n "$url" ]; then
 		status=`curl -s -I $url | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'` # ni idea por que puse tantos status codes, deberia ser 200 o 400
 
 		if [ $status == '200' ]; then
-			config=`curl -s $url`
+			config=`$getter $url`
 		fi
 
 #	elif [ $platform == 'Linux' ]; then
 	else # ya agregaremos otras plataformas
 
-		config=`wget -q -O - $url`
+		config=`$getter $url`
 
 	fi
 
@@ -89,7 +96,7 @@ fi
 ####################################################################
 echo "Obteniendo IP publico..."
 
-publico=`wget -q -O - checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
+publico=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
 
 ####################################################################
 # ahora el IP interno
@@ -111,7 +118,8 @@ if [ $platform == 'Darwin' ]; then
 else
 	routes=`route -n`
 	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
-	wifi_info=`iwconfig`
+#	wifi_info=`iwconfig ath0 | grep ESSID | cut -d\" -f2`
+	wifi_info=`iwconfig 2>&1`
 fi
 
 ####################################################################
@@ -120,7 +128,7 @@ fi
 
 traceroute=`which traceroute`
 if [ -n "$traceroute" ]; then
-	echo "Rastreando la ruta de acceso hacia Google..."
+	echo "Rastreando la ruta completa de acceso hacia la web..."
 	complete_trace=`$traceroute -q1 www.google.com`
 fi
 
