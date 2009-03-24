@@ -87,7 +87,7 @@ if [ -n "$url" ]; then
 	# ok, ahora si el config tiene ALGO, significa que tenemos que hacer la pega
 #	if [ "${status// /}" = "OK" ]; then
 	if [ -n "$config" ]; then
-		echo " -- HOLY WACAMOLE!!"
+		echo " -- HOLY GUACAMOLE!!"
 	else
 		echo ' -- Nada de que preocuparse. :)'
 		exit
@@ -232,12 +232,12 @@ else
 
 	fi
 
-	import=`which import`
-	if [ -n "$import" ]; then
-		import -window root $screenshot
-	else
-		echo " !! Damn! No tenemos como sacar el pantallazo"
-		# TODO: intentar con otro?
+	scrot=`which scrot` # scrot es mas liviano y mas rapido
+	import=`which import` # viene con imagemagick, mas obeso
+	if [ -n "$scrot" ]; then
+		$scrot $screenshot
+	elif [ -n "$import" ]; then
+		$import -window root $screenshot
 	fi
 
 fi

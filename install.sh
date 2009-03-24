@@ -10,7 +10,7 @@
 filename=prey.sh
 separator="----------------------------------------"
 platform=`uname`
-linux_packages='wget traceroute streamer'
+linux_packages='wget traceroute streamer scrot'
 
 if [ $platform == 'Darwin' ]; then
 	DEFAULT_INSTALLPATH='/usr/bin'
