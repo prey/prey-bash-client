@@ -4,7 +4,7 @@
 # Prey v0.1 - by Tomas Pollak (bootlog.org)
 # URL : http://github.com/tomas/prey
 # License: GPLv3
-# Requisites: UUencode (sharutils), Sendmail or Mailx, Traceroute and Streamer (for webcam capture in Linux)
+# Requisites for Linux: Wget, Traceroute, Streamer (for webcam capture) and Perl Libs IO::Socket and NET::SSLeay (yeah, i know)
 ####################################################################
 
 ####################################################################
@@ -17,15 +17,17 @@ url=''
 # mail
 emailtarget='mailbox@domain.com'
 
-###################################################################
-# encabezado del correo
-####################################################################
+# configuracion smtp, no podemos mandarlo con sendmail/mailx porque rebota como spam
+smtp_server='smtp.gmail.com:587'
+smtp_username='username@gmail.com'
+smtp_password='password'
 
+# esto se puede dejar tal cual, pero cambialo si quieres
 from='no-reply@domain.com'
 subject="Prey status report"
 
 ####################################################################
-# configuracion secundaria, esto en teoria se puede modificar desde fuera
+# configuracion secundaria, esto en teoria se podra modificar desde fuera
 ####################################################################
 
 alertuser=0
@@ -38,7 +40,8 @@ minutos=100
 ruta_archivos=~/
 
 # donde guardamos la imagen temporal
-image_path=/tmp/prey.jpg
+screenshot=/tmp/prey-screenshot.jpg
+picture=/tmp/prey-picture.jpg
 
 # backup ?
 # backup_path=~/.prey
@@ -46,6 +49,7 @@ image_path=/tmp/prey.jpg
 ####################################################################
 # ok, demosle. eso si veamos si estamos en Linux o Mac
 ####################################################################
+echo -e '\n ### Prey 0.1 al acecho!\n'
 
 platform=`uname`
 
@@ -62,12 +66,12 @@ fi
 # primero revisemos si buscamos url, y si existe o no
 ####################################################################
 if [ -n "$url" ]; then
-	echo 'Revisando URL...'
+	echo ' -- Revisando URL...'
 
 	# Mac OS viene con curl por defecto, asi que tenemos que checkear
 	if [ $platform == 'Darwin' ]; then
 
-		status=`curl -s -I $url | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'` # ni idea por que puse tantos status codes, deberia ser 200 o 400
+		status=`$getter -I $url | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'` # ni idea por que puse tantos status codes, deberia ser 200 o 400
 
 		if [ $status == '200' ]; then
 			config=`$getter $url`
@@ -83,9 +87,9 @@ if [ -n "$url" ]; then
 	# ok, ahora si el config tiene ALGO, significa que tenemos que hacer la pega
 #	if [ "${status// /}" = "OK" ]; then
 	if [ -n "$config" ]; then
-		echo "HOLY SHIT!!"
+		echo " -- HOLY WACAMOLE!!"
 	else
-		echo 'Nada de que preocuparse'
+		echo ' -- Nada de que preocuparse. :)'
 		exit
 	fi
 
@@ -94,21 +98,21 @@ fi
 ####################################################################
 # partamos por ver cual es nuestro IP publico
 ####################################################################
-echo "Obteniendo IP publico..."
+echo " -- Obteniendo IP publico..."
 
 publico=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
 
 ####################################################################
 # ahora el IP interno
 ####################################################################
-echo "Obteniendo IP privado..."
+echo " -- Obteniendo IP privado..."
 
 interno=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
 
 ####################################################################
 # gateway, mac e informacion de wifi (nombre red, canal, etc)
 ####################################################################
-echo "Obteniendo enrutamiento interno y direccion MAC..."
+echo " -- Obteniendo enrutamiento interno y direccion MAC..."
 
 if [ $platform == 'Darwin' ]; then
 	routes=`netstat -rn | grep default | cut -c20-35`
@@ -126,16 +130,17 @@ fi
 # rastreemos la ruta completa hacia Google
 ####################################################################
 
-traceroute=`which traceroute`
+# disabled for now, TOO SLOW!
+# traceroute=`which traceroute`
 if [ -n "$traceroute" ]; then
-	echo "Rastreando la ruta completa de acceso hacia la web..."
-	complete_trace=`$traceroute -q1 www.google.com`
+	echo " -- Rastreando la ruta completa de acceso hacia la web..."
+	complete_trace=`$traceroute -q1 www.google.com 2>&1`
 fi
 
 ####################################################################
 # ahora veamos que archivos ha tocado el idiota
 ####################################################################
-echo "Obteniendo listado de archivos modificados..."
+echo " -- Obteniendo listado de archivos modificados..."
 
 # no incluimos los archivos carpetas ocultas ni los archivos weones de Mac OS
 archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minutos`
@@ -144,7 +149,7 @@ archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minut
 ####################################################################
 # ahora veamos que programas esta corriendo
 ####################################################################
-echo "Obteniendo tiempo de uso y listado de programas en ejecucion..."
+echo " -- Obteniendo tiempo de uso y listado de programas en ejecucion..."
 
 uptime=`uptime`
 programas=`ps ux`
@@ -152,17 +157,21 @@ programas=`ps ux`
 ####################################################################
 # ahora veamos a donde esta conectado
 ####################################################################
-echo "Obteniendo listado de conexiones activas..."
+echo " -- Obteniendo listado de conexiones activas..."
 
 connections=`netstat | grep -i established`
 
 ####################################################################
 # ahora los metemos en el texto que va a ir en el mail
 ####################################################################
-echo "Redactando el correo..."
+echo " -- Redactando el correo..."
 
 texto="
 Prey report!
+
+Uptime
+--------------------------------------------------------------------
+$uptime
 
 Datos de conexion
 --------------------------------------------------------------------
@@ -198,53 +207,44 @@ El programa del que nunca quisiste recibir un mail, Prey. :)
 
 ####################################################################
 # veamos si podemos sacar una foto del tipo con la camara del tarro.
-# si no saquemos un pantallazo para ver que esta haciendo el idiota
+# de todas formas un pantallazo para ver que esta haciendo el idiota
 ####################################################################
-echo "Obteniendo imagen para delatarlo..."
+echo " -- Obteniendo un pantallazo y una foto del impostor..."
 
 if [ $platform == 'Darwin' ]; then
 
+	/usr/sbin/screencapture $screenshot
 	# muy bien, veamos si el tarro puede sacar una imagen con la webcam
-	./isightcapture $image_path
+	./isightcapture $picture
 
 else
 
-	# probablemente esto lo usemos mas abajo
-	import=`which import`
-
-	# veamos si tenemos como sacar una imagen con la webcam
+	# si tenemos streamer, saquemos la foto
 	streamer=`which streamer`
 	if [ -n "$streamer" ]; then # excelente
 
 		$streamer -o /tmp/imagen.jpeg &> /dev/null # streamer necesita que sea JPEG (con la E) para detectar el formato
 
-		if [ -f '/tmp/imagen.jpeg' ]; then
-			mv /tmp/imagen.jpeg $image_path
-		else
-			# TODO: aca estamos duplicando codigo que esta mas abajo, esto deberia ser una funcion
-			if [ -n "$import" ]; then
-				import -window root $image_path
-			fi
-
-		fi
-
-	else # sacamos un pantallazo nomas
-
-		if [ -n "$import" ]; then
-			echo "No tenemos como sacar el pantallazo"
-			# TODO: intentar con otro?
-		else
-			import -window root $image_path
+		if [ -e '/tmp/imagen.jpeg' ]; then
+			mv /tmp/imagen.jpeg $picture
 		fi
 
 	fi
 
+	import=`which import`
+	if [ -n "$import" ]; then
+		import -window root $screenshot
+	else
+		echo " !! Damn! No tenemos como sacar el pantallazo"
+		# TODO: intentar con otro?
+	fi
+
 fi
 
-echo "Foto sacada!"
+echo " -- Imagenes listas!"
 
 ####################################################################
-# La comprimimos?
+# Las comprimimos?
 ####################################################################
 # echo "Comprimiento imagen..."
 # tar zcf $image_path.tar.gz $image_path
@@ -253,70 +253,37 @@ echo "Foto sacada!"
 ####################################################################
 # ahora la estocada final: mandemos el mail
 ####################################################################
-echo "Enviando el correo..."
+echo " -- Enviando el correo..."
+complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
+echo "$texto" > msg.tmp
 
-CONTENT=$texto
-msgdate=`date +"%a, %e %Y %T %z"`
-boundary=GvXjxJ+pjyke8COw
-archdate=`date +%F`
-attachment=`basename "$image_path"`
-archattachment="${archdate}-${attachment}"
-mimetype=`file -i $image_path | awk '{ print $2 }'`
-
-daemail=$(cat <<!
-Date: $msgdate
-From: $from
-To: $emailtarget
-Subject: $subject @ $msgdate
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="$boundary"
-Content-Disposition: inline
-
---$boundary
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-$CONTENT
-
---$boundary
-Content-Type: $mimetype; name="$attachment"
-Content-Disposition: attachment; filename="$attachment"
-Content-Transfer-Encoding: base64
-
-!)
-
-echo "$daemail" > msg.tmp
-echo  >> msg.tmp
-if [ "$attachment" = "text/plain" ]; then
-        cat "$image_path" >> msg.tmp
-else
-        uuencode -m $image_path $attachment | sed '1d' >> msg.tmp
+# si no pudimos sacar el pantallazo, lo eliminamos
+if [ ! -e "$picture" ]; then
+	picture=''
 fi
 
-echo  >> msg.tmp
-echo "--$boundary--" >> msg.tmp
-email=`cat msg.tmp`
+emailstatus=`./sendEmail -f $from -t $emailtarget -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
 
-sendmail=`which sendmail`
-mailx=`which mailx`
-if [ -n "$sendmail" ]; then
-	echo "$email" | $sendmail -t
-elif [ -n "$mailx" ]; then
-	$mailx -n -s "$subject @ $msgdate" $emailtarget < msg.tmp
-# mailx through SMTP (gmail) --> puede ser una opcion si el servidor de la casilla llega a alegar por envio de spam
-# env MAILRC=/dev/null from=sending_account@gmail.com smtp=smtp.gmail.com smtp-auth-user=sending_account smtp-use-starttls=yes smtp-auth-password=password smtp-auth=login mailx -n -s "subject" some_other_account@gmail(or_some_else).com </root/test.txt
+if [[ "$emailstatus" =~ "ERROR" ]]; then
+	echo ' !! Hubo un problema enviando el correo. Estan bien puestos los datos?'
 fi
 
 ####################################################################
 # ok, todo bien. ahora limpiemos la custion
 ####################################################################
-echo "Eliminando la evidencia..."
+echo " -- Eliminando la evidencia..."
 
+if [ -e "$picture" ]; then
+	rm $picture
+fi
+if [ -e "$screenshot" ]; then
+	rm $screenshot
+fi
 rm msg.tmp
-rm $image_path
 
 ####################################################################
 # le avisamos al ladron que esta cagado?
+# TODO: esto solo funciona con Zenity (GNOME y creo que XFCE)
 ####################################################################
 
 if [ $alertuser == 1 ]; then
@@ -331,7 +298,7 @@ if [ $alertuser == 1 ]; then
 
 		if [ $? -gt 0 ]; then
 
-			echo "No tenemos como mostrarle el mensaje"
+			echo " -- No tenemos como mostrarle el mensaje"
 			# TODO: intentar con otro?
 
 		else
@@ -357,14 +324,17 @@ if [ $alertuser == 1 ]; then
 
 fi
 
-echo "...todo listo!"
-
 ####################################################################
 # reiniciamos X para wevearlo mas aun?
 ####################################################################
 if [ $killx == 1 ]; then
 
-	echo "Botandolo del servidor grafico!"
+	echo " -- Botandolo del servidor grafico!"
 	killall gdm
 
 fi
+
+####################################################################
+# this is the end, my only friend
+####################################################################
+echo -e " -- ...todo listo!\n"
