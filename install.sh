@@ -12,6 +12,12 @@ separator="----------------------------------------"
 platform=`uname`
 linux_packages='wget streamer traceroute libio-socket-ssl-perl libnet-ssleay-perl'
 
+if [ $platform == 'Darwin' ]; then
+	DEFAULT_INSTALLPATH='/usr/bin'
+else
+	DEFAULT_INSTALLPATH='/usr/local/bin'
+fi
+
 	# first we should ask the neccesary questions so as to generate the config automatically
 
 	echo -e "\n####################################"
@@ -21,10 +27,10 @@ linux_packages='wget streamer traceroute libio-socket-ssl-perl libnet-ssleay-per
 
 	# set installation path
 	echo -e $separator
-	echo -n " -> Where do you want us to put the script? [/usr/local/bin] "
+	echo -n " -> Where do you want us to put the script? [$DEFAULT_INSTALLPATH] "
 	read INSTALLPATH
 	if [ "$INSTALLPATH" == "" ]; then
-		INSTALLPATH='/usr/local/bin'
+		INSTALLPATH=$DEFAULT_INSTALLPATH
 	elif [ -d $INSTALLPATH ]; then
 		echo " -- Ok, setting $INSTALLPATH as our install path."
 	else
@@ -51,11 +57,11 @@ linux_packages='wget streamer traceroute libio-socket-ssl-perl libnet-ssleay-per
 
 	# SMTP user
 	echo -e $separator
-	echo -n " -> Type in your smtp username: (i.e. mailbox@gmail.com) [] "
+	echo -n " -> Type in your smtp username: (i.e. mailbox@gmail.com) [$EMAIL] "
 	read SMTP_USER
 	if [ "$SMTP_USER" == "" ]; then
-		echo -e " !! You need to type in a valid username. Exiting...\n"
-		exit
+		echo -e " -- Using the full email as the SMTP username..."
+		SMTP_USER=$EMAIL
 	fi
 
 	# SMTP pass
