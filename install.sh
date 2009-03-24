@@ -4,13 +4,13 @@
 # Prey v0.1 Installation Script - by Tomas Pollak (bootlog.org)
 # URL : http://github.com/tomas/prey
 # License: GPLv3
-# Requisites for Linux: Wget, Traceroute, Streamer (for webcam capture) and Perl Libs IO::Socket and NET::SSLeay (yeah, i know)
+# Requisites for Linux: Wget, Traceroute, Streamer (for webcam capture) and Perl Libs IO::Socket::SSL and NET::SSLeay (yeah, i know)
 ####################################################################
 
 filename=prey.sh
 separator="----------------------------------------"
 platform=`uname`
-linux_packages='wget streamer traceroute libio-socket-ssl-perl libnet-ssleay-perl'
+linux_packages='wget tracerout streamer'
 
 if [ $platform == 'Darwin' ]; then
 	DEFAULT_INSTALLPATH='/usr/bin'
@@ -128,13 +128,15 @@ fi
 		# TODO: the sudo method probably wont work in suse & arch. we should su and then do all the stuff
 
 		if [[ "$distro" =~ "Ubuntu" ]]; then
-			sudo apt-get install $linux_packages
+			sudo apt-get install "$linux_packages libio-socket-ssl-perl libnet-ssleay-perl"
 		elif [[ "$distro" =~ "Fedora|Redhat" ]]; then
-			sudo yum install $linux_packages
+			sudo yum install "$linux_packages perl-IO-Socket-SSL perl-Net-SSLeay"
 		elif [[ "$distro" =~ "SUSE" ]]; then
 			# its been a long time since i used suse, is smart the default package manager now?
+			# TODO: add perl lib packages
 			sudo smart install $linux_packages
 		elif [[ "$distro" =~ "Archlinux" ]]; then
+			# TODO: add perl lib packages
 			sudo pacman -S $linux_packages
 		fi
 
