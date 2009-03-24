@@ -107,7 +107,8 @@ publico=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.
 ####################################################################
 echo " -- Obteniendo IP privado..."
 
-interno=`ifconfig  | grep 'inet addr:'| grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1}'`
+# works in mac as well as linux (linux just prints an extra "addr:")
+interno=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print $2}'`
 
 ####################################################################
 # gateway, mac e informacion de wifi (nombre red, canal, etc)
@@ -118,7 +119,7 @@ if [ $platform == 'Darwin' ]; then
 	routes=`netstat -rn | grep default | cut -c20-35`
 	mac=`arp -n $routes | cut -f4 -d' '`
 	# vaya a saber uno porque apple escondio tanto este archivo!
-	wifi_info='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I'
+	wifi_info=`/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I`
 else
 	routes=`route -n`
 	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
@@ -169,7 +170,7 @@ echo " -- Redactando el correo..."
 texto="
 Prey report!
 
-Uptime
+Status general del computador (uptime)
 --------------------------------------------------------------------
 $uptime
 
@@ -177,7 +178,7 @@ Datos de conexion
 --------------------------------------------------------------------
 IP Publico: $publico. IP interno: $interno.
 
-Enrutado de red (la primera)
+Enrutado de red
 --------------------------------------------------------------------
 Direccion MAC: $mac. Gateway: $routes
 
