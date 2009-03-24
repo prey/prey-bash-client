@@ -4,7 +4,7 @@
 # Prey v0.1 Installation Script - by Tomas Pollak (bootlog.org)
 # URL : http://github.com/tomas/prey
 # License: GPLv3
-# Requisites for Linux: Wget, Traceroute, Streamer (for webcam capture) and Perl Libs IO::Socket::SSL and NET::SSLeay (yeah, i know)
+# Requisites for Linux: Wget, Traceroute, Scrot, Streamer (for webcam capture) and Perl Libs IO::Socket::SSL and NET::SSLeay (yeah, i know)
 ####################################################################
 
 filename=prey.sh
