@@ -10,7 +10,7 @@
 filename=prey.sh
 separator="----------------------------------------"
 platform=`uname`
-linux_packages='wget tracerout streamer'
+linux_packages='wget traceroute streamer'
 
 if [ $platform == 'Darwin' ]; then
 	DEFAULT_INSTALLPATH='/usr/bin'
@@ -128,9 +128,9 @@ fi
 		# TODO: the sudo method probably wont work in suse & arch. we should su and then do all the stuff
 
 		if [[ "$distro" =~ "Ubuntu" ]]; then
-			sudo apt-get install "$linux_packages libio-socket-ssl-perl libnet-ssleay-perl"
+			sudo apt-get install $linux_packages libio-socket-ssl-perl libnet-ssleay-perl
 		elif [[ "$distro" =~ "Fedora|Redhat" ]]; then
-			sudo yum install "$linux_packages perl-IO-Socket-SSL perl-Net-SSLeay"
+			sudo yum install $linux_packages perl-IO-Socket-SSL perl-Net-SSLeay
 		elif [[ "$distro" =~ "SUSE" ]]; then
 			# its been a long time since i used suse, is smart the default package manager now?
 			# TODO: add perl lib packages
@@ -164,4 +164,4 @@ fi
 
 	echo -e $separator
 	echo -e "\n -- Everything OK! Prey is up and running now. You can now delete this directory safely. "
-	echo -e " -- If you ever want to uninstall Prey, remove the file in $INSTALLPATH and the last line in root's crontab. \n\n"
+	echo -e " -- If you ever want to uninstall Prey, remove the files prey.sh and sendEmail in $INSTALLPATH and the last line in root's crontab. \n\n"
