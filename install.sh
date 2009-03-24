@@ -129,7 +129,9 @@ fi
 
 		if [[ "$distro" =~ "Ubuntu" ]]; then
 			sudo apt-get install $linux_packages libio-socket-ssl-perl libnet-ssleay-perl
-		elif [[ "$distro" =~ "Fedora|Redhat" ]]; then
+		elif [[ "$distro" =~ "Fedora|Redhat|CentOS" ]]; then
+			# seems they also need these packages: perl-TermReadKey perl-MIME-Lite perl-File-Type
+			# from EPEL repo (http://fedoraproject.org/wiki/EPEL)
 			sudo yum install $linux_packages perl-IO-Socket-SSL perl-Net-SSLeay
 		elif [[ "$distro" =~ "SUSE" ]]; then
 			# its been a long time since i used suse, is smart the default package manager now?
@@ -143,7 +145,7 @@ fi
 	elif [ $platform == 'Darwin' ]; then
 
 		echo -e $separator
-		echo -e " -- Copying ISightCapture to $INSTALLPATH..."
+		echo -e " -- Copying iSightCapture to $INSTALLPATH..."
 		sudo cp isightcapture $INSTALLPATH
 
 	fi
