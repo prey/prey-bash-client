@@ -242,6 +242,8 @@ else
 					picture='/tmp/imagen.ppm'
 				fi
 
+			fi
+
 		fi
 
 	fi
@@ -271,6 +273,8 @@ else
 		fi
 
 	fi
+
+fi
 
 echo " -- Imagenes listas!"
 
