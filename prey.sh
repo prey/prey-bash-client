@@ -227,15 +227,30 @@ else
 		$streamer -o /tmp/imagen.jpeg &> /dev/null # streamer necesita que sea JPEG (con la E) para detectar el formato
 
 		if [ -e '/tmp/imagen.jpeg' ]; then
+
 			mv /tmp/imagen.jpeg $picture
+
+		else # by Vanscot, http://www.hometown.cl/ --> some webcams are unable to take JPGs so we grab a PPM
+
+			$streamer -o /tmp/imagen.ppm &> /dev/null
+			if [ -e '/tmp/imagen.ppm' ]; then
+
+				$convert=`which convert`
+				if [ -n "$convert" ]; then # si tenemos imagemagick instalado podemos convertirla a JPG
+					$convert /tmp/imagen.ppm $picture > /dev/null
+				else # trataremos de enviarla asi nomas
+					picture='/tmp/imagen.ppm'
+				fi
+
 		fi
 
 	fi
 
 	scrot=`which scrot` # scrot es mas liviano y mas rapido
 	import=`which import` # viene con imagemagick, mas obeso
+
 	if [ -n "$scrot" ]; then
-		$scrot $screenshot
+		DISPLAY=:0 $scrot $screenshot
 	elif [ -n "$import" ]; then
 		$import -window root $screenshot
 	fi
@@ -258,9 +273,13 @@ echo " -- Enviando el correo..."
 complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
 echo "$texto" > msg.tmp
 
-# si no pudimos sacar el pantallazo, lo eliminamos
+# si no pudimos sacar el pantallazo o la foto, limpiamos las variables
 if [ ! -e "$picture" ]; then
 	picture=''
+fi
+
+if [ ! -e "$screenshot" ]; then
+	screenshot=''
 fi
 
 emailstatus=`./sendEmail -f $from -t $emailtarget -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
@@ -289,37 +308,30 @@ rm msg.tmp
 
 if [ $alertuser == 1 ]; then
 
-	# veamos si estamos en GNOME
-	gnome=`ps x | grep `ps o ppid,fname | grep bash | grep -v grep | head -1 | awk '{print $1}'` | grep 'gnome-session' | wc -l`
+	# veamos si tenemos zenity
+	zenity=`which zenity`
 
-	if [ $gnome == 1 ]; then
+	if [ -n "$zenity" ]; then
 
-		# veamos si tenemos zenity
-		type 'zenity' > /dev/null 2>&1
+		echo " -- No tenemos como mostrarle el mensaje"
+		# TODO: intentar con otro?
 
-		if [ $? -gt 0 ]; then
+	else
 
-			echo " -- No tenemos como mostrarle el mensaje"
-			# TODO: intentar con otro?
+		# lo agarramos pal weveo ?
+		# zenity --question --text "Este computador es tuyo?"
+		# if [ $? = 0 ]; then
+			# TODO: inventar buena talla
+		# fi
 
-		else
+		# progress bar, en caso de que queramos usarlo
+		# find ~ -name '*.ps' | zenity --progress --pulsate
 
-			# lo agarramos pal weveo ?
-			# zenity --question --text "Este computador es tuyo?"
-			# if [ $? = 0 ]; then
-				# TODO: inventar buena talla
-			# fi
+		 # mensaje de informacion
+		# zenity --info --text "Obtenimos la informacion"
 
-			# progress bar, en caso de que queramos usarlo
-			# find ~ -name '*.ps' | zenity --progress --pulsate
-
-			 # mensaje de informacion
-			# zenity --info --text "Obtenimos la informacion"
-
-			 # mejor, mensaje de error!
-			zenity --error --text "Te pillé maldito."
-
-		fi
+		 # mejor, mensaje de error!
+		$zenity --error --text "Te pillé maldito."
 
 	fi
 
@@ -328,19 +340,27 @@ fi
 ####################################################################
 # reiniciamos X para wevearlo mas aun?
 ####################################################################
-if [ $killx == 1 ]; then
+if [ $killx == 1 ]; then # muahahaha
+
 	echo " -- Botandolo del servidor grafico!"
 
-	gnome=`ps x | grep `ps o ppid,fname | grep bash | grep -v grep | head -1 | awk '{print $1}'` | grep 'gnome-session' | wc -l`
+	# ahora validamos por GDM, KDM, XDM y Entrance, pero hay MUCHO codigo repetido. TODO: reducir!
 
-	if [ $gnome == 1 ]; then
+	if [ `ps aux | grep gdm | grep -v grep | wc -l` -gt 0 ]; then
 
-		# muahahaha
 		killall gdm
 
-	else # vamos a asumir que esta usando KDE (TODO: revisar bien y aplicar tambien para XFCE, Fluxbox, etc)
+	elif [ `ps aux | grep kdm | grep -v grep | wc -l` -gt 0]; then
 
 		killall kdm
+
+	elif [ `ps aux | grep xdm | grep -v grep | wc -l` -gt 0]; then
+
+		killall xdm
+
+	elif [ `ps aux | grep entrance | grep -v grep | wc -l` -gt 0]; then
+
+		killall entrance
 
 	fi
 
