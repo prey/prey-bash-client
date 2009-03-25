@@ -246,16 +246,31 @@ else
 
 	fi
 
+	if [ `whoami` == 'root' ]; then
+
+		logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
+		logged_user_call="su $logged_user -c"
+
+	fi
+
 	scrot=`which scrot` # scrot es mas liviano y mas rapido
 	import=`which import` # viene con imagemagick, mas obeso
 
 	if [ -n "$scrot" ]; then
-		DISPLAY=:0 $scrot $screenshot
-	elif [ -n "$import" ]; then
-		$import -window root $screenshot
-	fi
 
-fi
+		DISPLAY=:0 $logged_user_call $scrot $screenshot
+
+	elif [ -n "$import" ]; then
+
+		args="-window root -display :0"
+
+		if [ `whoami` == 'root' ]; then # friggin su command, cannot pass args with "-" since it gets confused
+			$logged_user_call "$import $args $screenshot"
+		else
+			$import $args $screenshot
+		fi
+
+	fi
 
 echo " -- Imagenes listas!"
 
