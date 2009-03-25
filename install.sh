@@ -162,7 +162,7 @@ fi
 
 	echo -e $separator
 	echo -e " -- Adding crontab entry..."
-	(sudo crontab -l; echo "*/$TIMING * * * * $INSTALLPATH/$filename") | sudo crontab -
+	(sudo crontab -l; echo "*/$TIMING * * * * cd $INSTALLPATH; ./$filename") | sudo crontab -
 
 	echo -e $separator
 	echo -e "\n -- Everything OK! Prey is up and running now. You can now delete this directory safely. "
