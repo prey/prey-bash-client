@@ -52,6 +52,7 @@ picture=/tmp/prey-picture.jpg
 echo -e '\n ### Prey 0.1 al acecho!\n'
 
 platform=`uname`
+logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 
 if [ $platform == 'Darwin' ]; then
 	getter='curl -s'
@@ -248,26 +249,23 @@ else
 
 	fi
 
-	if [ `whoami` == 'root' ]; then
-
-		logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
-		logged_user_call="su $logged_user -c"
-
-	fi
-
 	scrot=`which scrot` # scrot es mas liviano y mas rapido
 	import=`which import` # viene con imagemagick, mas obeso
 
 	if [ -n "$scrot" ]; then
 
-		DISPLAY=:0 $logged_user_call $scrot $screenshot
+		if [ `whoami` == 'root' ]; then
+			DISPLAY=:0 su $logged_user -c "$scrot $screenshot"
+		else
+			$scrot $screenshot
+		fi
 
 	elif [ -n "$import" ]; then
 
 		args="-window root -display :0"
 
 		if [ `whoami` == 'root' ]; then # friggin su command, cannot pass args with "-" since it gets confused
-			$logged_user_call "$import $args $screenshot"
+			su $logged_user -c "$import $args $screenshot"
 		else
 			$import $args $screenshot
 		fi
