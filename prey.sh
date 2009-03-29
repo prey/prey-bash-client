@@ -23,8 +23,8 @@ smtp_username='username@gmail.com'
 smtp_password='password'
 
 # esto se puede dejar tal cual, pero cambialo si quieres
-from='no-reply@domain.com'
-subject="Prey status report"
+from='Prey <no-reply@gmail.com>'
+subject="PREY -- status report"
 
 ####################################################################
 # configuracion secundaria, esto en teoria se podra modificar desde fuera
@@ -90,7 +90,7 @@ if [ -n "$url" ]; then
 	if [ -n "$config" ]; then
 		echo " -- HOLY GUACAMOLE!!"
 	else
-		echo ' -- Nada de que preocuparse. :)'
+		echo -e " -- Nada de que preocuparse. :)\n"
 		exit
 	fi
 
@@ -169,7 +169,7 @@ connections=`netstat | grep -i established`
 echo " -- Redactando el correo..."
 
 texto="
-Hey-o, hey-o! These are the whereabouts of the prey!
+Buenas noticias amigo mio... al parecer lo encontramos!
 
 Status general del computador (uptime)
 --------------------------------------------------------------------
@@ -203,8 +203,8 @@ $connections
 Ahora a agarrar al maldito!
 
 --
-Con mucho carino,
-El programa del que nunca quisiste recibir un mail, Prey. :)
+Tu fiel servidor, Prey
+Para actualizaciones visita http://prey.bootlog.org
 "
 
 ####################################################################
@@ -215,7 +215,19 @@ echo " -- Obteniendo un pantallazo y una foto del impostor..."
 
 if [ $platform == 'Darwin' ]; then
 
-	/usr/sbin/screencapture $screenshot
+	screencapture='/usr/sbin/screencapture -mx'
+
+	if [`whoami` == 'root']; then # we need to get the PID of the loginwindow and take the screenshot through launchctl
+
+        loginpid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
+        launchctl bsexec $loginpid $screencapture $screenshot
+
+	else
+
+		$screencapture $screnshot
+
+	fi
+
 	# muy bien, veamos si el tarro puede sacar una imagen con la webcam
 	./isightcapture $picture
 
