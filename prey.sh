@@ -217,7 +217,7 @@ if [ $platform == 'Darwin' ]; then
 
 	screencapture='/usr/sbin/screencapture -mx'
 
-	if [`whoami` == 'root']; then # we need to get the PID of the loginwindow and take the screenshot through launchctl
+	if [ `whoami` == 'root' ]; then # we need to get the PID of the loginwindow and take the screenshot through launchctl
 
         loginpid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
         launchctl bsexec $loginpid $screencapture $screenshot
