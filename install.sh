@@ -24,6 +24,19 @@ fi
 	echo "### By Tomas Pollak, bootlog.org ###"
 	echo -e "####################################\n"
 
+	# define language
+	echo -e $separator
+	echo -n " -> Set default language for Prey's status report (english/spanish) [spanish]"
+	read LANGUAGE
+	if [ "$LANGUAGE" == "" ]; then
+		echo " -- Defaulting to Prey in english..."
+	elif [ -d "lang/$LANGUAGE" ]; then
+		echo " -- Ok, Prey will speak in $LANGUAGE then."
+	else
+		echo " !! Unsupported language! Remember to write its complete name in english (spanish, english, german, etc)"
+		exit
+	fi
+
 	# set installation path
 	echo -e $separator
 	echo -n " -> Where do you want us to put the script? [$DEFAULT_INSTALLPATH] "
@@ -109,6 +122,7 @@ fi
 
 	echo -e $separator
 	echo -e " -- Ok, setting up configuration values..."
+	sed -i -e "s/lang='.*'/lang='$LANGUAGE'/" $filename
 	sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $filename
 	sed -i -e "s/url='.*'/url='$URL'/" $filename
 	sed -i -e "s/-SLASH-/\//g" $filename
@@ -152,6 +166,7 @@ fi
 	echo -e $separator
 	echo -e "\n -- Copying Prey and Email Sender to $INSTALLPATH..."
 	sudo cp $filename $INSTALLPATH
+	sudo mv lang $INSTALLPATH
 	sudo cp sendEmail $INSTALLPATH
 
 	echo -e $separator

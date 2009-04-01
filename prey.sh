@@ -204,44 +204,7 @@ connections=`netstat -taue | grep -i established`
 # ahora los metemos en el texto que va a ir en el mail
 ####################################################################
 echo " -- Redactando el correo..."
-texto="
-Buenas noticias amigo mio, al parecer lo encontramos!
-
-Estado general del computador (uptime)
---------------------------------------------------------------------
-$uptime
-
-Datos de conexion
---------------------------------------------------------------------
-IP Publico: $publico. IP interno: $interno.
-
-Enrutado de red
---------------------------------------------------------------------
-Direccion MAC: $mac. Gateway: $routes
-
-Datos sobre red WiFi
---------------------------------------------------------------------
-$wifi_info
-
-En los ultimos $minutos minutos se han modificado estos archivos
---------------------------------------------------------------------
-$archivos
-
-Programas en execucion
---------------------------------------------------------------------
-$programas
-
-Conexiones abiertas
---------------------------------------------------------------------
-$connections
-
-
-Ahora a agarrar al maldito!
-
---
-Tu fiel servidor, Prey
-Para actualizaciones visita http://prey.bootlog.org
-"
+. lang/$lang
 
 ####################################################################
 # veamos si podemos sacar una foto del tipo con la camara del tarro.

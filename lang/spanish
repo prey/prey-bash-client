@@ -1,0 +1,46 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (bootlog.org)
+# Spanish language file v 0.1 - by Juan C. Mardones (juanmardones.com)
+# URL : http://prey.bootlog.org
+# License: GPLv3
+####################################################################
+
+texto="
+Buenas noticias amigo mio, al parecer lo encontramos!
+
+Estado general del computador (uptime)
+--------------------------------------------------------------------
+$uptime
+
+Datos de conexion
+--------------------------------------------------------------------
+IP Publico: $publico. IP interno: $interno.
+
+Enrutado de red
+--------------------------------------------------------------------
+Direccion MAC: $mac. Gateway: $routes
+
+Datos sobre red WiFi
+--------------------------------------------------------------------
+$wifi_info
+
+En los ultimos $minutos minutos se han modificado estos archivos
+--------------------------------------------------------------------
+$archivos
+
+Programas en execucion
+--------------------------------------------------------------------
+$programas
+
+Conexiones abiertas
+--------------------------------------------------------------------
+$connections
+
+
+Ahora a agarrar al maldito!
+
+--
+Tu fiel servidor, Prey
+Para actualizaciones visita http://prey.bootlog.org
+"
