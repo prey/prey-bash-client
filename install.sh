@@ -1,12 +1,11 @@
 #!/bin/bash
-
 ####################################################################
-# Prey v0.1 Installation Script - by Tomas Pollak (bootlog.org)
-# URL : http://github.com/tomas/prey
+# Prey Installation Script - by Tomas Pollak (bootlog.org)
+# URL : http://prey.bootlog.org
 # License: GPLv3
-# Requisites for Linux: Wget, Traceroute, Scrot, Streamer (for webcam capture) and Perl Libs IO::Socket::SSL and NET::SSLeay (yeah, i know)
 ####################################################################
 
+version='0.1'
 filename=prey.sh
 separator="----------------------------------------"
 platform=`uname`
@@ -21,7 +20,7 @@ fi
 	# first we should ask the neccesary questions so as to generate the config automatically
 
 	echo -e "\n####################################"
-	echo "### Prey 0.1 installation script ###"
+	echo "### Prey $version installation script ###"
 	echo "### By Tomas Pollak, bootlog.org ###"
 	echo -e "####################################\n"
 

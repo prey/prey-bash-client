@@ -1,8 +1,15 @@
+##############################################
+# Prey README
+# For updates visit prey.bootlog.org
+##############################################
+
 Prey is a small script for tracking your stolen laptop.
 It is licenced by the GPLv3 which means you can do just
-about anything with it. It runs in *NIX systems.
+about anything with it. It runs in *NIX systems and Windows as well.
 
+##############################################
 1. How it works
+##############################################
 
 The script runs at a specified interval in your machine,
 and checks for a specified URL in the web. If the URL exists
@@ -12,34 +19,51 @@ all that info through to a previously defined email address.
 You can also not define a URL and in that case the program
 sends the data every time it runs.
 
+##############################################
 2. Installation
+##############################################
 
-For Mac & Ubuntu/Debian users: just download the package and run the
+For Windows users, execute PreyConfig.exe, fill in all the fields, tick the
+"Activar Prey" checkbox and then click on "Activar".
+
+For Mac & Linux users, just download the package, unzip it and run the
 install script:
 
-$ chmod +x install.sh
-$ ./install.sh
+	$ chmod +x install.sh
+	$ ./install.sh
 
-For all other distros: download the files, put them anywhere you want,
-change the configuration values and then add an entry in root's crontab:
+##############################################
+3. Requisites for Linux
+##############################################
 
-$ sudo crontab -e
+Mac comes with everything needed to run Prey. However Linux users should make
+sure they have the following installed: (note the installer does this automatically!)
 
-For example, if you wish the script to run at an interval
-of ten minutes, the crontab line would look like:
+	o wget
+	o traceroute
+	o scrot or imagemagick (for screenshot capture)
+	o streamer (for webcam capture) --> in Fedora the xawtv package includes it
+	o Perl libs IO::Socket::SSL and NET::SSLeay
 
-*/10 * * * * /usr/local/bin/prey.sh > /dev/null
-
-3. Usage
+##############################################
+4. Usage
+##############################################
 
 The idea is that when your laptop gets stolen -- hopefully never, that is --
 you should immediately create the URL you specified in Prey's
-configuration. You actually don't need to put anything in it, since what
-triggers the application is the status code 200.
+configuration with some text in it. Prey expects a status code 200 to run.
 
-That's it! Feel free to fork the repo and contribute if you want to.
+##############################################
+5. Credits
+##############################################
 
-4. Acknowledgements
+	o Tomás Pollak (bootlog.org)
+	o Julián Mejio (julianmejia.co.cc)
+	o Juan Carlos Mardones (juanmardones.com)
+
+##############################################
+6. Acknowledgements
+##############################################
 
 Prey works thanks to Michal Ludvig's excellent command-line SMTP client
 and Axel Bauer's iSightCapture program for capturing pictures on the
@@ -47,4 +71,5 @@ Mac. And of course, a bunch of powerful open source utilities!
 
 Command line SMTP client: http://www.logix.cz/michal/devel/smtp/index.xp?show_selected=1&msgid=31
 iSightCapture: http://www.intergalactic.de/pages/iSight.html
- 
+
+--

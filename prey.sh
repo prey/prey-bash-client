@@ -1,15 +1,18 @@
 #!/bin/bash
-
 ####################################################################
-# Prey v0.1 - by Tomas Pollak (bootlog.org)
-# URL : http://github.com/tomas/prey
+# PREY - by Tomas Pollak (bootlog.org)
+# URL : http://prey.bootlog.org
 # License: GPLv3
-# Requisites for Linux: Wget, Traceroute, Scrot, Streamer (for webcam capture) and Perl Libs IO::Socket::SSL and NET::SSLeay (yeah, i know)
 ####################################################################
 
+version='0.1'
+
 ####################################################################
-# configuracion primaria, necesaria para que funcione Prey
+# basic configuration
 ####################################################################
+
+# language, english or spanish
+lang='spanish'
 
 # url de verificacion, por defecto nada para que corra completo
 url=''
@@ -49,7 +52,7 @@ picture=/tmp/prey-picture.jpg
 ####################################################################
 # ok, demosle. eso si veamos si estamos en Linux o Mac
 ####################################################################
-echo -e '\n ### Prey 0.1 al acecho!\n'
+echo -e "\n ### PREY $version al acecho!\n"
 
 platform=`uname`
 logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
@@ -86,7 +89,7 @@ if [ -n "$url" ]; then
 	fi
 
 	# ok, ahora si el config tiene ALGO, significa que tenemos que hacer la pega
-#	if [ "${status// /}" = "OK" ]; then
+	# eventualmente el archivo remoto puede tener parametros y gatillar comportamientos
 	if [ -n "$config" ]; then
 		echo " -- HOLY GUACAMOLE!!"
 	else
@@ -125,7 +128,41 @@ else
 	routes=`route -n`
 	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
 #	wifi_info=`iwconfig ath0 | grep ESSID | cut -d\" -f2`
-	wifi_info=`iwconfig 2>&1`
+	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+fi
+
+if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto connect to one
+
+	if [ $platform == 'Linux' ]; then
+
+		# Find device used for wifi.
+		devlist=$(cat /proc/net/wireless | tail --lines=1) 2>/dev/null
+		devleft=${devlist#' '*}
+		devright=${devlist%%':'*}
+		echo $devright | grep "" > /tmp/dev_pure
+		dev=$(cat /tmp/dev_pure)
+
+		# Get a list of open wifi points, and choose one
+		iwlist $dev scan > /tmp/scan_output 2>/dev/null
+		scanone=$(egrep 'ESSID|Encryption' /tmp/scan_output)
+		essidone=${scanone%%"Encryption key:off"*}
+		essidquot=${essidone##*'ESSID:"'}
+		essid=${essidquot%'"'*}
+
+		# Connect
+		if [[ ! -z $essid && ! -z $dev ]]; then
+			iwconfig $dev essid $essid
+			wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+		fi
+
+	else # untested, for mac
+
+		networksetup -setnetworkserviceenabled AirPort off
+		networksetup -setnetworkserviceenabled AirPort on
+		wifi_info=`/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I`
+
+	fi
+
 fi
 
 ####################################################################
@@ -161,17 +198,16 @@ programas=`ps ux`
 ####################################################################
 echo " -- Obteniendo listado de conexiones activas..."
 
-connections=`netstat | grep -i established`
+connections=`netstat -taue | grep -i established`
 
 ####################################################################
 # ahora los metemos en el texto que va a ir en el mail
 ####################################################################
 echo " -- Redactando el correo..."
-
 texto="
-Buenas noticias amigo mio... al parecer lo encontramos!
+Buenas noticias amigo mio, al parecer lo encontramos!
 
-Status general del computador (uptime)
+Estado general del computador (uptime)
 --------------------------------------------------------------------
 $uptime
 
@@ -187,15 +223,15 @@ Datos sobre red WiFi
 --------------------------------------------------------------------
 $wifi_info
 
-En los ultimos $minutos minutos ha modificado los siguientes archivos
+En los ultimos $minutos minutos se han modificado estos archivos
 --------------------------------------------------------------------
 $archivos
 
-Ahora esta corriendo los siguientes programas
+Programas en execucion
 --------------------------------------------------------------------
 $programas
 
-Y tiene las siguientes conexiones abiertas
+Conexiones abiertas
 --------------------------------------------------------------------
 $connections
 
@@ -311,7 +347,7 @@ if [ ! -e "$screenshot" ]; then
 	screenshot=''
 fi
 
-emailstatus=`./sendEmail -f $from -t $emailtarget -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
+emailstatus=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
 
 if [[ "$emailstatus" =~ "ERROR" ]]; then
 	echo ' !! Hubo un problema enviando el correo. Estan bien puestos los datos?'
@@ -353,9 +389,6 @@ if [ $alertuser == 1 ]; then
 			# TODO: inventar buena talla
 		# fi
 
-		# progress bar, en caso de que queramos usarlo
-		# find ~ -name '*.ps' | zenity --progress --pulsate
-
 		 # mensaje de informacion
 		# zenity --info --text "Obtenimos la informacion"
 
@@ -374,25 +407,11 @@ if [ $killx == 1 ]; then # muahahaha
 	echo " -- Botandolo del servidor grafico!"
 
 	# ahora validamos por GDM, KDM, XDM y Entrance, pero hay MUCHO codigo repetido. TODO: reducir!
-
-	if [ `ps aux | grep gdm | grep -v grep | wc -l` -gt 0 ]; then
-
-		killall gdm
-
-	elif [ `ps aux | grep kdm | grep -v grep | wc -l` -gt 0]; then
-
-		killall kdm
-
-	elif [ `ps aux | grep xdm | grep -v grep | wc -l` -gt 0]; then
-
-		killall xdm
-
-	elif [ `ps aux | grep entrance | grep -v grep | wc -l` -gt 0]; then
-
-		killall entrance
-
+	if [ $platform == 'Linux' ]; then
+		pkill "gdm|kdm|xdm|entrance"
+	else
+		echo " !! Como lo botamos desde Mac OS?"
 	fi
-
 fi
 
 ####################################################################
