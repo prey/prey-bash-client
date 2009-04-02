@@ -5,54 +5,13 @@
 # License: GPLv3
 ####################################################################
 
-version='0.1'
-
-####################################################################
-# basic configuration
-####################################################################
-
-# language, english or spanish
-lang='spanish'
-
-# url de verificacion, por defecto nada para que corra completo
-url=''
-
-# mail
-emailtarget='mailbox@domain.com'
-
-# configuracion smtp, no podemos mandarlo con sendmail/mailx porque rebota como spam
-smtp_server='smtp.gmail.com:587'
-smtp_username='username@gmail.com'
-smtp_password='password'
-
-# esto se puede dejar tal cual, pero cambialo si quieres
-from='Prey <no-reply@gmail.com>'
-subject="PREY -- status report"
-
-####################################################################
-# configuracion secundaria, esto en teoria se podra modificar desde fuera
-####################################################################
-
-alertuser=0
-killx=0
-
-# transcurso de tiempo en que fueron modificados los archivos, en minutos
-minutos=100
-
-# de donde obtener el listado de archivos modificados. por defecto home
-ruta_archivos=~/
-
-# donde guardamos la imagen temporal
-screenshot=/tmp/prey-screenshot.jpg
-picture=/tmp/prey-picture.jpg
-
-# backup ?
-# backup_path=~/.prey
+version='0.2'
+. ./testconfig
 
 ####################################################################
 # ok, demosle. eso si veamos si estamos en Linux o Mac
 ####################################################################
-echo -e "\n ### PREY $version al acecho!\n"
+echo -e "\n ### PREY $version spreads its wings!\n"
 
 platform=`uname`
 logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
@@ -127,7 +86,6 @@ if [ $platform == 'Darwin' ]; then
 else
 	routes=`route -n`
 	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
-#	wifi_info=`iwconfig ath0 | grep ESSID | cut -d\" -f2`
 	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
 fi
 
@@ -204,44 +162,7 @@ connections=`netstat -taue | grep -i established`
 # ahora los metemos en el texto que va a ir en el mail
 ####################################################################
 echo " -- Redactando el correo..."
-texto="
-Buenas noticias amigo mio, al parecer lo encontramos!
-
-Estado general del computador (uptime)
---------------------------------------------------------------------
-$uptime
-
-Datos de conexion
---------------------------------------------------------------------
-IP Publico: $publico. IP interno: $interno.
-
-Enrutado de red
---------------------------------------------------------------------
-Direccion MAC: $mac. Gateway: $routes
-
-Datos sobre red WiFi
---------------------------------------------------------------------
-$wifi_info
-
-En los ultimos $minutos minutos se han modificado estos archivos
---------------------------------------------------------------------
-$archivos
-
-Programas en execucion
---------------------------------------------------------------------
-$programas
-
-Conexiones abiertas
---------------------------------------------------------------------
-$connections
-
-
-Ahora a agarrar al maldito!
-
---
-Tu fiel servidor, Prey
-Para actualizaciones visita http://prey.bootlog.org
-"
+. lang/$lang
 
 ####################################################################
 # veamos si podemos sacar una foto del tipo con la camara del tarro.
@@ -368,32 +289,36 @@ rm msg.tmp
 
 ####################################################################
 # le avisamos al ladron que esta cagado?
-# TODO: esto solo funciona con Zenity (GNOME y creo que XFCE)
+# TODO: esto solo funciona con Linux (KDE y GNOME, y quizas XFCE)
 ####################################################################
 
-if [ $alertuser == 1 ]; then
+if [ $alertuser == 'y' ]; then
 
-	# veamos si tenemos zenity
-	zenity=`which zenity`
+	if [ $platform == 'Linux' ]; then
 
-	if [ -n "$zenity" ]; then
+		# veamos si tenemos zenity o kdialog
+		zenity=`which zenity`
+		kdialog=`which kdialog`
 
-		echo " -- No tenemos como mostrarle el mensaje"
-		# TODO: intentar con otro?
+		if [ -n "$zenity" ]; then
 
-	else
+			# lo agarramos pal weveo ?
+			# zenity --question --text "Este computador es tuyo?"
+			# if [ $? = 0 ]; then
+				# TODO: inventar buena talla
+			# fi
 
-		# lo agarramos pal weveo ?
-		# zenity --question --text "Este computador es tuyo?"
-		# if [ $? = 0 ]; then
-			# TODO: inventar buena talla
-		# fi
+			 # mensaje de informacion
+			# zenity --info --text "Obtuvimos la informacion"
 
-		 # mensaje de informacion
-		# zenity --info --text "Obtenimos la informacion"
+			 # mejor, mensaje de error!
+			$zenity --error --text $alertmsg
 
-		 # mejor, mensaje de error!
-		$zenity --error --text "Te pillé maldito."
+		elif [ -n "$kdialog" ]; then #untested!
+
+			$kdialog --error $alertmsg
+
+		fi
 
 	fi
 
@@ -412,6 +337,7 @@ if [ $killx == 1 ]; then # muahahaha
 	else
 		echo " !! Como lo botamos desde Mac OS?"
 	fi
+
 fi
 
 ####################################################################

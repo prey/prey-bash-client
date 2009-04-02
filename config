@@ -1,0 +1,56 @@
+#!/bin/bash
+####################################################################
+# PREY Configuration File - by Tomas Pollak (bootlog.org)
+# URL : http://prey.bootlog.org
+# License: GPLv3
+####################################################################
+
+# language, english or spanish
+lang='spanish'
+
+# verification URL, if left empty Prey will always send the information
+url=''
+
+# mailbox to send the report
+emailtarget='mailbox@domain.com'
+
+# SMTP configuration
+# TODO: store the password in an encrypted form
+smtp_server='smtp.gmail.com:587'
+smtp_username='username@gmail.com'
+smtp_password='password'
+
+####################################################################
+# advanced configuration, this is totally optional
+####################################################################
+
+# email settings
+from='Prey <no-reply@gmail.com>'
+subject="PREY -- status report"
+
+# alert the user with a message, y or n
+alertuser=n
+alertmsg="This is a stolen computer, and has been marked by Prey.
+Please contact immediately $emailtarget to clarify the situation.
+Otherwise you'll be notified to the police. YOU HAVE BEEN WARNED!"
+
+# should we kill the X session?
+killx=0
+
+# timelapse to watch for modified files
+minutos=100
+
+# route where to get the modified files from
+ruta_archivos=~/
+
+# where to store the temporary images
+screenshot=/tmp/prey-screenshot.jpg
+picture=/tmp/prey-picture.jpg
+
+
+####################################################################
+# not implemented yet
+####################################################################
+
+# backup ?
+# backup_path=~/.prey
