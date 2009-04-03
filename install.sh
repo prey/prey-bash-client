@@ -237,7 +237,7 @@ separator="---------------------------------------------------------------------
 
 		sudo cp $temp_config_file $INSTALLPATH/$config_file
 		sudo chmod 700 $INSTALLPATH/$config_file # no read access to other users, for security
-#		rm $temp_config_file
+		rm $temp_config_file
 
 	fi
 
