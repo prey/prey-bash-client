@@ -6,7 +6,7 @@
 ####################################################################
 
 version='0.2'
-. ./testconfig
+. ./config
 
 ####################################################################
 # ok, demosle. eso si veamos si estamos en Linux o Mac
@@ -29,7 +29,7 @@ fi
 # primero revisemos si buscamos url, y si existe o no
 ####################################################################
 if [ -n "$url" ]; then
-	echo ' -- Revisando URL...'
+	echo ' -- Checking URL...'
 
 	# Mac OS viene con curl por defecto, asi que tenemos que checkear
 	if [ $platform == 'Darwin' ]; then
@@ -52,7 +52,7 @@ if [ -n "$url" ]; then
 	if [ -n "$config" ]; then
 		echo " -- HOLY GUACAMOLE!!"
 	else
-		echo -e " -- Nada de que preocuparse. :)\n"
+		echo -e " -- Nothing to worry about. :)\n"
 		exit
 	fi
 
@@ -61,14 +61,14 @@ fi
 ####################################################################
 # partamos por ver cual es nuestro IP publico
 ####################################################################
-echo " -- Obteniendo IP publico..."
+echo " -- Getting public IP address..."
 
 publico=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
 
 ####################################################################
 # ahora el IP interno
 ####################################################################
-echo " -- Obteniendo IP privado..."
+echo " -- Getting private LAN IP address..."
 
 # works in mac as well as linux (linux just prints an extra "addr:")
 interno=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print $2}'`
@@ -76,7 +76,7 @@ interno=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print 
 ####################################################################
 # gateway, mac e informacion de wifi (nombre red, canal, etc)
 ####################################################################
-echo " -- Obteniendo enrutamiento interno y direccion MAC..."
+echo " -- Getting MAC address, routing and Wifi info..."
 
 if [ $platform == 'Darwin' ]; then
 	routes=`netstat -rn | grep default | cut -c20-35`
@@ -90,6 +90,8 @@ else
 fi
 
 if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto connect to one
+
+	echo " -- Trying to connect to first open wifi network available..."
 
 	if [ $platform == 'Linux' ]; then
 
@@ -111,6 +113,8 @@ if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto co
 		if [[ ! -z $essid && ! -z $dev ]]; then
 			iwconfig $dev essid $essid
 			wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+		else
+			echo " -- Couldn't find a way to connect to an open wifi network!"
 		fi
 
 	else # untested, for mac
@@ -130,45 +134,45 @@ fi
 # disabled for now, TOO SLOW!
 # traceroute=`which traceroute`
 if [ -n "$traceroute" ]; then
-	echo " -- Rastreando la ruta completa de acceso hacia la web..."
+	echo " -- Tracing our complete route to the Internet..."
 	complete_trace=`$traceroute -q1 www.google.com 2>&1`
 fi
 
 ####################################################################
-# ahora veamos que archivos ha tocado el idiota
-####################################################################
-echo " -- Obteniendo listado de archivos modificados..."
-
-# no incluimos los archivos carpetas ocultas ni los archivos weones de Mac OS
-archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minutos`
-# archivos=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos`
-
-####################################################################
 # ahora veamos que programas esta corriendo
 ####################################################################
-echo " -- Obteniendo tiempo de uso y listado de programas en ejecucion..."
+echo " -- Getting computer uptime and a list of running programs..."
 
 uptime=`uptime`
 programas=`ps ux`
 
 ####################################################################
+# ahora veamos que archivos ha tocado el idiota
+####################################################################
+echo " -- Getting a list of recently modified files..."
+
+# no incluimos los archivos carpetas ocultas ni los archivos weones de Mac OS
+archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minutos 2>&1`
+# archivos=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos`
+
+####################################################################
 # ahora veamos a donde esta conectado
 ####################################################################
-echo " -- Obteniendo listado de conexiones activas..."
+echo " -- Getting list of current active connections..."
 
 connections=`netstat -taue | grep -i established`
 
 ####################################################################
 # ahora los metemos en el texto que va a ir en el mail
 ####################################################################
-echo " -- Redactando el correo..."
+echo " -- Writing our email..."
 . lang/$lang
 
 ####################################################################
 # veamos si podemos sacar una foto del tipo con la camara del tarro.
 # de todas formas un pantallazo para ver que esta haciendo el idiota
 ####################################################################
-echo " -- Obteniendo un pantallazo y una foto del impostor..."
+echo " -- Taking a screenshot and a picture of the impostor..."
 
 if [ $platform == 'Darwin' ]; then
 
@@ -243,19 +247,12 @@ else
 
 fi
 
-echo " -- Imagenes listas!"
-
-####################################################################
-# Las comprimimos?
-####################################################################
-# echo "Comprimiento imagen..."
-# tar zcf $image_path.tar.gz $image_path
-# image_path=$image_path.tar.gz
+echo " -- Done with the images!"
 
 ####################################################################
 # ahora la estocada final: mandemos el mail
 ####################################################################
-echo " -- Enviando el correo..."
+echo " -- Sending the email..."
 complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
 echo "$texto" > msg.tmp
 
@@ -266,18 +263,24 @@ fi
 
 if [ ! -e "$screenshot" ]; then
 	screenshot=''
+# else
+	# Comprimimos el pantallazo? (A veces es medio pesado)
+	# echo " -- Comprimiento pantallazo..."
+	# tar zcf $screenshot.tar.gz $screenshot
+	# screenshot=$screenshot.tar.gz
 fi
 
 emailstatus=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
 
 if [[ "$emailstatus" =~ "ERROR" ]]; then
-	echo ' !! Hubo un problema enviando el correo. Estan bien puestos los datos?'
+	echo ' !! There was a problem sending the email. Are you sure it was setup correctly?'
+	echo " !! If you're using Gmail, you can try removing the '@gmail.com' from the smtp_username field in Prey's config file."
 fi
 
 ####################################################################
 # ok, todo bien. ahora limpiemos la custion
 ####################################################################
-echo " -- Eliminando la evidencia..."
+echo " -- Removing all traces of evidence..."
 
 if [ -e "$picture" ]; then
 	rm $picture
@@ -312,11 +315,11 @@ if [ $alertuser == 'y' ]; then
 			# zenity --info --text "Obtuvimos la informacion"
 
 			 # mejor, mensaje de error!
-			$zenity --error --text $alertmsg
+			$zenity --error --text "$alertmsg"
 
 		elif [ -n "$kdialog" ]; then #untested!
 
-			$kdialog --error $alertmsg
+			$kdialog --error "$alertmsg"
 
 		fi
 
@@ -327,15 +330,15 @@ fi
 ####################################################################
 # reiniciamos X para wevearlo mas aun?
 ####################################################################
-if [ $killx == 1 ]; then # muahahaha
+if [ $killx == "y" ]; then # muahahaha
 
-	echo " -- Botandolo del servidor grafico!"
+	echo " -- Kicking him off the X session!"
 
 	# ahora validamos por GDM, KDM, XDM y Entrance, pero hay MUCHO codigo repetido. TODO: reducir!
 	if [ $platform == 'Linux' ]; then
 		pkill "gdm|kdm|xdm|entrance"
 	else
-		echo " !! Como lo botamos desde Mac OS?"
+		echo " !! How do we shut him off in Mac OS?"
 	fi
 
 fi
@@ -343,4 +346,4 @@ fi
 ####################################################################
 # this is the end, my only friend
 ####################################################################
-echo -e " -- ...todo listo!\n"
+echo -e " -- Done! Happy hunting! :)\n"

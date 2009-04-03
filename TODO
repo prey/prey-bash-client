@@ -1,7 +1,11 @@
 - Enable some configuration to be set up remotely (from the check file)
-- Add Windows support (via Cygwin?)
 - Passwords with weird characters have a problem being inserted with sed.
-- Call networkmanager if there's no Wifi connection so there's a better chance to catch the guy.
-- create an "accesible" user account so that we can lurk the thief into logging in and opening his mail or whatever (and catch him whole handed)
-- Templating for emails (so that we can add languages more easily)
+- Create an "accesible" user account so that we can lurk the thief into logging in and opening his mail or whatever (and catch him whole handed)
 - La idea es que durante el proceso de recolección de datos, también se adjunte en el email un pequeño volcado de los paquetes TCP que se hayan generado mientras el ladrón navega por internet. tcpdump/wireshark > tcpxtract (Idea de Salamander).
+- Install file and Prey messages according to defined language.
+
+DONE
+- Add Windows support (via Cygwin?) --> GRANDE JULIAN!
+- Templating for emails (so that we can add languages more easily)
+- Call networkmanager if there's no Wifi connection so there's a better chance to catch the guy.
+- Check why the hell sometimes emails are not sent.
