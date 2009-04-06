@@ -11,13 +11,9 @@ temp_config_file=temp_config
 prey_file=prey.sh
 platform=`uname`
 linux_packages='wget traceroute scrot'
-TIMING=10
 
-if [ $platform == 'Darwin' ]; then
-	DEFAULT_INSTALLPATH='/usr/share/prey'
-else
-	DEFAULT_INSTALLPATH='/usr/share/prey'
-fi
+TIMING=10
+DEFAULT_INSTALLPATH='/usr/share/prey'
 
 separator="--------------------------------------------------------------------------------"
 
