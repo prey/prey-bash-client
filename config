@@ -35,7 +35,7 @@ minutos=60
 # route where to get the modified files from
 ruta_archivos=~/
 
-# change wallpaper to alert nearby users
+# change wallpaper to alert nearby users -- EXPERIMENTAL!
 alertwallpaper=n
 wallpaper="alerts/prey-wallpaper-$lang.png"
 
@@ -45,7 +45,10 @@ alertmsg="This is a stolen computer, and has been marked by Prey.
 Please contact immediately $emailtarget to clarify the situation.
 Otherwise you'll be notified to the police. YOU HAVE BEEN WARNED!"
 
-# should we kill the X session?
+# should we kill the X session?  -- EXPERIMENTAL!
+# this isn't such a good idea anyway, since we should try to keep
+# the guy logged in for as long as we can, to get the maximum amount
+# of information we can from him -- Tomas
 killx=n
 
 # where to store the temporary images

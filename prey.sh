@@ -140,7 +140,7 @@ if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto co
 
 			echo " -- Couldn't find a way to connect to an open wifi network!"
 
-		if
+		fi
 
 	fi
 
@@ -315,19 +315,24 @@ rm msg.tmp
 
 if [ $alertwallpaper == 'y' ]; then
 
+	echo " -- Changing the wallpaper to alert him and nearby users..."
+	# we need the full path to the files (and we'll asume the script is being run from prey's folder)
+	wallpaper=`pwd`/$wallpaper
+
 	if [ $platform == 'Linux' ]; then
 
 		gconftool=`which gconftool-2`
 		kdesktop=`which kdesktop`
-		$xfce=`which xfconf-query`
+		xfce=`which xfconf-query`
 
 		if [ -n "$gconftool" ]; then
 
 			$gconftool --type string --set /desktop/gnome/background/picture_filename $wallpaper
+			$gconftool --type string --set /desktop/gnome/background/picture_options 'zoom'
 
 		elif [ -n "$kdesktop" ]; then # untested
 
-			$desktop KBackgroundIface setWallpaper $wallpaper 5
+			$kdesktop KBackgroundIface setWallpaper $wallpaper 5
 
 		elif [ -n "$xfce" ]; then # requires xfce 4.6
 
@@ -355,6 +360,8 @@ fi
 ####################################################################
 
 if [ $alertuser == 'y' ]; then
+
+	echo " -- Showing the guy our alert message..."
 
 	if [ $platform == 'Linux' ]; then
 
