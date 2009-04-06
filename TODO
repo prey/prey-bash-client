@@ -2,9 +2,10 @@
 - Passwords with weird characters have a problem being inserted with sed.
 - Create an "accesible" user account so that we can lurk the thief into logging in and opening his mail or whatever (and catch him whole handed)
 - La idea es que durante el proceso de recolección de datos, también se adjunte en el email un pequeño volcado de los paquetes TCP que se hayan generado mientras el ladrón navega por internet. tcpdump/wireshark > tcpxtract (Idea de Salamander).
-- Install file and Prey messages according to defined language.
+- Change desktop background with a huge "THIS COMPUTER IS STOLEN" image.
 
 DONE
+- Install file and Prey messages according to defined language.
 - Add Windows support (via Cygwin?) --> GRANDE JULIAN!
 - Templating for emails (so that we can add languages more easily)
 - Call networkmanager if there's no Wifi connection so there's a better chance to catch the guy.

@@ -82,7 +82,6 @@ if [ $platform == 'Darwin' ]; then
 	airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 	routes=`netstat -rn | grep default | cut -c20-35`
 	mac=`arp -n $routes | cut -f4 -d' '`
-	# vaya a saber uno porque apple escondio tanto este archivo!
 	wifi_info=`$airport -I`
 else
 	routes=`route -n`
@@ -110,7 +109,7 @@ if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto co
 		essidquot=${essidone##*'ESSID:"'}
 		essid=${essidquot%'"'*}
 
-		# Connect
+		# lets see if we have a valid device and essid
 		if [[ ! -z $essid && ! -z $dev ]]; then
 			iwconfig $dev essid $essid
 			wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
@@ -129,17 +128,19 @@ if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto co
 		networksetup -setairportpower on 2>/dev/null
 
 		# list available access points and parse to get first SSID with security "NONE"
-		SSID=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
+		essid=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
 
-		# now lets connect
-		networksetup -setairportnetwork $SSID 2>/dev/null
+		if [ -n "$essid" ]; then
 
-		# and restart the airport
-		networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
-		networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
+			# now lets connect and get the new info
+			networksetup -setairportnetwork $essid 2>/dev/null
+			wifi_info=`$airport -I`
 
-		# so we can get the info
-		wifi_info=`$airport -I`
+		else
+
+			echo " -- Couldn't find a way to connect to an open wifi network!"
+
+		if
 
 	fi
 
@@ -309,8 +310,48 @@ fi
 rm msg.tmp
 
 ####################################################################
+# change desktop wallpaper with a BIG image to alert nearby people (great idea @warorface!)
+####################################################################
+
+if [ $alertwallpaper == 'y' ]; then
+
+	if [ $platform == 'Linux' ]; then
+
+		gconftool=`which gconftool-2`
+		kdesktop=`which kdesktop`
+		$xfce=`which xfconf-query`
+
+		if [ -n "$gconftool" ]; then
+
+			$gconftool --type string --set /desktop/gnome/background/picture_filename $wallpaper
+
+		elif [ -n "$kdesktop" ]; then # untested
+
+			$desktop KBackgroundIface setWallpaper $wallpaper 5
+
+		elif [ -n "$xfce" ]; then # requires xfce 4.6
+
+			$xfce -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s $wallpaper
+
+		fi
+
+	else # really untested
+
+		# this code belongs to Katy Richard
+		# http://thingsthatwork.net/index.php/2008/02/07/fun-with-os-x-defaults-and-launchd/
+
+		defaults write com.apple.Desktop Background "{default = {ChangePath = '~/Pictures'; ChooseFolderPath = '~/Pictures'; CollectionString = Wallpapers; ImageFileAlias = <00000000 00e00003 00000000 c2cc314a 0000482b 00000000 00089e0c 001be568 0000c2fe 8ab30000 00000920 fffe0000 00000000 0000ffff ffff0001 00100008 9e0c0007 4cea0007 4cb40013 52b2000e 00260012 00740068 00650065 006d0070 00690072 0065005f 00310036 00380030 002e006a 00700067 000f001a 000c004d 00610063 0069006e 0074006f 00730068 00200048 00440012 00355573 6572732f 6b726963 68617264 2f506963 74757265 732f5761 6c6c7061 70657273 2f746865 656d7069 72655f31 3638302e 6a706700 00130001 2f000015 0002000f ffff0000 >; ImageFilePath = $wallpaper; Placement = Crop; TimerPopUpTag = 6; };}"
+
+		# we need to restart the dock to make the new wallpaper visible
+		killall Dock
+
+	fi
+
+fi
+
+####################################################################
 # le avisamos al ladron que esta cagado?
-# TODO: esto solo funciona con Linux (KDE y GNOME, y quizas XFCE)
+# TODO: esto solo funciona con GNOME y KDE
 ####################################################################
 
 if [ $alertuser == 'y' ]; then
