@@ -79,10 +79,11 @@ interno=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print 
 echo " -- Getting MAC address, routing and Wifi info..."
 
 if [ $platform == 'Darwin' ]; then
+	airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 	routes=`netstat -rn | grep default | cut -c20-35`
 	mac=`arp -n $routes | cut -f4 -d' '`
 	# vaya a saber uno porque apple escondio tanto este archivo!
-	wifi_info=`/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I`
+	wifi_info=`$airport -I`
 else
 	routes=`route -n`
 	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
@@ -117,11 +118,28 @@ if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto co
 			echo " -- Couldn't find a way to connect to an open wifi network!"
 		fi
 
-	else # untested, for mac
+	else # Mac Wifi Autoconnect by Warorface <warorface@gmail.com>
 
-		networksetup -setnetworkserviceenabled AirPort off
-		networksetup -setnetworkserviceenabled AirPort on
-		wifi_info=`/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport -I`
+		# restart airport service
+		networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
+		networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
+
+		# power on the airport
+		networksetup -setairportpower off 2>/dev/null
+		networksetup -setairportpower on 2>/dev/null
+
+		# list available access points and parse to get first SSID with security "NONE"
+		SSID=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
+
+		# now lets connect
+		networksetup -setairportnetwork $SSID 2>/dev/null
+
+		# and restart the airport
+		networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
+		networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
+
+		# so we can get the info
+		wifi_info=`$airport -I`
 
 	fi
 
