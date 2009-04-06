@@ -23,14 +23,22 @@ sends the data every time it runs.
 2. Installation
 ##############################################
 
-For Windows users, execute PreyConfig.exe, fill in all the fields, tick the
-"Activar Prey" checkbox and then click on "Activar".
+For Windows users: download, extract and execute PreyConfig.exe. 
+Fill in all the fields, tick the "Activar Prey" checkbox and then 
+click on "Activar".
+
+If you ever want to uninstall Prey, just execute PreyConfig.exe again 
+and untick the box "Activar Prey". You should also delete the key 
+"HKLM\SOFTWARE\Prey" from Windows registry as well.
 
 For Mac & Linux users, just download the package, unzip it and run the
 install script:
 
 	$ chmod +x install.sh
 	$ ./install.sh
+
+Note: You should use the full URL in Prey's setup, such as 
+http://prey.bootlog.org (not just prey.bootlog.org).
 
 ##############################################
 3. Requisites for Linux
@@ -58,7 +66,7 @@ configuration with some text in it. Prey expects a status code 200 to run.
 ##############################################
 
 	o Tomás Pollak (bootlog.org)
-	o Julián Mejio (julianmejia.co.cc)
+	o Julián Mejio (mehio.co.cc)
 	o Juan Carlos Mardones (juanmardones.com)
 
 ##############################################
