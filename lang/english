@@ -63,7 +63,7 @@ STRING_TAKE_IMAGE=" -- Taking a screenshot and a picture of the impostor..."
 STRING_TAKE_IMAGE_DONE=" -- Done with the images!"
 STRING_SENDING_EMAIL=" -- Sending the email..."
 STRING_ERROR_EMAIl="There was a problem sending the email. Are you sure it was setup correctly?
-If you're using Gmail, you can try removing the '@gmail.com' from the smtp_username field in Prey's config file."
+If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file."
 STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
 STRING_CHANGE_WALLPAPER=" -- Changing the wallpaper to alert him and nearby users..."
 STRING_SHOW_ALERT=" -- Showing the guy our alert message..."

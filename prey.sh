@@ -12,7 +12,7 @@ version='0.2'
 ####################################################################
 # ok, demosle. eso si veamos si estamos en Linux o Mac
 ####################################################################
-echo -e $STRING_START
+echo -e "$STRING_START"
 
 platform=`uname`
 logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
@@ -30,7 +30,7 @@ fi
 # primero revisemos si buscamos url, y si existe o no
 ####################################################################
 if [ -n "$url" ]; then
-	echo $STRING_CHECK_URL
+	echo "$STRING_CHECK_URL"
 
 	# Mac OS viene con curl por defecto, asi que tenemos que checkear
 	if [ $platform == 'Darwin' ]; then
@@ -51,9 +51,9 @@ if [ -n "$url" ]; then
 	# ok, ahora si el config tiene ALGO, significa que tenemos que hacer la pega
 	# eventualmente el archivo remoto puede tener parametros y gatillar comportamientos
 	if [ -n "$config" ]; then
-		echo $STRING_PROBLEM
+		echo "$STRING_PROBLEM"
 	else
-		echo -e $STRING_NO_PROBLEM
+		echo -e "$STRING_NO_PROBLEM"
 		exit
 	fi
 
@@ -62,14 +62,14 @@ fi
 ####################################################################
 # partamos por ver cual es nuestro IP publico
 ####################################################################
-echo $STRING_GET_IP
+echo "$STRING_GET_IP"
 
 publico=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
 
 ####################################################################
 # ahora el IP interno
 ####################################################################
-echo $STRING_GET_LAN_IP
+echo "$STRING_GET_LAN_IP"
 
 # works in mac as well as linux (linux just prints an extra "addr:")
 interno=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print $2}'`
@@ -77,7 +77,7 @@ interno=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print 
 ####################################################################
 # gateway, mac e informacion de wifi (nombre red, canal, etc)
 ####################################################################
-echo $STRING_GET_MAC_AND_WIFI
+echo "$STRING_GET_MAC_AND_WIFI"
 
 if [ $platform == 'Darwin' ]; then
 	airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
@@ -92,7 +92,7 @@ fi
 
 if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto connect to one
 
-	echo $STRING_TRY_TO_CONNECT
+	echo "$STRING_TRY_TO_CONNECT"
 
 	if [ $platform == 'Linux' ]; then
 
@@ -115,7 +115,7 @@ if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto co
 			iwconfig $dev essid $essid
 			wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
 		else
-			echo $STRING_NO_CONNECT_TO_WIFI
+			echo "$STRING_NO_CONNECT_TO_WIFI"
 		fi
 
 	else # Mac Wifi Autoconnect by Warorface <warorface@gmail.com>
@@ -139,7 +139,7 @@ if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto co
 
 		else
 
-			echo $STRING_NO_CONNECT_TO_WIFI
+			echo "$STRING_NO_CONNECT_TO_WIFI"
 
 		fi
 
@@ -154,14 +154,14 @@ fi
 # disabled for now, TOO SLOW!
 # traceroute=`which traceroute`
 if [ -n "$traceroute" ]; then
-	echo $STRING_TRACE
+	echo "$STRING_TRACE"
 	complete_trace=`$traceroute -q1 www.google.com 2>&1`
 fi
 
 ####################################################################
 # ahora veamos que programas esta corriendo
 ####################################################################
-echo $STRING_UPTIME_AND_PROCESS
+echo "$STRING_UPTIME_AND_PROCESS"
 
 uptime=`uptime`
 programas=`ps ux`
@@ -169,7 +169,7 @@ programas=`ps ux`
 ####################################################################
 # ahora veamos que archivos ha tocado el idiota
 ####################################################################
-echo $STRING_MODIFIED_FILES
+echo "$STRING_MODIFIED_FILES"
 
 # no incluimos los archivos carpetas ocultas ni los archivos weones de Mac OS
 archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minutos 2>&1`
@@ -178,21 +178,21 @@ archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minut
 ####################################################################
 # ahora veamos a donde esta conectado
 ####################################################################
-echo $STRING_ACTIVE_CONNECTIONS
+echo "$STRING_ACTIVE_CONNECTIONS"
 
 connections=`netstat -taue | grep -i established`
 
 ####################################################################
 # ahora los metemos en el texto que va a ir en el mail
 ####################################################################
-echo $STRING_WRITE_EMAIL
+echo "$STRING_WRITE_EMAIL"
 . lang/$lang
 
 ####################################################################
 # veamos si podemos sacar una foto del tipo con la camara del tarro.
 # de todas formas un pantallazo para ver que esta haciendo el idiota
 ####################################################################
-echo $STRING_TAKE_IMAGE
+echo "$STRING_TAKE_IMAGE"
 
 if [ $platform == 'Darwin' ]; then
 
@@ -267,12 +267,12 @@ else
 
 fi
 
-echo $STRING_TAKE_IMAGE_DONE
+echo "$STRING_TAKE_IMAGE_DONE"
 
 ####################################################################
 # ahora la estocada final: mandemos el mail
 ####################################################################
-echo $STRING_SENDING_EMAIL
+echo "$STRING_SENDING_EMAIL"
 complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
 echo "$texto" > msg.tmp
 
@@ -293,13 +293,13 @@ fi
 emailstatus=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
 
 if [[ "$emailstatus" =~ "ERROR" ]]; then
-	echo $STRING_ERROR_EMAIl
+	echo "$STRING_ERROR_EMAIL"
 fi
 
 ####################################################################
 # ok, todo bien. ahora limpiemos la custion
 ####################################################################
-echo $STRING_REMOVE_EVIDENCE
+echo "$STRING_REMOVE_EVIDENCE"
 
 if [ -e "$picture" ]; then
 	rm $picture
@@ -315,7 +315,7 @@ rm msg.tmp
 
 if [ $alertwallpaper == 'y' ]; then
 
-	echo $STRING_CHANGE_WALLPAPER
+	echo "$STRING_CHANGE_WALLPAPER"
 	# we need the full path to the files (and we'll asume the script is being run from prey's folder)
 	wallpaper=`pwd`/$wallpaper
 
@@ -361,7 +361,7 @@ fi
 
 if [ $alertuser == 'y' ]; then
 
-	echo $STRING_SHOW_ALERT
+	echo "$STRING_SHOW_ALERT"
 
 	if [ $platform == 'Linux' ]; then
 
@@ -398,13 +398,13 @@ fi
 ####################################################################
 if [ $killx == "y" ]; then # muahahaha
 
-	echo $STRING_XKILL
+	echo "$STRING_XKILL"
 
 	# ahora validamos por GDM, KDM, XDM y Entrance, pero hay MUCHO codigo repetido. TODO: reducir!
 	if [ $platform == 'Linux' ]; then
 		pkill "gdm|kdm|xdm|entrance"
 	else
-		echo $STRING_MACKILL
+		echo "$STRING_MACKILL"
 	fi
 
 fi
@@ -412,4 +412,4 @@ fi
 ####################################################################
 # this is the end, my only friend
 ####################################################################
-echo -e $STRING_DONE
+echo -e "$STRING_DONE"
