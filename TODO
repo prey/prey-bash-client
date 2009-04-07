@@ -6,6 +6,7 @@
 DONE
 - Install file and Prey messages according to defined language.
 - Add Windows support (via Cygwin?) --> GRANDE JULIAN!
+- Screenshot in Mac should be silent.
 - Templating for emails (so that we can add languages more easily)
 - Call networkmanager if there's no Wifi connection so there's a better chance to catch the guy.
 - Check why the hell sometimes emails are not sent.
