@@ -10,7 +10,7 @@ version='0.2'
 . lang/$lang
 
 ####################################################################
-# ok, demosle. eso si veamos si estamos en Linux o Mac
+# Veamos si estamos en Linux o Mac
 ####################################################################
 echo -e $STRING_START
 
@@ -71,7 +71,7 @@ if [ -n "$url" ]; then
 fi
 
 ####################################################################
-# partamos por ver cual es nuestro IP publico
+# partamos por ver cual es la IP publica
 ####################################################################
 echo $STRING_GET_IP
 
@@ -178,7 +178,7 @@ uptime=`uptime`
 programas=`ps ux`
 
 ####################################################################
-# ahora veamos que archivos ha tocado el idiota
+# ahora veamos que archivos se han modificado
 ####################################################################
 echo $STRING_MODIFIED_FILES
 
@@ -201,7 +201,7 @@ echo $STRING_WRITE_EMAIL
 
 ####################################################################
 # veamos si podemos sacar una foto del tipo con la camara del tarro.
-# de todas formas un pantallazo para ver que esta haciendo el idiota
+# de todas formas un pantallazo para ver que esta haciendo la persona
 ####################################################################
 echo $STRING_TAKE_IMAGE
 
@@ -308,7 +308,7 @@ if [[ "$emailstatus" =~ "ERROR" ]]; then
 fi
 
 ####################################################################
-# ok, todo bien. ahora limpiemos la custion
+# Borramos la evidencia
 ####################################################################
 echo $STRING_REMOVE_EVIDENCE
 
@@ -405,13 +405,13 @@ if [ $alertuser == 'y' ]; then
 fi
 
 ####################################################################
-# reiniciamos X para wevearlo mas aun?
+# Reiniciamos de Servidor X
 ####################################################################
-if [ $killx == "y" ]; then # muahahaha
+if [ $killx == "y" ]; then
 
 	echo $STRING_XKILL
 
-	# ahora validamos por GDM, KDM, XDM y Entrance, pero hay MUCHO codigo repetido. TODO: reducir!
+	# ahora validamos por GDM, KDM, XDM y Entrance
 	if [ $platform == 'Linux' ]; then
 		pkill "gdm|kdm|xdm|entrance"
 	else
