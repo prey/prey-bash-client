@@ -188,7 +188,7 @@ separator="---------------------------------------------------------------------
 	if [ $platform == 'Linux' ]; then
 
 		echo -e $separator
-		echo -e " -- Ok, installing necesary software...\n"
+		echo -e " -- Ok, installing necessary software...\n"
 
 		distro=`cat /proc/version 2>&1`
 
@@ -226,7 +226,7 @@ separator="---------------------------------------------------------------------
 	sudo chmod +x $INSTALLPATH/sendEmail $INSTALLPATH/$prey_file
 
 	# now the language files
-	sudo cp -r lang $INSTALLPATH
+	sudo cp -r lang alerts $INSTALLPATH
 	sudo chmod +x $INSTALLPATH/lang/spanish $INSTALLPATH/lang/english
 
 	if [ "$SKIP" != "y" ]; then

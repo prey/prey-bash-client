@@ -8,14 +8,14 @@
 # language, english or spanish
 lang='english'
 
-# verification URL, if left empty Prey will always send the information
+# verification URL, if left empty Prey will always gather and send the information
 url=''
 
 # mailbox to send the report
 emailtarget='mailbox@domain.com'
 
 # SMTP configuration
-# TODO: store the password in an encrypted form
+# TODO: store the password in an encrypted formt
 # don't worry, this file will be unaccesible for other users anyway
 smtp_server='smtp.gmail.com:587'
 smtp_username='username@gmail.com'
@@ -29,20 +29,27 @@ smtp_password='password'
 from='Prey <no-reply@gmail.com>'
 subject="PREY -- status report"
 
+# timelapse to watch for modified files, default one hour
+minutos=60
+
+# route where to get the modified files from
+ruta_archivos=~/
+
+# change wallpaper to alert nearby users -- EXPERIMENTAL!
+alertwallpaper=n
+wallpaper="alerts/prey-wallpaper-$lang.png"
+
 # alert the user with a message, y or n
 alertuser=n
 alertmsg="This is a stolen computer, and has been marked by Prey.
 Please contact immediately $emailtarget to clarify the situation.
 Otherwise you'll be notified to the police. YOU HAVE BEEN WARNED!"
 
-# should we kill the X session?
+# should we kill the X session?  -- EXPERIMENTAL!
+# this isn't such a good idea anyway, since we should try to keep
+# the guy logged in for as long as we can, to get the maximum amount
+# of information we can from him -- Tomas
 killx=n
-
-# timelapse to watch for modified files, default one hour
-minutos=60
-
-# route where to get the modified files from
-ruta_archivos=~/
 
 # where to store the temporary images
 screenshot=/tmp/prey-screenshot.jpg
