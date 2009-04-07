@@ -139,7 +139,7 @@ if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto co
 
 		else
 
-			echo " -- Couldn't find a way to connect to an open wifi network!"
+			echo $STRING_NO_CONNECT_TO_WIFI
 
 		fi
 
@@ -315,7 +315,7 @@ rm msg.tmp
 
 if [ $alertwallpaper == 'y' ]; then
 
-	echo " -- Changing the wallpaper to alert him and nearby users..."
+	echo $STRING_CHANGE_WALLPAPER
 	# we need the full path to the files (and we'll asume the script is being run from prey's folder)
 	wallpaper=`pwd`/$wallpaper
 
@@ -361,7 +361,7 @@ fi
 
 if [ $alertuser == 'y' ]; then
 
-	echo " -- Showing the guy our alert message..."
+	echo $STRING_SHOW_ALERT
 
 	if [ $platform == 'Linux' ]; then
 
