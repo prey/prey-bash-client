@@ -293,7 +293,7 @@ fi
 emailstatus=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
 
 if [[ "$emailstatus" =~ "ERROR" ]]; then
-	echo "$STRING_ERROR_EMAIl"
+	echo "$STRING_ERROR_EMAIL"
 fi
 
 ####################################################################
@@ -411,4 +411,4 @@ fi
 ####################################################################
 # this is the end, my only friend
 ####################################################################
-echo -e $STRING_DONE
+echo -e "$STRING_DONE"
