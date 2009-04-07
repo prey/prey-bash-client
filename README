@@ -3,7 +3,7 @@
 # For updates visit prey.bootlog.org
 ##############################################
 
-Prey is a small script for tracking your stolen laptop.
+Prey is a script for tracking your stolen laptop.
 It is licenced by the GPLv3 which means you can do just
 about anything with it. It runs in *NIX systems and Windows as well.
 
@@ -65,10 +65,10 @@ configuration with some text in it. Prey expects a status code 200 to run.
 5. Credits
 ##############################################
 
-	o Tomás Pollak (bootlog.org)
-	o Julián Mejio (mehio.co.cc)
-	o Juan Carlos Mardones (juanmardones.com)
-	o Diego Torres (warorface.com)
+	o Tomás Pollak - http://bootlog.org
+	o Julián Mejio - http://mehio.co.cc
+	o Juan Carlos Mardones - http://juanmardones.com
+	o Diego Torres - http://warorface.com
 
 ##############################################
 6. Acknowledgements
