@@ -70,7 +70,7 @@ elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	DEFAULT_SMTP_USER=" -- Using the full email as the SMTP username..."
 	ENTER_SMTP_PASS=" -> Type in your smtp password: [] "
 	INVALID_SMTP_PASS=" !! You need to type in a valid password. Exiting...\n"
-	ENTER_URL=" -- Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
+	CHECK_URL_OR_NOT=" -- Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
 	ENTER_URL=" -- Ok, which URL would it be then? [i.e. http://myserver.com/prey_check_url] "
 	INVALID_URL=" !! You need to define a URL. Exiting...\n"
 	SET_TIMING=" -- Ok, last one. How frequent (in minutes) would you like Prey to be ran? [$TIMING] "
