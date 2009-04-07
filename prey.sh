@@ -10,9 +10,9 @@ version='0.2'
 . lang/$lang
 
 ####################################################################
-# ok, demosle. eso si veamos si estamos en Linux o Mac
+# Veamos si estamos en Linux o Mac
 ####################################################################
-echo -e "$STRING_START"
+echo -e ""$STRING_START""
 
 platform=`uname`
 logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
@@ -60,7 +60,7 @@ if [ -n "$url" ]; then
 fi
 
 ####################################################################
-# partamos por ver cual es nuestro IP publico
+# partamos por ver cual es la IP publica
 ####################################################################
 echo "$STRING_GET_IP"
 
@@ -167,7 +167,7 @@ uptime=`uptime`
 programas=`ps ux`
 
 ####################################################################
-# ahora veamos que archivos ha tocado el idiota
+# ahora veamos que archivos se han modificado
 ####################################################################
 echo "$STRING_MODIFIED_FILES"
 
@@ -190,7 +190,7 @@ echo "$STRING_WRITE_EMAIL"
 
 ####################################################################
 # veamos si podemos sacar una foto del tipo con la camara del tarro.
-# de todas formas un pantallazo para ver que esta haciendo el idiota
+# de todas formas un pantallazo para ver que esta haciendo la persona
 ####################################################################
 echo "$STRING_TAKE_IMAGE"
 
@@ -293,11 +293,11 @@ fi
 emailstatus=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
 
 if [[ "$emailstatus" =~ "ERROR" ]]; then
-	echo "$STRING_ERROR_EMAIL"
+	echo "$STRING_ERROR_EMAIl"
 fi
 
 ####################################################################
-# ok, todo bien. ahora limpiemos la custion
+# Borramos la evidencia
 ####################################################################
 echo "$STRING_REMOVE_EVIDENCE"
 
@@ -394,13 +394,12 @@ if [ $alertuser == 'y' ]; then
 fi
 
 ####################################################################
-# reiniciamos X para wevearlo mas aun?
+# Reiniciamos de Servidor X
 ####################################################################
-if [ $killx == "y" ]; then # muahahaha
+if [ $killx == "y" ]; then
 
 	echo "$STRING_XKILL"
 
-	# ahora validamos por GDM, KDM, XDM y Entrance, pero hay MUCHO codigo repetido. TODO: reducir!
 	if [ $platform == 'Linux' ]; then
 		pkill "gdm|kdm|xdm|entrance"
 	else
@@ -412,4 +411,4 @@ fi
 ####################################################################
 # this is the end, my only friend
 ####################################################################
-echo -e "$STRING_DONE"
+echo -e $STRING_DONE
