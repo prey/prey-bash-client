@@ -12,7 +12,7 @@ version='0.2'
 ####################################################################
 # Veamos si estamos en Linux o Mac
 ####################################################################
-echo -e ""$STRING_START""
+echo -e "$STRING_START"
 
 platform=`uname`
 logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
@@ -274,7 +274,7 @@ echo "$STRING_TAKE_IMAGE_DONE"
 ####################################################################
 echo "$STRING_SENDING_EMAIL"
 complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
-echo "$texto" > msg.tmp
+echo "$emailtext" > msg.tmp
 
 # si no pudimos sacar el pantallazo o la foto, limpiamos las variables
 if [ ! -e "$picture" ]; then

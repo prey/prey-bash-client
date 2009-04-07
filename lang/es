@@ -1,0 +1,112 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# Spanish language file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# URL : http://prey.bootlog.org
+# License: GPLv3
+####################################################################
+
+if [ -n "$uptime" ]; then # prey is already running
+
+# email template
+
+emailtext="
+Buenas noticias amigo mio, al parecer lo encontramos!
+
+Estado general del computador (uptime)
+--------------------------------------------------------------------
+$uptime
+
+Datos de conexion
+--------------------------------------------------------------------
+IP Publico: $publico. IP interno: $interno.
+
+Enrutado de red
+--------------------------------------------------------------------
+Direccion MAC: $mac. Gateway: $routes
+
+Datos sobre red WiFi
+--------------------------------------------------------------------
+$wifi_info
+
+En los ultimos $minutos minutos se han modificado estos archivos
+--------------------------------------------------------------------
+$archivos
+
+Programas en ejecucion
+--------------------------------------------------------------------
+$programas
+
+Conexiones abiertas
+--------------------------------------------------------------------
+$connections
+
+
+Ahora a agarrar al maldito!
+
+--
+Tu fiel servidor, Prey
+Para actualizaciones visita http://prey.bootlog.org
+"
+
+elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
+
+	# installer messages
+	# TODO: translate this to spanish
+
+	HELLO_IN_LANGUAGE=" -- Prey hablara espanol entonces!"
+	WHERE_TO_INSTALL_PREY=" -> Where do you want us to install Prey? [$DEFAULT_INSTALLPATH] "
+	INVALID_INSTALL_PATH=" !! Invalid installation path. Parent directory doesn't exist!\n"
+	SETTING_INSTALL_PATH=" -- Ok, setting $INSTALLPATH as our install path."
+	DELETING_OLD_FILES=" -- Deleting old Prey installation files...\n"
+	CONFIG_FILE_EXISTS=" -> Config file exists! Would you like to skip all the boring questions? (Not recommended) [n] "
+	SKIP_INSTALL_QUESTIONS=" -- Alright, well just update the necesary files!\n"
+	ENTER_EMAIL_ADDRESS=" -> What email address would you like the email sent to? (i.e. mailbox@domain.com) [] "
+	INVALID_EMAIL_ADDRESS=" !! You need to define an inbox. Exiting...\n"
+	ENTER_SMTP_SERVER=" -> Which smtp server should we use? (with port) [smtp.gmail.com:587] "
+	DEFAULT_SMTP_SERVER=" -- We'll be using Gmail then! "
+	INVALID_SMTP_SERVER=" -> Type in your smtp username: (i.e. mailbox@gmail.com) [$EMAIL] "
+	ENTER_SMTP_USER=" -- Using $EMAIL as the SMTP username..."
+	DEFAULT_SMTP_USER=" -- Using the full email as the SMTP username..."
+	ENTER_SMTP_PASS=" -> Type in your smtp password: [] "
+	INVALID_SMTP_PASS=" !! You need to type in a valid password. Exiting...\n"
+	ENTER_URL=" -- Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
+	ENTER_URL=" -- Ok, which URL would it be then? [i.e. http://myserver.com/prey_check_url] "
+	INVALID_URL=" !! You need to define a URL. Exiting...\n"
+	SET_TIMING=" -- Ok, last one. How frequent (in minutes) would you like Prey to be ran? [$TIMING] "
+	INSTALLING_SOFTWARE=" -- Ok, installing necessary software...\n"
+	COPYING_ISIGHTCAPTURE=" -- Copying iSightCapture to $INSTALLPATH..."
+	COPYING_FILES="\n -- Copying necessary files to $INSTALLPATH and setting permissions..."
+	ADDING_CRONTAB=" -- Adding crontab entry..."
+
+else
+
+	# installer messages
+
+	STRING_START="\n ### PREY $version despliega sus alas!\n"
+	STRING_CHECK_URL=" -- Revisando URL..."
+	STRING_PROBLEM=" -- OUCH!!"
+	STRING_NO_PROBLEM=" -- Nada de que preocuparse. :)\n"
+	STRING_GET_IP=" -- Obteniendo la direccion IP publica..."
+	STRING_GET_LAN_IP=" -- Obteniendo la direccion IP privada de la LAN..."
+	STRING_GET_MAC_AND_WIFI=" -- Obteniendo direccion MAC, tabla de rutas e informacion de la Red Wifi..."
+	STRING_TRY_TO_CONNECT=" -- Intentando conectarnos a la primera red abierta disponible..."
+	STRING_NO_CONNECT_TO_WIFI=" -- No encontramos la forma de conectarnos a una red Wifi abierta!"
+	STRING_TRACE=" -- Rastreando la ruta completa hacia Internet..."
+	STRING_UPTIME_AND_PROCESS=" -- Obteniendo el uptime y la lista de programas en ejecucion..."
+	STRING_MODIFIED_FILES=" -- Obteniendo una lista de los archivos recientemente modificados..."
+	STRING_ACTIVE_CONNECTIONS=" -- Obteniendo la lista de las conecciones activas..."
+	STRING_WRITE_EMAIL=" -- Redactando el correo electronico..."
+	STRING_TAKE_IMAGE=" -- Tomando una captura de pantalla y una foto de la persona..."
+	STRING_TAKE_IMAGE_DONE=" -- Finalizando la captura de imagenes..."
+	STRING_SENDING_EMAIL=" -- Enviando el correo electronico..."
+	STRING_ERROR_EMAIl=" !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
+	Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion."
+	STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
+	STRING_CHANGE_WALLPAPER=" -- Cambiando el fondo de pantalla para alertar a la persona y a los que esten cerca..."
+	STRING_SHOW_ALERT=" -- Mostrando nuestro mensaje de alerta..."
+	STRING_XKILL=" -- Intentando sacarlo de la sesion X!"
+	STRING_MACKILL="Como se supone que realizamos esto en Mac OS?"
+	STRING_DONE=" -- Todo listo! Suerte con la caceria! :)\n"
+
+fi

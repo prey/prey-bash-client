@@ -1,0 +1,113 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# English lang file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# URL : http://prey.bootlog.org
+# License: GPLv3
+####################################################################
+
+if [ -n "$uptime" ]; then # prey is already running
+
+# email template
+
+emailtext="
+Good news my friend, it seems we found it!
+
+General state of computer (uptime)
+--------------------------------------------------------------------
+$uptime
+
+Connection information
+--------------------------------------------------------------------
+IP Publico: $publico. IP interno: $interno.
+
+Route information
+--------------------------------------------------------------------
+Direccion MAC: $mac. Gateway: $routes
+
+WiFi information
+--------------------------------------------------------------------
+$wifi_info
+
+In the last $minutos minutes the following files have been modified
+--------------------------------------------------------------------
+$archivos
+
+Running programs
+--------------------------------------------------------------------
+$programas
+
+Open connections
+--------------------------------------------------------------------
+$connections
+
+
+Now, go catch the bastard!
+
+--
+Your humble servant, Prey
+For updates visit http://prey.bootlog.org
+"
+
+
+elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
+
+	# installer messages
+
+#	HELLO_IN_LANGUAGE=" -- Prey will speak english then!"
+	WHERE_TO_INSTALL_PREY=" -> Where do you want us to install Prey? [$DEFAULT_INSTALLPATH] "
+	INVALID_INSTALL_PATH=" !! Invalid installation path. Parent directory doesn't exist!\n"
+	SETTING_INSTALL_PATH=" -- Ok, setting $INSTALLPATH as our install path."
+	DELETING_OLD_FILES=" -- Deleting old Prey installation files...\n"
+	CONFIG_FILE_EXISTS=" -> Config file exists! Would you like to skip all the boring questions? (Not recommended) [n] "
+	SKIP_INSTALL_QUESTIONS=" -- Alright, well just update the necesary files!\n"
+	ENTER_EMAIL_ADDRESS=" -> What email address would you like the email sent to? (i.e. mailbox@domain.com) [] "
+	INVALID_EMAIL_ADDRESS=" !! You need to define an inbox. Exiting...\n"
+	ENTER_SMTP_SERVER=" -> Which smtp server should we use? (with port) [smtp.gmail.com:587] "
+	DEFAULT_SMTP_SERVER=" -- We'll be using Gmail then! "
+	INVALID_SMTP_SERVER=" -> Type in your smtp username: (i.e. mailbox@gmail.com) [$EMAIL] "
+	ENTER_SMTP_USER=" -- Using $EMAIL as the SMTP username..."
+	DEFAULT_SMTP_USER=" -- Using the full email as the SMTP username..."
+	ENTER_SMTP_PASS=" -> Type in your smtp password: [] "
+	INVALID_SMTP_PASS=" !! You need to type in a valid password. Exiting...\n"
+	ENTER_URL=" -- Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
+	ENTER_URL=" -- Ok, which URL would it be then? [i.e. http://myserver.com/prey_check_url] "
+	INVALID_URL=" !! You need to define a URL. Exiting...\n"
+	SET_TIMING=" -- Ok, last one. How frequent (in minutes) would you like Prey to be ran? [$TIMING] "
+	INSTALLING_SOFTWARE=" -- Ok, installing necessary software...\n"
+	COPYING_ISIGHTCAPTURE=" -- Copying iSightCapture to $INSTALLPATH..."
+	COPYING_FILES="\n -- Copying necessary files to $INSTALLPATH and setting permissions..."
+	ADDING_CRONTAB=" -- Adding crontab entry..."
+
+
+else
+
+# prey status messages
+
+	STRING_START="\n ### PREY $version spreads its wings!\n"
+	STRING_CHECK_URL=" -- Checking URL..."
+	STRING_PROBLEM=" -- HOLY GUACAMOLE!!"
+	STRING_NO_PROBLEM=" -- Nothing to worry about. :)\n"
+	STRING_GET_IP=" -- Getting public IP address..."
+	STRING_GET_LAN_IP=" -- Getting private LAN IP address..."
+	STRING_GET_MAC_AND_WIFI=" -- Getting MAC address, routing and Wifi info..."
+	STRING_TRY_TO_CONNECT=" -- Trying to connect to first open wifi network available..."
+	STRING_NO_CONNECT_TO_WIFI=" -- Couldn't find a way to connect to an open wifi network!"
+	STRING_TRACE=" -- Tracing our complete route to the Internet..."
+	STRING_UPTIME_AND_PROCESS=" -- Getting computer uptime and a list of running programs..."
+	STRING_MODIFIED_FILES=" -- Getting a list of recently modified files..."
+	STRING_ACTIVE_CONNECTIONS=" -- Getting list of current active connections..."
+	STRING_WRITE_EMAIL=" -- Writing our email..."
+	STRING_TAKE_IMAGE=" -- Taking a screenshot and a picture of the impostor..."
+	STRING_TAKE_IMAGE_DONE=" -- Done with the images!"
+	STRING_SENDING_EMAIL=" -- Sending the email..."
+	STRING_ERROR_EMAIl="There was a problem sending the email. Are you sure it was setup correctly?
+	If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file."
+	STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
+	STRING_CHANGE_WALLPAPER=" -- Changing the wallpaper to alert him and nearby users..."
+	STRING_SHOW_ALERT=" -- Showing the guy our alert message..."
+	STRING_XKILL=" -- Kicking him off the X session!"
+	STRING_DONE=" -- Done! Happy hunting! :)\n"
+	STRING_MACKILL="How do we shut him off in Mac OS?"
+
+fi

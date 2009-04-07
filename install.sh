@@ -22,6 +22,22 @@ separator="---------------------------------------------------------------------
 	echo "### By Tomas Pollak, bootlog.org ###"
 	echo -e "####################################\n"
 
+	# define language
+	echo -e $separator
+	echo -n " -> Set default language for Prey (en/es) [en] "
+	read LANGUAGE
+	if [ "$LANGUAGE" == "" ]; then
+		echo " -- Defaulting to Prey in english..."
+		LANGUAGE='en'
+		. lang/$LANGUAGE
+	elif [ -e "lang/$LANGUAGE" ]; then
+		. lang/$LANGUAGE
+		echo "$HELLO_IN_LANGUAGE"
+	else
+		echo -e " !! Unsupported language! Remember to write its valid code (en for english, es for espanol, etc)\n"
+		exit
+	fi
+
 	# we need to check for previous versions of prey (which were installed in /usr/local/bin or /usr/bin)
 	# well delete them since thats not the place where they should be
 	if [ -e "/usr/local/bin/prey.sh" ]; then
@@ -42,7 +58,7 @@ separator="---------------------------------------------------------------------
 		read DELETE
 		if [[ "$DELETE" == "" || $DELETE == "y" ]]; then
 
-			echo -e " -- Deleting old Prey installation files...\n"
+			echo -e "$DELETING_OLD_FILES"
 
 			sudo rm $previous_path/prey.sh
 			sudo rm $previous_path/sendEmail
@@ -61,16 +77,16 @@ separator="---------------------------------------------------------------------
 
 	# set installation path
 	echo -e $separator
-	echo -n " -> Where do you want us to install Prey? [$DEFAULT_INSTALLPATH] "
+	echo -n "$WHERE_TO_INSTALL_PREY"
 	read INSTALLPATH
 	PARENT_PATH=`echo $INSTALLPATH | sed "s/\/prey//"`
 	if [ "$INSTALLPATH" == "" ]; then
 		INSTALLPATH=$DEFAULT_INSTALLPATH
 	elif [ ! -d "$PARENT_PATH" ]; then
-		echo -e " !! Invalid installation path. Parent directory doesn't exist!\n"
+		echo -e "$INVALID_INSTALL_PATH"
 		exit
 	else
-		echo " -- Ok, setting $INSTALLPATH as our install path."
+		echo "$SETTING_INSTALL_PATH"
 	fi
 
 	# lets check if the installpath exists and create it if not
@@ -79,41 +95,28 @@ separator="---------------------------------------------------------------------
 		SKIP=n
 	elif [ -e $INSTALLPATH/$config_file ]; then
 		echo -e $separator
-		echo -n " -> Config file exists! Would you like to skip all the boring questions? (Not recommended) [n] "
+		echo -n "$CONFIG_FILE_EXISTS"
 		read SKIP
 	fi
 
 	if [ "$SKIP" == "y" ]; then
 
-		echo -e " -- Alright, well just update the necesary files!\n"
+		echo -e "$SKIP_INSTALL_QUESTIONS"
 
 	else
 
-		# define language
-		echo -e $separator
-		echo -n " -> Set default language for Prey's status report (english/spanish) [english] "
-		read LANGUAGE
-		if [ "$LANGUAGE" == "" ]; then
-			echo " -- Defaulting to Prey in english..."
-		elif [ -e "lang/$LANGUAGE" ]; then
-			echo " -- Ok, Prey will speak in $LANGUAGE then."
-		else
-			echo -e " !! Unsupported language! Remember to write its complete name in english (spanish, english, german, etc)\n"
-			exit
-		fi
-
 		# get the email
 		echo -e $separator
-		echo -n " -> What email address would you like the email sent to? (i.e. mailbox@domain.com) [] "
+		echo -n "$ENTER_EMAIL_ADDRESS"
 		read EMAIL
 		if [ "$EMAIL" == "" ]; then
-			echo -e " !! You need to define an inbox. Exiting...\n"
+			echo -e "$INVALID_EMAIL_ADDRESS"
 			exit
 		fi
 
 		# setup SMTP
 		echo -e $separator
-		echo -n " -> Which smtp server should we use? (with port) [smtp.gmail.com:587] "
+		echo -n "$ENTER_SMTP_SERVER"
 		read SMTP_SERVER
 		if [ "$SMTP_SERVER" == "" ]; then
 			SMTP_SERVER='smtp.gmail.com:587'
@@ -121,35 +124,35 @@ separator="---------------------------------------------------------------------
 
 		# SMTP user
 		echo -e $separator
-		echo -n " -> Type in your smtp username: (i.e. mailbox@gmail.com) [$EMAIL] "
+		echo -n "$ENTER_SMTP_USER"
 		read SMTP_USER
 		if [ "$SMTP_USER" == "" ]; then
-			echo -e " -- Using the full email as the SMTP username..."
+			echo -e "$DEFAULT_SMTP_USER"
 			SMTP_USER=$EMAIL
 		fi
 
 		# SMTP pass
 		echo -e $separator
-		echo -n " -> Type in your smtp password: [] "
+		echo -n "$ENTER_SMTP_PASS"
 		read -s SMTP_PASS
 		echo -e "\n"
 		if [ "$SMTP_PASS" == "" ]; then
-			echo -e " !! You need to type in a valid password. Exiting...\n"
+			echo -e "$INVALID_SMTP_PASS"
 			exit
 		fi
 
 		# setup URL check
 		echo -e $separator
-		echo -n " -- Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
+		echo -n "$CHECK_URL_OR_NOT"
 		read CHECK
 		case "$CHECK" in
 		[yY] )
 			# which url then
 			echo -e $separator
-			echo -n " -- Ok, which URL would it be then? [i.e. http://myserver.com/prey_check_url] "
+			echo -n "$ENTER_URL"
 			read URL
 			if [ "$URL" == "" ]; then
-				echo -e " !! You need to define a URL. Exiting...\n"
+				echo -e "$INVALID_URL"
 				exit
 			fi
 			# URL=`echo $URL | sed -f urlencode.sed`
@@ -166,7 +169,7 @@ separator="---------------------------------------------------------------------
 
 		# run interval
 		echo -e $separator
-		echo -n " -- Ok, last one. How frequent (in minutes) would you like Prey to be ran? [$TIMING] "
+		echo -n "$SET_TIMING"
 		read TIMING
 		if [ "$TIMING" == "" ]; then
 			TIMING=10
@@ -188,7 +191,7 @@ separator="---------------------------------------------------------------------
 	if [ $platform == 'Linux' ]; then
 
 		echo -e $separator
-		echo -e " -- Ok, installing necessary software...\n"
+		echo -e "$INSTALLING_SOFTWARE"
 
 		distro=`cat /proc/version 2>&1`
 
@@ -213,14 +216,14 @@ separator="---------------------------------------------------------------------
 	elif [ $platform == 'Darwin' ]; then
 
 		echo -e $separator
-		echo -e " -- Copying iSightCapture to $INSTALLPATH..."
+		echo -e "$COPYING_ISIGHTCAPTURE"
 		sudo cp isightcapture $INSTALLPATH
 		sudo chmod +x $INSTALLPATH/isightcapture
 
 	fi
 
 	echo -e $separator
-	echo -e "\n -- Copying necessary files to $INSTALLPATH and setting permissions..."
+	echo -e "$COPYING_FILES"
 	# first the basic files
 	sudo cp -f $prey_file sendEmail $INSTALLPATH
 	sudo chmod +x $INSTALLPATH/sendEmail $INSTALLPATH/$prey_file
@@ -238,7 +241,7 @@ separator="---------------------------------------------------------------------
 	fi
 
 	echo -e $separator
-	echo -e " -- Adding crontab entry..."
+	echo -e "$ADDING_CRONTAB"
 	# well also remove any line invoking prey if it was already there, just to make sure
 	(sudo crontab -l | grep -v prey; echo "*/$TIMING * * * * cd $INSTALLPATH; ./$prey_file") | sudo crontab -
 

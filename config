@@ -5,8 +5,8 @@
 # License: GPLv3
 ####################################################################
 
-# language, english or spanish
-lang='english'
+# language, en (english) or es (espanol)
+lang='en'
 
 # verification URL, if left empty Prey will always gather and send the information
 url=''
