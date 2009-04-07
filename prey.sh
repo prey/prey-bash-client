@@ -52,6 +52,17 @@ if [ -n "$url" ]; then
 	# eventualmente el archivo remoto puede tener parametros y gatillar comportamientos
 	if [ -n "$config" ]; then
 		echo $STRING_PROBLEM
+      
+      # Lets parse, remember: killx minutes path alertwallpaper alertuser alertmsg separated by ","
+      # See DOCS/ARGUMENTS for more Information
+
+      killx=`echo $config|gawk -F, '{print $1}'`
+      minutos=`echo $config|gawk -F, '{print $2}'`
+      ruta_archivos=`echo $config|gawk -F, '{print $3}'`
+      alertwallpaper=`echo $config|gawk -F, '{print $4}'`
+      alertuser=`echo $config|gawk -F, '{print $5}'`
+      alertmsg=`echo $config|gawk -F, '{print $6}'`
+
 	else
 		echo -e $STRING_NO_PROBLEM
 		exit
