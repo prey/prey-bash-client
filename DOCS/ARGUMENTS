@@ -1,20 +1,17 @@
+
 There are some arguments in the configuration file, the arguments need to be put in "" and separed by , for an easy parsing.
 This is the structure of the file:
 
 - Config.txt ----------------- 
-killx minutes path alert msg 
+killx minutes path alertwallpaper alert msg 
 ------------------------------
 
 Example:
-"0","100","/home/jmardones","1","Please return this laptop to Juan C. Mardones K. Cel Phone: 88192038"
+"n","100","/home/jmardones","n","y","Please return this laptop to Juan C. Mardones K. Cel Phone: 88192038"
  
-* killx will atempt to kill the xserver. Default 0 > nothing happen. 1 will try to kill xserver.
-
-* minutes is the time for search modified files, Default 100.
-
-* Path is the root folder for search modified files, Default /root.
-
-* alert can be 0 or 1. 0 is the default behaviur and does nothing, with this flag in 1 in the gnome will show some alerts, with zenity.
-
-* msg is the message send by zenity. If alert is 0 nothing happen.
-
+- killx will atempt to kill the xserver. Default n > nothing happen. y will try to kill xserver.
+- minutes is the time for search modified files, Default 100.
+- Path is the root folder for search modified files, Default /root.
+- alertwallpaper allow to change the wallpaper in your Desktop, default n 
+- alert can be n or y. n is the default behaviur and does nothing, with this flag in y in linux will show some alerts, with zenity and kdialog.
+- msg is the message send by zenity. If alert is n nothing happen.
