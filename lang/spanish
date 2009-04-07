@@ -65,6 +65,8 @@ STRING_SENDING_EMAIL=" -- Enviando el correo electronico."
 STRING_ERROR_EMAIl="Se encontro un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
 Si estas usando Gmail, intenta con remover la '@gmail.com' del campo smtp_username en el archivo de configuracion."
 STRING_REMOVE_EVIDENCE=" -- Removiendo todos la evidencia."
+STRING_CHANGE_WALLPAPER=" -- Cambiando el wallpaper para alertar a la persona y a los que esten cerca..."
+STRING_SHOW_ALERT=" -- Mostrando nuestro mensaje de alerta..."
 STRING_XKILL=" -- Intentando sacarlo de la session X!"
 STRING_MACKILL="Como se supone que realizamos esto en Mac OS?"
 STRING_DONE=" -- Listo, y suerte! :)\n"

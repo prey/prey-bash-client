@@ -65,6 +65,8 @@ STRING_SENDING_EMAIL=" -- Sending the email..."
 STRING_ERROR_EMAIl="There was a problem sending the email. Are you sure it was setup correctly?
 If you're using Gmail, you can try removing the '@gmail.com' from the smtp_username field in Prey's config file."
 STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
+STRING_CHANGE_WALLPAPER=" -- Changing the wallpaper to alert him and nearby users..."
+STRING_SHOW_ALERT=" -- Showing the guy our alert message..."
 STRING_XKILL=" -- Kicking him off the X session!"
 STRING_DONE=" -- Done! Happy hunting! :)\n"
 STRING_MACKILL="How do we shut him off in Mac OS?"
