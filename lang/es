@@ -55,29 +55,40 @@ elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	# TODO: translate this to spanish
 
 	HELLO_IN_LANGUAGE=" -- Prey hablara espanol entonces!"
-	WHERE_TO_INSTALL_PREY=" -> Where do you want us to install Prey? [$DEFAULT_INSTALLPATH] "
-	INVALID_INSTALL_PATH=" !! Invalid installation path. Parent directory doesn't exist!\n"
-	SETTING_INSTALL_PATH=" -- Ok, setting $INSTALLPATH as our install path."
-	DELETING_OLD_FILES=" -- Deleting old Prey installation files...\n"
-	CONFIG_FILE_EXISTS=" -> Config file exists! Would you like to skip all the boring questions? (Not recommended) [n] "
-	SKIP_INSTALL_QUESTIONS=" -- Alright, well just update the necesary files!\n"
-	ENTER_EMAIL_ADDRESS=" -> What email address would you like the email sent to? (i.e. mailbox@domain.com) [] "
-	INVALID_EMAIL_ADDRESS=" !! You need to define an inbox. Exiting...\n"
-	ENTER_SMTP_SERVER=" -> Which smtp server should we use? (with port) [smtp.gmail.com:587] "
-	DEFAULT_SMTP_SERVER=" -- We'll be using Gmail then! "
-	INVALID_SMTP_SERVER=" -> Type in your smtp username: (i.e. mailbox@gmail.com) [$EMAIL] "
-	ENTER_SMTP_USER=" -- Using $EMAIL as the SMTP username..."
-	DEFAULT_SMTP_USER=" -- Using the full email as the SMTP username..."
-	ENTER_SMTP_PASS=" -> Type in your smtp password: [] "
-	INVALID_SMTP_PASS=" !! You need to type in a valid password. Exiting...\n"
-	CHECK_URL_OR_NOT=" -- Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
-	ENTER_URL=" -- Ok, which URL would it be then? [i.e. http://myserver.com/prey_check_url] "
-	INVALID_URL=" !! You need to define a URL. Exiting...\n"
-	SET_TIMING=" -- Ok, last one. How frequent (in minutes) would you like Prey to be ran? [$TIMING] "
-	INSTALLING_SOFTWARE=" -- Ok, installing necessary software...\n"
-	COPYING_ISIGHTCAPTURE=" -- Copying iSightCapture to $INSTALLPATH..."
-	COPYING_FILES="\n -- Copying necessary files to $INSTALLPATH and setting permissions..."
-	ADDING_CRONTAB=" -- Adding crontab entry..."
+	WHERE_TO_INSTALL_PREY=" -> Donde quieres que instalemos Prey? [$DEFAULT_INSTALLPATH] "
+	USING_DEFAULT_INSTALL_PATH=" -- Usando la ruta de instalacion por defecto..."
+	INVALID_INSTALL_PATH=" !! Ruta invalida de instalacion. La carpeta superior no existe!\n"
+	SETTING_INSTALL_PATH=" -- Ok, instalaremos Prey en $INSTALLPATH."
+
+	DELETING_OLD_FILES=" -- Eliminando archivos antiguos de Prey...\n"
+	CONFIG_FILE_EXISTS=" -> Archivo de configuracion existe! Quieres que nos saltemos las preguntas de configuracion? (No recomendado) [n] "
+
+	SKIP_INSTALL_QUESTIONS=" -- Muy bien, solo actualizaremos los archivos necesarios!\n"
+
+	ENTER_EMAIL_ADDRESS=" -> A que casilla de email quieres que Prey envie el correo? (i.e. casilla@dominio.com) [] "
+	INVALID_EMAIL_ADDRESS=" !! Necesitas escribir una casilla de correo valida! Saliendo...\n"
+
+	ENTER_SMTP_SERVER=" -> Que servidor SMTP quieres que usemos? (con su puerto) [smtp.gmail.com:587] "
+	DEFAULT_SMTP_SERVER=" -- Usando Gmail como servidor STMP. "
+	ENTER_SMTP_USER=" -> Escribe tu nombre de usuario del servidor SMTP: (i.e. casilla@gmail.com)"
+	DEFAULT_SMTP_USER=" -- Nuestro usuario STMP sera entonces"
+	ENTER_SMTP_PASS=" -> Escribe tu contrasena para el servidor SMTP: (No va a mostrar nada) [] "
+	INVALID_SMTP_PASS=" !! Debes escribir una contrasena SMTP valida. Saliendo...\n"
+
+	CHECK_URL_OR_NOT=" -- Quieres que Prey use una URL de verificacion? (No significa que el reporte se enviara cada vez que Prey se ejecute) [n] "
+	ENTER_URL=" -- Ok, que URL quieres usar entonces? [i.e. http://miservidor.com/laptop_desaparecido] "
+	INVALID_URL=" !! Tienes que definir una URL. Saliendo...\n"
+	SET_TIMING=" -- Ok, la ultima. Con que frecuencia (en minutos) quieres que Prey se ejecute? [$TIMING] "
+
+	INSTALLING_SOFTWARE=" -- Ok, instalando el software necesario...\n"
+	COPYING_ISIGHTCAPTURE=" -- Copiando iSightCapture a $INSTALLPATH..."
+	COPYING_FILES="\n -- Copiando archivos necesarios a $INSTALLPATH y definiendo permisos..."
+	ADDING_CRONTAB=" -- Agregando entrada en el crontab..."
+	INSTALL_OK="\n -- Todo bien! Prey esta instalado y listo para volar. Ahora puedes eliminar esta carpeta.
+ -- Si alguna vez quieres desinstalar Prey, basta con que elimines la carpeta $INSTALLPATH
+    y remuevas la linea de Prey del crontab de root:\n
+\t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
+ -- Para actualizaciones recuerda visitar http://prey.bootlog.org!\n\n"
 
 else
 

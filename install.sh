@@ -52,8 +52,8 @@ separator="---------------------------------------------------------------------
 
 	if [ -n "$previous_path" ]; then
 
-		echo -e "It seems you had already installed Prey 0.1 in $previous_path.\nThe new version uses a different path for the installation,"
-		echo -e "so we should remove the old ones since they won't be used anymore."
+		echo -e "It seems you had already installed Prey in $previous_path.\nThe new version uses a different path for the installation,"
+		echo -e "so we should remove the old files since they won't be used anymore."
 		echo -n "Should we do this automatically for you? [y] "
 		read DELETE
 		if [[ "$DELETE" == "" || $DELETE == "y" ]]; then
@@ -82,12 +82,18 @@ separator="---------------------------------------------------------------------
 	PARENT_PATH=`echo $INSTALLPATH | sed "s/\/prey//"`
 	if [ "$INSTALLPATH" == "" ]; then
 		INSTALLPATH=$DEFAULT_INSTALLPATH
+		echo -e "$USING_DEFAULT_INSTALL_PATH"
 	elif [ ! -d "$PARENT_PATH" ]; then
 		echo -e "$INVALID_INSTALL_PATH"
 		exit
 	else
 		echo "$SETTING_INSTALL_PATH"
 	fi
+
+	# now that we have the install path we need to fetch to rerun this
+	# so as to insert the INSTALL_PATH variable into the other messages
+	# TODO: make this in a cleaner way
+	. lang/$LANGUAGE
 
 	# lets check if the installpath exists and create it if not
 	if [ ! -d $INSTALLPATH ]; then
@@ -120,14 +126,15 @@ separator="---------------------------------------------------------------------
 		read SMTP_SERVER
 		if [ "$SMTP_SERVER" == "" ]; then
 			SMTP_SERVER='smtp.gmail.com:587'
+			echo -e "$DEFAULT_SMTP_SERVER"
 		fi
 
 		# SMTP user
 		echo -e $separator
-		echo -n "$ENTER_SMTP_USER"
-		read SMTP_USER
+		echo -n "$ENTER_SMTP_USER [$EMAIL] "
+ 		read SMTP_USER
 		if [ "$SMTP_USER" == "" ]; then
-			echo -e "$DEFAULT_SMTP_USER"
+			echo -e "$DEFAULT_SMTP_USER" $EMAIL.
 			SMTP_USER=$EMAIL
 		fi
 
@@ -229,8 +236,8 @@ separator="---------------------------------------------------------------------
 	sudo chmod +x $INSTALLPATH/sendEmail $INSTALLPATH/$prey_file
 
 	# now the language files
-	sudo cp -r lang alerts $INSTALLPATH
-	sudo chmod +x $INSTALLPATH/lang/spanish $INSTALLPATH/lang/english
+	sudo cp -R lang alerts $INSTALLPATH
+	sudo chmod +x $INSTALLPATH/lang/*
 
 	if [ "$SKIP" != "y" ]; then
 
@@ -246,8 +253,4 @@ separator="---------------------------------------------------------------------
 	(sudo crontab -l | grep -v prey; echo "*/$TIMING * * * * cd $INSTALLPATH; ./$prey_file") | sudo crontab -
 
 	echo -e $separator
-	echo -e "\n -- Everything OK! Prey is up and running now. You can now delete this directory safely. "
-	echo -e " -- If you ever want to uninstall Prey, just delete the $INSTALLPATH directory"
-	echo -e "and remove Prey's line in root's crontab: \n"
-	echo -e " \t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n"
-	echo -e " -- For updates remember to check http://prey.bootlog.org!\n\n"
+	echo -e "$INSTALL_OK"
