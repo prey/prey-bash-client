@@ -180,7 +180,7 @@ archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minut
 ####################################################################
 echo "$STRING_ACTIVE_CONNECTIONS"
 
-connections=`netstat -taue | grep -i established`
+connections=`netstat -a | grep -i established`
 
 ####################################################################
 # ahora los metemos en el texto que va a ir en el mail
