@@ -90,7 +90,7 @@ else
 	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
 fi
 
-if [ ! -n "$wifi_info" ]; then # no wifi connection, let's see if we can auto connect to one
+if [ "$interno" == "" ]; then # no wifi connection, let's see if we can auto connect to one
 
 	echo "$STRING_TRY_TO_CONNECT"
 
