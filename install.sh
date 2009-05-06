@@ -17,10 +17,10 @@ DEFAULT_INSTALLPATH='/usr/share/prey'
 
 separator="--------------------------------------------------------------------------------"
 
-	echo -e "\n####################################"
-	echo "### Prey $version installation script ###"
-	echo "### By Tomas Pollak, bootlog.org ###"
-	echo -e "####################################\n"
+	echo -e "\n\t\033[1m####################################"
+	echo -e "\t### Prey $version installation script ###"
+	echo -e "\t### By Tomas Pollak, bootlog.org ###"
+	echo -e "\t####################################\033[0m\n"
 
 	# define language
 	echo -e $separator

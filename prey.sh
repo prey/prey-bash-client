@@ -12,7 +12,7 @@ version='0.2'
 ####################################################################
 # Veamos si estamos en Linux o Mac
 ####################################################################
-echo -e "$STRING_START"
+echo -e "\E[36m$STRING_START\E[0m"
 
 platform=`uname`
 logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
@@ -388,6 +388,21 @@ if [ $alertuser == 'y' ]; then
 			$kdialog --error "$alertmsg"
 
 		fi
+
+	else # Mac alert msg code by Matias Halles (http://halles.cl)
+
+		alertvoice='Zarvox'
+		# can be Agnes, Kathy, Princess, Vicki, Victoria, Bruce, Fred, Junior, Ralph, Albert, Bad News, Bahh, Bells, Boing, Bubbles, Cellos , Deranged, Good News, Hysterical, Pipe Organ, Trinoids, Whisper, Zarvox
+
+		osascript -e "say \"$alertmsg\" using \"$alertvoice\"" &
+
+# this must go in column 0
+osascript<<END
+	tell application "Finder"
+		activate #Le da el foco al Finder
+		set dd to display dialog "\n$alertmsg\n" buttons {"OK, tengo miedo."} default button 1 with icon caution #Despliega el diálogo.
+	end tell
+END
 
 	fi
 
