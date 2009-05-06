@@ -1,0 +1,27 @@
+-- Unversioned
+
+ + Fixed email error message not appearing. -- Tomas
+ + Fixed critical Mac wifi_info bug reported by Diego. -- Tomas
+ + Edited and readded Juan Carlos' changelog. -- Tomas
+ + Removed and translated most of inline comments. -- Tomas
+ + Fixed netstat bug in Mac OS (Reported by _____). -- Tomas
+ + Separated Linux and Mac functions, along with a new base functions file (check /platform dir) -- Tomas
+ + Added Mac message function. UNTESTED! -- Matias
+ + Added Mac wallpaper function. UNTESTED! -- Tomas (Original code from Katy in thingsthatwork.net)
+
+-- Version 0.2
+
+ + Added graphical Mac installer. -- Diego (Grande!)
+ + Wallpaper switching in Linux (from Diego's idea). -- Tomas
+ + Wifi autoconnect to first open hotspot feature. Linux/Mac. -- Diego & Tomas
+ + Separated configuration file from Prey main app. -- Tomas
+ + Fixed bug in email sending -- Tomas (From help from everyone's reports)
+ + Changed default installation path to /usr/share/prey. -- Tomas
+ + Language support for Linux/Mac installation script. -- Tomas
+ + Added language support for emails and Prey messages. -- Juan Carlos
+ + Enhanced X Session killing -- Juan Carlos
+ + A HUGE lot of bugfixes. -- Juan Carlos
+
+-- Version 0.1
+
+ + Initial release -- Tomas

@@ -1,7 +1,7 @@
 #!/bin/bash
 ####################################################################
 # Prey Installation Script - by Tomas Pollak (bootlog.org)
-# URL : http://prey.bootlog.org
+# URL : http://preyproject.com
 # License: GPLv3
 ####################################################################
 
@@ -17,10 +17,10 @@ DEFAULT_INSTALLPATH='/usr/share/prey'
 
 separator="--------------------------------------------------------------------------------"
 
-	echo -e "\n\t\033[1m####################################"
-	echo -e "\t### Prey $version installation script ###"
-	echo -e "\t### By Tomas Pollak, bootlog.org ###"
-	echo -e "\t####################################\033[0m\n"
+	echo -e "\n\t\033[1m########################################"
+	echo -e "\t###   Prey $version installation script   ###"
+	echo -e "\t###   By Tomas Pollak, bootlog.org   ###"
+	echo -e "\t########################################\033[0m\n"
 
 	# define language
 	echo -e $separator
@@ -34,7 +34,7 @@ separator="---------------------------------------------------------------------
 		. lang/$LANGUAGE
 		echo "$HELLO_IN_LANGUAGE"
 	else
-		echo -e " !! Unsupported language! Remember to write its valid code (en for english, es for espanol, etc)\n"
+		echo -e " !! Unsupported language! Remember to write its valid code (en for english, es for espanol, de for deutsche, etc)\n"
 		exit
 	fi
 
@@ -44,7 +44,7 @@ separator="---------------------------------------------------------------------
 
 		previous_path="/usr/local/bin"
 
-	elif [ -e "/usr/bin/prey" ]; then
+	elif [ -e "/usr/bin/prey.sh" ]; then
 
 		previous_path="/usr/bin"
 
@@ -188,7 +188,7 @@ separator="---------------------------------------------------------------------
 		sed -i -e "s/lang='.*'/lang='$LANGUAGE'/" $temp_config_file
 		sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $temp_config_file
 		sed -i -e "s/url='.*'/url='$URL'/" $temp_config_file
-		sed -i -e "s/-SLASH-/\//g" $temp_config_file
+		sed -i -e "s/-SLASH-/\//g" $temp_config_file # resolve the slash hack
 		sed -i -e "s/smtp_server='.*'/smtp_server='$SMTP_SERVER'/" $temp_config_file
 		sed -i -e "s/smtp_username='.*'/smtp_username='$SMTP_USER'/" $temp_config_file
 		sed -i -e "s/smtp_password='.*'/smtp_password='$SMTP_PASS'/" $temp_config_file
@@ -235,9 +235,9 @@ separator="---------------------------------------------------------------------
 	sudo cp -f $prey_file sendEmail $INSTALLPATH
 	sudo chmod +x $INSTALLPATH/sendEmail $INSTALLPATH/$prey_file
 
-	# now the language files
-	sudo cp -R lang alerts $INSTALLPATH
-	sudo chmod +x $INSTALLPATH/lang/*
+	# now the language and specific platform files
+	sudo cp -R lang alerts platform $INSTALLPATH
+	sudo chmod +x $INSTALLPATH/lang/* $INSTALLPATH/platform/*
 
 	if [ "$SKIP" != "y" ]; then
 

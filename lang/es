@@ -84,11 +84,11 @@ elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	COPYING_ISIGHTCAPTURE=" -- Copiando iSightCapture a $INSTALLPATH..."
 	COPYING_FILES="\n -- Copiando archivos necesarios a $INSTALLPATH y definiendo permisos..."
 	ADDING_CRONTAB=" -- Agregando entrada en el crontab..."
-	INSTALL_OK="\n -- Todo bien! Prey esta instalado y listo para volar. Ahora puedes eliminar esta carpeta.
+	INSTALL_OK="\033[1m\n -- Todo bien! Prey esta instalado y listo para volar. Ahora puedes eliminar esta carpeta.
  -- Si alguna vez quieres desinstalar Prey, basta con que elimines la carpeta $INSTALLPATH
     y remuevas la linea de Prey del crontab de root:\n
 \t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
- -- Para actualizaciones recuerda visitar http://prey.bootlog.org!\n\n"
+ -- Para actualizaciones recuerda visitar http://prey.bootlog.org!\033[0m\n\n"
 
 else
 
@@ -111,8 +111,8 @@ else
 	STRING_TAKE_IMAGE=" -- Tomando una captura de pantalla y una foto de la persona..."
 	STRING_TAKE_IMAGE_DONE=" -- Finalizando la captura de imagenes..."
 	STRING_SENDING_EMAIL=" -- Enviando el correo electronico..."
-	STRING_ERROR_EMAIl=" !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
-	Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion."
+	STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
+    Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion.\033[0m\n"
 	STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
 	STRING_CHANGE_WALLPAPER=" -- Cambiando el fondo de pantalla para alertar a la persona y a los que esten cerca..."
 	STRING_SHOW_ALERT=" -- Mostrando nuestro mensaje de alerta..."
