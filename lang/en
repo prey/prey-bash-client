@@ -19,11 +19,17 @@ $uptime
 
 Connection information
 --------------------------------------------------------------------
-IP Publico: $publico. IP interno: $interno.
+IP Public: $publico 
+(Approx. location: http://www.maxmind.com/app/locate_ip?ips=$publico). 
+
+IP internal: $interno.
 
 Route information
 --------------------------------------------------------------------
 Direccion MAC: $mac. Gateway: $routes
+
+Traceroute: 
+http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico&cmd=+Go+
 
 WiFi information
 --------------------------------------------------------------------
