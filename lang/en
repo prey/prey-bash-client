@@ -26,7 +26,7 @@ IP internal: $interno.
 
 Route information
 --------------------------------------------------------------------
-Direccion MAC: $mac. Gateway: $routes
+MAC Address: $mac. Gateway: $routes
 
 Traceroute: 
 http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico&cmd=+Go+
