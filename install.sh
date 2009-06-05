@@ -214,7 +214,8 @@ separator="---------------------------------------------------------------------
 		elif [[ "$distro" =~ "SUSE" ]]; then
 			# its been a long time since i used suse, is smart the default package manager now?
 			# TODO: add perl lib packages
-			sudo smart install $linux_packages streamer # faltan los otros, alguien sabe como se llaman?
+			zypper ar http://download.opensuse.org/repositories/X11:/Utilities/openSUSE_11.1/ 'X11:Utilities'
+			sudo zypper install $linux_packages streamer # faltan los otros, alguien sabe como se llaman?
 		elif [[ "$distro" =~ "Archlinux" ]]; then
 			# TODO: add perl lib packages
 			sudo pacman -S $linux_packages streamer  # faltan los otros, alguien sabe como se llaman?
