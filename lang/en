@@ -20,9 +20,15 @@ $uptime
 Connection information
 --------------------------------------------------------------------
 IP Public: $publico 
-(Approx. location: http://www.maxmind.com/app/locate_ip?ips=$publico). 
+Approx. location: http://www.maxmind.com/app/locate_ip?ips=$publico 
 
 IP internal: $interno.
+
+Who owns the public IP address?
+--------------------------------------------------------------------
+
+http://whois.domaintools.com/$publico
+
 
 Route information
 --------------------------------------------------------------------
