@@ -19,14 +19,13 @@ $uptime
 
 Datos de conexion
 --------------------------------------------------------------------
-IP Publico: $publico
+IP publico: $publico -- IP interno: $interno.
 -> Lugar aprox.: http://www.maxmind.com/app/locate_ip?ips=$publico
-
-IP interno: $interno.
+-> IP Whois: http://whois.domaintools.com/$publico
 
 Enrutado de red
 --------------------------------------------------------------------
-Direccion MAC: $mac. Gateway: $routes
+Direccion MAC: $mac. -- Gateway: $routes
 
 Traceroute:
 -> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico
