@@ -1,6 +1,7 @@
 - Test mode.
 - Email bug in Mac installer.
 - Language bug in Mac installer.
+- Enable auto-login in Mac/Linux/Windows if computer is in stolen state.
 - Enable some configuration to be set up remotely (from the check file)
 - Passwords with weird characters have a problem being inserted with sed.
 - Create an "accesible" user account so that we can lurk the thief into logging in and opening his mail or whatever (and catch him whole handed)

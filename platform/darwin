@@ -94,7 +94,7 @@ function alert_user {
 osascript<<END
 	tell application "Finder"
 		activate #Le da el foco al Finder
-		set dd to display dialog "\n$alertmsg\n" buttons {"OK, tengo miedo."} default button 1 with icon caution #Despliega el diálogo.
+		set dd to display dialog "\n$alertmsg\n" buttons {"OK, I'm afraid."} default button 1 with icon caution #Despliega el diálogo.
 	end tell
 END
 }
