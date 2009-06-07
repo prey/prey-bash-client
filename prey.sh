@@ -21,12 +21,17 @@ os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 
 echo -e "\E[36m$STRING_START\E[0m"
 
+if [ $1 == "-t" ]; then
+	echo -e " -- TEST MODE ENABLED. WON'T CHECK URL!"
+	test_mode=1
+fi
+
 ####################################################################
 # if there's a URL in the config, lets see if it actually exists
 # if it doesn't, the program will shut down gracefully
 ####################################################################
 
-if [ -n "$url" ]; then
+if [[ -n "$url" && ! -n "$test_mode" ]]; then
 	echo "$STRING_CHECK_URL"
 	check_url
 
@@ -81,10 +86,10 @@ get_images
 echo "$STRING_TAKE_IMAGE_DONE"
 
 ####################################################################
-# all set, lets send the email
+# all set, lets send the report
 ####################################################################
 
-echo "$STRING_SENDING_EMAIL"
+echo "$STRING_SENDING_REPORT"
 
 # lets clean the vars in case we couldn't get the images
 if [ ! -e "$picture" ]; then
@@ -98,7 +103,7 @@ if [ ! -e "$screenshot" ]; then
 	# compress_screenshot
 fi
 
-send_email
+send_report
 
 echo "$STRING_REMOVE_EVIDENCE"
 remove_evidence

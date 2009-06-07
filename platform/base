@@ -43,15 +43,22 @@ function write_email {
 	. lang/$lang
 }
 
-function send_email {
+function send_report {
 	complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
-	echo "$emailtext" > msg.tmp
-	emailstatus=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
-
-	if [[ "$emailstatus" =~ "ERROR" ]]; then
-		echo -e "$STRING_ERROR_EMAIL"
+	if [ "$report_method" == "tunnel" ]; then
+		response=`curl -F "to=$emailtarget" -F "subject=$complete_subject" -F "body=$emailtext" -F "picture=@$picture;type=image/jpeg" -F "screenshot=@$screenshot;type=image/jpeg" $http_tunnel_url`
+	elif [ "$report_method" == "web" ]; then
+		post_url=`echo $URL | sed -e 's/\.xml/\/reports/'`
+		response=`curl -X PUT "[report]body=$emailtext" -F "picture=@$picture;type=image/jpeg" -F "screenshot=@$screenshot;type=image/jpeg" "$post_url"`
+	else
+		echo "$emailtext" > msg.tmp
+		response=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
+		if [[ "$response" =~ "ERROR" ]]; then
+			echo -e "$STRING_ERROR_EMAIL"
+		fi
 	fi
 }
+
 
 function remove_evidence {
 	if [ -e "$picture" ]; then

@@ -11,6 +11,7 @@ temp_config_file=temp_config
 prey_file=prey.sh
 platform=`uname`
 linux_packages='wget traceroute scrot'
+web_app_url='http://preyproject.com'
 
 TIMING=10
 DEFAULT_INSTALLPATH='/usr/share/prey'
@@ -111,41 +112,62 @@ separator="---------------------------------------------------------------------
 
 	else
 
-		# get the email
+		# what reporting method?
 		echo -e $separator
-		echo -n "$ENTER_EMAIL_ADDRESS"
-		read EMAIL
-		if [ "$EMAIL" == "" ]; then
-			echo -e "$INVALID_EMAIL_ADDRESS"
-			exit
+		echo -n "$DEFINE_REPORT_METHOD"
+		read REPORT_METHOD
+		if [ "$REPORT_METHOD" == "" ]; then
+			REPORT_METHOD='email'
+			echo -e "$DEFAULT_REPORT_METHOD"
+		elif [ "$REPORT_METHOD" == 'web' ]; then
+			echo -n "$ADD_DEVICE_KEY"
+			read DEVICE_KEY
+			# the device keys are six digit long hex strings
+			if [[ "$DEVICE_KEY" == "" || ${#DEVICE_KEY} != 6 ]]; then
+				echo -e "$INVALID_DEVICE_KEY"
+				exit
+			fi
 		fi
 
-		# setup SMTP
-		echo -e $separator
-		echo -n "$ENTER_SMTP_SERVER"
-		read SMTP_SERVER
-		if [ "$SMTP_SERVER" == "" ]; then
-			SMTP_SERVER='smtp.gmail.com:587'
-			echo -e "$DEFAULT_SMTP_SERVER"
-		fi
+		if [ "$REPORT_METHOD" == 'email' ]; then
 
-		# SMTP user
-		echo -e $separator
-		echo -n "$ENTER_SMTP_USER [$EMAIL] "
- 		read SMTP_USER
-		if [ "$SMTP_USER" == "" ]; then
-			echo -e "$DEFAULT_SMTP_USER" $EMAIL.
-			SMTP_USER=$EMAIL
-		fi
+			# get the email
+			echo -e $separator
+			echo -n "$ENTER_EMAIL_ADDRESS"
+			read EMAIL
+			if [ "$EMAIL" == "" ]; then
+				echo -e "$INVALID_EMAIL_ADDRESS"
+				exit
+			fi
 
-		# SMTP pass
-		echo -e $separator
-		echo -n "$ENTER_SMTP_PASS"
-		read -s SMTP_PASS
-		echo -e "\n"
-		if [ "$SMTP_PASS" == "" ]; then
-			echo -e "$INVALID_SMTP_PASS"
-			exit
+			# setup SMTP
+			echo -e $separator
+			echo -n "$ENTER_SMTP_SERVER"
+			read SMTP_SERVER
+			if [ "$SMTP_SERVER" == "" ]; then
+				SMTP_SERVER='smtp.gmail.com:587'
+				echo -e "$DEFAULT_SMTP_SERVER"
+			fi
+
+			# SMTP user
+			echo -e $separator
+			echo -n "$ENTER_SMTP_USER [$EMAIL] "
+	 		read SMTP_USER
+			if [ "$SMTP_USER" == "" ]; then
+				echo -e "$DEFAULT_SMTP_USER" $EMAIL.
+				SMTP_USER=$EMAIL
+			fi
+
+			# SMTP pass
+			echo -e $separator
+			echo -n "$ENTER_SMTP_PASS"
+			read -s SMTP_PASS
+			echo -e "\n"
+			if [ "$SMTP_PASS" == "" ]; then
+				echo -e "$INVALID_SMTP_PASS"
+				exit
+			fi
+
 		fi
 
 		# setup URL check
@@ -154,18 +176,24 @@ separator="---------------------------------------------------------------------
 		read CHECK
 		case "$CHECK" in
 		[yY] )
-			# which url then
-			echo -e $separator
-			echo -n "$ENTER_URL"
-			read URL
-			if [ "$URL" == "" ]; then
-				echo -e "$INVALID_URL"
-				exit
+
+			if [ "$REPORT_METHOD" == 'web' ]; then
+				URL="$web_app_url/devices/$device_key.xml"
+				echo -e "$USING_DEFAULT_APP_URL"
+			else
+				# which url then
+				echo -e $separator
+				echo -n "$ENTER_URL"
+				read URL
+				if [ "$URL" == "" ]; then
+					echo -e "$INVALID_URL"
+					exit
+				fi
+				# URL=`echo $URL | sed -f urlencode.sed`
+				# urlencoding no nos sirve, porque despues wget no puede resolver la direccion. dirty hack entonces.
+				URL=`echo $URL | sed "s/\//-SLASH-/g"`
 			fi
-			# URL=`echo $URL | sed -f urlencode.sed`
-			# urlencoding no nos sirve, porque despues wget no puede resolver la direccion. dirty hack entonces.
-			URL=`echo $URL | sed "s/\//-SLASH-/g"`
-			;;
+		;;
 		[nN] ) # echo "OK, no URL check then."
 			URL=""
 		;;
@@ -186,6 +214,7 @@ separator="---------------------------------------------------------------------
 		echo -e " -- Ok, setting up configuration values..."
 		cp $config_file $temp_config_file
 		sed -i -e "s/lang='.*'/lang='$LANGUAGE'/" $temp_config_file
+		sed -i -e "s/device_key='.*'/device_key='$DEVICE_KEY'/" $temp_config_file
 		sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $temp_config_file
 		sed -i -e "s/url='.*'/url='$URL'/" $temp_config_file
 		sed -i -e "s/-SLASH-/\//g" $temp_config_file # resolve the slash hack

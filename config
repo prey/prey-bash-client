@@ -8,15 +8,24 @@
 # language, en (english) or es (espanol)
 lang='en'
 
+# you can use direct email, our http tunnel, or the prey web service
+# options: email, tunnel, web
+report_method='email'
+
+# if you're using the web service, this should contain your six-digit key
+device_key=''
+
 # verification URL, if left empty Prey will always gather and send the information
+# required for web reporting mode
 url=''
 
-# mailbox to send the report
+# if you're using email or tunnel method, put your mail here
 emailtarget='mailbox@domain.com'
 
-# SMTP configuration
-# TODO: store the password in an encrypted formt
-# don't worry, this file will be unaccesible for other users anyway
+####################################################################
+# SMTP configuration for direct email reporting
+####################################################################
+
 smtp_server='smtp.gmail.com:587'
 smtp_username='username@gmail.com'
 smtp_password='password'

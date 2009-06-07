@@ -70,6 +70,13 @@ elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
 	SKIP_INSTALL_QUESTIONS=" -- Muy bien, solo actualizaremos los archivos necesarios!\n"
 
+	# TODO: finish translating this.
+	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email]"
+	DEFAULT_REPORT_METHOD=" -- Using email as our reporting method. All good!"
+	ADD_DEVICE_KEY=" -> Please enter the six-digit Device Key as supplied by the web service."
+	INVALID_DEVICE_KEY=" !! Invalid device key! Remember to register your device in preyproject.com to get one."
+	USING_DEFAULT_APP_URL=" -- Using routes for the web application. Nothing to write in here!"
+
 	ENTER_EMAIL_ADDRESS=" -> A que casilla de email quieres que Prey envie el correo? (i.e. casilla@dominio.com) [] "
 	INVALID_EMAIL_ADDRESS=" !! Necesitas escribir una casilla de correo valida! Saliendo...\n"
 
