@@ -6,7 +6,7 @@
 ####################################################################
 
 version='0.2'
-. ./config
+. ./configtest
 
 if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
@@ -21,8 +21,8 @@ os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 
 echo -e "\E[36m$STRING_START\E[0m"
 
-if [ $1 == "-t" ]; then
-	echo -e " -- TEST MODE ENABLED. WON'T CHECK URL!"
+if [ "$1" == "-t" ]; then
+	echo -e "\033[1m -- TEST MODE ENABLED. WON'T CHECK URL!\033[0m\n"
 	test_mode=1
 fi
 

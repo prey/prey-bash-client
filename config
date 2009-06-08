@@ -12,11 +12,12 @@ lang='en'
 # options: email, tunnel, web
 report_method='email'
 
-# if you're using the web service, this should contain your six-digit key
+# if you're using the web service, this should contain your API & Device keys
+web_service='http://prey.rails'
+api_key=''
 device_key=''
 
 # verification URL, if left empty Prey will always gather and send the information
-# required for web reporting mode
 url=''
 
 # if you're using email or tunnel method, put your mail here

@@ -72,8 +72,11 @@ elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
 	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email] "
 	DEFAULT_REPORT_METHOD=" -- Using email as our reporting method. All good!"
-	ADD_DEVICE_KEY=" -> Please enter the six-digit Device Key as supplied by the web service: "
+	ADD_API_KEY=" -> Please enter your API Key as supplied by the web service: "
+	INVALID_API_KEY=" !! Invalid API key! Remember to signup at preyproject.com to get one.\n"
+	ADD_DEVICE_KEY=" -> Please enter the Device Key for this PC as supplied by the web service: "
 	INVALID_DEVICE_KEY=" !! Invalid device key! Remember to register your device in preyproject.com to get one.\n"
+
 	USING_DEFAULT_APP_URL=" -- Using routes for the web application. Nothing to write in here!"
 
 	ENTER_EMAIL_ADDRESS=" -> What email address would you like the email sent to? (i.e. mailbox@domain.com) [] "
@@ -121,7 +124,7 @@ else
 	STRING_WRITE_EMAIL=" -- Writing our email..."
 	STRING_TAKE_IMAGE=" -- Taking a screenshot and a picture of the impostor..."
 	STRING_TAKE_IMAGE_DONE=" -- Done with the images!"
-	STRING_SENDING_EMAIL=" -- Sending the email..."
+	STRING_SENDING_REPORT=" -- Sending the report..."
 	STRING_ERROR_EMAIL="\n\033[1m !! There was a problem sending the email. Are you sure it was setup correctly?
     If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file.\033[0m\n"
 	STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."

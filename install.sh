@@ -11,10 +11,10 @@ temp_config_file=temp_config
 prey_file=prey.sh
 platform=`uname`
 linux_packages='wget traceroute scrot'
-web_app_url='http://preyproject.com'
 
 TIMING=10
 DEFAULT_INSTALLPATH='/usr/share/prey'
+WEB_SERVICE_URL='http://prey.rails'
 
 separator="--------------------------------------------------------------------------------"
 
@@ -76,20 +76,25 @@ separator="---------------------------------------------------------------------
 
 	# ok, now lets ask the neccesary questions so as to generate the config automatically
 
+  # uncomment below if you want the installer to ask you where to install prey
+  # now we always install to /usr/share/prey, as it seems it works for everyone
+
 	# set installation path
-	echo -e $separator
-	echo -n "$WHERE_TO_INSTALL_PREY"
-	read INSTALLPATH
-	PARENT_PATH=`echo $INSTALLPATH | sed "s/\/prey//"`
-	if [ "$INSTALLPATH" == "" ]; then
-		INSTALLPATH=$DEFAULT_INSTALLPATH
-		echo -e "$USING_DEFAULT_INSTALL_PATH"
-	elif [ ! -d "$PARENT_PATH" ]; then
-		echo -e "$INVALID_INSTALL_PATH"
-		exit
-	else
-		echo "$SETTING_INSTALL_PATH"
-	fi
+	# echo -e $separator
+	# echo -n "$WHERE_TO_INSTALL_PREY"
+	# read INSTALLPATH
+	# PARENT_PATH=`echo $INSTALLPATH | sed "s/\/prey//"`
+	# if [ "$INSTALLPATH" == "" ]; then
+	 	INSTALLPATH=$DEFAULT_INSTALLPATH
+	# 	echo -e "$USING_DEFAULT_INSTALL_PATH"
+	# elif [ ! -d "$PARENT_PATH" ]; then
+	# 	echo -e "$INVALID_INSTALL_PATH"
+	# 	exit
+	# else
+	# 	echo "$SETTING_INSTALL_PATH"
+	# fi
+
+  
 
 	# now that we have the install path we need to fetch to rerun this
 	# so as to insert the INSTALL_PATH variable into the other messages
@@ -120,10 +125,17 @@ separator="---------------------------------------------------------------------
 			REPORT_METHOD='email'
 			echo -e "$DEFAULT_REPORT_METHOD"
 		elif [ "$REPORT_METHOD" == 'web' ]; then
+			echo -n "$ADD_API_KEY"
+			read API_KEY
+			# the device keys are six digit long hex strings
+			if [[ ${#API_KEY} != 12 ]]; then
+				echo -e "$INVALID_API_KEY"
+				exit
+			fi
 			echo -n "$ADD_DEVICE_KEY"
 			read DEVICE_KEY
 			# the device keys are six digit long hex strings
-			if [[ "$DEVICE_KEY" == "" || ${#DEVICE_KEY} != 6 ]]; then
+			if [[ ${#DEVICE_KEY} != 6 ]]; then
 				echo -e "$INVALID_DEVICE_KEY"
 				exit
 			fi
@@ -178,7 +190,7 @@ separator="---------------------------------------------------------------------
 		[yY] )
 
 			if [ "$REPORT_METHOD" == 'web' ]; then
-				URL="$web_app_url/devices/$device_key.xml"
+				URL="$WEB_SERVICE_URL/devices/$device_key.xml"
 				echo -e "$USING_DEFAULT_APP_URL"
 			else
 				# which url then
@@ -210,10 +222,15 @@ separator="---------------------------------------------------------------------
 			TIMING=10
 		fi
 
+WEB_SERVICE_URL=`echo $WEB_SERVICE_URL | sed "s/\//-SLASH-/g"`
+
 		echo -e $separator
 		echo -e " -- Ok, setting up configuration values..."
 		cp $config_file $temp_config_file
 		sed -i -e "s/lang='.*'/lang='$LANGUAGE'/" $temp_config_file
+		sed -i -e "s/web_service='.*'/web_service='$WEB_SERVICE_URL'/" $temp_config_file
+		sed -i -e "s/report_method='.*'/report_method='$REPORT_METHOD'/" $temp_config_file
+		sed -i -e "s/api_key='.*'/api_key='$API_KEY'/" $temp_config_file
 		sed -i -e "s/device_key='.*'/device_key='$DEVICE_KEY'/" $temp_config_file
 		sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $temp_config_file
 		sed -i -e "s/url='.*'/url='$URL'/" $temp_config_file
