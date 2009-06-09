@@ -6,7 +6,7 @@
 ####################################################################
 
 version='0.2'
-. ./configtest
+. ./config
 
 if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
