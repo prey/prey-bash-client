@@ -141,7 +141,7 @@ separator="---------------------------------------------------------------------
 			fi
 		fi
 
-		if [ "$REPORT_METHOD" == 'email' ]; then
+		if [ "$REPORT_METHOD" != 'web' ]; then
 
 			# get the email
 			echo -e $separator
@@ -152,32 +152,36 @@ separator="---------------------------------------------------------------------
 				exit
 			fi
 
-			# setup SMTP
-			echo -e $separator
-			echo -n "$ENTER_SMTP_SERVER"
-			read SMTP_SERVER
-			if [ "$SMTP_SERVER" == "" ]; then
-				SMTP_SERVER='smtp.gmail.com:587'
-				echo -e "$DEFAULT_SMTP_SERVER"
-			fi
+			if [ "$REPORT_METHOD" == 'email' ]; then
 
-			# SMTP user
-			echo -e $separator
-			echo -n "$ENTER_SMTP_USER [$EMAIL] "
-	 		read SMTP_USER
-			if [ "$SMTP_USER" == "" ]; then
-				echo -e "$DEFAULT_SMTP_USER" $EMAIL.
-				SMTP_USER=$EMAIL
-			fi
+				# setup SMTP
+				echo -e $separator
+				echo -n "$ENTER_SMTP_SERVER"
+				read SMTP_SERVER
+				if [ "$SMTP_SERVER" == "" ]; then
+					SMTP_SERVER='smtp.gmail.com:587'
+					echo -e "$DEFAULT_SMTP_SERVER"
+				fi
 
-			# SMTP pass
-			echo -e $separator
-			echo -n "$ENTER_SMTP_PASS"
-			read -s SMTP_PASS
-			echo -e "\n"
-			if [ "$SMTP_PASS" == "" ]; then
-				echo -e "$INVALID_SMTP_PASS"
-				exit
+				# SMTP user
+				echo -e $separator
+				echo -n "$ENTER_SMTP_USER [$EMAIL] "
+		 		read SMTP_USER
+				if [ "$SMTP_USER" == "" ]; then
+					echo -e "$DEFAULT_SMTP_USER" $EMAIL.
+					SMTP_USER=$EMAIL
+				fi
+
+				# SMTP pass
+				echo -e $separator
+				echo -n "$ENTER_SMTP_PASS"
+				read -s SMTP_PASS
+				echo -e "\n"
+				if [ "$SMTP_PASS" == "" ]; then
+					echo -e "$INVALID_SMTP_PASS"
+					exit
+				fi
+			
 			fi
 
 		fi

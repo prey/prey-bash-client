@@ -45,12 +45,11 @@ function write_email {
 
 function send_report {
 	complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
-	if [ "$report_method" == "tunnel" ]; then
-    send_via_tunnel
-	elif [ "$report_method" == "web" ]; then
-    send_via_web
+	if [ "$report_method" == 'email' ]; then
+		send_via_email
 	else
-    send_via_email
+		generate_post_data
+		send_via_http
 	fi
 }
 
@@ -59,26 +58,30 @@ function send_via_email {
 		response=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
 		if [[ "$response" =~ "ERROR" ]]; then
 			echo -e "$STRING_ERROR_EMAIL"
-
 		fi
 }
 
-function send_via_tunnel {
-		response=`curl -F "to=$emailtarget" -F "subject=$complete_subject" -F "body=$emailtext" -F "picture=@$picture;type=image/jpeg" -F "screenshot=@$screenshot;type=image/jpeg" $http_tunnel_url`
+function generate_post_data {
+	post_data="body='$emailtext'"
+	if [ -n "$picture" ]; then
+		post_data="$post_data&picture=@$picture;type=image/jpeg"
+	fi
+	if [ -n "$screenshot" ]; then
+		post_data="$post_data&screenshot=@$screenshot;type=image/jpeg"
+	fi
 }
 
-function send_via_web {
-   	post_url="$web_service/devices/$device_key/reports" # RESTful!
-   	post_data="[report]body=$emailtext&api_key=$api_key"
-   	if [ -n "$picture" ]; then
-   	  post_data="$post_data&picture=@$picture;type=image/jpeg"
-   	fi
-   	if [ -n "$screenshot" ]; then
-   	  post_data="$post_data&screenshot=@$screenshot;type=image/jpeg"
-   	fi
+function send_via_http {
+		if [ "$report_method" == "web" ]; then
+			post_data="$post_data&api_key=$api_key"
+			post_url="$web_service/devices/$device_key/reports" # RESTful!
+		else
+			post_data="$post_data&to=$emailtarget&subject='$complete_subject'"
+			post_url=$http_tunnel
+		fi
 		response=`curl -s -d "$post_data" "$post_url"`
+		# echo $response
 }
-
 
 function remove_evidence {
 	if [ -e "$picture" ]; then

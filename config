@@ -35,6 +35,9 @@ smtp_password='password'
 # optional configuration, some of this is still experimental
 ####################################################################
 
+# http tunnel url
+http_tunnel='http://preyapp.appspot.com'
+
 # email settings
 from='Prey <no-reply@gmail.com>'
 subject="PREY -- status report"
