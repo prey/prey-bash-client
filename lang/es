@@ -71,7 +71,7 @@ elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	SKIP_INSTALL_QUESTIONS=" -- Muy bien, solo actualizaremos los archivos necesarios!\n"
 
 	# TODO: finish translating this.
-	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email]"
+	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email] "
 	DEFAULT_REPORT_METHOD=" -- Using email as our reporting method. All good!"
 	ADD_API_KEY=" -> Please enter the 12-digit API Key as supplied by the web service: "
 	INVALID_API_KEY=" !! Invalid API key! Remember to signup at preyproject.com to get one.\n"
