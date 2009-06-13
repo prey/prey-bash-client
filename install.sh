@@ -283,8 +283,6 @@ separator="---------------------------------------------------------------------
 			TIMING=10
 		fi
 
-	echo $URL
-
 		WEB_SERVICE_URL=`echo $WEB_SERVICE_URL | sed "s/\//-SLASH-/g"`
 
 		echo -e $separator
