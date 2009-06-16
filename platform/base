@@ -62,24 +62,24 @@ function send_via_email {
 }
 
 function generate_post_data {
-	post_data="body='$emailtext'"
+	post_data=""
 	if [ -n "$picture" ]; then
-		post_data="$post_data&picture=@$picture;type=image/jpeg"
+		post_data="$post_data -F picture=@$picture"
 	fi
 	if [ -n "$screenshot" ]; then
-		post_data="$post_data&screenshot=@$screenshot;type=image/jpeg"
+		post_data="$post_data -F screenshot=@$screenshot"
 	fi
 }
 
 function send_via_http {
 		if [ "$report_method" == "web" ]; then
-			post_data="$post_data&api_key=$api_key"
+			post_data="$post_data -F api_key=$api_key"
 			post_url="$web_service/devices/$device_key/reports" # RESTful!
 		else
-			post_data="$post_data&to=$emailtarget&subject='$complete_subject'"
+			post_data="$post_data -F to='$emailtarget' -F subject='$complete_subject'"
 			post_url=$http_tunnel
 		fi
-		response=`curl -s -d "$post_data" "$post_url"`
+		response=`curl -s -F body="$emailtext" $post_data "$post_url"`
 		# echo $response
 }
 
