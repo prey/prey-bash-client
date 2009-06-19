@@ -20,6 +20,7 @@ function check_url {
 }
 
 function get_network_info {
+	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
 	routes=`route -n`
 	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
 	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`

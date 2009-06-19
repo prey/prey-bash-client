@@ -5,6 +5,13 @@
 # License: GPLv3
 ####################################################################
 
+# returns if we have have network access, otherwise 0
+function check_net_status {
+	# first line checks for LAN access, second one for web access. change it if you're using Prey in a closed environment.
+	# net_status=`ping -q -w 1 -c 1 \`ip r | grep default | cut -d ' ' -f 3\` > /dev/null && echo 1 || echo 0`
+	net_status=`ping -c 1 -t 1 www.google.com > /dev/null && echo 1 || echo 0`
+}
+
 function get_public_ip {
 	publico=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
 }

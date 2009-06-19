@@ -22,6 +22,24 @@ os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 echo -e "\E[36m$STRING_START\E[0m"
 
 ####################################################################
+# lets check if we're actually connected
+# if we're not, lets try to connect to a wifi access point
+####################################################################
+
+check_net_status
+if [ "$net_status" == 0 ]; then
+	echo "$STRING_TRY_TO_CONNECT"
+	try_to_connect
+
+	# ok, lets check again
+	check_net_status
+	if [ "$net_status" != "OK" ]; then
+		echo " !! No network connection! Nothing to do, shutting down..."
+		exit
+	fi
+fi
+
+####################################################################
 # if there's a URL in the config, lets see if it actually exists
 # if it doesn't, the program will shut down gracefully
 ####################################################################
@@ -52,11 +70,6 @@ get_internal_ip
 
 echo "$STRING_GET_MAC_AND_WIFI"
 get_network_info
-
-if [ "$wifi_info" == "" ]; then # no wifi connection, let's see if we can auto connect to one
-	echo "$STRING_TRY_TO_CONNECT"
-	try_to_connect
-fi
 
 # traceroute=`which traceroute` <-- disabled since its TOO DAMN SLOW!
 if [ -n "$traceroute" ]; then
