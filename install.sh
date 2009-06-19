@@ -24,7 +24,7 @@ separator="---------------------------------------------------------------------
 
 	# define language
 	echo -e $separator
-	echo -n " -> Set default language for Prey (en/es) [en] "
+	echo -n " -> Set default language for Prey (en/es/sv) [en] "
 	read LANGUAGE
 	if [ "$LANGUAGE" == "" ]; then
 		echo " -- Defaulting to Prey in english..."
