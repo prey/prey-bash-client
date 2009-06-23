@@ -1,6 +1,6 @@
 #!/bin/bash
 ####################################################################
-# PREY Darwin (Mac) Functions - by Tomas Pollak (bootlog.org)
+# PREY Alert Module Darwin (Mac) Functions - by Tomas Pollak (bootlog.org)
 # URL : http://prey.bootlog.org
 # License: GPLv3
 ####################################################################
@@ -17,16 +17,16 @@ function change_wallpaper {
 
 # Mac alert msg code by Matias Halles (http://halles.cl)
 function alert_user {
-	alertvoice='Zarvox'
+	alert_voice='Zarvox'
 	# can be Agnes, Kathy, Princess, Vicki, Victoria, Bruce, Fred, Junior, Ralph, Albert, Bad News, Bahh, Bells, Boing, Bubbles, Cellos , Deranged, Good News, Hysterical, Pipe Organ, Trinoids, Whisper, Zarvox
 
-	osascript -e "say \"$alertmsg\" using \"$alertvoice\"" &
+	osascript -e "say \"$alert_message\" using \"$alert_voice\"" &
 
 # this must go in column 0
 osascript<<END
 	tell application "Finder"
 		activate #Le da el foco al Finder
-		set dd to display dialog "\n$alertmsg\n" buttons {"OK, I'm afraid."} default button 1 with icon caution #Despliega el diálogo.
+		set dd to display dialog "\n$alert_message\n" buttons {"OK, I'm afraid."} default button 1 with icon caution #Despliega el diálogo.
 	end tell
 END
 }

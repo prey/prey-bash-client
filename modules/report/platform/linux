@@ -1,6 +1,6 @@
 #!/bin/bash
 ####################################################################
-# PREY Linux Functions - by Tomas Pollak (bootlog.org)
+# PREY Report Module Linux Functions - by Tomas Pollak (bootlog.org)
 # URL : http://prey.bootlog.org
 # License: GPLv3
 ####################################################################
@@ -9,7 +9,9 @@ function get_network_info {
 	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
 	routes=`route -n`
 	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
-	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+	if [ ! -n "$wifi_info" ]; then
+		wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+	fi
 }
 
 function get_images {

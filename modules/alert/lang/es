@@ -6,6 +6,6 @@
 # License: GPLv3
 ####################################################################
 
-	STRING_CHANGE_WALLPAPER=" -- Cambiando el fondo de pantalla para alertar a la persona y a los que esten cerca..."
-	STRING_SHOW_ALERT=" -- Mostrando nuestro mensaje de alerta..."
+STRING_CHANGE_WALLPAPER=" -- Cambiando el fondo de pantalla para alertar a la persona y a los que esten cerca..."
+STRING_SHOW_ALERT=" -- Mostrando nuestro mensaje de alerta..."
 

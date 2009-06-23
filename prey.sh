@@ -27,13 +27,13 @@ echo -e "\E[36m$STRING_START\E[0m"
 ####################################################################
 
 check_net_status
-if [ $net_status == 0 ]; then
+if [ $connected == 0 ]; then
 	echo "$STRING_TRY_TO_CONNECT"
 	try_to_connect
 
 	# ok, lets check again
 	check_net_status
-	if [ $net_status == 0 ]; then
+	if [ $connected == 0 ]; then
 		echo "$STRING_NO_CONNECT_TO_WIFI"
 		exit
 	fi
@@ -48,9 +48,9 @@ if [ -n "$url" ]; then
 	echo "$STRING_CHECK_URL"
 	check_status
 
-	if [ $activate == 1 ]; then
+	if [ $status == '200' ]; then
 		echo -e "$STRING_PROBLEM"
-		parse_response
+		process_response
 	else
 		echo -e "$STRING_NO_PROBLEM"
 		exit
@@ -62,27 +62,7 @@ fi
 # for now lets run every module with an executable run.sh script
 ####################################################################
 
-for module_path in `find modules -maxdepth 1 -mindepth 1 -type d`; do
-
-	if [ -x "$module_path/run.sh" ]; then
-
-		# if there's a language file, lets run it
-		if [ -f $module_path/lang/$lang ]; then
-		. $module_path/lang/$lang
-		elif [ -f $module_path/lang/$lang ];
-		. $module_path/lang/en
-		fi
-
-		# if there's a config file, lets run it as well
-		if [ -f $module_path/config ]; then
-			. $module_path/config
-		fi
-
-		# now, go!
-		. $module_path/run.sh
-	fi
-
-done
-
-# this is the end, my only friend
+echo -e " -- Running active modules..."
+run_active_modules
 echo -e "$STRING_DONE"
+

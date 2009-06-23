@@ -1,17 +1,17 @@
 #!/bin/bash
 ####################################################################
-# PREY Configuration File - by Tomas Pollak (bootlog.org)
+# PREY Alert Module Configuration File - by Tomas Pollak (bootlog.org)
 # URL : http://prey.bootlog.org
 # License: GPLv3
 ####################################################################
 
-# change wallpaper to alert nearby users -- EXPERIMENTAL!
-alertwallpaper=n
-wallpaper="alerts/prey-wallpaper-$lang.png"
-
 # alert the user with a message, y or n
-alertuser=n
-alertmsg="This is a stolen computer, and has been marked by Prey.
-Please contact immediately $emailtarget to clarify the situation.
-Otherwise you'll be notified to the police. YOU HAVE BEEN WARNED!"
+alert_user=n
+alert_message='This is a stolen computer, and has been marked by Prey.
+You should contact us immediately at http://preyproject.com to clarify the situation.
+Otherwise you"ll be notified to the police. Time is running: YOU HAVE BEEN WARNED!'
+
+# change wallpaper to alert nearby users -- EXPERIMENTAL!
+change_wallpaper=n
+wallpaper="$module_path/lib/prey-wallpaper-$lang.png"
 

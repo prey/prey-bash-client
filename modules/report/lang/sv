@@ -10,7 +10,7 @@ if [ -n "$uptime" ]; then # prey is already running
 
 # email template
 
-	emailtext="
+	report_body="
 	Goda nyheter min vän, det verkar som om vi hittat din dator!
 
 	Allmän status (upptid)
@@ -19,28 +19,28 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	Anslutningsinformation
 	--------------------------------------------------------------------
-	Publikt IP: $publico -- Internt IP: $interno.
-	-> Ungefärlig geografisk lokation: http://www.maxmind.com/app/locate_ip?ips=$publico
-	-> IP Whois: http://whois.domaintools.com/$publico
+	Publikt IP: $public_ip -- Internt IP: $internal_ip.
+	-> Ungefärlig geografisk lokation: http://www.maxmind.com/app/locate_ip?ips=$public_ip
+	-> IP Whois: http://whois.domaintools.com/$public_ip
 
 	Route information
 	--------------------------------------------------------------------
 	MAC Adress: $mac. -- Gateway: $routes
 
 	Traceroute:
-	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico
+	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$public_ip
 
 	Information om trådlös anslutning
 	--------------------------------------------------------------------
 	$wifi_info
 
-	Under de senaste $minutos minuterna har följande filer modifierats 
+	Under de senaste $modified_files_time minuterna har följande filer modifierats 
 	--------------------------------------------------------------------
-	$archivos
+	$modified_files
 
 	Processer som kör
 	--------------------------------------------------------------------
-	$programas
+	$running_programs
 
 	Öppna anslutningar
 	--------------------------------------------------------------------
@@ -51,7 +51,7 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	--
 	Din ödmjuke betjänt, Prey
-	För uppdateringar besök http://prey.bootlog.org
+	För uppdateringar besök http://preyproject.com
 	"
 
 else 

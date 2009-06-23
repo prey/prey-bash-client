@@ -5,9 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-. platform/base
-. platform/$os
-
 echo "$STRING_GET_IP"
 get_public_ip
 

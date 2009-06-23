@@ -10,7 +10,7 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	# email template
 
-	emailtext="
+	report_body="
 	Buenas noticias amigo mio, al parecer lo encontramos!
 
 	Estado general del computador (uptime)
@@ -19,28 +19,28 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	Datos de conexion
 	--------------------------------------------------------------------
-	IP publico: $publico -- IP interno: $interno.
-	-> Lugar aprox.: http://www.maxmind.com/app/locate_ip?ips=$publico
-	-> IP Whois: http://whois.domaintools.com/$publico
+	IP publico: $public_ip -- IP interno: $internal_ip
+	-> Lugar aprox.: http://www.maxmind.com/app/locate_ip?ips=$public_ip
+	-> IP Whois: http://whois.domaintools.com/$public_ip
 
 	Enrutado de red
 	--------------------------------------------------------------------
 	Direccion MAC: $mac. -- Gateway: $routes
 
 	Traceroute:
-	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico
+	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$public_ip
 
 	Datos sobre red WiFi
 	--------------------------------------------------------------------
 	$wifi_info
 
-	En los ultimos $minutos minutos se han modificado estos archivos
+	En los ultimos $modified_files_time minutos se han modificado estos archivos
 	--------------------------------------------------------------------
-	$archivos
+	$modified_files
 
 	Programas en ejecucion
 	--------------------------------------------------------------------
-	$programas
+	$running_programs
 
 	Conexiones abiertas
 	--------------------------------------------------------------------
@@ -51,7 +51,7 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	--
 	Tu fiel servidor, Prey
-	Para actualizaciones visita http://prey.bootlog.org
+	Para actualizaciones visita http://preyproject.com
 	"
 
 else 

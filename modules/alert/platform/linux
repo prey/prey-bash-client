@@ -1,6 +1,6 @@
 #!/bin/bash
 ####################################################################
-# PREY Linux Functions - by Tomas Pollak (bootlog.org)
+# PREY Alert Module Linux Functions - by Tomas Pollak (bootlog.org)
 # URL : http://prey.bootlog.org
 # License: GPLv3
 ####################################################################
@@ -43,11 +43,11 @@ function alert_user {
 		# zenity --info --text "Obtuvimos la informacion"
 
 		 # mejor, mensaje de error!
-		$zenity --error --text "$alertmsg"
+		$zenity --error --text "$alert_message"
 
 	elif [ -n "$kdialog" ]; then #untested!
 
-		$kdialog --error "$alertmsg"
+		$kdialog --error "$alert_message"
 
 	fi
 }

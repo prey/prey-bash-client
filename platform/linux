@@ -24,8 +24,6 @@ function try_to_connect {
 	if [[ ! -z $essid && ! -z $dev ]]; then
 		iwconfig $dev essid $essid
 		wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
-	else
-		echo "$STRING_NO_CONNECT_TO_WIFI"
 	fi
 }
 

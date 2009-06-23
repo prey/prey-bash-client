@@ -9,7 +9,9 @@ function get_network_info {
 	airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 	routes=`netstat -rn | grep default | cut -c20-35`
 	mac=`arp -n $routes | cut -f4 -d' '`
-	wifi_info=`$airport -I | grep -v "Off"`
+	if [ ! -n "$wifi_info" ]; then
+		wifi_info=`$airport -I | grep -v "Off"`
+	fi
 }
 
 function get_images {
@@ -27,5 +29,5 @@ function get_images {
 	fi
 
 	# muy bien, veamos si el tarro puede sacar una imagen con la webcam
-	./isightcapture $picture
+	$module_path/lib/isightcapture $picture
 }

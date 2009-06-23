@@ -11,18 +11,110 @@ getter='curl -s'
 function check_net_status {
 	# first line checks for LAN access, second one for web access. change it if you're using Prey in a closed environment.
 	# net_status=`ping -q -w 1 -c 1 \`ip r | grep default | cut -d ' ' -f 3\` > /dev/null && echo 1 || echo 0`
-	net_status=`ping -c 1 -t 1 www.google.com > /dev/null && echo 1 || echo 0`
+	connected=`ping -q -w 1 -c 1 www.google.com > /dev/null && echo 1 || echo 0`
 }
 
 # we could eventually use a different method for status checking
 function check_status {
-	status=`$getter -I $url | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'`
-	if [ $status == '200' ]; then
-		activate=1
-	fi
+	headers=`$getter -I $url`
+	status=`echo $headers | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'`
 }
 
 # this is where the magic will happen. :)
-function parse_response {
+# some ideas:
+	# if its a shell script, run it and post back the response
+	# if its a zip file, unzip it in modules and run the active modules (the executable ones)
+	# if its a xml/json file, parse it and assign config values correspondingly
+function process_response {
 	response=`$getter $url`
+	if [[ "$response" =~ "xml" ]]; then
+		echo ' -- Got XML. Parsing...'
+		parse_xml
+	elif [[ "$response" =~ "#!/bin/bash" ]]; then
+		echo ' -- Got a Bash Script! Running...'
+		run_script
+	elif [ `grep 'octet-stream' $headers > /dev/null && echo 1` == 1 ]; then
+		echo ' -- Got a ZIP file! Lets see whats in there...'
+		process_zip
+	fi
+}
+
+# REALLY untested. function expects a <modules> section in the xml and activates de modules as requested
+
+function parse_xml {
+
+	awk -F"[<>]" ' /<modules>/,/<\/modules>/' res.xml | while read line; do
+
+		value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
+		if [ "$line" == "$value" ]; then
+			if [[ "$line" =~ "active" ]]; then
+				if [[ "$line" =~ "true" ]]; then
+					echo " -- $module active!"
+					if [ ! -x modules/$module/run.sh ]; then
+						chmod +x modules/$module/run.sh
+					fi
+				else
+					module=''
+				fi 
+			else
+				module=`echo $line | sed 's/[^a-zA-Z0-9]//g'`
+			fi
+		else
+			if [[ -n "$module" && -f modules/$module/config ]]; then # module is active and has configuration
+				param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/g'`
+				sed -i -e "s/$param='.*'/$param='$value'/" ./modules/$module/config 
+			fi
+		fi
+
+	done
+
+}
+
+function run_script {
+	script=/tmp/script.sh
+	echo $response > $script
+	chmod +x $script
+	output=`$script`
+}
+
+function process_zip {
+	echo ' -- Processing ZIP... (yeah right!)'
+}
+
+function run_active_modules {
+
+	for module_path in `find modules -maxdepth 1 -mindepth 1 -type d`; do
+
+		if [ -x ./$module_path/run.sh ]; then
+
+			echo -e " -- Running $module_path!"
+
+			# if there's a language file, lets run it
+			if [ -f $module_path/lang/$lang ]; then
+			. $module_path/lang/$lang
+			elif [ -f $module_path/lang/$lang ]; then
+			. $module_path/lang/en
+			fi
+
+			# if there's a config file, lets run it as well
+			if [ -f $module_path/config ]; then
+				. $module_path/config
+			fi
+
+			# lets load the base functions for the module
+			if [ -f $module_path/platform/base ]; then
+				. $module_path/platform/base
+			fi
+
+			# and the OS-specific if there are
+			if [ -f $module_path/platform/$os ]; then
+				. $module_path/platform/$os
+			fi
+
+			# now, go!
+			. $module_path/run.sh
+		fi
+
+	done
+
 }

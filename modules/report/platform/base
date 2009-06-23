@@ -6,12 +6,12 @@
 ####################################################################
 
 function get_public_ip {
-	publico=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
+	public_ip=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
 }
 
 function get_internal_ip {
 	# works in mac as well as linux (linux just prints an extra "addr:")
-	interno=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print $2}'`
+	internal_ip=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print $2}'`
 }
 
 function trace_route {
@@ -20,12 +20,12 @@ function trace_route {
 
 function get_uptime_and_processes {
 	uptime=`uptime`
-	programas=`ps ux`
+	running_programs=`ps ux`
 }
 
 function get_modified_files {
 	# no incluimos los archivos carpetas ocultas ni los archivos weones de Mac OS
-	archivos=`find $modified_files_path \( ! -regex '.*/\..*/..*' \) -type f -mmin -$modified_files_time 2>&1`
+	modified_files=`find $modified_files_path \( ! -regex '.*/\..*/..*' \) -type f -mmin -$modified_files_time 2>&1`
 	# archivos=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos`
 }
 
@@ -40,13 +40,13 @@ function compress_screenshot {
 }
 
 function write_email {
-	. lang/$lang
+	. $module_path/lang/$lang
 }
 
 function send_email {
 	complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
-	echo "$emailtext" > msg.tmp
-	emailstatus=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
+	echo "$report_body" > msg.tmp
+	emailstatus=`$module_path/lib/sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
 
 	if [[ "$emailstatus" =~ "ERROR" ]]; then
 		echo -e "$STRING_ERROR_EMAIL"

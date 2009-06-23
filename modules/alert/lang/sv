@@ -6,6 +6,6 @@
 # License: GPLv3
 ####################################################################
 
-	STRING_CHANGE_WALLPAPER=" -- Ändrar bakgrundsbild för att göra tjuven och folk runt omkring uppmärksamma..."
-	STRING_SHOW_ALERT=" -- Visar tjuven vårt varningsmeddelande..."
+STRING_CHANGE_WALLPAPER=" -- Ändrar bakgrundsbild för att göra tjuven och folk runt omkring uppmärksamma..."
+STRING_SHOW_ALERT=" -- Visar tjuven vårt varningsmeddelande..."
 
