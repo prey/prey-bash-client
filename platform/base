@@ -10,8 +10,8 @@ getter='curl -s'
 # returns if we have have network access, otherwise 0
 function check_net_status {
 	# first line checks for LAN access, second one for web access. change it if you're using Prey in a closed environment.
-	# net_status=`ping -q -w 1 -c 1 \`ip r | grep default | cut -d ' ' -f 3\` > /dev/null && echo 1 || echo 0`
-	connected=`ping -q -w 1 -c 1 www.google.com > /dev/null && echo 1 || echo 0`
+	connected=`ping -q -w 1 -c 1 \`ip r | grep default | cut -d ' ' -f 3\` &> /dev/null && echo 1 || echo 0`
+	# connected=`ping -q -w 1 -c 1 www.google.com &> /dev/null && echo 1 || echo 0`
 }
 
 # we could eventually use a different method for status checking
@@ -43,7 +43,7 @@ function process_response {
 
 function parse_xml {
 
-	awk -F"[<>]" ' /<modules>/,/<\/modules>/' res.xml | while read line; do
+	echo $response | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | while read line; do
 
 		value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 		if [ "$line" == "$value" ]; then

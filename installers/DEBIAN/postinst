@@ -76,14 +76,16 @@ case "$1" in
 		TIMING=10
 	fi
 
-	# echo -e " -- Ok, setting up configuration values..."
+	# base prey stuff
 	sed -i -e "s/lang='.*'/lang='$LANGUAGE'/" $CONFIG_FILE
-	sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $CONFIG_FILE
 	sed -i -e "s/url='.*'/url='$URL'/" $CONFIG_FILE
 	sed -i -e "s/-SLASH-/\//g" $CONFIG_FILE # resolve the slash hack
-	sed -i -e "s/smtp_server='.*'/smtp_server='$SMTP_SERVER'/" $CONFIG_FILE
-	sed -i -e "s/smtp_username='.*'/smtp_username='$SMTP_USER'/" $CONFIG_FILE
-	sed -i -e "s/smtp_password='.*'/smtp_password='$SMTP_PASS'/" $CONFIG_FILE
+
+	# report module stuff
+	sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $REPORT_CONFIG_FILE
+	sed -i -e "s/smtp_server='.*'/smtp_server='$SMTP_SERVER'/" $REPORT_CONFIG_FILE
+	sed -i -e "s/smtp_username='.*'/smtp_username='$SMTP_USER'/" $REPORT_CONFIG_FILE
+	sed -i -e "s/smtp_password='.*'/smtp_password='$SMTP_PASS'/" $REPORT_CONFIG_FILE
 
 	# echo -e "$ADDING_CRONTAB"
 	# well also remove any line invoking prey if it was already there, just to make sure
