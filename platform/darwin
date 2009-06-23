@@ -21,11 +21,7 @@ function try_to_connect {
 
 		# now lets connect and get the new info
 		networksetup -setairportnetwork $essid 2>/dev/null
-		wifi_info=`$airport -I`
-
-	else
-
-		echo "$STRING_NO_CONNECT_TO_WIFI"
+		wifi_info=`$airport -I | grep -v "Off"`
 
 	fi
 }

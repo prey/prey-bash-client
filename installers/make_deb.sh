@@ -13,6 +13,10 @@ cp -r ../lang ./build/tmp/prey/usr/share/prey/
 cp -r ../platform ./build/tmp/prey/usr/share/prey/
 cp -r ../modules ./build/tmp/prey/usr/share/prey/
 
+cp ../CHANGELOG ./build/tmp/prey/usr/share/prey/
+cp ../LICENSE ./build/tmp/prey/usr/share/prey/
+cp ../README ./build/tmp/prey/usr/share/prey/
+
 # Make the deb package
 dpkg-deb -b ./build/tmp/prey ./build
 
