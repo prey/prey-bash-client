@@ -27,13 +27,13 @@ echo -e "\E[36m$STRING_START\E[0m"
 ####################################################################
 
 check_net_status
-if [ "$net_status" == 0 ]; then
+if [ $net_status == 0 ]; then
 	echo "$STRING_TRY_TO_CONNECT"
 	try_to_connect
 
 	# ok, lets check again
 	check_net_status
-	if [ "$net_status" != "OK" ]; then
+	if [ $net_status == 0 ]; then
 		echo " !! No network connection! Nothing to do, shutting down..."
 		exit
 	fi
