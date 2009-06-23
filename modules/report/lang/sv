@@ -1,0 +1,74 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# Swedish lang file v 0.1 - by Dan Sellberg (dan@dkcp.com)
+# URL : http://prey.bootlog.org
+# License: GPLv3
+####################################################################
+
+if [ -n "$uptime" ]; then # prey is already running
+
+# email template
+
+	emailtext="
+	Goda nyheter min vän, det verkar som om vi hittat din dator!
+
+	Allmän status (upptid)
+	--------------------------------------------------------------------
+	$uptime
+
+	Anslutningsinformation
+	--------------------------------------------------------------------
+	Publikt IP: $publico -- Internt IP: $interno.
+	-> Ungefärlig geografisk lokation: http://www.maxmind.com/app/locate_ip?ips=$publico
+	-> IP Whois: http://whois.domaintools.com/$publico
+
+	Route information
+	--------------------------------------------------------------------
+	MAC Adress: $mac. -- Gateway: $routes
+
+	Traceroute:
+	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico
+
+	Information om trådlös anslutning
+	--------------------------------------------------------------------
+	$wifi_info
+
+	Under de senaste $minutos minuterna har följande filer modifierats 
+	--------------------------------------------------------------------
+	$archivos
+
+	Processer som kör
+	--------------------------------------------------------------------
+	$programas
+
+	Öppna anslutningar
+	--------------------------------------------------------------------
+	$connections
+
+
+	Gå och fånga tjuven nu!
+
+	--
+	Din ödmjuke betjänt, Prey
+	För uppdateringar besök http://prey.bootlog.org
+	"
+
+else 
+
+	STRING_GET_IP=" -- Hämtar publik IP adress..."
+	STRING_GET_LAN_IP=" -- Hämtar privat LAN IP adress..."
+	STRING_GET_MAC_AND_WIFI=" -- Hämtar MAC address, routing och trådlös info..."
+	STRING_TRACE=" -- Spårar vår route till internet..."
+	STRING_UPTIME_AND_PROCESS=" -- Hämtar datorns upptid och en lista på program som körs..."
+	STRING_MODIFIED_FILES=" -- Hämtar lista på nyligen modifierade filer..."
+	STRING_ACTIVE_CONNECTIONS=" -- Hämtar lista över aktiva anslutningar..."
+	STRING_WRITE_EMAIL=" -- Skapar epostmeddelande..."
+	STRING_TAKE_IMAGE=" -- Tar skärmbild och foto av tjuven..."
+	STRING_TAKE_IMAGE_DONE=" -- Klar med bilderna!"
+	STRING_SENDING_EMAIL=" -- Skickar email..."
+	STRING_ERROR_EMAIL="\n\033[1m !! Det gick inte att skicka epost. Är du säker på att inställningarna är korrekta?
+    Om du använder Gmail, testa att ta bort '@gmail.com' i användarnamnet för SMTP i Preys konfigurationsfil.\033[0m\n"
+	STRING_REMOVE_EVIDENCE=" -- Tar bort alla spår av bevis..."
+
+fi

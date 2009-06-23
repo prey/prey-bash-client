@@ -5,6 +5,8 @@
 # License: GPLv3
 ####################################################################
 
+getter='curl -s'
+
 # returns if we have have network access, otherwise 0
 function check_net_status {
 	# first line checks for LAN access, second one for web access. change it if you're using Prey in a closed environment.
@@ -12,60 +14,15 @@ function check_net_status {
 	net_status=`ping -c 1 -t 1 www.google.com > /dev/null && echo 1 || echo 0`
 }
 
-function get_public_ip {
-	publico=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
-}
-
-function get_internal_ip {
-	# works in mac as well as linux (linux just prints an extra "addr:")
-	interno=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print $2}'`
-}
-
-function trace_route {
-	complete_trace=`$traceroute -q1 www.google.com 2>&1`
-}
-
-function get_uptime_and_processes {
-	uptime=`uptime`
-	programas=`ps ux`
-}
-
-function get_modified_files {
-	# no incluimos los archivos carpetas ocultas ni los archivos weones de Mac OS
-	archivos=`find $ruta_archivos \( ! -regex '.*/\..*/..*' \) -type f -mmin -$minutos 2>&1`
-	# archivos=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos`
-}
-
-function get_active_connections {
-	connections=`netstat -a | grep -i established`
-}
-
-function compress_screenshot {
-	echo " -- Compressing screenshot..."
-	tar zcf $screenshot.tar.gz $screenshot
-	screenshot=$screenshot.tar.gz
-}
-
-function write_email {
-	. lang/$lang
-}
-
-function send_email {
-	complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
-	echo "$emailtext" > msg.tmp
-	emailstatus=`./sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
-
-	if [[ "$emailstatus" =~ "ERROR" ]]; then
-		echo -e "$STRING_ERROR_EMAIL"
+# we could eventually use a different method for status checking
+function check_status {
+	status=`$getter -I $url | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'`
+	if [ $status == '200' ]; then
+		activate=1
 	fi
 }
 
-function remove_evidence {
-	if [ -e "$picture" ]; then
-		rm $picture
-	fi
-	if [ -e "$screenshot" ]; then
-		rm $screenshot
-	fi
-	rm msg.tmp
+# this is where the magic will happen. :)
+function parse_response {
+	response=`$getter $url`
 }

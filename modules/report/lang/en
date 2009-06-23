@@ -1,0 +1,72 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# English lang file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# URL : http://prey.bootlog.org
+# License: GPLv3
+####################################################################
+
+if [ -n "$uptime" ]; then # prey is already running
+
+	emailtext="
+	Good news my friend, it seems we found it!
+
+	General state of computer (uptime)
+	--------------------------------------------------------------------
+	$uptime
+
+	Connection information
+	--------------------------------------------------------------------
+	Public IP: $publico -- Internal IP: $interno.
+	-> Approx. location: http://www.maxmind.com/app/locate_ip?ips=$publico
+	-> IP Whois: http://whois.domaintools.com/$publico
+
+	Route information
+	--------------------------------------------------------------------
+	MAC Address: $mac. -- Gateway: $routes
+
+	Traceroute:
+	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico
+
+	WiFi information
+	--------------------------------------------------------------------
+	$wifi_info
+
+	In the last $minutos minutes the following files have been modified
+	--------------------------------------------------------------------
+	$archivos
+
+	Running programs
+	--------------------------------------------------------------------
+	$programas
+
+	Open connections
+	--------------------------------------------------------------------
+	$connections
+
+
+	Now, go catch the bastard!
+
+	--
+	Your humble servant, Prey
+	For updates visit http://prey.bootlog.org
+	"
+
+else 
+
+	STRING_GET_IP=" -- Getting public IP address..."
+	STRING_GET_LAN_IP=" -- Getting private LAN IP address..."
+	STRING_GET_MAC_AND_WIFI=" -- Getting MAC address, routing and Wifi info..."
+	STRING_TRACE=" -- Tracing our complete route to the Internet..."
+	STRING_UPTIME_AND_PROCESS=" -- Getting computer uptime and a list of running programs..."
+	STRING_MODIFIED_FILES=" -- Getting a list of recently modified files..."
+	STRING_ACTIVE_CONNECTIONS=" -- Getting list of current active connections..."
+	STRING_WRITE_EMAIL=" -- Writing our email..."
+	STRING_TAKE_IMAGE=" -- Taking a screenshot and a picture of the impostor..."
+	STRING_TAKE_IMAGE_DONE=" -- Done with the images!"
+	STRING_SENDING_EMAIL=" -- Sending the email..."
+	STRING_ERROR_EMAIL="\n\033[1m !! There was a problem sending the email. Are you sure it was setup correctly?
+	If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file.\033[0m\n"
+	STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
+
+fi

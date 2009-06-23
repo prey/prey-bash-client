@@ -6,58 +6,9 @@
 # License: GPLv3
 ####################################################################
 
-if [ -n "$uptime" ]; then # prey is already running
-
-# email template
-
-emailtext="
-Buenas noticias amigo mio, al parecer lo encontramos!
-
-Estado general del computador (uptime)
---------------------------------------------------------------------
-$uptime
-
-Datos de conexion
---------------------------------------------------------------------
-IP publico: $publico -- IP interno: $interno.
--> Lugar aprox.: http://www.maxmind.com/app/locate_ip?ips=$publico
--> IP Whois: http://whois.domaintools.com/$publico
-
-Enrutado de red
---------------------------------------------------------------------
-Direccion MAC: $mac. -- Gateway: $routes
-
-Traceroute:
--> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico
-
-Datos sobre red WiFi
---------------------------------------------------------------------
-$wifi_info
-
-En los ultimos $minutos minutos se han modificado estos archivos
---------------------------------------------------------------------
-$archivos
-
-Programas en ejecucion
---------------------------------------------------------------------
-$programas
-
-Conexiones abiertas
---------------------------------------------------------------------
-$connections
-
-
-Ahora a agarrar al maldito!
-
---
-Tu fiel servidor, Prey
-Para actualizaciones visita http://prey.bootlog.org
-"
-
-elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
+if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
 	# installer messages
-	# TODO: translate this to spanish
 
 	HELLO_IN_LANGUAGE=" -- Prey hablara espanol entonces!"
 	WHERE_TO_INSTALL_PREY=" -> Donde quieres que instalemos Prey? [$DEFAULT_INSTALLPATH] "
@@ -95,34 +46,14 @@ elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 \t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
  -- Para actualizaciones recuerda visitar http://prey.bootlog.org!\033[0m\n\n"
 
-else
-
-	# installer messages
+else # prey status messages
 
 	STRING_START="\n ### PREY $version despliega sus alas!\n"
+	STRING_TRY_TO_CONNECT=" -- Intentando conectarnos a la primera red abierta disponible..."
+	STRING_NO_CONNECT_TO_WIFI=" -- No encontramos la forma de conectarnos a una red Wifi abierta!"
 	STRING_CHECK_URL=" -- Revisando URL..."
 	STRING_PROBLEM=" -- OUCH!!"
 	STRING_NO_PROBLEM=" -- Nada de que preocuparse. :)\n"
-	STRING_GET_IP=" -- Obteniendo la direccion IP publica..."
-	STRING_GET_LAN_IP=" -- Obteniendo la direccion IP privada de la LAN..."
-	STRING_GET_MAC_AND_WIFI=" -- Obteniendo direccion MAC, tabla de rutas e informacion de la Red Wifi..."
-	STRING_TRY_TO_CONNECT=" -- Intentando conectarnos a la primera red abierta disponible..."
-	STRING_NO_CONNECT_TO_WIFI=" -- No encontramos la forma de conectarnos a una red Wifi abierta!"
-	STRING_TRACE=" -- Rastreando la ruta completa hacia Internet..."
-	STRING_UPTIME_AND_PROCESS=" -- Obteniendo el uptime y la lista de programas en ejecucion..."
-	STRING_MODIFIED_FILES=" -- Obteniendo una lista de los archivos recientemente modificados..."
-	STRING_ACTIVE_CONNECTIONS=" -- Obteniendo la lista de las conecciones activas..."
-	STRING_WRITE_EMAIL=" -- Redactando el correo electronico..."
-	STRING_TAKE_IMAGE=" -- Tomando una captura de pantalla y una foto de la persona..."
-	STRING_TAKE_IMAGE_DONE=" -- Finalizando la captura de imagenes..."
-	STRING_SENDING_EMAIL=" -- Enviando el correo electronico..."
-	STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
-    Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion.\033[0m\n"
-	STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
-	STRING_CHANGE_WALLPAPER=" -- Cambiando el fondo de pantalla para alertar a la persona y a los que esten cerca..."
-	STRING_SHOW_ALERT=" -- Mostrando nuestro mensaje de alerta..."
-	STRING_XKILL=" -- Intentando sacarlo de la sesion X!"
-	STRING_MACKILL="Como se supone que realizamos esto en Mac OS?"
 	STRING_DONE=" -- Todo listo! Suerte con la caceria! :)\n"
 
 fi

@@ -1,13 +1,10 @@
 #!/bin/bash
 ####################################################################
-# PREY Configuration File - by Tomas Pollak (bootlog.org)
+# Prey Alert - by Tomas Pollak (http://bootlog.org)
 # URL : http://prey.bootlog.org
 # License: GPLv3
 ####################################################################
 
-# language, en (english) or es (espanol)
-lang='en'
-
-# verification URL, if left empty Prey will always gather and send the information
-url=''
+STRING_CHANGE_WALLPAPER=" -- Changing the wallpaper to alert him and nearby users..."
+STRING_SHOW_ALERT=" -- Showing the guy our alert message..."
 

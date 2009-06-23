@@ -1,0 +1,70 @@
+#!/bin/bash
+####################################################################
+# PREY Linux Functions - by Tomas Pollak (bootlog.org)
+# URL : http://prey.bootlog.org
+# License: GPLv3
+####################################################################
+
+function get_network_info {
+	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
+	routes=`route -n`
+	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
+	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+}
+
+function get_images {
+	# we may need to know who the logged user is
+	logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
+
+	# si tenemos streamer, saquemos la foto
+	streamer=`which streamer`
+	if [ -n "$streamer" ]; then
+
+		$streamer -o /tmp/imagen.jpeg &> /dev/null # streamer necesita que sea JPEG (con la E) para detectar el formato
+
+		if [ -e '/tmp/imagen.jpeg' ]; then
+
+			mv /tmp/imagen.jpeg $picture
+
+		else # by Vanscot, http://www.hometown.cl/ --> some webcams are unable to take JPGs so we grab a PPM
+
+			$streamer -o /tmp/imagen.ppm &> /dev/null
+			if [ -e '/tmp/imagen.ppm' ]; then
+
+				$convert=`which convert`
+				if [ -n "$convert" ]; then # si tenemos imagemagick instalado podemos convertirla a JPG
+					$convert /tmp/imagen.ppm $picture > /dev/null
+				else # trataremos de enviarla asi nomas
+					picture='/tmp/imagen.ppm'
+				fi
+
+			fi
+
+		fi
+
+	fi
+
+	scrot=`which scrot` # scrot es mas liviano y mas rapido
+	import=`which import` # viene con imagemagick, mas obeso
+
+	if [ -n "$scrot" ]; then
+
+		if [ `whoami` == 'root' ]; then
+			DISPLAY=:0 su $logged_user -c "$scrot $screenshot"
+		else
+			$scrot $screenshot
+		fi
+
+	elif [ -n "$import" ]; then
+
+		args="-window root -display :0"
+
+		if [ `whoami` == 'root' ]; then # friggin su command, cannot pass args with "-" since it gets confused
+			su $logged_user -c "$import $args $screenshot"
+		else
+			$import $args $screenshot
+		fi
+
+	fi
+}
+

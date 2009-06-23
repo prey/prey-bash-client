@@ -1,0 +1,74 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# Spanish language file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# URL : http://prey.bootlog.org
+# License: GPLv3
+####################################################################
+
+if [ -n "$uptime" ]; then # prey is already running
+
+	# email template
+
+	emailtext="
+	Buenas noticias amigo mio, al parecer lo encontramos!
+
+	Estado general del computador (uptime)
+	--------------------------------------------------------------------
+	$uptime
+
+	Datos de conexion
+	--------------------------------------------------------------------
+	IP publico: $publico -- IP interno: $interno.
+	-> Lugar aprox.: http://www.maxmind.com/app/locate_ip?ips=$publico
+	-> IP Whois: http://whois.domaintools.com/$publico
+
+	Enrutado de red
+	--------------------------------------------------------------------
+	Direccion MAC: $mac. -- Gateway: $routes
+
+	Traceroute:
+	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico
+
+	Datos sobre red WiFi
+	--------------------------------------------------------------------
+	$wifi_info
+
+	En los ultimos $minutos minutos se han modificado estos archivos
+	--------------------------------------------------------------------
+	$archivos
+
+	Programas en ejecucion
+	--------------------------------------------------------------------
+	$programas
+
+	Conexiones abiertas
+	--------------------------------------------------------------------
+	$connections
+
+
+	Ahora a agarrar al maldito!
+
+	--
+	Tu fiel servidor, Prey
+	Para actualizaciones visita http://prey.bootlog.org
+	"
+
+else 
+
+	STRING_GET_IP=" -- Obteniendo la direccion IP publica..."
+	STRING_GET_LAN_IP=" -- Obteniendo la direccion IP privada de la LAN..."
+	STRING_GET_MAC_AND_WIFI=" -- Obteniendo direccion MAC, tabla de rutas e informacion de la Red Wifi..."
+	STRING_TRACE=" -- Rastreando la ruta completa hacia Internet..."
+	STRING_UPTIME_AND_PROCESS=" -- Obteniendo el uptime y la lista de programas en ejecucion..."
+	STRING_MODIFIED_FILES=" -- Obteniendo una lista de los archivos recientemente modificados..."
+	STRING_ACTIVE_CONNECTIONS=" -- Obteniendo la lista de las conecciones activas..."
+	STRING_WRITE_EMAIL=" -- Redactando el correo electronico..."
+	STRING_TAKE_IMAGE=" -- Tomando una captura de pantalla y una foto de la persona..."
+	STRING_TAKE_IMAGE_DONE=" -- Finalizando la captura de imagenes..."
+	STRING_SENDING_EMAIL=" -- Enviando el correo electronico..."
+	STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
+    Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion.\033[0m\n"
+	STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
+
+fi
