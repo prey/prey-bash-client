@@ -6,24 +6,36 @@
 ####################################################################
 
 function try_to_connect {
-	# Find device used for wifi.
-	devlist=$(cat /proc/net/wireless | tail --lines=1) 2>/dev/null
-	devleft=${devlist#' '*}
-	devright=${devlist%%':'*}
-	echo $devright | grep "" > /tmp/dev_pure
-	dev=$(cat /tmp/dev_pure)
 
-	# Get a list of open wifi points, and choose one
-	iwlist $dev scan > /tmp/scan_output 2>/dev/null
-	scanone=$(egrep 'ESSID|Encryption' /tmp/scan_output)
-	essidone=${scanone%%"Encryption key:off"*}
-	essidquot=${essidone##*'ESSID:"'}
-	essid=${essidquot%'"'*}
+	if [ `which nm-applet` ]; then
 
-	# lets see if we have a valid device and essid
-	if [[ ! -z $essid && ! -z $dev ]]; then
-		iwconfig $dev essid $essid
-		wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+		killall nm-applet &> /dev/null
+		nm-applet --sm-disable & 2> /dev/null
+		sleep 3
+
+	else
+
+		# Find device used for wifi.
+		devlist=$(cat /proc/net/wireless | tail --lines=1) 2>/dev/null
+		devleft=${devlist#' '*}
+		devright=${devlist%%':'*}
+		echo $devright | grep "" > /tmp/dev_pure
+		dev=$(cat /tmp/dev_pure)
+
+		# Get a list of open wifi points, and choose one
+		iwlist $dev scan > /tmp/scan_output 2>/dev/null
+		scanone=$(egrep 'ESSID|Encryption' /tmp/scan_output)
+		essidone=${scanone%%"Encryption key:off"*}
+		essidquot=${essidone##*'ESSID:"'}
+		essid=${essidquot%'"'*}
+
+		# lets see if we have a valid device and essid
+		if [[ ! -z $essid && ! -z $dev ]]; then
+			iwconfig $dev essid $essid
+			wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+		fi
+
 	fi
+
 }
 
