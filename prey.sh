@@ -34,7 +34,7 @@ if [ $net_status == 0 ]; then
 	# ok, lets check again
 	check_net_status
 	if [ $net_status == 0 ]; then
-		echo " !! No network connection! Nothing to do, shutting down..."
+		echo "$STRING_NO_CONNECT_TO_WIFI"
 		exit
 	fi
 fi
@@ -46,12 +46,11 @@ fi
 
 if [ -n "$url" ]; then
 	echo "$STRING_CHECK_URL"
-	check_url
+	check_status
 
-	# ok, if the config actually contains something, it means Prey should do its magic
-	# eventually the remote file can contain config params to modify certain behaviours in Prey
-	if [ -n "$config" ]; then
+	if [ $activate == 1 ]; then
 		echo -e "$STRING_PROBLEM"
+		parse_response
 	else
 		echo -e "$STRING_NO_PROBLEM"
 		exit
@@ -59,84 +58,31 @@ if [ -n "$url" ]; then
 fi
 
 ####################################################################
-# ok, lets gather all the information
+# ok what shall we do then?
+# for now lets run every module with an executable run.sh script
 ####################################################################
 
-echo "$STRING_GET_IP"
-get_public_ip
+for module_path in `find modules -maxdepth 1 -mindepth 1 -type d`; do
 
-echo "$STRING_GET_LAN_IP"
-get_internal_ip
+	if [ -x "$module_path/run.sh" ]; then
 
-echo "$STRING_GET_MAC_AND_WIFI"
-get_network_info
+		# if there's a language file, lets run it
+		if [ -f $module_path/lang/$lang ]; then
+		. $module_path/lang/$lang
+		elif [ -f $module_path/lang/$lang ];
+		. $module_path/lang/en
+		fi
 
-# traceroute=`which traceroute` <-- disabled since its TOO DAMN SLOW!
-if [ -n "$traceroute" ]; then
-	echo "$STRING_TRACE"
-	trace_route
-fi
+		# if there's a config file, lets run it as well
+		if [ -f $module_path/config ]; then
+			. $module_path/config
+		fi
 
-echo "$STRING_UPTIME_AND_PROCESS"
-get_uptime_and_processes
+		# now, go!
+		. $module_path/run.sh
+	fi
 
-echo "$STRING_MODIFIED_FILES"
-get_modified_files
-
-echo "$STRING_ACTIVE_CONNECTIONS"
-get_active_connections
-
-echo "$STRING_WRITE_EMAIL"
-write_email
-
-echo "$STRING_TAKE_IMAGE"
-get_images
-echo "$STRING_TAKE_IMAGE_DONE"
-
-####################################################################
-# all set, lets send the email
-####################################################################
-
-echo "$STRING_SENDING_EMAIL"
-
-# lets clean the vars in case we couldn't get the images
-if [ ! -e "$picture" ]; then
-	picture=''
-fi
-
-if [ ! -e "$screenshot" ]; then
-	screenshot=''
-# else
-	# should we compress the screenshot? (faster email sending)
-	# compress_screenshot
-fi
-
-send_email
-
-echo "$STRING_REMOVE_EVIDENCE"
-remove_evidence
-
-####################################################################
-# post email stuff, wallpaper and message alerts
-####################################################################
-
-if [ $alertwallpaper == 'y' ]; then
-	echo "$STRING_CHANGE_WALLPAPER"
-	# we need the full path to the files (and we'll asume the script is being run from prey's folder)
-	wallpaper=`pwd`/$wallpaper
-	change_wallpaper
-fi
-
-if [ $alertuser == 'y' ]; then
-	echo "$STRING_SHOW_ALERT"
-	alert_user
-fi
-
-# should we drop him out of his X session?
-if [ $killx == "y" ]; then
-	echo "$STRING_XKILL"
-	kill_x
-fi
+done
 
 # this is the end, my only friend
 echo -e "$STRING_DONE"

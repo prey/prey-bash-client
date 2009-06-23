@@ -6,56 +6,7 @@
 # License: GPLv3
 ####################################################################
 
-if [ -n "$uptime" ]; then # prey is already running
-
-# email template
-
-emailtext="
-Good news my friend, it seems we found it!
-
-General state of computer (uptime)
---------------------------------------------------------------------
-$uptime
-
-Connection information
---------------------------------------------------------------------
-Public IP: $publico -- Internal IP: $interno.
--> Approx. location: http://www.maxmind.com/app/locate_ip?ips=$publico
--> IP Whois: http://whois.domaintools.com/$publico
-
-Route information
---------------------------------------------------------------------
-MAC Address: $mac. -- Gateway: $routes
-
-Traceroute:
--> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$publico
-
-WiFi information
---------------------------------------------------------------------
-$wifi_info
-
-In the last $minutos minutes the following files have been modified
---------------------------------------------------------------------
-$archivos
-
-Running programs
---------------------------------------------------------------------
-$programas
-
-Open connections
---------------------------------------------------------------------
-$connections
-
-
-Now, go catch the bastard!
-
---
-Your humble servant, Prey
-For updates visit http://prey.bootlog.org
-"
-
-
-elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
+if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
 	# installer messages
 
@@ -95,34 +46,14 @@ elif [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 \t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
  -- For updates remember to check http://prey.bootlog.org!\033[0m\n\n"
 
-else
-
-# prey status messages
+else # prey status messages
 
 	STRING_START="\n ### PREY $version spreads its wings!\n"
+	STRING_TRY_TO_CONNECT=" -- Trying to connect to first open wifi network available..."
+	STRING_NO_CONNECT_TO_WIFI=" -- Couldn't find a way to connect to an open wifi network!"
 	STRING_CHECK_URL=" -- Checking URL..."
 	STRING_PROBLEM=" -- HOLY GUACAMOLE!!"
 	STRING_NO_PROBLEM=" -- Nothing to worry about. :)\n"
-	STRING_GET_IP=" -- Getting public IP address..."
-	STRING_GET_LAN_IP=" -- Getting private LAN IP address..."
-	STRING_GET_MAC_AND_WIFI=" -- Getting MAC address, routing and Wifi info..."
-	STRING_TRY_TO_CONNECT=" -- Trying to connect to first open wifi network available..."
-	STRING_NO_CONNECT_TO_WIFI=" -- Couldn't find a way to connect to an open wifi network!"
-	STRING_TRACE=" -- Tracing our complete route to the Internet..."
-	STRING_UPTIME_AND_PROCESS=" -- Getting computer uptime and a list of running programs..."
-	STRING_MODIFIED_FILES=" -- Getting a list of recently modified files..."
-	STRING_ACTIVE_CONNECTIONS=" -- Getting list of current active connections..."
-	STRING_WRITE_EMAIL=" -- Writing our email..."
-	STRING_TAKE_IMAGE=" -- Taking a screenshot and a picture of the impostor..."
-	STRING_TAKE_IMAGE_DONE=" -- Done with the images!"
-	STRING_SENDING_EMAIL=" -- Sending the email..."
-	STRING_ERROR_EMAIL="\n\033[1m !! There was a problem sending the email. Are you sure it was setup correctly?
-    If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file.\033[0m\n"
-	STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
-	STRING_CHANGE_WALLPAPER=" -- Changing the wallpaper to alert him and nearby users..."
-	STRING_SHOW_ALERT=" -- Showing the guy our alert message..."
-	STRING_XKILL=" -- Kicking him off the X session!"
 	STRING_DONE=" -- Done! Happy hunting! :)\n"
-	STRING_MACKILL="How do we shut him off in Mac OS?"
 
 fi
