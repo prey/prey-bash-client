@@ -9,9 +9,10 @@ function try_to_connect {
 
 	if [ `which nm-applet` ]; then
 
+		# lets restart the NM applet and give it 5 seconds to connect
 		killall nm-applet &> /dev/null
 		nm-applet --sm-disable & 2> /dev/null
-		sleep 3
+		sleep 5
 
 	else
 

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Prey Configurator
+GenericName=Prey Configurator
+Comment=Configure Prey Laptop Tracker Settings
+Exec=gksu /usr/share/prey/configure.py
+Terminal=false
+Type=Application
+Icon=/usr/share/prey/pixmaps/prey.png
+Categories=Application;System;
+Name[en_US]=Prey Configurator
+GenericName[en_US]=Configurator for the Prey Laptop Tracker
