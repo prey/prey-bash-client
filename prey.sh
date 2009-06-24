@@ -6,18 +6,20 @@
 ####################################################################
 
 version='0.2.5'
-. ./config
+base_path=`dirname $0`
+
+. $base_path/config
 
 if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
 fi
-. lang/$lang
+. $base_path/lang/$lang
 
 # valid unames: Linux, Darwin, FreeBSD, CygWin?
 # we also set it to lowercase
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
-. platform/base
-. platform/$os
+. $base_path/platform/base
+. $base_path/platform/$os
 
 echo -e "\E[36m$STRING_START\E[0m"
 

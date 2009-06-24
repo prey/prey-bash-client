@@ -10,20 +10,20 @@ INSTALLPATH=/usr/share/prey
 PREY_FILE=prey.sh
 
 # create crontab entry
-# (sudo crontab -l | grep -v prey; echo "*/$TIMING * * * * cd $INSTALLPATH; ./$PREY_FILE > /dev/null") | sudo crontab -
+(sudo crontab -l | grep -v prey; echo "*/$TIMING * * * * $INSTALLPATH/$PREY_FILE > /dev/null") | sudo crontab -
 
 # update system menus
 [ ! -x /usr/bin/update-menus ] || /usr/bin/update-menus
 
-message="You should run the configurator in Applications/System to set up Prey completely"
+message="You should run the configurator in System Tools to set up Prey completely"
 
-	if [ `which notify-send` ]; then
-		notify-send "Prey install complete" "$message"
-	elif [ `which zenity` ]; then
-		zenity --info --text "$message"
-	elif [ `which kdialog` ]; then
-		kdialog --error "$message"
-	fi
+if [ `which notify-send` ]; then
+	`which notify-send` "Prey install complete" "$message"
+elif [ `which zenity` ]; then
+	`which zenity` --info --text "$message"
+elif [ `which kdialog` ]; then
+	`which kdialog` --info "$message"
+fi
 
 exit
 
