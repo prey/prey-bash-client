@@ -1,2 +1,4 @@
 #!/bin/sh
 
+# Remove crontab Line
+(sudo crontab -l | grep -v prey) | sudo crontab -

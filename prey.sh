@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-version='0.2'
+version='0.2.5'
 . ./config
 
 if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
