@@ -5,6 +5,33 @@
 # License: GPLv3
 ####################################################################
 
+####################################################################
+# base functions
+####################################################################
+
+post_format='xml'
+
+function add_trace {
+	if [ "$post_format" == "xml" ]; then
+		trace="<$1>$2</$1>"
+	else
+		trace="$1=$2"
+	fi
+	traces[${#traces[*]}]=$trace
+}
+
+function list_traces {
+	echo " -- ${#traces[*]} traces gathered!"
+	for i in "${traces[@]}"
+	do
+		echo "$i"
+	done
+}
+
+####################################################################
+# request/response functions
+####################################################################
+
 getter='curl -s'
 
 # returns if we have have network access, otherwise 0
@@ -81,11 +108,15 @@ function process_zip {
 	echo ' -- Processing ZIP... (yeah right!)'
 }
 
+####################################################################
+# module activation functions
+####################################################################
+
 function run_active_modules {
 
-	for module_path in `find modules -maxdepth 1 -mindepth 1 -type d`; do
+	for module_path in `find $base_path/modules -maxdepth 1 -mindepth 1 -type d`; do
 
-		if [ -x ./$module_path/run.sh ]; then
+		if [ -x $module_path/run.sh ]; then
 
 			echo -e " -- Running $module_path!"
 

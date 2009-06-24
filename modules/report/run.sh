@@ -1,7 +1,7 @@
 #!/bin/bash
 ####################################################################
-# PREY Report Module - by Tomas Pollak (bootlog.org)
-# URL : http://prey.bootlog.org
+# Prey Report Module - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
 # License: GPLv3
 ####################################################################
 
