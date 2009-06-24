@@ -1,0 +1,391 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXAppleScriptBuildPhase section */
+		257572C4072881A4000BE9CA /* AppleScript */ = {
+			isa = PBXAppleScriptBuildPhase;
+			buildActionMask = 2147483647;
+			contextName = "";
+			files = (
+				257572C5072881A4000BE9CA /* Prey Installer.applescript in AppleScript */,
+			);
+			isSharedContext = 0;
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXAppleScriptBuildPhase section */
+
+/* Begin PBXBuildFile section */
+		257572C5072881A4000BE9CA /* Prey Installer.applescript in AppleScript */ = {isa = PBXBuildFile; fileRef = DA206CF3015C4E8B03C91932 /* Prey Installer.applescript */; settings = {ATTRIBUTES = (Debug, ); }; };
+		257572C8072881A4000BE9CA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
+		257572CA072881A4000BE9CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		257572CC072881A4000BE9CA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		257572CD072881A4000BE9CA /* AppleScriptKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA206CF1015C4E2903C91932 /* AppleScriptKit.framework */; };
+		5A90F2290FD4AC6600696802 /* prey-wallpaper-en.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F21D0FD4AC6600696802 /* prey-wallpaper-en.png */; };
+		5A90F22A0FD4AC6600696802 /* prey-wallpaper-es.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F21E0FD4AC6600696802 /* prey-wallpaper-es.png */; };
+		5A90F22B0FD4AC6600696802 /* config in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F21F0FD4AC6600696802 /* config */; };
+		5A90F22C0FD4AC6600696802 /* isightcapture in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2200FD4AC6600696802 /* isightcapture */; };
+		5A90F22D0FD4AC6600696802 /* en in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2220FD4AC6600696802 /* en */; };
+		5A90F22E0FD4AC6600696802 /* es in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2230FD4AC6600696802 /* es */; };
+		5A90F22F0FD4AC6600696802 /* base in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2250FD4AC6600696802 /* base */; };
+		5A90F2300FD4AC6600696802 /* darwin in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2260FD4AC6600696802 /* darwin */; };
+		5A90F2310FD4AC6600696802 /* prey.sh in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2270FD4AC6600696802 /* prey.sh */; };
+		5A90F2320FD4AC6600696802 /* sendEmail in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2280FD4AC6600696802 /* sendEmail */; };
+		5AFA974D0FD48EE8004A3823 /* prey-installer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5AFA974A0FD48EE8004A3823 /* prey-installer.icns */; };
+		5AFA974E0FD48EE8004A3823 /* prey.png in Resources */ = {isa = PBXBuildFile; fileRef = 5AFA974B0FD48EE8004A3823 /* prey.png */; };
+		60A014C40DBD2AA20071D9A8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60A014C20DBD2AA20071D9A8 /* MainMenu.xib */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		257572D5072881A4000BE9CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		257572D6072881A4000BE9CA /* Prey Installer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Prey Installer.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		5A90F1C10FD4A2F600696802 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Spanish; path = Spanish.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		5A90F21D0FD4AC6600696802 /* prey-wallpaper-en.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "prey-wallpaper-en.png"; sourceTree = "<group>"; };
+		5A90F21E0FD4AC6600696802 /* prey-wallpaper-es.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "prey-wallpaper-es.png"; sourceTree = "<group>"; };
+		5A90F21F0FD4AC6600696802 /* config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config; sourceTree = "<group>"; };
+		5A90F2200FD4AC6600696802 /* isightcapture */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = isightcapture; sourceTree = "<group>"; };
+		5A90F2220FD4AC6600696802 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = en; sourceTree = "<group>"; };
+		5A90F2230FD4AC6600696802 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = es; sourceTree = "<group>"; };
+		5A90F2250FD4AC6600696802 /* base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = base; sourceTree = "<group>"; };
+		5A90F2260FD4AC6600696802 /* darwin */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = darwin; sourceTree = "<group>"; };
+		5A90F2270FD4AC6600696802 /* prey.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = prey.sh; sourceTree = "<group>"; };
+		5A90F2280FD4AC6600696802 /* sendEmail */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = sendEmail; sourceTree = "<group>"; };
+		5AFA974A0FD48EE8004A3823 /* prey-installer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "prey-installer.icns"; sourceTree = "<group>"; };
+		5AFA974B0FD48EE8004A3823 /* prey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = prey.png; sourceTree = "<group>"; };
+		60A014C30DBD2AA20071D9A8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		65359356078DD41800E8BB2F /* AppleScriptKit.sdef */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.sdef; name = AppleScriptKit.sdef; path = /System/Library/Frameworks/AppleScriptKit.framework/Versions/A/Resources/AppleScriptKit.sdef; sourceTree = "<absolute>"; };
+		DA206CF1015C4E2903C91932 /* AppleScriptKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppleScriptKit.framework; path = /System/Library/Frameworks/AppleScriptKit.framework; sourceTree = "<absolute>"; };
+		DA206CF3015C4E8B03C91932 /* Prey Installer.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = "Prey Installer.applescript"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		257572CB072881A4000BE9CA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				257572CC072881A4000BE9CA /* Cocoa.framework in Frameworks */,
+				257572CD072881A4000BE9CA /* AppleScriptKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		080E96DDFE201D6D7F000001 /* Scripts */ = {
+			isa = PBXGroup;
+			children = (
+				DA206CF3015C4E8B03C91932 /* Prey Installer.applescript */,
+			);
+			name = Scripts;
+			sourceTree = "<group>";
+		};
+		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+				DA206CF1015C4E2903C91932 /* AppleScriptKit.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
+				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				257572D6072881A4000BE9CA /* Prey Installer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* Prey Installer */ = {
+			isa = PBXGroup;
+			children = (
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				080E96DDFE201D6D7F000001 /* Scripts */,
+				5A90F2020FD4AC2000696802 /* preyfiles */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+				257572D5072881A4000BE9CA /* Info.plist */,
+			);
+			name = "Prey Installer";
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				29B97316FDCFA39411CA2CEA /* main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				5AFA974A0FD48EE8004A3823 /* prey-installer.icns */,
+				5AFA974B0FD48EE8004A3823 /* prey.png */,
+				60A014C20DBD2AA20071D9A8 /* MainMenu.xib */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				65359356078DD41800E8BB2F /* AppleScriptKit.sdef */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5A90F2020FD4AC2000696802 /* preyfiles */ = {
+			isa = PBXGroup;
+			children = (
+				5A90F21C0FD4AC6600696802 /* alerts */,
+				5A90F21F0FD4AC6600696802 /* config */,
+				5A90F2200FD4AC6600696802 /* isightcapture */,
+				5A90F2210FD4AC6600696802 /* lang */,
+				5A90F2240FD4AC6600696802 /* platform */,
+				5A90F2270FD4AC6600696802 /* prey.sh */,
+				5A90F2280FD4AC6600696802 /* sendEmail */,
+			);
+			name = preyfiles;
+			sourceTree = "<group>";
+		};
+		5A90F21C0FD4AC6600696802 /* alerts */ = {
+			isa = PBXGroup;
+			children = (
+				5A90F21D0FD4AC6600696802 /* prey-wallpaper-en.png */,
+				5A90F21E0FD4AC6600696802 /* prey-wallpaper-es.png */,
+			);
+			path = alerts;
+			sourceTree = "<group>";
+		};
+		5A90F2210FD4AC6600696802 /* lang */ = {
+			isa = PBXGroup;
+			children = (
+				5A90F2220FD4AC6600696802 /* en */,
+				5A90F2230FD4AC6600696802 /* es */,
+			);
+			path = lang;
+			sourceTree = "<group>";
+		};
+		5A90F2240FD4AC6600696802 /* platform */ = {
+			isa = PBXGroup;
+			children = (
+				5A90F2250FD4AC6600696802 /* base */,
+				5A90F2260FD4AC6600696802 /* darwin */,
+			);
+			path = platform;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		257572C3072881A4000BE9CA /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		257572C2072881A4000BE9CA /* Prey Installer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4E71A80508A2C90C0034BBD9 /* Build configuration list for PBXNativeTarget "Prey Installer" */;
+			buildPhases = (
+				257572C3072881A4000BE9CA /* Headers */,
+				257572C4072881A4000BE9CA /* AppleScript */,
+				257572C6072881A4000BE9CA /* Resources */,
+				257572C9072881A4000BE9CA /* Sources */,
+				257572CB072881A4000BE9CA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Prey Installer";
+			productInstallPath = "$(HOME)/Applications";
+			productName = "Prey Installer";
+			productReference = 257572D6072881A4000BE9CA /* Prey Installer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 4E71A80908A2C90C0034BBD9 /* Build configuration list for PBXProject "Prey Installer" */;
+			compatibilityVersion = "Xcode 3.1";
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				Spanish,
+			);
+			mainGroup = 29B97314FDCFA39411CA2CEA /* Prey Installer */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				257572C2072881A4000BE9CA /* Prey Installer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		257572C6072881A4000BE9CA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				257572C8072881A4000BE9CA /* InfoPlist.strings in Resources */,
+				60A014C40DBD2AA20071D9A8 /* MainMenu.xib in Resources */,
+				5AFA974D0FD48EE8004A3823 /* prey-installer.icns in Resources */,
+				5AFA974E0FD48EE8004A3823 /* prey.png in Resources */,
+				5A90F2290FD4AC6600696802 /* prey-wallpaper-en.png in Resources */,
+				5A90F22A0FD4AC6600696802 /* prey-wallpaper-es.png in Resources */,
+				5A90F22B0FD4AC6600696802 /* config in Resources */,
+				5A90F22C0FD4AC6600696802 /* isightcapture in Resources */,
+				5A90F22D0FD4AC6600696802 /* en in Resources */,
+				5A90F22E0FD4AC6600696802 /* es in Resources */,
+				5A90F22F0FD4AC6600696802 /* base in Resources */,
+				5A90F2300FD4AC6600696802 /* darwin in Resources */,
+				5A90F2310FD4AC6600696802 /* prey.sh in Resources */,
+				5A90F2320FD4AC6600696802 /* sendEmail in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		257572C9072881A4000BE9CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				257572CA072881A4000BE9CA /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C165DFE840E0CC02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		60A014C20DBD2AA20071D9A8 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				60A014C30DBD2AA20071D9A8 /* English */,
+				5A90F1C10FD4A2F600696802 /* Spanish */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		4E71A80608A2C90C0034BBD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = "Prey Installer";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		4E71A80708A2C90C0034BBD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				OTHER_OSAFLAGS = "-x";
+				PRODUCT_NAME = "Prey Installer";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		4E71A80A08A2C90C0034BBD9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.5;
+			};
+			name = Debug;
+		};
+		4E71A80B08A2C90C0034BBD9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.4;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4E71A80508A2C90C0034BBD9 /* Build configuration list for PBXNativeTarget "Prey Installer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4E71A80608A2C90C0034BBD9 /* Debug */,
+				4E71A80708A2C90C0034BBD9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4E71A80908A2C90C0034BBD9 /* Build configuration list for PBXProject "Prey Installer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4E71A80A08A2C90C0034BBD9 /* Debug */,
+				4E71A80B08A2C90C0034BBD9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}
