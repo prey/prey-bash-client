@@ -7,6 +7,7 @@
 
 version='0.2.5'
 base_path=`dirname $0`
+start_time=`date +"%F %T"`
 
 . $base_path/config
 
