@@ -5,6 +5,10 @@
 # License: GPLv3
 ####################################################################
 
+function get_gateway_ip {
+	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
+}
+
 function try_to_connect {
 
 	if [ `which nm-applet` ]; then

@@ -25,7 +25,7 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	Enrutado de red
 	--------------------------------------------------------------------
-	Direccion MAC: $mac. -- Gateway: $routes
+	Direccion MAC: $mac. -- Gateway: $gateway_ip
 
 	Traceroute:
 	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$public_ip
@@ -63,9 +63,9 @@ else
 	STRING_UPTIME_AND_PROCESS=" -- Obteniendo el uptime y la lista de programas en ejecucion..."
 	STRING_MODIFIED_FILES=" -- Obteniendo una lista de los archivos recientemente modificados..."
 	STRING_ACTIVE_CONNECTIONS=" -- Obteniendo la lista de las conecciones activas..."
-	STRING_WRITE_EMAIL=" -- Redactando el correo electronico..."
 	STRING_TAKE_IMAGE=" -- Tomando una captura de pantalla y una foto de la persona..."
 	STRING_TAKE_IMAGE_DONE=" -- Finalizando la captura de imagenes..."
+	STRING_WRITE_EMAIL=" -- Redactando el correo electronico..."
 	STRING_SENDING_EMAIL=" -- Enviando el correo electronico..."
 	STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
     Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion.\033[0m\n"

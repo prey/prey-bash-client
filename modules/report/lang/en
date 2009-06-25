@@ -8,6 +8,8 @@
 
 if [ -n "$uptime" ]; then # prey is already running
 
+	# email template
+
 	report_body="
 	Good news my friend, it seems we found it!
 
@@ -23,7 +25,7 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	Route information
 	--------------------------------------------------------------------
-	MAC Address: $mac. -- Gateway: $routes
+	MAC Address: $mac. -- Gateway: $gateway_ip
 
 	Traceroute:
 	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$public_ip
@@ -68,4 +70,5 @@ else
 	STRING_ERROR_EMAIL="\n\033[1m !! There was a problem sending the email. Are you sure it was setup correctly?
 	If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file.\033[0m\n"
 	STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
+
 fi
