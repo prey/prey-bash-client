@@ -5,6 +5,14 @@
 # License: GPLv3
 ####################################################################
 
+running_prey=`ps aux | grep "prey.sh" | grep -v grep | wc -l`
+if [[ "$running_prey" -gt 2 && "$1" != "-f" ]]; then # prey is already running
+
+	echo ' !! Prey is already running! Kill the other process or run with -f to force execution.'
+	exit
+
+fi
+
 version='0.2.5'
 base_path=`dirname $0`
 start_time=`date +"%F %T"`
