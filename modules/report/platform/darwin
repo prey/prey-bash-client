@@ -6,7 +6,7 @@
 ####################################################################
 
 function get_network_info {
-	mac=`arp -n $routes | cut -f4 -d' '`
+	mac=`arp -n $gateway_ip | cut -f4 -d' '`
 	wifi_info=`$airport -I | grep -v "Off"`
 }
 
@@ -20,7 +20,7 @@ function get_images {
 
 	else
 
-		$screencapture $screnshot
+		$screencapture $screenshot
 
 	fi
 
