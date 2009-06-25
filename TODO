@@ -1,6 +1,4 @@
 - Finish translating the spanish install messages.
-- Email bug in Mac installer.
-- Language bug in Mac installer.
 - Enable auto-login in Mac/Linux/Windows if computer is in stolen state.
 - Enable some configuration to be set up remotely (from the check file)
 - Passwords with weird characters have a problem being inserted with sed.
@@ -17,3 +15,5 @@ DONE
 - Call networkmanager if there's no Wifi connection so there's a better chance to catch the guy.
 - Check why the hell sometimes emails are not sent.
 - Change desktop background with a huge "THIS COMPUTER IS STOLEN" image. --> Needs testing though.
+- Email bug in Mac installer.
+- Language bug in Mac installer.
