@@ -99,9 +99,10 @@ getter='curl -s'
 
 # returns if we have have network access, otherwise 0
 function check_net_status {
+	get_gateway_ip
 	# first line checks for web access, second one for LAN access (faster). change it if you need to.
 	# connected=`ping -q -w 1 -c 1 www.google.com &> /dev/null && echo 1 || echo 0`
-	connected=`ping -q -w 1 -c 1 \`ip r | grep default | cut -d ' ' -f 3\` &> /dev/null && echo 1 || echo 0`
+	connected=`ping -q -w 1 -c 1 $gateway_ip &> /dev/null && echo 1 || echo 0`
 }
 
 # we could eventually use a different method for status checking
