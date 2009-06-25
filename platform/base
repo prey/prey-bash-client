@@ -109,7 +109,7 @@ function check_net_status {
 # we could eventually use a different method for status checking
 function check_status {
 	headers=`$getter -I $check_url`
-	status=`echo "$headers" | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'`
+	status=`echo "$headers" | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g' | sed 's/^0//'`
 }
 
 # we may eventually use a specific header for Prey
