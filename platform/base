@@ -124,14 +124,14 @@ function process_response {
 	if [[ "$content_type" =~ "xml" ]]; then
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
-	elif [ "$content_type" =~ "octet-steam" ]; then
+	elif [[ "$content_type" =~ "octet-steam" ]]; then
 		echo ' -- Got a ZIP file! Installing new module...'
 		response_type='zip'
 	elif [[ "$content_type" =~ "text/plain" ]]; then
 		echo ' -- Got a text file! Lets see if its something we can actually run.'
 		response_type='text'
 	elif [[ "$content_type" =~ "text/html" ]]; then
-		echo " -- It's just an HTML file. Lets just do our job."
+		echo " -- Rseponse was just an HTML file. Lets just do our job."
 		return 
 	else
 		return 
@@ -276,7 +276,7 @@ function send_via_scp {
 	echo "$trace_list" > /tmp/prey_traces.tmp
 	if [[ -n "$scp_server" && -n "$scp_path" ]]; then
 		echo -e " -- Uploading the stuff to $scp_path in $scp_server..."
-		new_folder="prey_data_`date +"%F-%T" | sed -e 's/:/-/g'`"
+		new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
 		ssh $scp_server mkdir $scp_path/$new_folder
 		status=`scp $trace_file $file_list $scp_server:$scp_path/$new_folder`
 	else 
