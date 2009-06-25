@@ -14,6 +14,7 @@ linux_packages='wget traceroute scrot'
 
 TIMING=10
 DEFAULT_INSTALLPATH='/usr/share/prey'
+WEB_SERVICE_URL='http://prey.rails'
 
 separator="--------------------------------------------------------------------------------"
 
@@ -75,20 +76,23 @@ separator="---------------------------------------------------------------------
 
 	# ok, now lets ask the neccesary questions so as to generate the config automatically
 
+  # uncomment below if you want the installer to ask you where to install prey
+  # now we always install to /usr/share/prey, as it seems it works for everyone
+
 	# set installation path
-	echo -e $separator
-	echo -n "$WHERE_TO_INSTALL_PREY"
-	read INSTALLPATH
-	PARENT_PATH=`echo $INSTALLPATH | sed "s/\/prey//"`
-	if [ "$INSTALLPATH" == "" ]; then
-		INSTALLPATH=$DEFAULT_INSTALLPATH
-		echo -e "$USING_DEFAULT_INSTALL_PATH"
-	elif [ ! -d "$PARENT_PATH" ]; then
-		echo -e "$INVALID_INSTALL_PATH"
-		exit
-	else
-		echo "$SETTING_INSTALL_PATH"
-	fi
+	# echo -e $separator
+	# echo -n "$WHERE_TO_INSTALL_PREY"
+	# read INSTALLPATH
+	# PARENT_PATH=`echo $INSTALLPATH | sed "s/\/prey//"`
+	# if [ "$INSTALLPATH" == "" ]; then
+	 	INSTALLPATH=$DEFAULT_INSTALLPATH
+	# 	echo -e "$USING_DEFAULT_INSTALL_PATH"
+	# elif [ ! -d "$PARENT_PATH" ]; then
+	# 	echo -e "$INVALID_INSTALL_PATH"
+	# 	exit
+	# else
+	# 	echo "$SETTING_INSTALL_PATH"
+	# fi
 
 	# now that we have the install path we need to fetch to rerun this
 	# so as to insert the INSTALL_PATH variable into the other messages
@@ -97,7 +101,7 @@ separator="---------------------------------------------------------------------
 
 	# lets check if the installpath exists and create it if not
 	if [ ! -d $INSTALLPATH ]; then
-		sudo mkdir -p $INSTALLPATH
+		# sudo mkdir -p $INSTALLPATH
 		SKIP=n
 	elif [ -e $INSTALLPATH/$config_file ]; then
 		echo -e $separator
@@ -111,41 +115,132 @@ separator="---------------------------------------------------------------------
 
 	else
 
-		# get the email
+		# what reporting method?
 		echo -e $separator
-		echo -n "$ENTER_EMAIL_ADDRESS"
-		read EMAIL
-		if [ "$EMAIL" == "" ]; then
-			echo -e "$INVALID_EMAIL_ADDRESS"
-			exit
+		echo -n "$DEFINE_REPORT_METHOD"
+		read REPORT_METHOD
+		if [ "$REPORT_METHOD" == "" ]; then
+			REPORT_METHOD='email'
+			echo -e "$DEFAULT_REPORT_METHOD"
+		elif [ "$REPORT_METHOD" == 'web' ]; then
+
+			echo -e $separator
+			echo -n " -- Have you already registered on the site? (y/n) [n] "
+			read USER_REGISTERED
+			if [ "$USER_REGISTERED" == 'y' ]; then
+
+				echo -n "$ADD_API_KEY"
+				read API_KEY
+				# the device keys are six digit long hex strings
+				if [[ ${#API_KEY} != 12 ]]; then
+					echo -e "$INVALID_API_KEY"
+					exit
+				fi
+
+			else
+
+				echo -n " -- OK, then let us do so for you. Please type in your desired username: "
+				read WEB_USERNAME
+				echo -n " -- Please type in your email: "
+				read WEB_EMAIL
+				echo -n " -- Please type in your desired password: (We just use it to sign up for you!) "
+				read -s WEB_PASSWORD
+
+				if [[ -n "$WEB_USERNAME" && -n "$WEB_EMAIL" && -n "$WEB_PASSWORD" ]]; then
+
+					user_response=`curl -s -d "user[login]=$WEB_USERNAME&user[email]=$WEB_EMAIL&user[password]=$WEB_PASSWORD&user[password_confirmation]=$WEB_PASSWORD" $WEB_SERVICE_URL/users.xml`
+					if [[ "$user_response" =~ 'error' ]]; then
+						echo -e -n "\n\n !! There was a problem signing up in the web service. Please try again or just do so directly in $WEB_SERVICE_URL.\n\n"
+						echo -e " !! The response we got was this: \n\n$user_response.\n\n"
+						exit
+					fi
+
+					API_KEY=`echo $user_response | sed -n -e 's/.*<api-key>\(.*\)<\/api-key>.*/\1/p'`
+					echo -e "\n\n -- Registration succesful! Remember to log in as $WEB_USERNAME in $WEB_SERVICE_URL whenever you want to change your settings or view your reports."
+					echo -e " -- By the way, your API Key is $API_KEY. We'll add it to your config file."
+
+				else 
+
+					echo -e " !!  Some of the fields for the web service registration are missing! Please try again.\n"
+					exit
+
+				fi
+
+			fi
+
+			echo -e $separator
+			echo -n " -- Do you want us to add this device automatically to your profile in the web service? (y/n) [y] "
+			read ADD_DEVICE_AUTO
+
+			if [ "$ADD_DEVICE_AUTO" == 'n' ]; then
+
+				echo -n "$ADD_DEVICE_KEY"
+				read DEVICE_KEY
+				# the device keys are six digit long hex strings
+				if [[ ${#DEVICE_KEY} != 6 ]]; then
+					echo -e "$INVALID_DEVICE_KEY"
+					exit
+				fi
+			else
+				hostname=`hostname`
+				device_response=`curl -s -d "api_key=$API_KEY&device[title]=$hostname&device[device_type]=Desktop" $WEB_SERVICE_URL/devices.xml`
+
+				if [[ "$device_response" =~ 'error' ]]; then
+					echo -e -n "!! There was a problem registering your device in the web service. Please try again or just do so directly in $WEB_SERVICE_URL.\n\n"
+					echo -e " !! The response we got was this: \n\n$device_response.\n\n"
+					exit
+				fi
+
+				DEVICE_KEY=`echo $device_response | sed -n -e 's/.*<key>\(.*\)<\/key>.*/\1/p'`
+				echo -e "-- Everything ok! Your Device key is $DEVICE_KEY. We'll add it to your config file automagically."
+
+			fi
+
 		fi
 
-		# setup SMTP
-		echo -e $separator
-		echo -n "$ENTER_SMTP_SERVER"
-		read SMTP_SERVER
-		if [ "$SMTP_SERVER" == "" ]; then
-			SMTP_SERVER='smtp.gmail.com:587'
-			echo -e "$DEFAULT_SMTP_SERVER"
-		fi
+		if [ "$REPORT_METHOD" != 'web' ]; then
 
-		# SMTP user
-		echo -e $separator
-		echo -n "$ENTER_SMTP_USER [$EMAIL] "
- 		read SMTP_USER
-		if [ "$SMTP_USER" == "" ]; then
-			echo -e "$DEFAULT_SMTP_USER" $EMAIL.
-			SMTP_USER=$EMAIL
-		fi
+			# get the email
+			echo -e $separator
+			echo -n "$ENTER_EMAIL_ADDRESS"
+			read EMAIL
+			if [ "$EMAIL" == "" ]; then
+				echo -e "$INVALID_EMAIL_ADDRESS"
+				exit
+			fi
 
-		# SMTP pass
-		echo -e $separator
-		echo -n "$ENTER_SMTP_PASS"
-		read -s SMTP_PASS
-		echo -e "\n"
-		if [ "$SMTP_PASS" == "" ]; then
-			echo -e "$INVALID_SMTP_PASS"
-			exit
+			if [ "$REPORT_METHOD" == 'email' ]; then
+
+				# setup SMTP
+				echo -e $separator
+				echo -n "$ENTER_SMTP_SERVER"
+				read SMTP_SERVER
+				if [ "$SMTP_SERVER" == "" ]; then
+					SMTP_SERVER='smtp.gmail.com:587'
+					echo -e "$DEFAULT_SMTP_SERVER"
+				fi
+
+				# SMTP user
+				echo -e $separator
+				echo -n "$ENTER_SMTP_USER [$EMAIL] "
+		 		read SMTP_USER
+				if [ "$SMTP_USER" == "" ]; then
+					echo -e "$DEFAULT_SMTP_USER" $EMAIL.
+					SMTP_USER=$EMAIL
+				fi
+
+				# SMTP pass
+				echo -e $separator
+				echo -n "$ENTER_SMTP_PASS"
+				read -s SMTP_PASS
+				echo -e "\n"
+				if [ "$SMTP_PASS" == "" ]; then
+					echo -e "$INVALID_SMTP_PASS"
+					exit
+				fi
+			
+			fi
+
 		fi
 
 		# setup URL check
@@ -154,18 +249,24 @@ separator="---------------------------------------------------------------------
 		read CHECK
 		case "$CHECK" in
 		[yY] )
-			# which url then
-			echo -e $separator
-			echo -n "$ENTER_URL"
-			read URL
-			if [ "$URL" == "" ]; then
-				echo -e "$INVALID_URL"
-				exit
+
+			if [ "$REPORT_METHOD" == 'web' ]; then
+				URL="$WEB_SERVICE_URL/devices/$DEVICE_KEY.xml"
+				echo -e "$USING_DEFAULT_APP_URL"
+			else
+				# which url then
+				echo -e $separator
+				echo -n "$ENTER_URL"
+				read URL
+				if [ "$URL" == "" ]; then
+					echo -e "$INVALID_URL"
+					exit
+				fi
 			fi
-			# URL=`echo $URL | sed -f urlencode.sed`
-			# urlencoding no nos sirve, porque despues wget no puede resolver la direccion. dirty hack entonces.
+			# dirty hack so that wget can actually resolve the slashes. 
+			# urlencoding is unneccesary if you can pull a dirty hack, right?
 			URL=`echo $URL | sed "s/\//-SLASH-/g"`
-			;;
+		;;
 		[nN] ) # echo "OK, no URL check then."
 			URL=""
 		;;
@@ -182,18 +283,28 @@ separator="---------------------------------------------------------------------
 			TIMING=10
 		fi
 
+		WEB_SERVICE_URL=`echo $WEB_SERVICE_URL | sed "s/\//-SLASH-/g"`
+
 		echo -e $separator
 		echo -e " -- Ok, setting up configuration values..."
 		cp $config_file $temp_config_file
 		sed -i -e "s/lang='.*'/lang='$LANGUAGE'/" $temp_config_file
+		sed -i -e "s/web_service='.*'/web_service='$WEB_SERVICE_URL'/" $temp_config_file
+		sed -i -e "s/report_method='.*'/report_method='$REPORT_METHOD'/" $temp_config_file
+		sed -i -e "s/api_key='.*'/api_key='$API_KEY'/" $temp_config_file
+		sed -i -e "s/device_key='.*'/device_key='$DEVICE_KEY'/" $temp_config_file
 		sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $temp_config_file
 		sed -i -e "s/url='.*'/url='$URL'/" $temp_config_file
-		sed -i -e "s/-SLASH-/\//g" $temp_config_file # resolve the slash hack
 		sed -i -e "s/smtp_server='.*'/smtp_server='$SMTP_SERVER'/" $temp_config_file
 		sed -i -e "s/smtp_username='.*'/smtp_username='$SMTP_USER'/" $temp_config_file
 		sed -i -e "s/smtp_password='.*'/smtp_password='$SMTP_PASS'/" $temp_config_file
 
+		sed -i -e "s/-SLASH-/\//g" $temp_config_file # resolve the slash hack
+
 	fi
+
+	# lets create the install path
+	sudo mkdir -p $INSTALLPATH
 
 	if [ $platform == 'Linux' ]; then
 

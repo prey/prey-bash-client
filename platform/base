@@ -1,7 +1,7 @@
 #!/bin/bash
 ####################################################################
 # PREY Base Functions - by Tomas Pollak (bootlog.org)
-# URL : http://prey.bootlog.org
+# URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
 
@@ -9,7 +9,22 @@
 # base functions
 ####################################################################
 
-post_format='xml'
+# fetches a var and then assigns it as $value
+# expects the name of array and then the name of var
+function get_var {
+	ARRAY="$1[*]"
+	local ${!ARRAY}
+	eval 'echo ${'"${2}"'} | sed -e "s/%20/ /g"'
+}
+
+# if you need to fetch a specific trace or file
+function get_trace {
+	get_var traces $1
+}
+
+function get_file {
+	get_var files $1
+}
 
 function add_trace {
 	if [ "$post_format" == "xml" ]; then
@@ -17,18 +32,66 @@ function add_trace {
 	else
 		trace="$1=$2"
 	fi
-	traces[${#traces[*]}]=$trace
+	echo " -- Adding trace: $1 -> $2"
+	# we need to encode whitespaces, otherwise well get into trouble
+	trace=`echo $trace | sed 's/\s/%20/g'`
+	traces[${#traces[*]}]="$trace"
+}
+
+function add_file {
+	if [ -f "$2" ]; then
+		echo " -- Adding file: $1 -> $2"
+		files[${#files[*]}]=$1=$2
+	fi
+}
+
+function remove_traces {
+	unset -v traces
+	echo ' -- Dropping all traces!'
+}
+
+function remove_files {
+	for f in "${files[@]}"
+	do
+		rm -f $f
+		echo " -- Removed $f"
+	done
 }
 
 function list_traces {
-	echo " -- ${#traces[*]} traces gathered!"
-	for i in "${traces[@]}"
+	# echo " -- ${#traces[*]} traces gathered!"
+	for t in "${traces[@]}"
 	do
-		echo "$i"
+		echo -e "$t\n"
+	done
+}
+
+function list_files {
+	# echo " -- ${#files[*]} files gathered!"
+	for f in "${files[@]}"
+	do
+		if [ "$post_method" == 'http' ]; then
+			echo -e "-F $f" | sed -e 's/=/=@/'
+		else # just list the file paths
+			echo -e $f | sed -e 's/.*=//'
+		fi
 	done
 }
 
 ####################################################################
+# string functions
+####################################################################
+
+# TODO: should switch to more advanced forms of encryption!
+function encrypt {
+	echo -n "$1" | openssl enc -base64
+}
+
+function decrypt {
+	echo "$1" | openssl enc -base64 -d
+}
+
+###################################################################
 # request/response functions
 ####################################################################
 
@@ -36,15 +99,20 @@ getter='curl -s'
 
 # returns if we have have network access, otherwise 0
 function check_net_status {
-	# first line checks for LAN access, second one for web access. change it if you're using Prey in a closed environment.
-	connected=`ping -q -w 1 -c 1 \`ip r | grep default | cut -d ' ' -f 3\` &> /dev/null && echo 1 || echo 0`
+	# first line checks for web access, second one for LAN access (faster). change it if you need to.
 	# connected=`ping -q -w 1 -c 1 www.google.com &> /dev/null && echo 1 || echo 0`
+	connected=`ping -q -w 1 -c 1 \`ip r | grep default | cut -d ' ' -f 3\` &> /dev/null && echo 1 || echo 0`
 }
 
 # we could eventually use a different method for status checking
 function check_status {
-	headers=`$getter -I $url`
-	status=`echo $headers | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'`
+	headers=`$getter -I $check_url`
+	status=`echo "$headers" | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g'`
+}
+
+function parse_headers {
+	content_type=`echo "$headers" | awk /Content-Type/ | sed 's/Content-Type://g'`
+	# we may eventually use a specific header for Prey
 }
 
 # this is where the magic will happen. :)
@@ -53,24 +121,30 @@ function check_status {
 	# if its a zip file, unzip it in modules and run the active modules (the executable ones)
 	# if its a xml/json file, parse it and assign config values correspondingly
 function process_response {
-	response=`$getter $url`
-	if [[ "$response" =~ "xml" ]]; then
+	if [[ "$content_type" =~ "xml" ]]; then
 		echo ' -- Got XML. Parsing...'
-		parse_xml
-	elif [[ "$response" =~ "#!/bin/bash" ]]; then
-		echo ' -- Got a Bash Script! Running...'
-		run_script
-	elif [ `grep 'octet-stream' $headers > /dev/null && echo 1` == 1 ]; then
-		echo ' -- Got a ZIP file! Lets see whats in there...'
-		process_zip
+		response_type='xml'
+	elif [ "$content_type" =~ "octet-steam" ]; then
+		echo ' -- Got a ZIP file! Installing new module...'
+		response_type='zip'
+	elif [[ "$content_type" =~ "text/plain" ]]; then
+		echo ' -- Got a text file! Lets see if its something we can actually run.'
+		response_type='text'
+	elif [[ "$content_type" =~ "text/html" ]]; then
+		echo " -- It's just an HTML file. Lets just do our job."
+		return 
+	else
+		return 
 	fi
+	response=`$getter $check_url`
+	eval 'process_'"${response_type}"''
 }
 
 # REALLY untested. function expects a <modules> section in the xml and activates de modules as requested
 
-function parse_xml {
+function process_xml {
 
-	echo $response | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | while read line; do
+	echo "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | while read line; do
 
 		value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 		if [ "$line" == "$value" ]; then
@@ -87,9 +161,9 @@ function parse_xml {
 				module=`echo $line | sed 's/[^a-zA-Z0-9]//g'`
 			fi
 		else
-			if [[ -n "$module" && -f modules/$module/config ]]; then # module is active and has configuration
+			if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then # module is active and has configuration
 				param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/g'`
-				sed -i -e "s/$param='.*'/$param='$value'/" ./modules/$module/config 
+				sed -i -e "s/$param='.*'/$param='$value'/" $base_path/modules/$module/config 
 			fi
 		fi
 
@@ -97,19 +171,24 @@ function parse_xml {
 
 }
 
-function run_script {
-	script=/tmp/script.sh
-	echo $response > $script
-	chmod +x $script
-	output=`$script`
+function process_text {
+	if [[ -n `echo $response | grep '#!/bin/bash'` && ! -n `echo $response | grep ' rm '` ]]; then
+		echo ' -- Valid script! Lets get it on.'
+		script=/tmp/script.sh
+		echo $response > $script
+		chmod +x $script
+		output=`$script`
+	else
+		echo " !! Invalid script. Remember Prey doesn't run any external script which try to destroy things (for security reasons)."
+	fi
 }
 
 function process_zip {
-	echo ' -- Processing ZIP... (yeah right!)'
+	echo ' -- Processing ZIP... (well, almost!)'
 }
 
 ####################################################################
-# module activation functions
+# module functions
 ####################################################################
 
 function run_active_modules {
@@ -149,3 +228,59 @@ function run_active_modules {
 	done
 
 }
+
+####################################################################
+# data posting functions
+####################################################################
+
+function post_data {
+	trace_list=`list_traces`
+	file_list=`list_files`
+	if [[ $trace_list || $file_list ]]; then
+		if [ "$test_mode" == 1 ]; then
+			echo ' >> This is where the data gets sent. But not in test mode!' 
+		else 
+			trace_file=/tmp/prey_traces.tmp
+			echo "$trace_list" > $trace_file
+			eval 'send_via_'"${post_method}"''
+			rm $trace_file
+		fi
+		remove_traces
+		remove_files
+	fi
+}
+
+function send_via_email {
+	decoded_pass=`decrypt "$smtp_password"`
+	complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
+	response=`$base_path/lib/sendEmail -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file tls=auto username=$smtp_username password=$decoded_pass`
+	if [[ "$response" =~ "ERROR" ]]; then
+		echo -e "$STRING_ERROR_EMAIL"
+		echo -e "\n This is the complete error message: \n $response\n"
+	fi
+}
+
+function send_via_http {
+	if [ -n "$post_url" ]; then
+		if [ -n "$api_key" ]; then
+			post_data="$file_list -F api_key=$api_key"
+		fi
+		response=`curl -s -F body="$trace_list" $post_data "$post_url"`
+		# echo $response
+	else
+		echo ' !! You need to set up a POST URL for the HTTP sending to work!'
+	fi
+} 
+
+function send_via_scp {
+	echo "$trace_list" > /tmp/prey_traces.tmp
+	if [[ -n "$scp_server" && -n "$scp_path" ]]; then
+		echo -e " -- Uploading the stuff to $scp_path in $scp_server..."
+		new_folder="prey_data_`date +"%F-%T" | sed -e 's/:/-/g'`"
+		ssh $scp_server mkdir $scp_path/$new_folder
+		status=`scp $trace_file $file_list $scp_server:$scp_path/$new_folder`
+	else 
+		echo ' !! You need to set up a server in order to send the report via SCP!'
+	fi
+}
+

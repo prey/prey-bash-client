@@ -21,6 +21,15 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
 	SKIP_INSTALL_QUESTIONS=" -- Alright, well just update the necesary files!\n"
 
+	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email] "
+	DEFAULT_REPORT_METHOD=" -- Using email as our reporting method. All good!"
+	ADD_API_KEY=" -> Please enter your API Key as supplied by the web service: "
+	INVALID_API_KEY=" !! Invalid API key! Remember to signup at preyproject.com to get one.\n"
+	ADD_DEVICE_KEY=" -> Please enter the Device Key for this PC as supplied by the web service: "
+	INVALID_DEVICE_KEY=" !! Invalid device key! Remember to register your device in preyproject.com to get one.\n"
+
+	USING_DEFAULT_APP_URL=" -- Using routes for the web application. Nothing to write in here!"
+
 	ENTER_EMAIL_ADDRESS=" -> What email address would you like the email sent to? (i.e. mailbox@domain.com) [] "
 	INVALID_EMAIL_ADDRESS=" !! You need to define an inbox. Exiting...\n"
 
