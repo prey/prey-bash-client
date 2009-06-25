@@ -7,9 +7,11 @@
 
 echo "$STRING_GET_IP"
 get_public_ip
+add_trace public_ip $public_ip
 
 echo "$STRING_GET_LAN_IP"
 get_internal_ip
+add_trace internal_ip $internal_ip
 
 echo "$STRING_GET_MAC_AND_WIFI"
 get_network_info
@@ -29,32 +31,23 @@ get_modified_files
 echo "$STRING_ACTIVE_CONNECTIONS"
 get_active_connections
 
-echo "$STRING_WRITE_EMAIL"
-write_email
+# echo "$STRING_WRITE_EMAIL"
+# write_email
+# add_trace report_body $report_body
 
 echo "$STRING_TAKE_IMAGE"
 get_images
+if [ -f "$picture" ]; then
+	add_file picture "$picture"
+fi
+if [ -f "$screenshot" ]; then
+	add_file screenshot "$screenshot"
+fi
 echo "$STRING_TAKE_IMAGE_DONE"
 
 ####################################################################
-# all set, lets send the email
+# all set, lets send the report
 ####################################################################
 
 echo "$STRING_SENDING_EMAIL"
-
-# lets clean the vars in case we couldn't get the images
-if [ ! -e "$picture" ]; then
-	picture=''
-fi
-
-if [ ! -e "$screenshot" ]; then
-	screenshot=''
-# else
-	# should we compress the screenshot? (faster email sending)
-	# compress_screenshot
-fi
-
-send_email
-
-echo "$STRING_REMOVE_EVIDENCE"
-remove_evidence
+post_data

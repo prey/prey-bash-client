@@ -1,7 +1,7 @@
 #!/bin/bash
 ####################################################################
-# PREY - by Tomas Pollak (bootlog.org)
-# URL : http://prey.bootlog.org
+# Prey - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
 
@@ -15,13 +15,18 @@ if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 fi
 . $base_path/lang/$lang
 
-# valid unames: Linux, Darwin, FreeBSD, CygWin?
-# we also set it to lowercase
+# we  to fetch the OS-specific methods
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 . $base_path/platform/base
 . $base_path/platform/$os
 
 echo -e "\E[36m$STRING_START\E[0m"
+
+if [ "$1" == "-t" ]; then
+	echo -e "\033[1m -- TEST MODE ENABLED. WON'T CHECK URL OR SEND STUFF!\033[0m\n"
+	test_mode=1
+	check_url=''
+fi
 
 ####################################################################
 # lets check if we're actually connected
@@ -46,12 +51,13 @@ fi
 # if it doesn't, the program will shut down gracefully
 ####################################################################
 
-if [ -n "$url" ]; then
+if [ -n "$check_url" ]; then
 	echo "$STRING_CHECK_URL"
 	check_status
 
-	if [ $status == '200' ]; then
+	if [ "$status" == '200' ]; then
 		echo -e "$STRING_PROBLEM"
+		parse_headers
 		process_response
 	else
 		echo -e "$STRING_NO_PROBLEM"

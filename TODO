@@ -1,4 +1,4 @@
-- Test mode.
+- Finish translating the spanish install messages.
 - Email bug in Mac installer.
 - Language bug in Mac installer.
 - Enable auto-login in Mac/Linux/Windows if computer is in stolen state.
@@ -8,6 +8,8 @@
 - La idea es que durante el proceso de recolección de datos, también se adjunte en el email un pequeño volcado de los paquetes TCP que se hayan generado mientras el ladrón navega por internet. tcpdump/wireshark > tcpxtract (Idea de Salamander).
 
 DONE
+- Select email, tunnel or web service mode.
+- Test mode.
 - Install file and Prey messages according to defined language.
 - Add Windows support (via Cygwin?) --> GRANDE JULIAN!
 - Screenshot in Mac should be silent.

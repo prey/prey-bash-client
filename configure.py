@@ -25,7 +25,7 @@ class PreyConfigurator:
         print "URL: %s" % url.get_text()
         print "API Key: %s" % api_key.get_text()
         print "Device Key: %s" % device_key.get_text()
-        print "Time: %s" % minutes.get_value_as_int()
+        print "Inverval (minutes): %s" % minutes.get_value_as_int()
         # lets pass the vars to bash
         self.edit_param('lang', language)
         self.edit_param('url', url.get_text())
@@ -33,7 +33,7 @@ class PreyConfigurator:
         self.edit_param('device_key', device_key.get_text())
         
         # lets change the crontab interval
-    	os.system('(sudo crontab -l | grep -v prey; echo "*/'+str(minutes.get_value_as_int())+' * * * * cd /usr/share/prey; ./prey.sh > /dev/null") | sudo crontab -')
+        os.system('(sudo crontab -l | grep -v prey; echo "*/'+str(minutes.get_value_as_int())+' * * * * /usr/share/prey/prey.sh > /dev/null") | sudo crontab -')
         gtk.main_quit()
 
        # def change_digits(self, widget, minutes):

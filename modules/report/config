@@ -5,24 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-# mailbox to send the report
-emailtarget='mailbox@domain.com'
-
-# SMTP configuration
-# TODO: store the password in an encrypted formt
-# don't worry, this file will be unaccesible for other users anyway
-smtp_server='smtp.gmail.com:587'
-smtp_username='username@gmail.com'
-smtp_password='password'
-
-####################################################################
-# optional configuration, some of this is still experimental
-####################################################################
-
-# email settings
-from='Prey <no-reply@gmail.com>'
-subject="PREY -- status report"
-
 # timelapse to watch for modified files, in minutes
 modified_files_time=60
 

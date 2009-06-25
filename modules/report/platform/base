@@ -38,27 +38,3 @@ function compress_screenshot {
 	tar zcf $screenshot.tar.gz $screenshot
 	screenshot=$screenshot.tar.gz
 }
-
-function write_email {
-	. $module_path/lang/$lang
-}
-
-function send_email {
-	complete_subject="$subject @ `date +"%a, %e %Y %T %z"`"
-	echo "$report_body" > msg.tmp
-	emailstatus=`$module_path/lib/sendEmail -f "$from" -t "$emailtarget" -u "$complete_subject" -s $smtp_server -a $picture $screenshot -o message-file=msg.tmp tls=auto username=$smtp_username password=$smtp_password`
-
-	if [[ "$emailstatus" =~ "ERROR" ]]; then
-		echo -e "$STRING_ERROR_EMAIL"
-	fi
-}
-
-function remove_evidence {
-	if [ -e "$picture" ]; then
-		rm $picture
-	fi
-	if [ -e "$screenshot" ]; then
-		rm $screenshot
-	fi
-	rm msg.tmp
-}

@@ -9,6 +9,7 @@
 if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
 	# installer messages
+	# TODO: translate this to spanish
 
 	HELLO_IN_LANGUAGE=" -- Prey hablara espanol entonces!"
 	WHERE_TO_INSTALL_PREY=" -> Donde quieres que instalemos Prey? [$DEFAULT_INSTALLPATH] "
@@ -20,6 +21,16 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	CONFIG_FILE_EXISTS=" -> Archivo de configuracion existe! Quieres que nos saltemos las preguntas de configuracion? (No recomendado) [n] "
 
 	SKIP_INSTALL_QUESTIONS=" -- Muy bien, solo actualizaremos los archivos necesarios!\n"
+
+	# TODO: finish translating this.
+	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email] "
+	DEFAULT_REPORT_METHOD=" -- Using email as our reporting method. All good!"
+	ADD_API_KEY=" -> Please enter the 12-digit API Key as supplied by the web service: "
+	INVALID_API_KEY=" !! Invalid API key! Remember to signup at preyproject.com to get one.\n"
+	ADD_DEVICE_KEY=" -> Please enter the six-digit Device Key as supplied by the web service."
+	INVALID_DEVICE_KEY=" !! Invalid device key! Remember to register your device in preyproject.com to get one."
+
+	USING_DEFAULT_APP_URL=" -- Using routes for the web application. Nothing to write in here!"
 
 	ENTER_EMAIL_ADDRESS=" -> A que casilla de email quieres que Prey envie el correo? (i.e. casilla@dominio.com) [] "
 	INVALID_EMAIL_ADDRESS=" !! Necesitas escribir una casilla de correo valida! Saliendo...\n"

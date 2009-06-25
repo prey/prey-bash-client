@@ -3,7 +3,7 @@ Version: 0.2.5-ubuntu2
 Architecture: all
 Maintainer: Tomas Pollak <tomas@bootlog.org>
 Priority: optional
-Depends: scrot, curl, streamer, libio-socket-ssl-perl, libnet-ssleay-perl
+Depends: openssl, scrot, curl, streamer, libio-socket-ssl-perl, libnet-ssleay-perl
 Recommends: prey-report
 Section: utils
 Homepage: http://preyproject.com
