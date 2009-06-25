@@ -10,17 +10,22 @@ import os
 
 class PreyConfigurator:
     def entry_toggle_web_service(self, checkbutton, url, api_key, device_key):
-        url.set_editable(not checkbutton.get_active())
+        check_url.set_editable(not checkbutton.get_active())
         api_key.set_editable(checkbutton.get_active())
         device_key.set_editable(checkbutton.get_active())
 
     def entry_toggle_visibility(self, checkbutton, entry):
         entry.set_visibility(checkbutton.get_active())
 
-    def changed_post_method(self, combobox, notebook):
+    def changed_post_method(self, combobox, notebook, check_url):
         model = combobox.get_model()
         index = combobox.get_active()
         notebook.set_current_page(index)
+        check_url.set_editable(index != 0)
+
+    def changed_device_key(self, widget, device_key, check_url):
+        check_url.set_text("http://preyproject.com/"+device_key.get_text())
+        print "Device Key: %s" % device_key.get_text()
 
     def get_current_var(self, var):
         command = 'grep \''+var+'=\' /usr/share/prey/config | sed "s/'+var+'=\'\(.*\)\'/\\1/"'
@@ -48,6 +53,7 @@ class PreyConfigurator:
         self.current_scp_path = self.get_current_var('scp_path')
 
     def apply_settings(self, checkbutton, lang, minutes, check_url, post_method, api_key, device_key, mail_to, smtp_server, smtp_username, smtp_password, scp_server, scp_path):
+
         model = lang.get_model()
         index = lang.get_active()
         l = model[index][0]
@@ -58,10 +64,13 @@ class PreyConfigurator:
         elif l == 'Sverige':
             language = 'sv'
 
+        real_check_url = check_url.get_text()
+
         model = post_method.get_model()
         index = post_method.get_active()
         if index == 0: 
             real_post_method = 'http'
+            real_check_url = 'http://preyproject.com/' + device_key.get_text()
         elif index == 1: 
             real_post_method = 'email'
         elif index == 2: 
@@ -74,7 +83,7 @@ class PreyConfigurator:
         # print "Device Key: %s" % device_key.get_text()
 
         self.edit_param('lang', language)
-        self.edit_param('check_url', check_url.get_text())
+        self.edit_param('check_url', real_check_url)
         self.edit_param('post_method', real_post_method)
 
         self.edit_param('api_key', api_key.get_text())
@@ -97,7 +106,7 @@ class PreyConfigurator:
 
     def edit_param(self, param, value):
         config_file = '/usr/share/prey/config'
-        if param == 'url': value = value.replace('/', '\/')
+        if param == 'check_url': value = value.replace('/', '\/')
         command = 'sed -i -e "s/'+param+'=\'.*\'/'+param+'=\''+value+'\'/" '+ config_file
         # print command
         os.system(command)
@@ -169,10 +178,8 @@ class PreyConfigurator:
 
         check_url = gtk.Entry()
         check_url.set_max_length(100)
-        # url.connect("activate", self.enter_callback, url)
+
         check_url.set_text(self.current_check_url)
-        # url.insert_text(" world", len(url.get_text()))
-        # url.select_region(0, len(url.get_text()))
         vbox.pack_start(check_url, False, True, 0)
            
         # posting method
@@ -188,6 +195,9 @@ class PreyConfigurator:
 
         post_method.set_active(0)
         vbox.pack_start(post_method, False, True, 0)           
+                   
+        # we need to set it up after the post method exists
+        check_url.set_editable(post_method.get_active() != 0)
                                   
         # second frame
 
@@ -242,6 +252,7 @@ class PreyConfigurator:
 
         device_key = gtk.Entry()
         device_key.set_max_length(6)
+        device_key.connect("insert-at-cursor", self.changed_device_key, device_key, check_url)
         vbox.pack_start(device_key, False, True, 0)  
 
         label = gtk.Label("Remember to register in \n http://preyproject.com for your\n API and Device keys!")
@@ -286,6 +297,7 @@ class PreyConfigurator:
         vbox.add(label)
 
         smtp_password = gtk.Entry()
+        smtp_password.set_visibility(False)
         smtp_password.set_text(self.current_smtp_password)
         vbox.pack_start(smtp_password, False, True, 0) 
 
@@ -319,7 +331,7 @@ class PreyConfigurator:
         # end notebook
         
         notebook.set_current_page(post_method.get_active())
-        post_method.connect('changed', self.changed_post_method, notebook)
+        post_method.connect('changed', self.changed_post_method, notebook, check_url)
  
         # horizontal box and close button
   
