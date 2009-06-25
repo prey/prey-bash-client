@@ -9,7 +9,7 @@
 lang='en'
 
 # verification URL, if left empty Prey will always gather and send the information
-check_url=''
+check_url='http://preyproject.com/'
 
 # you can use send the report via email or to the web service
 # valid values: http, scp, email
