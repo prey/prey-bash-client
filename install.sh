@@ -34,6 +34,7 @@ separator="---------------------------------------------------------------------
 	elif [ -e "lang/$LANGUAGE" ]; then
 		. lang/$LANGUAGE
 		echo "$HELLO_IN_LANGUAGE"
+		echo "$YES_NO"
 	else
 		echo -e " !! Unsupported language! Remember to write its valid code (en for english, es for espanol, de for deutsche, etc)\n"
 		exit
@@ -55,9 +56,9 @@ separator="---------------------------------------------------------------------
 
 		echo -e "It seems you had already installed Prey in $previous_path.\nThe new version uses a different path for the installation,"
 		echo -e "so we should remove the old files since they won't be used anymore."
-		echo -n "Should we do this automatically for you? [y] "
+		echo -n "Should we do this automatically for you? ($YES_NO) [$YES] "
 		read DELETE
-		if [[ "$DELETE" == "" || $DELETE == "y" ]]; then
+		if [[ "$DELETE" == "" || $DELETE == "$YES" ]]; then
 
 			echo -e "$DELETING_OLD_FILES"
 
@@ -109,7 +110,7 @@ separator="---------------------------------------------------------------------
 		read SKIP
 	fi
 
-	if [ "$SKIP" == "y" ]; then
+	if [ "$SKIP" == "$YES" ]; then
 
 		echo -e "$SKIP_INSTALL_QUESTIONS"
 
@@ -125,9 +126,9 @@ separator="---------------------------------------------------------------------
 		elif [ "$REPORT_METHOD" == 'web' ]; then
 
 			echo -e $separator
-			echo -n " -- Have you already registered on the site? (y/n) [n] "
+			echo -n " -- Have you already registered on the site? ($YES_NO) [n] "
 			read USER_REGISTERED
-			if [ "$USER_REGISTERED" == 'y' ]; then
+			if [ "$USER_REGISTERED" == "$YES" ]; then
 
 				echo -n "$ADD_API_KEY"
 				read API_KEY
@@ -169,7 +170,7 @@ separator="---------------------------------------------------------------------
 			fi
 
 			echo -e $separator
-			echo -n " -- Do you want us to add this device automatically to your profile in the web service? (y/n) [y] "
+			echo -n " -- Do you want us to add this device automatically to your profile in the web service? ($YES_NO) [$YES] "
 			read ADD_DEVICE_AUTO
 
 			if [ "$ADD_DEVICE_AUTO" == 'n' ]; then
@@ -351,7 +352,7 @@ separator="---------------------------------------------------------------------
 	sudo cp -R lang alerts platform $INSTALLPATH
 	sudo chmod +x $INSTALLPATH/lang/* $INSTALLPATH/platform/*
 
-	if [ "$SKIP" != "y" ]; then
+	if [ "$SKIP" != "$YES" ]; then
 
 		sudo cp $temp_config_file $INSTALLPATH/$config_file
 		sudo chmod 700 $INSTALLPATH/$config_file # no read access to other users, for security
