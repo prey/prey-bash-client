@@ -22,6 +22,8 @@ class PreyConfigurator:
         index = combobox.get_active()
         notebook.set_current_page(index)
         check_url.set_editable(index != 0)
+        if index == 0:
+            check_url.set_text('http://preyproject.com')
 
     def changed_device_key(self, widget, device_key, check_url):
         check_url.set_text("http://preyproject.com/"+device_key.get_text())
@@ -64,13 +66,10 @@ class PreyConfigurator:
         elif l == 'Sverige':
             language = 'sv'
 
-        real_check_url = check_url.get_text()
-
         model = post_method.get_model()
         index = post_method.get_active()
         if index == 0: 
             real_post_method = 'http'
-            real_check_url = 'http://preyproject.com/' + device_key.get_text()
         elif index == 1: 
             real_post_method = 'email'
         elif index == 2: 
@@ -83,7 +82,7 @@ class PreyConfigurator:
         # print "Device Key: %s" % device_key.get_text()
 
         self.edit_param('lang', language)
-        self.edit_param('check_url', real_check_url)
+        self.edit_param('check_url', check_url.get_text())
         self.edit_param('post_method', real_post_method)
 
         self.edit_param('api_key', api_key.get_text())
@@ -189,7 +188,7 @@ class PreyConfigurator:
         vbox.pack_start(label, False, True, 0)
 
         post_method = gtk.combo_box_new_text()
-        post_method.append_text('Web service')
+        post_method.append_text('Web service (Recommended)')
         post_method.append_text('SMTP Email')
         post_method.append_text('Secure Copy (SCP)')
 
