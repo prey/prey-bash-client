@@ -9,110 +9,23 @@ TIMING=20
 INSTALLPATH=/usr/share/prey
 PREY_FILE=prey.sh
 
+# make sure the config file is only readable by root
+# chmod 700 $INSTALLPATH/config
+
 # create crontab entry
-(sudo crontab -l | grep -v prey; echo "*/$TIMING * * * * $INSTALLPATH/$PREY_FILE > /dev/null") | sudo crontab -
+(crontab -l | grep -v prey; echo "*/$TIMING * * * * $INSTALLPATH/$PREY_FILE > /dev/null") | crontab -
 
 # update system menus
 [ ! -x /usr/bin/update-menus ] || /usr/bin/update-menus
 
-message="You should run the configurator in System Tools to set up Prey completely"
+message="Smooth! Now you should run the configurator in System Tools to finish setting up Prey."
 
 if [ `which notify-send` ]; then
 	`which notify-send` "Prey install complete" "$message"
 elif [ `which zenity` ]; then
 	`which zenity` --info --text "$message"
 elif [ `which kdialog` ]; then
-	`which kdialog` --info "$message"
+	`which kdialog` --msgbox "$message"
 fi
-
-exit
-
-####################################################################
-# OLD INSTALLER STUFF... NOT USED ANYMORE!
-####################################################################
-
-set -e
-
-. /usr/share/debconf/confmodule
-
-PREY_PATH=/usr/share/prey
-CONFIG_FILE=$PREY_PATH/config
-REPORT_CONFIG_FILE=$PREY_PATH/modules/report/config
-TIMING=10
-
-case "$1" in
-  configure)
-
-	# define language
-	LANGUAGE=`zenity --entry --text "Set default language for Prey (en/es/sv) [en] "`
-	if [ ! -f "$PREY_PATH/lang/$LANGUAGE" ]; then
-		echo " -- Defaulting to Prey in english..."
-		LANGUAGE='en'
-	fi
-
-	chmod +x $PREY_PATH/lang/$LANGUAGE
-	. $PREY_PATH/lang/$LANGUAGE
-
-	EMAIL=`zenity --entry --text "Enter email address"`
-	if [ $EMAIL == "" ]; then
-		echo -e "$INVALID_EMAIL_ADDRESS"
-		exit
-	fi
-
-	# setup SMTP
-	SMTP_SERVER=`zenity --entry --text "Enter SMTP Server"`
-	if [ $SMTP_SERVER == "" ]; then
-		SMTP_SERVER='smtp.gmail.com:587'
-		# echo -e "$DEFAULT_SMTP_SERVER"
-	fi
-
-	# SMTP user
-	SMTP_USER=`zenity --entry --text "Enter SMTP User [$EMAIL] "`
-	if [ $SMTP_USER == "" ]; then
-		echo -e "$DEFAULT_SMTP_USER" $EMAIL.
-		SMTP_USER=$EMAIL
-	fi
-
-	# SMTP pass
-
-	SMTP_PASS=`zenity --entry --text "Enter SMTP Pass"`
-	if [ "$SMTP_PASS" == "" ]; then
-		echo -e "$INVALID_SMTP_PASS"
-		exit
-	fi
-
-	# setup URL check
-
-	URL=`zenity --entry --text "Enter check URL"`
-	URL=`echo $URL | sed "s/\//-SLASH-/g"`
-
-	TIMING=`zenity --entry --text "Enter Prey Run Interval"`
-	if [ "$TIMING" == "" ]; then
-		TIMING=10
-	fi
-
-	# base prey stuff
-	sed -i -e "s/lang='.*'/lang='$LANGUAGE'/" $CONFIG_FILE
-	sed -i -e "s/url='.*'/url='$URL'/" $CONFIG_FILE
-	sed -i -e "s/-SLASH-/\//g" $CONFIG_FILE # resolve the slash hack
-
-	# report module stuff
-	sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $REPORT_CONFIG_FILE
-	sed -i -e "s/smtp_server='.*'/smtp_server='$SMTP_SERVER'/" $REPORT_CONFIG_FILE
-	sed -i -e "s/smtp_username='.*'/smtp_username='$SMTP_USER'/" $REPORT_CONFIG_FILE
-	sed -i -e "s/smtp_password='.*'/smtp_password='$SMTP_PASS'/" $REPORT_CONFIG_FILE
-
-	# echo -e "$ADDING_CRONTAB"
-	# well also remove any line invoking prey if it was already there, just to make sure
-	(sudo crontab -l | grep -v prey; echo "*/$TIMING * * * * cd $INSTALLPATH; ./$prey_file") | sudo crontab -
-
-	# echo -e "$INSTALL_OK"
-
-    ;;
-
-  *) echo "$0: didn't understand being called with \`$1'" 1>&2
-     exit 0;;
-
-esac
 
 exit 0
