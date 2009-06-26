@@ -31,7 +31,8 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	DEFAULT_SMTP_USER=" -- Ok, vårt SMTP användarnamn kommer att vara" # the installer appends the email var
 	ENTER_SMTP_PASS=" -> Skriv in ditt SMTP lösenord: (Det kommer inte att visas i klartext) [] "
 	INVALID_SMTP_PASS=" !! Du måste skriva in ett giltigt lösenord. Avslutar...\n"
-
+	YES_NO="y/n"
+	YES="y"
 	CHECK_URL_OR_NOT=" -- Vill du att Prey ska kontrollera en URL? (Nej, innebär att en rapport skickas var gång datorn startas) [n] "
 	ENTER_URL=" -- Ok, vilket URL ska vi kontrollera? [t.ex. http://minserver.se/prey_check_url] "
 	INVALID_URL=" !! Du måste ange en URL. Exiting...\n"

@@ -41,7 +41,8 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	DEFAULT_SMTP_USER=" -- Nuestro usuario STMP sera entonces"
 	ENTER_SMTP_PASS=" -> Escribe tu contrasena para el servidor SMTP: (No va a mostrar nada) [] "
 	INVALID_SMTP_PASS=" !! Debes escribir una contrasena SMTP valida. Saliendo...\n"
-
+	YES_NO="s/n"
+	YES="s"
 	CHECK_URL_OR_NOT=" -- Quieres que Prey use una URL de verificacion? (No significa que el reporte se enviara cada vez que Prey se ejecute) [n] "
 	ENTER_URL=" -- Ok, que URL quieres usar entonces? [i.e. http://miservidor.com/laptop_desaparecido] "
 	INVALID_URL=" !! Tienes que definir una URL. Saliendo...\n"
