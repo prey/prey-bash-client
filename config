@@ -41,7 +41,7 @@ scp_path='~'
 mail_to='mailbox@domain.com'
 
 # the password is now stored base64 encrypted
-# if you wish to generate it by hand run,
+# if you wish to generate it by hand, run
 # $ echo -n "password" | openssl enc -base64
 smtp_server='smtp.gmail.com:587'
 smtp_username='username@gmail.com'

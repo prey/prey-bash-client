@@ -45,19 +45,6 @@ function add_file {
 	fi
 }
 
-function remove_traces {
-	unset -v traces
-	echo ' -- Dropping all traces!'
-}
-
-function remove_files {
-	for f in "${files[@]}"
-	do
-		rm -f $f
-		echo " -- Removed $f"
-	done
-}
-
 function list_traces {
 	# echo " -- ${#traces[*]} traces gathered!"
 	for t in "${traces[@]}"
@@ -77,6 +64,22 @@ function list_files {
 		fi
 	done
 }
+
+function remove_traces {
+	unset -v traces
+	echo ' -- Dropping all traces!'
+}
+
+function remove_files {
+	for f in "${files[@]}"
+	do
+		file=`echo $f | sed -e 's/^.*=//'`
+		rm -f $file
+		echo " -- Removed $file"
+	done
+}
+
+
 
 ####################################################################
 # string functions

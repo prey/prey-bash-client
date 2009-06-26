@@ -49,7 +49,7 @@ class PreyConfigurator:
         self.current_mail_to = self.get_current_var('mail_to')
         self.current_smtp_server = self.get_current_var('smtp_server')
         self.current_smtp_username = self.get_current_var('smtp_username')
-        self.current_smtp_password = self.get_current_var('smtp_password')
+        # self.current_smtp_password = self.get_current_var('smtp_password')
 
         self.current_scp_server = self.get_current_var('scp_server')
         self.current_scp_path = self.get_current_var('scp_path')
@@ -91,13 +91,16 @@ class PreyConfigurator:
         self.edit_param('mail_to', mail_to.get_text())
         self.edit_param('smtp_server', smtp_server.get_text())
         self.edit_param('smtp_username', smtp_username.get_text())
-        self.edit_param('smtp_password', smtp_password.get_text())
+        
+        if smtp_password.get_text() != '':
+            encoded_pass = os.popen('echo -n "'+ smtp_password.get_text() + '" | openssl enc -base64').read().strip()
+            self.edit_param('smtp_password', encoded_pass)
 
         self.edit_param('scp_server', scp_server.get_text())
         self.edit_param('scp_path', scp_path.get_text())
 
         # lets change the crontab interval
-        os.system('(sudo crontab -l | grep -v prey; echo "*/'+str(minutes.get_value_as_int())+' * * * * /usr/share/prey/prey.sh > /dev/null") | sudo crontab -')
+        os.system('(crontab -l | grep -v prey; echo "*/'+str(minutes.get_value_as_int())+' * * * * /usr/share/prey/prey.sh > /dev/null") | crontab -')
         gtk.main_quit()
 
        # def change_digits(self, widget, minutes):
@@ -297,7 +300,7 @@ class PreyConfigurator:
 
         smtp_password = gtk.Entry()
         smtp_password.set_visibility(False)
-        smtp_password.set_text(self.current_smtp_password)
+        # smtp_password.set_text(self.current_smtp_password)
         vbox.pack_start(smtp_password, False, True, 0) 
 
         label = gtk.Label('Email Settings')
