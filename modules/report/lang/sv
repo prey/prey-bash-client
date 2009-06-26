@@ -66,7 +66,7 @@ else
 	STRING_WRITE_EMAIL=" -- Skapar epostmeddelande..."
 	STRING_TAKE_IMAGE=" -- Tar skärmbild och foto av tjuven..."
 	STRING_TAKE_IMAGE_DONE=" -- Klar med bilderna!"
-	STRING_SENDING_EMAIL=" -- Skickar email..."
+	STRING_SENDING_EMAIL=" -- Skickar report..."
 	STRING_ERROR_EMAIL="\n\033[1m !! Det gick inte att skicka epost. Är du säker på att inställningarna är korrekta?
     Om du använder Gmail, testa att ta bort '@gmail.com' i användarnamnet för SMTP i Preys konfigurationsfil.\033[0m\n"
 	STRING_REMOVE_EVIDENCE=" -- Tar bort alla spår av bevis..."

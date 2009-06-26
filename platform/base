@@ -108,6 +108,9 @@ function check_net_status {
 
 # we could eventually use a different method for status checking
 function check_status {
+	if [ "$post_method" == 'http' ]; then
+		check_url="$check_url/devices/$device_key.xml"
+	fi
 	headers=`$getter -I $check_url`
 	status=`echo "$headers" | awk /HTTP/ | sed 's/[^200|302|400|404|500]//g' | sed 's/^0//'`
 }
@@ -263,6 +266,7 @@ function send_via_email {
 }
 
 function send_via_http {
+	post_url=`echo $check_url | sed 's/\.xml/\/reports/'`
 	if [ -n "$post_url" ]; then
 		if [ -n "$api_key" ]; then
 			post_data="$file_list -F api_key=$api_key"
@@ -270,7 +274,7 @@ function send_via_http {
 		response=`curl -s -F body="$trace_list" $post_data "$post_url"`
 		# echo $response
 	else
-		echo ' !! You need to set up a POST URL for the HTTP sending to work!'
+		echo ' !! You need to set up a URL for the HTTP sending to work!'
 	fi
 } 
 

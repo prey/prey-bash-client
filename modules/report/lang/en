@@ -66,7 +66,7 @@ else
 	STRING_TAKE_IMAGE=" -- Taking a screenshot and a picture of the impostor..."
 	STRING_TAKE_IMAGE_DONE=" -- Done with the images!"
 	STRING_WRITE_EMAIL=" -- Writing our email..."
-	STRING_SENDING_EMAIL=" -- Sending the email..."
+	STRING_SENDING_EMAIL=" -- Sending the report..."
 	STRING_ERROR_EMAIL="\n\033[1m !! There was a problem sending the email. Are you sure it was setup correctly?
 	If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file.\033[0m\n"
 	STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."

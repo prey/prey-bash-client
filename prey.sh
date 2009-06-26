@@ -5,18 +5,20 @@
 # License: GPLv3
 ####################################################################
 
-running_prey=`ps aux | grep "prey.sh" | grep -v grep | wc -l`
-if [[ "$running_prey" -gt 2 && "$1" != "-f" ]]; then # prey is already running
-
-	echo ' !! Prey is already running! Kill the other process or run with -f to force execution.'
-	exit
-
-fi
-
 version='0.2.5'
 base_path=`dirname $0`
 start_time=`date +"%F %T"`
 
+# are we running?
+running_prey=`ps aux | grep "prey.sh" | grep -v grep | wc -l`
+if [[ "$running_prey" -gt 2 && "$1" != "-f" ]]; then # prey is already running
+
+	echo -e "\n !! Prey is already running! Kill the other process or run with -f to force execution.\n"
+	exit
+
+fi
+
+# get configuration & language file
 . $base_path/config
 
 if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
@@ -24,14 +26,15 @@ if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 fi
 . $base_path/lang/$lang
 
-# we  to fetch the OS-specific methods
+# ok lets get going now
+
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 . $base_path/platform/base
 . $base_path/platform/$os
 
 echo -e "\E[36m$STRING_START\E[0m"
 
-if [ "$1" == "-t" ]; then
+if [[ "$1" == "-t" ]]; then
 	echo -e "\033[1m -- TEST MODE ENABLED. WON'T CHECK URL OR SEND STUFF!\033[0m\n"
 	test_mode=1
 	check_url=''
