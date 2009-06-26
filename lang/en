@@ -39,7 +39,8 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	DEFAULT_SMTP_USER=" -- Ok, our SMTP username will be" # the installer appends the email var
 	ENTER_SMTP_PASS=" -> Type in your smtp password: (It won't be shown) [] "
 	INVALID_SMTP_PASS=" !! You need to type in a valid password. Exiting...\n"
-
+	YES_NO="y/n"
+	YES="y"
 	CHECK_URL_OR_NOT=" -- Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
 	ENTER_URL=" -- Ok, which URL would it be then? [i.e. http://myserver.com/prey_check_url] "
 	INVALID_URL=" !! You need to define a URL. Exiting...\n"
@@ -53,7 +54,7 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
  -- If you ever want to uninstall Prey, just delete the $INSTALLPATH directory
     and remove Prey's line in root's crontab: \n
 \t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
- -- For updates remember to check http://prey.bootlog.org!\033[0m\n\n"
+ -- For updates remember to check http://preyproject.com!\033[0m\n\n"
 
 else # prey status messages
 
