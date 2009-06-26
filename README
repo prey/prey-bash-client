@@ -1,6 +1,6 @@
 ##############################################
 # Prey README
-# For updates visit prey.bootlog.org
+# For updates visit preyproject.com
 ##############################################
 
 Prey is a script for tracking your stolen laptop.
@@ -38,7 +38,7 @@ install script:
 	$ ./install.sh
 
 Note: You should use the full URL in Prey's setup, such as
-http://prey.bootlog.org (not just prey.bootlog.org).
+http://preyproject.com (not just preyproject.com).
 
 ##############################################
 3. Requisites for Linux
