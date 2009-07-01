@@ -22,7 +22,7 @@ function get_images {
 
 		if [ -e '/tmp/imagen.jpeg' ]; then
 
-			mv /tmp/imagen.jpeg $picture
+			mv /tmp/imagen.jpeg $picture > /dev/null
 
 		else # by Vanscot, http://www.hometown.cl/ --> some webcams are unable to take JPGs so we grab a PPM
 
