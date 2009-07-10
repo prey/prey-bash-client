@@ -6,9 +6,7 @@
 # License: GPLv3
 ####################################################################
 
-if [ -n "$uptime" ]; then # prey is already running
-
-	# email template
+function do_report {
 
 	report_body="
 	Goda nyheter min vän, det verkar som om vi hittat din dator!
@@ -54,8 +52,9 @@ if [ -n "$uptime" ]; then # prey is already running
 	För uppdateringar besök http://preyproject.com
 	"
 
-else 
-
+}
+	
+	NO_RUN_CONNECTION=" -- There is no Internet connection, we'll skip this step"
 	STRING_GET_IP=" -- Hämtar publik IP adress..."
 	STRING_GET_LAN_IP=" -- Hämtar privat LAN IP adress..."
 	STRING_GET_MAC_AND_WIFI=" -- Hämtar MAC address, routing och trådlös info..."
@@ -70,5 +69,3 @@ else
 	STRING_ERROR_EMAIL="\n\033[1m !! Det gick inte att skicka epost. Är du säker på att inställningarna är korrekta?
     Om du använder Gmail, testa att ta bort '@gmail.com' i användarnamnet för SMTP i Preys konfigurationsfil.\033[0m\n"
 	STRING_REMOVE_EVIDENCE=" -- Tar bort alla spår av bevis..."
-
-fi
