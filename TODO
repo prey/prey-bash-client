@@ -1,3 +1,4 @@
+- Finish the cronjob change in case of robbery.
 - Finish translating the spanish install messages.
 - Enable auto-login in Mac/Linux/Windows if computer is in stolen state.
 - Enable some configuration to be set up remotely (from the check file)
