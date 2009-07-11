@@ -28,6 +28,7 @@ fi
 
 # ok lets get going now
 
+os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 . $base_path/platform/base
 . $base_path/platform/$os
 
@@ -53,8 +54,10 @@ if [ $connected == 0 ]; then
 	check_net_status
 	if [ $connected == 0 ]; then
 		echo "$STRING_NO_CONNECT_TO_WIFI"
+		exit
 	fi
 fi
+
 ####################################################################
 # if there's a URL in the config, lets see if it actually exists
 # if it doesn't, the program will shut down gracefully
@@ -63,16 +66,8 @@ fi
 if [ -n "$check_url" ]; then
 	echo "$STRING_CHECK_URL"
 	check_status
+
 	if [ "$status" == '200' ]; then
-		echo -e "$STRING_PROBLEM"
-		parse_headers
-		process_response
-		sed -i -e "s/pc_status='.*'/pc_status='Stolen'/" $base_path/config
-	elif [[ "$status" == '404' && "$pc_status" == 'Stolen' ]]; then
-		sed -i -e "s/pc_status='.*'/pc_status=''/" $base_path/config
-		echo -e "$STRING_NO_PROBLEM"
-		exit
-	elif [ "$pc_status" == 'Stolen' ]; then
 		echo -e "$STRING_PROBLEM"
 		parse_headers
 		process_response
@@ -90,3 +85,4 @@ fi
 echo -e " -- Running active modules..."
 run_active_modules
 echo -e "$STRING_DONE"
+

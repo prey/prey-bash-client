@@ -238,7 +238,7 @@ function run_active_modules {
 }
 
 ####################################################################
-# data posting functions //Esto no deberia estar en report module?
+# data posting functions
 ####################################################################
 
 function post_data {
@@ -261,9 +261,7 @@ function post_data {
 function send_via_email {
 	decoded_pass=`decrypt "$smtp_password"`
 	complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
-	report=/tmp/reporte.tmp 
-	echo "$report_body" > $report
-	response=`$base_path/lib/sendEmail -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$report tls=auto username=$smtp_username password=$decoded_pass`
+	response=`$base_path/lib/sendEmail -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file tls=auto username=$smtp_username password=$decoded_pass`
 	if [[ "$response" =~ "ERROR" ]]; then
 		echo -e "$STRING_ERROR_EMAIL"
 		echo -e "\n This is the complete error message: \n $response\n"
@@ -284,6 +282,7 @@ function send_via_http {
 } 
 
 function send_via_scp {
+	echo "$trace_list" > /tmp/prey_traces.tmp
 	if [[ -n "$scp_server" && -n "$scp_path" ]]; then
 		echo -e " -- Uploading the stuff to $scp_path in $scp_server..."
 		new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"

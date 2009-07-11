@@ -10,19 +10,13 @@ lang='en'
 
 # verification URL, if left empty Prey will always gather and send the information
 check_url='http://preyproject.com'
-os='linux'
-#Computer Status, in case it was reported and there is no internet.
-pc_status=''
-execute_time=''
-####################################################################
-# Report sending method //Esto deberia ir en report
+
 # you can use send the report via email or to the web service
 # valid values: http, scp, email
-####################################################################
 post_method='http'
 
 ####################################################################
-# http posting configuration //Esto deberia ir en report
+# http posting configuration
 ####################################################################
 
 # you can get both of these from Prey's web service
@@ -30,7 +24,7 @@ api_key=''
 device_key=''
 
 ####################################################################
-# scp posting configuration //Esto deberia ir en report
+# scp posting configuration
 # we dont use user/pass but RSA keys
 # for more info check http://tinyurl.com/sshtip
 ####################################################################
@@ -40,17 +34,17 @@ scp_server='my.server.com'
 scp_path='~'
 
 ####################################################################
-# SMTP settings, for email posting //Esto deberia ir en report
+# SMTP settings, for email posting
 ####################################################################
 
 # mailbox to send the report
-mail_to='usuario@gmail.com'
+mail_to='mailbox@domain.com'
 
 # the password is now stored base64 encrypted
 # if you wish to generate it by hand, run
 # $ echo -n "password" | openssl enc -base64
 smtp_server='smtp.gmail.com:587'
-smtp_username='usuario@gmail.com'
+smtp_username='username@gmail.com'
 smtp_password='password'
 
 # you dont need to change this
