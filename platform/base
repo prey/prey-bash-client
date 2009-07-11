@@ -139,7 +139,7 @@ function process_response {
 		echo ' -- Got a text file! Lets see if its something we can actually run.'
 		response_type='text'
 	elif [[ "$content_type" =~ "text/html" ]]; then
-		echo " -- Rseponse was just an HTML file. Lets just do our job."
+		echo " -- Response was just an HTML file. Lets just do our job."
 		return
 	else
 		return
@@ -204,7 +204,7 @@ function process_zip {
 
 function install_new_module {
 	echo -e "Installing new module: $1..."
-	wget "$check_url/download/module?api_key=$api_key" -o /tmp/$1.zip &> /dev/null
+	wget "$check_url/download/$module?api_key=$api_key" -o /tmp/$1.zip &> /dev/null
 	if [ -f "/tmp/$1.zip" ]; then
 		echo " -- Got new module from $check_url! Unpackaging..."
 		mv /tmp/$1.zip $base_path/modules
@@ -245,7 +245,7 @@ function run_active_modules {
 			fi
 
 			# now, go!
-			. $module_path/run.sh
+			. $module_path/run
 		fi
 
 	done

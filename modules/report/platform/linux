@@ -6,7 +6,8 @@
 ####################################################################
 
 function get_network_info {
-	mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
+	# mac=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
+	mac=`ifconfig | grep 'HWaddr' | cut -d ' ' -f11-15`
 	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
 }
 
@@ -65,4 +66,3 @@ function get_images {
 
 	fi
 }
-

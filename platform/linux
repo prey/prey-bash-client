@@ -9,6 +9,8 @@ function get_gateway_ip {
 	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
 }
 
+# attempts to connect to the first open public wifi network
+# if we dont have NetworkManager available, we use plain iwconfig
 function try_to_connect {
 
 	if [ `which nm-applet` ]; then
@@ -43,4 +45,3 @@ function try_to_connect {
 	fi
 
 }
-
