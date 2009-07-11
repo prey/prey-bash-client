@@ -84,5 +84,11 @@ fi
 
 echo -e " -- Running active modules..."
 run_active_modules
-echo -e "$STRING_DONE"
 
+####################################################################
+# lets send whatever our modules have gathered
+####################################################################
+
+echo -e " -- Sending data..."
+post_data
+echo -e "$STRING_DONE"
