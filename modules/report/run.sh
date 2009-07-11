@@ -4,7 +4,6 @@
 # URL : http://preyproject.com
 # License: GPLv3
 ####################################################################
-if [ $connected == 1 ]; then
 
 echo "$STRING_GET_IP"
 get_public_ip
@@ -32,10 +31,9 @@ get_modified_files
 echo "$STRING_ACTIVE_CONNECTIONS"
 get_active_connections
 
-# echo "$STRING_WRITE_EMAIL" // Trash.. saquemoslo despues.
+# echo "$STRING_WRITE_EMAIL"
 # write_email
 # add_trace report_body $report_body
-do_report
 
 echo "$STRING_TAKE_IMAGE"
 get_images
@@ -53,7 +51,3 @@ echo "$STRING_TAKE_IMAGE_DONE"
 
 echo "$STRING_SENDING_EMAIL"
 post_data
-
-else 
-	echo "$NO_RUN_CONNECTION"
-fi

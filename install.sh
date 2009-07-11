@@ -9,7 +9,7 @@ version='0.2'
 config_file=config
 temp_config_file=temp_config
 prey_file=prey.sh
-platform=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
+platform=`uname`
 linux_packages='wget traceroute scrot'
 
 TIMING=10
@@ -299,9 +299,6 @@ separator="---------------------------------------------------------------------
 		sed -i -e "s/smtp_server='.*'/smtp_server='$SMTP_SERVER'/" $temp_config_file
 		sed -i -e "s/smtp_username='.*'/smtp_username='$SMTP_USER'/" $temp_config_file
 		sed -i -e "s/smtp_password='.*'/smtp_password='$SMTP_PASS'/" $temp_config_file
-		sed -i -e "s/os='.*'/os='$platform'/" $temp_config_file
-		sed -i -e "s/execute_time='.*'/execute_time='$TIMING'/" $temp_config_file
-
 
 		sed -i -e "s/-SLASH-/\//g" $temp_config_file # resolve the slash hack
 

@@ -6,7 +6,9 @@
 # License: GPLv3
 ####################################################################
 
-function do_report {
+if [ -n "$uptime" ]; then # prey is already running
+
+	# email template
 
 	report_body="
 	Buenas noticias amigo mio, al parecer lo encontramos!
@@ -51,8 +53,9 @@ function do_report {
 	Tu fiel servidor, Prey
 	Para actualizaciones visita http://preyproject.com
 	"
-}
-	NO_RUN_CONNECTION=" -- No hay conexion a Internet, nos saltaremos este paso."
+
+else 
+
 	STRING_GET_IP=" -- Obteniendo la direccion IP publica..."
 	STRING_GET_LAN_IP=" -- Obteniendo la direccion IP privada de la LAN..."
 	STRING_GET_MAC_AND_WIFI=" -- Obteniendo direccion MAC, tabla de rutas e informacion de la Red Wifi..."
@@ -67,3 +70,5 @@ function do_report {
 	STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
     Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion.\033[0m\n"
 	STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
+
+fi
