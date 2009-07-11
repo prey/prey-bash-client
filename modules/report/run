@@ -44,10 +44,3 @@ if [ -f "$screenshot" ]; then
 	add_file screenshot "$screenshot"
 fi
 echo "$STRING_TAKE_IMAGE_DONE"
-
-####################################################################
-# all set, lets send the report
-####################################################################
-
-echo "$STRING_SENDING_EMAIL"
-post_data

@@ -140,9 +140,9 @@ function process_response {
 		response_type='text'
 	elif [[ "$content_type" =~ "text/html" ]]; then
 		echo " -- Rseponse was just an HTML file. Lets just do our job."
-		return 
+		return
 	else
-		return 
+		return
 	fi
 	response=`$getter $check_url`
 	eval 'process_'"${response_type}"''
@@ -158,20 +158,23 @@ function process_xml {
 		if [ "$line" == "$value" ]; then
 			if [[ "$line" =~ "active" ]]; then
 				if [[ "$line" =~ "true" ]]; then
-					echo " -- $module active!"
-					if [ ! -x modules/$module/run.sh ]; then
-						chmod +x modules/$module/run.sh
+					echo " -- $module module active!"
+					if [ ! -x modules/$module/run ]; then
+						chmod +x modules/$module/run
 					fi
 				else
 					module=''
-				fi 
+				fi
 			else
 				module=`echo $line | sed 's/[^a-zA-Z0-9]//g'`
+				if [ ! -d $base_path/modules/$module ]; then
+					install_new_module $module
+				fi
 			fi
 		else
 			if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then # module is active and has configuration
 				param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/g'`
-				sed -i -e "s/$param='.*'/$param='$value'/" $base_path/modules/$module/config 
+				sed -i -e "s/$param='.*'/$param='$value'/" $base_path/modules/$module/config
 			fi
 		fi
 
@@ -199,11 +202,23 @@ function process_zip {
 # module functions
 ####################################################################
 
+function install_new_module {
+	echo -e "Installing new module: $1..."
+	wget "$check_url/download/module?api_key=$api_key" -o /tmp/$1.zip &> /dev/null
+	if [ -f "/tmp/$1.zip" ]; then
+		echo " -- Got new module from $check_url! Unpackaging..."
+		mv /tmp/$1.zip $base_path/modules
+		unzip $base_path/modules/$1.zip
+		rm $base_path/modules/$1.zip
+		echo " -- New $1 module placed and ready to go!"
+	fi
+}
+
 function run_active_modules {
 
 	for module_path in `find $base_path/modules -maxdepth 1 -mindepth 1 -type d`; do
 
-		if [ -x $module_path/run.sh ]; then
+		if [ -x $module_path/run ]; then
 
 			echo -e " -- Running $module_path!"
 
@@ -246,8 +261,8 @@ function post_data {
 	file_list=`list_files`
 	if [[ $trace_list || $file_list ]]; then
 		if [ "$test_mode" == 1 ]; then
-			echo ' >> This is where the data gets sent. But not in test mode!' 
-		else 
+			echo ' >> This is where the data gets sent. But not in test mode!'
+		else
 			trace_file=/tmp/prey_traces.tmp
 			echo "$trace_list" > $trace_file
 			eval 'send_via_'"${post_method}"''
@@ -279,7 +294,7 @@ function send_via_http {
 	else
 		echo ' !! You need to set up a URL for the HTTP sending to work!'
 	fi
-} 
+}
 
 function send_via_scp {
 	echo "$trace_list" > /tmp/prey_traces.tmp
@@ -288,8 +303,7 @@ function send_via_scp {
 		new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
 		ssh $scp_server mkdir $scp_path/$new_folder
 		status=`scp $trace_file $file_list $scp_server:$scp_path/$new_folder`
-	else 
+	else
 		echo ' !! You need to set up a server in order to send the report via SCP!'
 	fi
 }
-
