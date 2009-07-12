@@ -204,7 +204,7 @@ function process_zip {
 
 function install_new_module {
 	echo -e "Installing new module: $1..."
-	wget "$check_url/download/$module?api_key=$api_key" -o /tmp/$1.zip &> /dev/null
+	wget "$check_url/modules/download/$module?api_key=$api_key" -o /tmp/$1.zip &> /dev/null
 	if [ -f "/tmp/$1.zip" ]; then
 		echo " -- Got new module from $check_url! Unpackaging..."
 		mv /tmp/$1.zip $base_path/modules
@@ -297,7 +297,6 @@ function send_via_http {
 }
 
 function send_via_scp {
-	echo "$trace_list" > /tmp/prey_traces.tmp
 	if [[ -n "$scp_server" && -n "$scp_path" ]]; then
 		echo -e " -- Uploading the stuff to $scp_path in $scp_server..."
 		new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
