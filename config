@@ -8,7 +8,7 @@
 # language, en (english) or es (espanol)
 lang='en'
 
-# verification URL, if left empty Prey will always gather and send the information
+# verification URL, if left empty Prey will always activate and run
 check_url='http://preyproject.com'
 
 # you can use send the report via email or to the web service
@@ -50,4 +50,3 @@ smtp_password='password'
 # you dont need to change this
 mail_from='Prey <no-reply@gmail.com>'
 mail_subject="Prey -- status report"
-
