@@ -180,7 +180,7 @@ function process_xml {
 
 	if [[ "$line" =~ 'name="' ]]; then # we have a module node
 		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/g'`
-		echo "module: $module"
+		# echo " -- Got instructions for $module module."
 		if [[ "$line" =~ "true" ]]; then # module is active
 			if [ ! -d $base_path/modules/$module ]; then
 				install_new_module $module # <-- we're only installing the module if it is active
@@ -201,7 +201,7 @@ function process_xml {
 		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then # module is active and has configuration
 			param=`echo $line | sed 's/^<\(.*\)>.*<.*>$/\1/' | sed 'y/-/_/'` # we also replace -'s to _'s
 			value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
-			echo " -- Setting param $param -> $value for $module module."
+			# echo " -- Setting param $param -> $value for $module module."
 			sed -i -e "s/$param='.*'/$param='$value'/" $base_path/modules/$module/config
 		fi
 	fi
@@ -217,7 +217,7 @@ function process_text {
 	if [[ -n `echo $response | grep '#!/bin/bash'` && ! -n `echo $response | grep ' rm '` ]]; then
 		echo ' -- Valid script! Lets get it on.'
 		script=/tmp/script.sh
-		echo $response > $script
+		echo -e $response > $script
 		chmod +x $script
 		output=`$script`
 		add_trace 'script_output' $output
@@ -295,7 +295,7 @@ function post_data {
 	file_list=`list_files`
 	if [[ $trace_list || $file_list ]]; then
 		if [ "$test_mode" == 1 ]; then
-			echo ' >> This is where the data gets sent. But not in test mode!'
+			echo ' >> This is where the data gets sent. Though not in test mode!'
 		else
 			trace_file=/tmp/prey_traces.tmp
 			echo "$trace_list" > $trace_file
