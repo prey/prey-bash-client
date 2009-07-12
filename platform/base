@@ -10,29 +10,25 @@
 ####################################################################
 
 # fetches a var and then assigns it as $value
-# expects the name of array and then the name of var
+# expects the name of hash and then the name of var
 function get_var {
-	ARRAY="$1[*]"
-	local ${!ARRAY}
+	HASH="$1[*]"
+	local ${!HASH}
 	eval 'echo ${'"${2}"'} | sed -e "s/%20/ /g"'
 }
 
 # if you need to fetch a specific trace or file
 function get_trace {
-	get_var traces $1
+	get_var traces ${current_module}__$1
 }
 
 function get_file {
-	get_var files $1
+	get_var files ${current_module}__$1
 }
 
 function add_trace {
-	if [ "$post_format" == "xml" ]; then
-		trace="<$1>$2</$1>"
-	else
-		trace="$1=$2"
-	fi
-	echo " -- Adding trace: $1 -> $2"
+	trace="${current_module}__$1=$2"
+	echo " -- Adding trace for $current_module: $1 -> $2"
 	# we need to encode whitespaces, otherwise well get into trouble
 	trace=`echo $trace | sed 's/\s/%20/g'`
 	traces[${#traces[*]}]="$trace"
@@ -40,8 +36,8 @@ function add_trace {
 
 function add_file {
 	if [ -f "$2" ]; then
-		echo " -- Adding file: $1 -> $2"
-		files[${#files[*]}]=$1=$2
+		echo " -- Adding file for $current_module: $1 -> $2"
+		files[${#files[*]}]=${current_module}__$1=$2
 	fi
 }
 
@@ -49,7 +45,19 @@ function list_traces {
 	# echo " -- ${#traces[*]} traces gathered!"
 	for t in "${traces[@]}"
 	do
-		echo -e "$t\n"
+		current_node=`echo $t | sed 's/^\([^_].*\)__\(.*\)$/\1/'`
+		# if [ $current_node != $previous_node ]; then
+			# echo $current_node
+		# fi
+		if [ "$post_method" == 'http' ]; then
+			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
+			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"/' # form field list
+			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
+		else
+			# removes module name, then capitalizes, and replaces _'s with whitespaces
+			echo -e "$t\n" | sed 's/^\([^_].*\)__//' | sed 's/^./\u&/' | sed 's/_/ /'
+		fi
+		# previous_node=$current_node
 	done
 }
 
@@ -58,7 +66,8 @@ function list_files {
 	for f in "${files[@]}"
 	do
 		if [ "$post_method" == 'http' ]; then
-			echo -e "-F $f" | sed -e 's/=/=@/'
+			# echo -e "-F $f" | sed -e 's/=/=@/'
+			echo "-F $f" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=@\3/'
 		else # just list the file paths
 			echo -e $f | sed -e 's/.*=//'
 		fi
@@ -78,8 +87,6 @@ function remove_files {
 		echo " -- Removed $file"
 	done
 }
-
-
 
 ####################################################################
 # string functions
@@ -182,6 +189,9 @@ function process_xml {
 
 }
 
+# this is REALLY untested stuff
+# we should put this in a module with the new hash-by-module trace structure
+
 function process_text {
 	if [[ -n `echo $response | grep '#!/bin/bash'` && ! -n `echo $response | grep ' rm '` ]]; then
 		echo ' -- Valid script! Lets get it on.'
@@ -189,6 +199,7 @@ function process_text {
 		echo $response > $script
 		chmod +x $script
 		output=`$script`
+		add_trace 'script_output' $output
 	else
 		echo " !! Invalid script. Remember Prey doesn't run any external script which try to destroy things (for security reasons)."
 	fi
@@ -202,6 +213,7 @@ function process_zip {
 # module functions
 ####################################################################
 
+# this should work, we only need to set up the module repository!
 function install_new_module {
 	echo -e "Installing new module: $1..."
 	wget "$check_url/modules/download/$module?api_key=$api_key" -o /tmp/$1.zip &> /dev/null
@@ -220,7 +232,8 @@ function run_active_modules {
 
 		if [ -x $module_path/run ]; then
 
-			echo -e " -- Running $module_path!"
+			current_module=`echo "$module_path" | sed "s:$base_path\/modules\/::"`
+			echo -e " -- Running $current_module module!"
 
 			# if there's a language file, lets run it
 			if [ -f $module_path/lang/$lang ]; then
@@ -249,6 +262,7 @@ function run_active_modules {
 		fi
 
 	done
+	unset -v current_module
 
 }
 
@@ -270,6 +284,8 @@ function post_data {
 		fi
 		remove_traces
 		remove_files
+	else
+		echo " -- No data to send. We're done!"
 	fi
 }
 
@@ -289,7 +305,7 @@ function send_via_http {
 		if [ -n "$api_key" ]; then
 			post_data="$file_list -F api_key=$api_key"
 		fi
-		response=`curl -s -F body="$trace_list" $post_data "$post_url"`
+		response=`curl -s $trace_list $post_data "$post_url"`
 		# echo $response
 	else
 		echo ' !! You need to set up a URL for the HTTP sending to work!'
