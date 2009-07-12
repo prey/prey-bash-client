@@ -140,7 +140,7 @@ function process_response {
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
 	elif [[ "$content_type" =~ "octet-steam" ]]; then
-		echo ' -- Got a ZIP file! Installing new module...'
+		echo ' -- Got a ZIP file! What shall we do with it?'
 		response_type='zip'
 	elif [[ "$content_type" =~ "text/plain" ]]; then
 		echo ' -- Got a text file! Lets see if its something we can actually run.'
@@ -156,34 +156,55 @@ function process_response {
 }
 
 # REALLY untested. function expects a <modules> section in the xml and activates de modules as requested
+# format should be as follows:
+
+#	<modules>
+#		<module name="alert" active="true">
+#			<alert-message>asdasd</alert-message>
+#		</module>
+#		<module name="autologin" active="true">
+#			<user-name>guest</user-name>
+#		</module>
+#		<module name="report" active="false">
+#			<traceroute>y</traceroute>
+#		</module>
+#	</modules>
+
+# it should also work with one-line module entries (with no configuration), such as
+#
+# <module name="location" active="true" />
 
 function process_xml {
 
-	echo "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | while read line; do
+	echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "/module" | sed '1d' | while read line; do
 
-		value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
-		if [ "$line" == "$value" ]; then
-			if [[ "$line" =~ "active" ]]; then
-				if [[ "$line" =~ "true" ]]; then
-					echo " -- $module module active!"
-					if [ ! -x modules/$module/run ]; then
-						chmod +x modules/$module/run
-					fi
-				else
-					module=''
-				fi
-			else
-				module=`echo $line | sed 's/[^a-zA-Z0-9]//g'`
-				if [ ! -d $base_path/modules/$module ]; then
-					install_new_module $module
-				fi
+	if [[ "$line" =~ 'name="' ]]; then # we have a module node
+		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/g'`
+		echo "module: $module"
+		if [[ "$line" =~ "true" ]]; then # module is active
+			if [ ! -d $base_path/modules/$module ]; then
+				install_new_module $module # <-- we're only installing the module if it is active
+				echo " -- Installing new $module module..."
 			fi
-		else
-			if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then # module is active and has configuration
-				param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/g'`
-				sed -i -e "s/$param='.*'/$param='$value'/" $base_path/modules/$module/config
+			if [ ! -x $base_path/modules/$module/run ]; then
+				echo " -- Enabling $module module!"
+				chmod +x $base_path/modules/$module/run
 			fi
+		else # module is inactive
+			if [ -x $base_path/modules/$module/run ]; then
+				echo " -- Disabling $module module!"
+				chmod -x $base_path/modules/$module/run
+			fi
+			module='' # this allows us to check below if the module is inactive
 		fi
+	else
+		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then # module is active and has configuration
+			param=`echo $line | sed 's/^<\(.*\)>.*<.*>$/\1/' | sed 'y/-/_/'` # we also replace -'s to _'s
+			value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
+			echo " -- Setting param $param -> $value for $module module."
+			sed -i -e "s/$param='.*'/$param='$value'/" $base_path/modules/$module/config
+		fi
+	fi
 
 	done
 
@@ -206,7 +227,7 @@ function process_text {
 }
 
 function process_zip {
-	echo ' -- Processing ZIP... (well, almost!)'
+	echo ' -- Processing ZIP... (well, not really :)'
 }
 
 ####################################################################
@@ -215,7 +236,6 @@ function process_zip {
 
 # this should work, we only need to set up the module repository!
 function install_new_module {
-	echo -e "Installing new module: $1..."
 	wget "$check_url/modules/download/$module?api_key=$api_key" -o /tmp/$1.zip &> /dev/null
 	if [ -f "/tmp/$1.zip" ]; then
 		echo " -- Got new module from $check_url! Unpackaging..."
