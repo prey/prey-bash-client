@@ -1,0 +1,23 @@
+#!/bin/bash
+####################################################################
+# PREY Location Module Base Functions - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function get_current_location {
+	if [ -n "$wifi_points" ]; then
+		wifi_points=`echo $wifi_points | sed 's/.$//'`
+		wifi_points=", 'wifi_towers': [ $wifi_points ]"
+	fi
+
+	current_location_json=`$getter -X POST -H "Content-Type: application/json" -d "{ 'version': '1.1.0', 'host': '$check_url', 'request_address': true $wifi_points }" http://www.google.com/loc/json`
+}
+
+function parse_location_response {
+
+	current_location=$current_location_json
+	current_lat=`echo $current_location_json | grep latitude | sed 's/[^[:digit:]\.]*//g'`
+	current_lng=`echo $current_location_json | grep longitude | sed 's/[^[:digit:]\.]*//g'`
+
+}

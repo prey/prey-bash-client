@@ -1,0 +1,12 @@
+#!/bin/bash
+####################################################################
+# PREY Location Module Darwin Functions - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function get_wifi_access_points {
+
+	echo ' !! This module is still in development!'
+
+}
