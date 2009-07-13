@@ -15,8 +15,8 @@ function get_current_location {
 
 function parse_location_response {
 
-	current_lat=`echo $current_location_json | LANG=en_EN.UTF-8 sed -e 's/.*latitude":\(-*[0-9.]*\),.*/\1/'`
-	current_lng=`echo $current_location_json | LANG=en_EN.UTF-8 sed -e 's/.*longitude":\(-*[0-9.]*\),.*/\1/'`
-	current_location=`LANG=en_EN.UTF-8 echo $current_location_json`
+	current_lat=`echo $current_location_json | LANG=en_EN.UTF-8 sed 's/.*latitude":\(-*[0-9.]*\),.*/\1/'`
+	current_lng=`echo $current_location_json | LANG=en_EN.UTF-8 sed 's/.*longitude":\(-*[0-9.]*\),.*/\1/'`
+	current_address=`echo $current_location_json | LANG=en_EN.UTF-8 sed 's/.*address":\(.*\)/\1/'`
 
 }
