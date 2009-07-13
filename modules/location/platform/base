@@ -16,7 +16,7 @@ function get_current_location {
 function parse_location_response {
 
 	current_location=$current_location_json
-	current_lat=`echo $current_location_json | grep latitude | sed 's/[^[:digit:]\.]*//g'`
-	current_lng=`echo $current_location_json | grep longitude | sed 's/[^[:digit:]\.]*//g'`
+	current_lat=`echo $current_location_json | sed 's/.*latitude":\([^,].*\),.*/\1/'`
+	current_lng=`echo $current_location_json | sed 's/.*longitude":\([^,].*\),.*/\1/'`
 
 }
