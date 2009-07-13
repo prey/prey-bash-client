@@ -49,4 +49,4 @@ smtp_password='password'
 
 # you dont need to change this
 mail_from='Prey <no-reply@gmail.com>'
-mail_subject="Prey -- status report"
+mail_subject='Prey -- status report'

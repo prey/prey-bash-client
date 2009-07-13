@@ -92,3 +92,5 @@ run_active_modules
 echo -e " -- Sending data..."
 post_data
 echo -e "$STRING_DONE"
+
+exit 0
