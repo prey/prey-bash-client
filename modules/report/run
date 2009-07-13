@@ -31,10 +31,6 @@ get_modified_files
 echo "$STRING_ACTIVE_CONNECTIONS"
 get_active_connections
 
-# echo "$STRING_WRITE_EMAIL"
-# write_email
-# add_trace report_body $report_body
-
 echo "$STRING_TAKE_IMAGE"
 get_images
 if [ -f "$picture" ]; then
