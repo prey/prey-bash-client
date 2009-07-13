@@ -7,8 +7,7 @@
 
 function get_current_location {
 	if [ -n "$wifi_points" ]; then
-		wifi_points=`echo $wifi_points | sed 's/.$//'`
-		wifi_points=", 'wifi_towers': [ $wifi_points ]"
+		wifi_points=", 'wifi_towers': [ ${wifi_points%','*} ]"
 	fi
 
 	current_location_json=`$getter -X POST -H "Content-Type: application/json" -d "{ 'version': '1.1.0', 'host': '$check_url', 'request_address': true $wifi_points }" http://www.google.com/loc/json`
