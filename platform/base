@@ -51,7 +51,7 @@ function list_traces {
 		# fi
 		if [ "$post_method" == 'http' ]; then
 			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
-			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"/' # form field list
+			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
 			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
 		else
 			# removes module name, then capitalizes, and replaces _'s with whitespaces
