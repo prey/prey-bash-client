@@ -11,12 +11,7 @@ function get_gateway_ip {
 
 function get_wifi_device {
 	if [ ! -n "$wifi_device" ]; then
-		devlist=$(cat /proc/net/wireless | tail -1 | grep -v "nwid") 2>/dev/null
-		devleft=${devlist#' '*}
-		devright=${devlist%%':'*}
-		echo $devright | grep "" > /tmp/dev_pure
-		wifi_device=$(cat /tmp/dev_pure)
-		rm /tmp/dev_pure
+		wifi_device=`cat /proc/net/wireless | tail -1 | grep -v "nwid" | cut -d ' ' -f2 | sed 's/:$//'`
 	fi
 }
 
@@ -37,7 +32,7 @@ function try_to_connect {
 		if [ -n "$wifi_device" ]; then
 
 			# access_points=`iwlist $wifi_device | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr`
-			open_essid=`iwlist $wifi_device | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr | grep "off" | head -1 | cut -d ' ' -f1 | sed 's/"//g'`
+			open_essid=`iwlist $wifi_device scan | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr | grep "off" | head -1 | cut -d ' ' -f1 | sed 's/"//g'`
 
 			# lets see if we have a valid device and essid
 			if [ -n $open_essid ]; then
