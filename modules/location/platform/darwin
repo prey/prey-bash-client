@@ -5,11 +5,18 @@
 # License: GPLv3
 ####################################################################
 
+# restart airport service
+  networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
+  networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
+
+# power on the airport
+  networksetup -setairportpower off 2>/dev/null
+  networksetup -setairportpower on 2>/dev/null
+
 function get_wifi_access_points {
 
 	available_access_points=`$airport -I | grep -v "Off"`
 	if [ -n "$available_access_points" ]; then
-        #
 	out=`$airport -x -s`
 	parse=`curl -s -d texto="$out" http://preyproject.com/Fly/parsexml.php`
 	echo "$parse"
