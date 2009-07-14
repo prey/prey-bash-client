@@ -6,6 +6,14 @@
 - Create an "accesible" user account so that we can lurk the thief into logging in and opening his mail or whatever (and catch him whole handed)
 - La idea es que durante el proceso de recolección de datos, también se adjunte en el email un pequeño volcado de los paquetes TCP que se hayan generado mientras el ladrón navega por internet. tcpdump/wireshark > tcpxtract (Idea de Salamander).
 
+POSSIBLE MODULES
+- Updater -> Updates modules or eventually Prey itself
+- Video -> Grab video with streamer or something else
+- Alarm -> play a mp3 file REAL loud
+- Delete -> Delete requested files & folders.
+- Backup -> Gather requested data & send it.
+- Keylogger?? -> By popular demand.
+
 DONE
 - Select email, tunnel or web service mode.
 - Test mode.
