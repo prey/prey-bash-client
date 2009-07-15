@@ -25,8 +25,8 @@ fi
 echo "$STRING_UPTIME_AND_PROCESS"
 get_uptime_and_processes
 
-echo "$STRING_MODIFIED_FILES"
-get_modified_files
+# echo "$STRING_MODIFIED_FILES"
+# get_modified_files
 
 echo "$STRING_ACTIVE_CONNECTIONS"
 get_active_connections
