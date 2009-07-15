@@ -16,7 +16,9 @@ function get_wifi_device {
 }
 
 function get_wifi_info {
-	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+	if [ ! -n "$wifi_info" ]; then
+		wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+	fi
 }
 
 # attempts to connect to the first open public wifi network
