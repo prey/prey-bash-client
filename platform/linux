@@ -15,6 +15,10 @@ function get_wifi_device {
 	fi
 }
 
+function get_wifi_info {
+	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+}
+
 # attempts to connect to the first open public wifi network
 # if we dont have NetworkManager available, we use plain iwconfig
 function try_to_connect {
@@ -37,7 +41,6 @@ function try_to_connect {
 			# lets see if we have a valid device and essid
 			if [ -n $open_essid ]; then
 				iwconfig $wifi_device essid $open_essid
-				wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
 			fi
 
 		else

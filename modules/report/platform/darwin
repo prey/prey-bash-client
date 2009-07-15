@@ -5,9 +5,8 @@
 # License: GPLv3
 ####################################################################
 
-function get_network_info {
-	mac=`arp -n $gateway_ip | cut -f4 -d' '`
-	wifi_info=`$airport -I | grep -v "Off"`
+function get_mac_address {
+	mac_address=`arp -n $gateway_ip | cut -f4 -d' '`
 }
 
 function get_images {
