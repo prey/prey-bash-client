@@ -10,7 +10,7 @@ function get_wifi_access_points {
 	get_wifi_device
 	if [ -n "$wifi_device" ]; then
 
-		iwlist $wifi_device scan | grep -v "Frequency" \
+		iwlist $wifi_device scan | grep -v "Frequency" | sed 's/Quality=.*  S/S/' \
 		| awk -F '[ :=]+' '/Addr/{printf "\"mac_address\": " "\""$6"-"$7"-"$8"-"$9"-"$10"-"$11"\", "}
 											/Chann/{ printf "\"channel\": " $3*1 ", " }
 											/ESS/{ printf "\"ssid\": " $3 ", " }
