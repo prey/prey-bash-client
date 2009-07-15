@@ -25,7 +25,7 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	Enrutado de red
 	--------------------------------------------------------------------
-	Direccion MAC: $mac. -- Gateway: $gateway_ip
+	Direccion MAC: $mac_address. -- Gateway: $gateway_ip
 
 	Traceroute:
 	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$public_ip
@@ -54,7 +54,7 @@ if [ -n "$uptime" ]; then # prey is already running
 	Para actualizaciones visita http://preyproject.com
 	"
 
-else 
+else
 
 	STRING_GET_IP=" -- Obteniendo la direccion IP publica..."
 	STRING_GET_LAN_IP=" -- Obteniendo la direccion IP privada de la LAN..."

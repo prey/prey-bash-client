@@ -25,7 +25,7 @@ if [ -n "$uptime" ]; then # prey is already running
 
 	Route information
 	--------------------------------------------------------------------
-	MAC Adress: $mac. -- Gateway: $gateway_ip
+	MAC Adress: $mac_address. -- Gateway: $gateway_ip
 
 	Traceroute:
 	-> http://www.net.princeton.edu/cgi-bin/traceroute.pl?target=$public_ip
@@ -34,7 +34,7 @@ if [ -n "$uptime" ]; then # prey is already running
 	--------------------------------------------------------------------
 	$wifi_info
 
-	Under de senaste $modified_files_time minuterna har följande filer modifierats 
+	Under de senaste $modified_files_time minuterna har följande filer modifierats
 	--------------------------------------------------------------------
 	$modified_files
 
@@ -54,7 +54,7 @@ if [ -n "$uptime" ]; then # prey is already running
 	För uppdateringar besök http://preyproject.com
 	"
 
-else 
+else
 
 	STRING_GET_IP=" -- Hämtar publik IP adress..."
 	STRING_GET_LAN_IP=" -- Hämtar privat LAN IP adress..."

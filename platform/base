@@ -158,6 +158,14 @@ function process_response {
 # REALLY untested. function expects a <modules> section in the xml and activates de modules as requested
 # format should be as follows:
 
+# <device>
+# 	<device-type>phone</device-type>
+#		<missing>true</missing>
+# </device>
+# <configuration>
+#		<delay>10</delay>
+#		<loop>0</loop>
+# </configuration>
 #	<modules>
 #		<module name="alert" active="true">
 #			<alert-message>asdasd</alert-message>
@@ -176,7 +184,29 @@ function process_response {
 
 function process_xml {
 
-	echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "/module" | sed '1d' | while read line; do
+	process_config
+	process_modules
+
+}
+
+function process_config {
+
+	echo -e "$response" | sed -n '/<config>/,/<\/config>/p'  | grep -v "config>" | while read line; do
+
+		if [[ "$line" =~ 'delay="' ]]; then
+			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
+			if [ -n "$delay" ]; then
+				(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
+			fi
+		fi
+
+	done
+
+}
+
+function process_modules {
+
+	echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d' | while read line; do
 
 	if [[ "$line" =~ 'name="' ]]; then # we have a module node
 		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/g'`
