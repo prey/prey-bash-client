@@ -30,7 +30,7 @@ function get_images {
 			$streamer -o /tmp/imagen.ppm &> /dev/null
 			if [ -e '/tmp/imagen.ppm' ]; then
 
-				$convert=`which convert`
+				convert=`which convert`
 				if [ -n "$convert" ]; then # si tenemos imagemagick instalado podemos convertirla a JPG
 					$convert /tmp/imagen.ppm $picture > /dev/null
 				else # trataremos de enviarla asi nomas
