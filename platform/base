@@ -296,6 +296,8 @@ function install_or_update_module {
 			mv /tmp/prey-module-$1-config.tmp $base_path/modules/$1/config
 		fi
 		echo " -- New $1 module placed and ready to go!"
+	else
+		echo " !! Error getting $1 module. Repository down perhaps?"
 	fi
 }
 
