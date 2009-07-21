@@ -11,6 +11,12 @@ function get_gateway_ip {
 	gateway_ip=`netstat -rn | grep default | cut -c20-35`
 }
 
+function get_wifi_info {
+	if [ ! -n "$wifi_info" ]; then
+		wifi_info=`$airport -I | grep -v "Off"`
+	fi
+}
+
 function try_to_connect {
 	# restart airport service
 	networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
@@ -27,8 +33,6 @@ function try_to_connect {
 
 		# now lets connect and get the new info
 		networksetup -setairportnetwork $essid 2>/dev/null
-		wifi_info=`$airport -I | grep -v "Off"`
 
 	fi
 }
-
