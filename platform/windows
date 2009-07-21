@@ -18,7 +18,5 @@ function get_wifi_info {
 }
 
 function try_to_connect {
-
 	echo ' !! TODO yet!'
-
 }
