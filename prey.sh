@@ -18,6 +18,14 @@ if [[ "$running_prey" -gt 2 && "$1" != "-f" ]]; then # prey is already running
 
 fi
 
+os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
+
+# settings for windows version
+if [ "$os"=="$windowsnt" ]; then
+	base_path=/prey
+	os=windows
+fi
+
 # get configuration & language file
 . $base_path/config
 
@@ -26,9 +34,6 @@ if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 fi
 . $base_path/lang/$lang
 
-# ok lets get going now
-
-os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 . $base_path/platform/base
 . $base_path/platform/$os
 
