@@ -199,7 +199,7 @@ function process_config {
 
 	echo -e "$response" | sed -n '/<config>/,/<\/config>/p'  | grep -v "config>" | while read line; do
 
-		if [[ "$line" =~ 'delay="' ]]; then
+		if [ `find_in $line 'delay="'` ]; then
 			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			if [ -n "$delay" ]; then
 				(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
@@ -214,7 +214,7 @@ function process_modules {
 
 	echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d' | while read line; do
 
-	if [[ "$line" =~ 'name="' ]]; then # we have a module node
+	if [ `find_in $line 'name="'` ]; then # we have a module node
 		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/g'`
 		# echo " -- Got instructions for $module module."
 		if [[ "$line" =~ "true" ]]; then # module is active
@@ -349,7 +349,7 @@ function send_via_email {
 	decoded_pass=`decrypt "$smtp_password"`
 	complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
 	response=`$base_path/lib/sendEmail -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file tls=auto username=$smtp_username password=$decoded_pass`
-	if [[ "$response" =~ "ERROR" ]]; then
+	if [ `find_in $response 'ERROR'` ]; then
 		echo -e "$STRING_ERROR_EMAIL"
 		echo -e "\n This is the complete error message: \n $response\n"
 	fi
