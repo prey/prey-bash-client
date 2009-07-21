@@ -1,0 +1,24 @@
+#!/bin/bash
+####################################################################
+# PREY Windows Base Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function get_gateway_ip {
+	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | head -1`
+}
+
+function get_wifi_device {
+	echo ' !! TODO yet!'
+}
+
+function get_wifi_info {
+	echo ' !! TODO yet!'
+}
+
+function try_to_connect {
+
+	echo ' !! TODO yet!'
+
+}
