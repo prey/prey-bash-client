@@ -217,7 +217,7 @@ function process_modules {
 	if [ `find_in $line 'name="'` ]; then # we have a module node
 		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/g'`
 		# echo " -- Got instructions for $module module."
-		if [[ "$line" =~ "true" ]]; then # module is active
+		if [ `find_in $line "true"` ]; then # module is active
 			if [ ! -d $base_path/modules/$module ]; then
 				install_new_module $module # <-- we're only installing the module if it is active
 				echo " -- Installing new $module module..."
