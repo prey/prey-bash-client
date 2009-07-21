@@ -10,8 +10,7 @@ function get_public_ip {
 }
 
 function get_internal_ip {
-	# internal_ip=`ifconfig | grep "inet " | grep -v "127.0.0.1" | cut -f2 | awk '{ print $2}' | sed 's/addr://'`
-	internal_ip=`ifconfig | grep inet | awk '{ print $2}' | sed 's/addr://'`
+	internal_ip=`ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{ print $2}' | sed 's/addr://' | head -1`
 }
 
 function trace_route {
@@ -31,15 +30,6 @@ function get_modified_files {
 
 function get_active_connections {
 	connections=`netstat -a | grep -i established`
-}
-
-function get_current_location {
-	# get_trace wifi_mac_address
-	# get_trace wifi_channel
-	# get_trace wifi_signal_strength
-	# get_trace wifi_ssid
-	# get_trace wifi_signal_to_noise
-	current_location_json=`$getter -X POST -H "Content-Type: application/json" -d '{ "version": "1.1.0", "host": "preyproject.com", "request_address": true }' http://www.google.com/loc/json`
 }
 
 function compress_screenshot {

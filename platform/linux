@@ -9,11 +9,9 @@ function get_gateway_ip {
 	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
 }
 
-<<<<<<< Updated upstream:platform/linux
-=======
 function get_wifi_device {
 	if [ ! -n "$wifi_device" ]; then
-		wifi_device=`cat /proc/net/wireless | tail -1 | grep -v "nwid" | sed 's/^..\([^:].*\):.*/\1/'`
+		wifi_device=`cat /proc/net/wireless | tail -1 | grep -v "nwid" | sed -e 's/^\([^:].*\):.*/\1/' -e 's/\s//g'`
 	fi
 }
 
@@ -23,7 +21,6 @@ function get_wifi_info {
 	fi
 }
 
->>>>>>> Stashed changes:platform/linux
 # attempts to connect to the first open public wifi network
 # if we dont have NetworkManager available, we use plain iwconfig
 function try_to_connect {
@@ -37,24 +34,21 @@ function try_to_connect {
 
 	else
 
-		# Find device used for wifi.
-		devlist=$(cat /proc/net/wireless | tail --lines=1) 2>/dev/null
-		devleft=${devlist#' '*}
-		devright=${devlist%%':'*}
-		echo $devright | grep "" > /tmp/dev_pure
-		dev=$(cat /tmp/dev_pure)
+		get_wifi_device
+		if [ -n "$wifi_device" ]; then
 
-		# Get a list of open wifi points, and choose one
-		iwlist $dev scan > /tmp/scan_output 2>/dev/null
-		scanone=$(egrep 'ESSID|Encryption' /tmp/scan_output)
-		essidone=${scanone%%"Encryption key:off"*}
-		essidquot=${essidone##*'ESSID:"'}
-		essid=${essidquot%'"'*}
+			# access_points=`iwlist $wifi_device | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr`
+			open_essid=`iwlist $wifi_device scan | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr | grep "off" | head -1 | cut -d ' ' -f1 | sed 's/"//g'`
 
-		# lets see if we have a valid device and essid
-		if [[ ! -z $essid && ! -z $dev ]]; then
-			iwconfig $dev essid $essid
-			wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+			# lets see if we have a valid device and essid
+			if [ -n $open_essid ]; then
+				iwconfig $wifi_device essid $open_essid
+			fi
+
+		else
+
+			echo -e ' !! No wifi device found!'
+
 		fi
 
 	fi

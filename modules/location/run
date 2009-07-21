@@ -1,0 +1,15 @@
+#!/bin/bash
+####################################################################
+# PREY Location Module - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+wifi_points=`get_wifi_access_points`
+
+get_current_location
+parse_location_response
+
+add_trace 'lat' $current_lat
+add_trace 'lng' $current_lng
+add_trace 'address' $current_address
