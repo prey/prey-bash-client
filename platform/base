@@ -127,7 +127,7 @@ function check_status {
 
 # we may eventually use a specific header for Prey
 function parse_headers {
-	content_type=`echo "$headers" | awk /Content-Type/ | sed 's/Content-Type://g'`
+	content_type=`echo "$headers" | grep "Content-Type" | sed 's/.*: \([a-z\/-]*\).*/\1/'`
 }
 
 # this is where the magic will happen. :)
@@ -136,16 +136,16 @@ function parse_headers {
 	# if its a zip file, unzip it in modules and run the active modules (the executable ones)
 	# if its a xml/json file, parse it and assign config values correspondingly
 function process_response {
-	if [[ "$content_type" =~ "xml" ]]; then
+	if [ "$content_type" == "text/xml" ]; then
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
-	elif [[ "$content_type" =~ "octet-steam" ]]; then
+	elif [ "$content_type" == "application/octet-stream" ]; then
 		echo ' -- Got a ZIP file! What shall we do with it?'
 		response_type='zip'
-	elif [[ "$content_type" =~ "text/plain" ]]; then
+	elif [ "$content_type" == "text/plain" ]; then
 		echo ' -- Got a text file! Lets see if its something we can actually run.'
 		response_type='text'
-	elif [[ "$content_type" =~ "text/html" ]]; then
+	elif [ "$content_type" == "text/html" ]; then
 		echo " -- Response was just an HTML file. Lets just do our job."
 		return
 	else
