@@ -14,7 +14,13 @@ get_internal_ip
 add_trace internal_ip $internal_ip
 
 echo "$STRING_GET_MAC_AND_WIFI"
-get_network_info
+get_mac_address
+add_trace mac_address $mac_address
+
+get_wifi_info
+if [ -n "$wifi_info" ]; then
+	add_trace wifi_info $wifi_info
+fi
 
 # traceroute=`which traceroute` <-- disabled since its TOO DAMN SLOW!
 if [ -n "$traceroute" ]; then
