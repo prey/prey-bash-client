@@ -1,0 +1,14 @@
+#!/bin/bash
+####################################################################
+# PREY Alert Module Windows Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function change_wallpaper {
+	echo ' !! TODO yet!'
+}
+
+function alert_user {
+	echo ' !! TODO yet!'
+}

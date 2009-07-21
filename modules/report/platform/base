@@ -10,7 +10,11 @@ function get_public_ip {
 }
 
 function get_internal_ip {
-	internal_ip=`ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{ print $2}' | sed 's/addr://' | head -1`
+	if [ "$os" == "windows" ]; then
+		internal_ip=`ipconfig | grep "IP Address" | sed 's/^.*: //g' | head -1` # first internal ip
+	else
+		internal_ip=`ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{ print $2}' | sed 's/addr://' | head -1`
+	fi
 }
 
 function trace_route {
@@ -23,9 +27,9 @@ function get_uptime_and_processes {
 }
 
 function get_modified_files {
-	# no incluimos los archivos carpetas ocultas ni los archivos weones de Mac OS
+	# we dont include hidden files
 	modified_files=`find $modified_files_path \( ! -regex '.*/\..*/..*' \) -type f -mmin -$modified_files_time 2>&1`
-	# archivos=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos`
+	# modified_files=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos`
 }
 
 function get_active_connections {

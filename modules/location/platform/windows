@@ -1,0 +1,10 @@
+#!/bin/bash
+####################################################################
+# PREY Location Module Windows Functions - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function get_wifi_access_points {
+	echo ' !! TODO yet!'
+}

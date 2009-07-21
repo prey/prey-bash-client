@@ -20,9 +20,7 @@ fi
 
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 
-# settings for windows version
-if [ "$os"=="$windowsnt" ]; then
-	base_path=/prey
+if [ "$os" == "windowsnt" ]; then
 	os=windows
 fi
 
