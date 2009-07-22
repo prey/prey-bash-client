@@ -6,7 +6,7 @@
 ####################################################################
 
 function get_gateway_ip {
-	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | head -1`
+	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }
 
 function get_wifi_device {
