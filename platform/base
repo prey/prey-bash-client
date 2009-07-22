@@ -75,7 +75,7 @@ function list_files {
 			# echo -e "-F $f" | sed -e 's/=/=@/'
 			echo "-F $f" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=@\3/'
 		else # just list the file paths
-			echo -e $f | sed -e 's/.*=//'
+			echo -e $f | sed 's/.*=//'
 		fi
 	done
 }
@@ -88,7 +88,7 @@ function remove_traces {
 function remove_files {
 	for f in "${files[@]}"
 	do
-		file=`echo $f | sed -e 's/^.*=//'`
+		file=`echo $f | sed 's/^.*=\(.*\)/\1/g'`
 		rm -f $file
 		echo " -- Removed $file"
 	done
@@ -133,7 +133,7 @@ function check_status {
 		check_url="$check_url/devices/$device_key.xml"
 	fi
 	headers=`$getter -I $check_url`
-	status=`echo "$headers" | grep "HTTP" | sed -e 's/[^200|302|400|404|500]//g' -e 's/^0//'`
+	status=`echo -e "$headers" | grep HTTP | sed -e 's/[^200|302|400|404|500]//g' -e 's/^0//'`
 }
 
 # we may eventually use a specific header for Prey
