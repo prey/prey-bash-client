@@ -6,5 +6,6 @@
 ####################################################################
 
 function get_wifi_access_points {
-	echo ' !! TODO yet!'
+	# $module_path/lib/wifi_config.exe -aps | sed 's/PUT_THE_MAGIC_IN_HERE//'
+	echo ''
 }

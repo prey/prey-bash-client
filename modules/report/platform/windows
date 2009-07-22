@@ -5,10 +5,22 @@
 # License: GPLv3
 ####################################################################
 
+# we dont have a /tmp folder over here!
+screenshot="c:\windows\temp\prey-screenshot.bmp"
+picture="c:\windows\temp\prey-picture.jpg"
+
 function get_mac_address {
-	mac_address=`ipconfig | grep Physical | sed 's/^.*: //g' | head -1`
+	mac_address=`ipconfig -all | grep Physical | sed 's/^.*: //g' | grep -v '^$' | head -1`
+}
+
+function get_uptime_and_processes {
+	uptime=`net stats srv | grep Statistics`
+	running_programs=`tasklist -v`
 }
 
 function get_images {
-	echo ' !! TODO yet!'
+
+	$module_path/lib/boxcutter-fs.exe $screenshot
+	$module_path/lib/simplecapture.exe /filename $picture /suffix ' ' /jpgquality 80 /imgperfect 500 /imgcaption hh:nn:ss”
+
 }

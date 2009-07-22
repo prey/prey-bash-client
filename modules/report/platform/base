@@ -11,7 +11,7 @@ function get_public_ip {
 
 function get_internal_ip {
 	if [ "$os" == "windows" ]; then
-		internal_ip=`ipconfig | grep "IP Address" | sed 's/^.*: //g' | head -1` # first internal ip
+		internal_ip=`ipconfig | grep "IP Address" | sed 's/^.*: //g' | grep -v '^$' | head -1` # first internal ip
 	else
 		internal_ip=`ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{ print $2}' | sed 's/addr://' | head -1`
 	fi
@@ -21,6 +21,7 @@ function trace_route {
 	complete_trace=`$traceroute -q1 www.google.com 2>&1`
 }
 
+# NOTE: this is for mac/linux only, windows has its own!
 function get_uptime_and_processes {
 	uptime=`uptime`
 	running_programs=`ps ux`
