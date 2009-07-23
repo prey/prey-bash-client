@@ -352,7 +352,7 @@ function post_data {
 
 function send_via_email {
 	mailsender="$base_path/lib/sendEmail"
-	if [ "$os" == "windows" ];
+	if [ "$os" == "windows" ]; then
 		mailsender=$mailsender.exe
 	fi
 	decoded_pass=`decrypt "$smtp_password"`
