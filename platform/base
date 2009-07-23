@@ -75,7 +75,7 @@ function list_files {
 			# echo -e "-F $f" | sed -e 's/=/=@/'
 			echo "-F $f" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=@\3/'
 		else # just list the file paths
-			echo -e $f | sed 's/^.*=\(.*\)/\1/'
+			echo $f | sed 's/^.*=\(.*\)/\1/'
 		fi
 	done
 }
