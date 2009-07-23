@@ -1,6 +1,8 @@
-;NSIS Modern User Interface
-;Welcome/Finish Page Example Script
-;Written by Joost Verburg
+; -------------------------------
+; Prey Windows Installer Script
+; By Tomas Pollak (bootlog.org)
+; http://preyproject.com
+; Licence: GPLv3
 
 ;--------------------------------
 ;Include Modern UI
@@ -15,13 +17,14 @@
   OutFile "prey-installer-win32.exe"
 
   ;Default installation folder
-  InstallDir "$LOCALAPPDATA\Prey"
+  ;InstallDir "$LOCALAPPDATA\Prey"
+  InstallDir "c:\Prey"
 
   ;Get installation folder from registry if available
   InstallDirRegKey HKCU "Software\Prey" ""
 
   ;Request application privileges for Windows Vista
-  RequestExecutionLevel user
+  RequestExecutionLevel highest
 
 ;--------------------------------
 ;Variables
@@ -31,7 +34,7 @@
 ;--------------------------------
 ;Interface Settings
 
-  !define MUI_WELCOMEFINISHPAGE_BITMAP "..\..\pixmaps\prey.png"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
   !define MUI_ABORTWARNING
 
 ;--------------------------------
@@ -39,8 +42,8 @@
 
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE "..\..\LICENSE"
-  !insertmacro MUI_PAGE_COMPONENTS
-  !insertmacro MUI_PAGE_DIRECTORY
+  ;!insertmacro MUI_PAGE_COMPONENTS
+  ;!insertmacro MUI_PAGE_DIRECTORY
 
   ;Start Menu Folder Page Configuration
   !define MUI_STARTMENUPAGE_REGISTRY_ROOT "SHCTX"
@@ -50,7 +53,9 @@
   !insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
   !insertmacro MUI_PAGE_INSTFILES
-  !define MUI_FINISHPAGE_RUN $INSTDIR\config.exe
+  !define MUI_FINISHPAGE_RUN "$PROGRAMFILES\Windows NT\Accessories\wordpad.exe"
+  !define MUI_FINISHPAGE_RUN_PARAMETERS "$INSTDIR\config"
+  !define MUI_FINISHPAGE_RUN_TEXT "Configure Prey Settings (Recommended)"
   !insertmacro MUI_PAGE_FINISH
 
   !insertmacro MUI_UNPAGE_CONFIRM
@@ -87,7 +92,7 @@ Section "Prey" PreySection
   File .* ..\..\platform\windows
 
   SetOutPath "$INSTDIR\lib"
-  File /r /x .* ..\..\lib\sendEmail
+  File /r /x .* ..\..\lib\*.*
 
   SetOutPath "$INSTDIR\modules"
   File /r /x /a .* ..\..\modules\alert
@@ -104,9 +109,13 @@ Section "Prey" PreySection
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Prey.lnk" "$INSTDIR\prey.bat"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$PROGRAMFILES\Windows NT\Accessories\wordpad.exe" "$INSTDIR\config"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
   !insertmacro MUI_STARTMENU_WRITE_END
+
+  ; add scheduled task
+  nsExec::Exec '"schtasks.exe" -create -ru "Administrator" -rp "password" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
 
 SectionEnd
 
@@ -134,7 +143,7 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\lib"
   RMDir /r "$INSTDIR\modules"
 
-  ; %NSIS_UNINSTALL_FILES
+  ;%NSIS_UNINSTALL_FILES
 
   Delete "$INSTDIR\README"
   Delete "$INSTDIR\prey.bat"
@@ -147,9 +156,13 @@ Section "Uninstall"
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 
   Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk"
   Delete "$SMPROGRAMS\$StartMenuFolder\Prey.lnk"
   RMDir "$SMPROGRAMS\$StartMenuFolder"
 
   DeleteRegKey /ifempty HKCU "Software\Prey"
+
+  ; delete prey scheduled task
+  nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey"'
 
 SectionEnd
