@@ -20,7 +20,7 @@ function find_in {
 function get_var {
 	HASH="$1[*]"
 	local ${!HASH}
-	eval 'echo ${'"${2}"'} | sed -e "s/%20/ /g"'
+	eval 'echo ${'"${2}"'} | sed "s/%20/ /g"'
 }
 
 # if you need to fetch a specific trace or file
@@ -36,7 +36,7 @@ function add_trace {
 	trace="${current_module}__$1=$2"
 	echo " -- Adding trace for $current_module: $1 -> $2"
 	# we need to encode whitespaces, otherwise well get into trouble
-	trace=`echo $trace | sed 's/\s/%20/g'`
+	trace=`echo $trace | sed 's/ /%20/g'`
 	traces[${#traces[*]}]="$trace"
 }
 
@@ -60,8 +60,8 @@ function list_traces {
 			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
 			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
 		else
-			# removes module name, then capitalizes, and replaces _'s with whitespaces
-			echo -e "$t\n" | sed -e 's/^\([^_].*\)__//' -e 's/^./\u&/' -e 's/_/ /'
+			# removes module name and replaces _'s with whitespaces
+			echo -e "$t\n" | sed -e 's/^\([^_].*\)__//' -e 's/_/ /'
 		fi
 		# previous_node=$current_node
 	done
