@@ -61,7 +61,7 @@ function list_traces {
 			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
 		else
 			# removes module name, then capitalizes, and replaces _'s with whitespaces
-			echo -e "$t\n" | sed 's/^\([^_].*\)__//' | sed 's/^./\u&/' | sed 's/_/ /'
+			echo -e "$t\n" | sed -e 's/^\([^_].*\)__//' -e 's/^./\u&/' -e 's/_/ /'
 		fi
 		# previous_node=$current_node
 	done
@@ -75,7 +75,7 @@ function list_files {
 			# echo -e "-F $f" | sed -e 's/=/=@/'
 			echo "-F $f" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=@\3/'
 		else # just list the file paths
-			echo -e $f | sed 's/.*=//'
+			echo -e $f | sed 's/^.*=\(.*\)/\1/'
 		fi
 	done
 }
@@ -88,7 +88,7 @@ function remove_traces {
 function remove_files {
 	for f in "${files[@]}"
 	do
-		file=`echo $f | sed 's/^.*=\(.*\)/\1/g'`
+		file=`echo $f | sed 's/^.*=\(.*\)/\1/'`
 		rm -f $file
 		echo " -- Removed $file"
 	done
@@ -351,9 +351,13 @@ function post_data {
 }
 
 function send_via_email {
+	mailsender="$base_path/lib/sendEmail"
+	if [ "$os" == "windows" ];
+		mailsender=$mailsender.exe
+	fi
 	decoded_pass=`decrypt "$smtp_password"`
 	complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
-	response=`$base_path/lib/sendEmail -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file tls=auto username=$smtp_username password=$decoded_pass`
+	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file tls=auto username=$smtp_username password=$decoded_pass`
 	if [ `find_in $response 'ERROR'` ]; then
 		echo -e "$STRING_ERROR_EMAIL"
 		echo -e "\n This is the complete error message: \n $response\n"
