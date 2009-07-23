@@ -1,3 +1,3 @@
 @echo off
-set path=c:\prey\distribution\windows\bin;%path%
+set path=c:\prey\bin;%path%
 bash c:\prey\prey.sh
