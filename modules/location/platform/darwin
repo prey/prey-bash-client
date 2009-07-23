@@ -19,7 +19,7 @@ function get_wifi_access_points {
 		-e 's/NOISE...\([0-9]*\)/"signal_to_noise": \1/g' \
 		-e 's/RSSI...\([0-9]*\)/"signal_strength": \1/g' \
 		-e 's/SSID_STR...\([a-zA-Z0-9_.-\ ]*\)/"ssid": "\1"}/g'
-		-e 's/} ,.*, {/}, {/g' # remove if there's any rubbish or double commas
+		-e 's/}.*{/}, {/g' # remove if there's any rubbish or double commas
 
 	fi
 
