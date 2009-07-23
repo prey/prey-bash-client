@@ -83,15 +83,16 @@ Section "Prey" PreySection
   File /x .* bin\*.*
 
   SetOutPath "$INSTDIR\platform"
-  File /r /x .* ..\..\platform\windows
+  File .* ..\..\platform\base
+  File .* ..\..\platform\windows
 
   SetOutPath "$INSTDIR\lib"
   File /r /x .* ..\..\lib\sendEmail
 
   SetOutPath "$INSTDIR\modules"
-  File /r /x .* ..\..\modules\alert
-  File /r /x .* ..\..\modules\report
-  File /r /x .* ..\..\modules\location
+  File /r /x /a .* ..\..\modules\alert
+  File /r /x /a .* ..\..\modules\report
+  File /r /x /a .* ..\..\modules\location
 
   SetOutPath "$INSTDIR"
 
