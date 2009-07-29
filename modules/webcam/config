@@ -6,10 +6,10 @@
 ####################################################################
 
 # should we capture video
-capture_video=n
+capture_video='n'
 
 # how much time should we capture video (in seconds)
-video_capture_time=30
+video_capture_time='30'
 
 # frames per second (for streamer in linux)
-frames_per_second=12
+frames_per_second='12'

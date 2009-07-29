@@ -6,4 +6,4 @@
 ####################################################################
 
 # should we trace the complete route? (it's a bit slow)
-trace_route=n
+trace_route='n'

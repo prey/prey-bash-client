@@ -6,11 +6,8 @@
 ####################################################################
 
 # alert the user with a message, y or n
-show_alert=n
-alert_message='This is a stolen computer, and has been marked by Prey.
-You should contact us immediately at http://preyproject.com to clarify the situation.
-Otherwise you"ll be notified to the police. Time is running: YOU HAVE BEEN WARNED!'
+alert_message='This is a stolen computer, and has been marked by Prey. Contact us immediately at http://preyproject.com to clarify the situation. YOU HAVE BEEN WARNED!'
 
 # change wallpaper to alert nearby users -- EXPERIMENTAL!
-change_wallpaper=n
+change_wallpaper='n'
 wallpaper="$module_path/lib/prey-wallpaper-$lang.png"
