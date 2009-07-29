@@ -210,22 +210,32 @@ function process_modules {
 	echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d' | while read line; do
 
 	if [[ "$line" =~ 'name="' ]]; then # we have a module node
-		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/g'`
-		echo " -- Got instructions for $module module."
-		if [[ "$line" =~ "true" ]]; then # module is active
-			if [ ! -d $base_path/modules/$module ]; then
-				echo " -- Installing new $module module..."
-				install_new_module $module # <-- we're only installing the module if it is active
-				if [ $? == 1 ]; then # error installing module
+		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/'`
+		# echo " -- Got instructions for $module module."
+		if [[ "$line" =~ "true" ]]; then # module should be active
+			if [ ! -d $base_path/modules/$module ]; then # not installed
+				echo " -- Installing new $module module!"
+				if [ `install_or_update_module $module` == 1 ]; then # we got an error installing the new module
 					module=''
 					continue
+				fi
+			elif [ "$auto_update" == "y" ]; then  # module is already installed and autoupdater is enabled
+				upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
+				current_version=`cat $base_path/modules/$module/version`
+				if [ $upstream_version -gt $current_version ]; then
+				echo " -- Updating $module module!"
+					install_or_update_module $module
+					if [ `install_or_update_module $module` == 1 ]; then # we got an error installing the new module
+						module=''
+						continue
+					fi
 				fi
 			fi
 			if [ ! -x $base_path/modules/$module/run ]; then
 				echo " -- Enabling $module module!"
 				chmod +x $base_path/modules/$module/run
 			fi
-		else # module is inactive
+		else # module should be inactive
 			if [ -x $base_path/modules/$module/run ]; then
 				echo " -- Disabling $module module!"
 				chmod -x $base_path/modules/$module/run
@@ -269,14 +279,31 @@ function process_zip {
 # module functions
 ####################################################################
 
+function get_module {
+	wget "$check_url/modules/get/$1?api_key=$api_key" -O /tmp/$1.zip &> /dev/null
+}
+
 # this should work, we only need to set up the module repository!
-function install_new_module {
-	wget "$check_url/modules/download/$module?api_key=$api_key" -O /tmp/$1.zip &> /dev/null
-	if [ `cat /tmp/$1.zip 2> /dev/null | wc -c` -gt 0 ]; then
-		echo " -- Got new module from repository! Unpackaging..."
+function install_or_update_module {
+	get_module $1
+	package_size=`cat /tmp/$1.zip 2> /dev/null | wc -c`
+	if [ $package_size -gt 0 ]; then
+		echo " -- Got new $1 module from repository! Unpackaging..."
 		mv /tmp/$1.zip $base_path/modules
+		if [ -d "$base_path/modules/$1" ]; then # module already installed
+			# if [ -f "$base_path/modules/$1/config" ]; then # with configuration
+			# 	echo ' -- Saving previous configuration values...'
+			# 	cp $base_path/modules/$1/config /tmp/prey-module-$1-config.tmp
+			# fi
+			rm -R $base_path/modules/$1
+		fi
 		unzip $base_path/modules/$1.zip
+		chmod +x $base_path/modules/$module/run # lets activate it in case its not
 		rm $base_path/modules/$1.zip
+		# if [ -f "/tmp/prey-module-$1-config.tmp" ]; then
+		# 	echo ' -- Applying previous configuration values...'
+		# 	mv /tmp/prey-module-$1-config.tmp $base_path/modules/$1/config
+		# fi
 		echo " -- New $1 module placed and ready to go!"
 		return 0
 	else
