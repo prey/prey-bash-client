@@ -213,8 +213,8 @@ function process_modules {
 	echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d' | while read line; do
 
 	if [[ "$line" =~ 'name="' ]]; then # we have a module node
-		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/'`
-		# echo " -- Got instructions for $module module."
+		module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
+		echo " -- Got instructions for $module module."
 		if [[ "$line" =~ "true" ]]; then # module should be active
 			if [ ! -d $base_path/modules/$module ]; then # not installed
 				echo " -- Installing new $module module!"
@@ -250,7 +250,7 @@ function process_modules {
 			param=`echo $line | sed 's/^<\(.*\)>.*<.*>$/\1/' | sed 'y/-/_/'` # we also replace -'s to _'s
 			value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			echo " -- Updating setting $param -> $value for $module module."
-			sed -i -e "s/$param='.*'/$param='$value'/" $base_path/modules/$module/config
+			sed -i -e "s/$param=.*$/$param='$value'/" $base_path/modules/$module/config
 		fi
 	fi
 
