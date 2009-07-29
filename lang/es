@@ -64,8 +64,13 @@ else # prey status messages
 	STRING_TRY_TO_CONNECT=" -- Intentando conectarnos a la primera red abierta disponible..."
 	STRING_NO_CONNECT_TO_WIFI=" -- No encontramos la forma de conectarnos a una red Wifi abierta!"
 	STRING_CHECK_URL=" -- Revisando URL..."
-	STRING_PROBLEM=" -- OUCH!!"
 	STRING_NO_PROBLEM=" -- Nada de que preocuparse. :)\n"
+	STRING_PROBLEM=" -- OUCH!!"
+	STRING_WRITE_EMAIL=" -- Redactando el reporte..."
+	STRING_SENDING_EMAIL=" -- Enviando el reporte..."
+	STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
+		Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion.\033[0m\n"
+	STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
 	STRING_DONE=" -- Todo listo! Suerte con la caceria! :)\n"
 
 fi
