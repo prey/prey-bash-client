@@ -184,14 +184,21 @@ function process_response {
 
 function process_xml {
 
-	process_config
-	process_modules
+	prey_configuration=`echo -e "$response" | sed -n '/<configuration>/,/<\/configuration>/p'  | grep -v "configuration>"`
+	if [ -n "$prey_configuration" ]; then
+		process_config
+	fi
+	module_configuration=`echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d'`
+	if [ -n "$module_configuration" ]; then
+		deactivate_all_modules # we need to do so we can enable only the active ones
+		process_modules
+	fi
 
 }
 
 function process_config {
 
-	echo -e "$response" | sed -n '/<configuration>/,/<\/configuration>/p'  | grep -v "configuration>" | while read line; do
+	echo -e "$prey_configuration" | while read line; do
 
 		if [[ "$line" =~ 'delay' ]]; then
 			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
@@ -210,7 +217,7 @@ function process_config {
 
 function process_modules {
 
-	echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d' | while read line; do
+	echo -e "$module_configuration" | while read line; do
 
 	if [[ "$line" =~ 'name="' ]]; then # we have a module node
 		module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
@@ -247,10 +254,10 @@ function process_modules {
 		fi
 	else
 		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then # module is active and has configuration
-			param=`echo $line | sed 's/^<\(.*\)>.*<.*>$/\1/' | sed 'y/-/_/'` # we also replace -'s to _'s
-			value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
+			param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
+			value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
 			echo " -- Updating setting $param -> $value for $module module."
-			sed -i -e "s/$param=.*$/$param='$value'/" $base_path/modules/$module/config
+			sed -i -e "s/$param=.*$/$param='$value'/" -e "s/-SLASH-/\//g" $base_path/modules/$module/config
 		fi
 	fi
 
@@ -313,6 +320,10 @@ function install_or_update_module {
 		echo " !! Couldn't get $1 module from repository."
 		return 1
 	fi
+}
+
+function deactivate_all_modules {
+	chmod -x `find $base_path/modules -name run`
 }
 
 function run_active_modules {
