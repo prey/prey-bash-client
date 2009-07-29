@@ -11,6 +11,5 @@ modified_files_time=60
 # route where to get the modified files from
 modified_files_path=~/
 
-# where to store the temporary images
-screenshot=/tmp/prey-screenshot.jpg
-picture=/tmp/prey-picture.jpg
+# should we grab a screenshot?
+get_screenshot=y

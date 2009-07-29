@@ -5,10 +5,8 @@
 # License: GPLv3
 ####################################################################
 
-if [ $alert_user == 'y' ]; then
-	echo "$STRING_SHOW_ALERT"
-	alert_user
-fi
+echo "$STRING_SHOW_ALERT"
+alert_user
 
 if [ $change_wallpaper == 'y' ]; then
 	echo "$STRING_CHANGE_WALLPAPER"
@@ -16,4 +14,3 @@ if [ $change_wallpaper == 'y' ]; then
 	wallpaper=`pwd`/$wallpaper
 	change_wallpaper
 fi
-

@@ -1,0 +1,11 @@
+#!/bin/bash
+####################################################################
+# Prey Network Module Lang File - by Dan Sellberg (dan@dkcp.com)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_GET_IP=" -- Hämtar publik IP adress..."
+STRING_GET_LAN_IP=" -- Hämtar privat LAN IP adress..."
+STRING_GET_MAC_AND_WIFI=" -- Hämtar MAC address, routing och trådlös info..."
+STRING_TRACE=" -- Spårar vår route till internet..."

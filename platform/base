@@ -199,6 +199,9 @@ function process_config {
 				echo " -- Setting delay to $delay minutes!"
 				(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
 			fi
+		elif [[ "$line" =~ 'auto_update' && "$line" =~ "true" ]]; then
+			auto_update="y"
+			echo ' -- Auto update enabled!'
 		fi
 
 	done
@@ -219,9 +222,9 @@ function process_modules {
 					module=''
 					continue
 				fi
-			elif [ "$auto_update" == "y" ]; then  # module is already installed and autoupdater is enabled
+			elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
 				upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
-				current_version=`cat $base_path/modules/$module/version`
+				current_version=`cat $base_path/modules/$module/version 2> /dev/null`
 				if [ $upstream_version -gt $current_version ]; then
 				echo " -- Updating $module module!"
 					install_or_update_module $module

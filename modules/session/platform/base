@@ -1,23 +1,11 @@
 #!/bin/bash
 ####################################################################
-# PREY Report Module Base Functions - by Tomas Pollak (bootlog.org)
+# Prey Session Module Base Functions - by Tomas Pollak (bootlog.org)
 # URL : http://preyproject.com
 # License: GPLv3
 ####################################################################
 
-function get_public_ip {
-	public_ip=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
-}
-
-function get_internal_ip {
-	internal_ip=`ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{ print $2}' | sed 's/addr://' | head -1`
-}
-
-function trace_route {
-	complete_trace=`$traceroute -q1 www.google.com 2>&1`
-}
-
-function get_uptime_and_processes {
+function get_uptime_and_programs {
 	uptime=`uptime`
 	running_programs=`ps ux`
 }
@@ -29,7 +17,7 @@ function get_modified_files {
 }
 
 function get_active_connections {
-	connections=`netstat -a | grep -i established`
+	active_connections=`netstat -a | grep -i established`
 }
 
 function compress_screenshot {
