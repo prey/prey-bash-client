@@ -1,0 +1,20 @@
+#!/bin/bash
+####################################################################
+# PREY Webcam Module Windows Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+picture="c:\windows\temp\prey-picture.jpg"
+
+function take_picture {
+
+	$module_path/lib/simplecapture.exe /filename $picture /suffix ' ' /jpgquality 80 /imgperfect 500 /imgcaption hh:nn:ss”
+
+}
+
+function capture_video {
+
+	echo ' !! Video capture still in development!'
+
+}
