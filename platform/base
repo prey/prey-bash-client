@@ -147,7 +147,7 @@ function parse_headers {
 	# if its a zip file, unzip it in modules and run the active modules (the executable ones)
 	# if its a xml/json file, parse it and assign config values correspondingly
 function process_response {
-	if [ "$content_type" == "text/xml" ]; then
+	if [ "$content_type" == "application/xml" ]; then
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
 	elif [ "$content_type" == "application/octet-stream" ]; then
@@ -195,20 +195,31 @@ function process_response {
 
 function process_xml {
 
-	process_config
-	process_modules
+	prey_configuration=`echo -e "$response" | sed -n '/<configuration>/,/<\/configuration>/p'  | grep -v "configuration>"`
+	if [ -n "$prey_configuration" ]; then
+		process_config
+	fi
+	module_configuration=`echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d'`
+	if [ -n "$module_configuration" ]; then
+		deactivate_all_modules # we need to do so we can enable only the active ones
+		process_modules
+	fi
 
 }
 
 function process_config {
 
-	echo -e "$response" | sed -n '/<config>/,/<\/config>/p'  | grep -v "config>" | while read line; do
+	echo -e "$prey_configuration" | while read line; do
 
 		if [ `find_in $line 'delay="'` ]; then
 			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			if [ -n "$delay" ]; then
+				echo " -- Setting delay to $delay minutes!"
 				(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
 			fi
+		elif [[ "$line" =~ 'auto_update' && "$line" =~ "true" ]]; then
+			auto_update="y"
+			echo ' -- Auto update enabled!'
 		fi
 
 	done
@@ -217,33 +228,48 @@ function process_config {
 
 function process_modules {
 
-	echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d' | while read line; do
+	echo -e "$module_configuration" | while read line; do
 
 	if [ `find_in $line 'name="'` ]; then # we have a module node
-		module=`echo $line | sed 's/^<module name="\(.*\)" .*$/\1/g'`
-		# echo " -- Got instructions for $module module."
+		module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
+		echo " -- Got instructions for $module module."
 		if [ `find_in $line "true"` ]; then # module is active
-			if [ ! -d $base_path/modules/$module ]; then
-				install_new_module $module # <-- we're only installing the module if it is active
-				echo " -- Installing new $module module..."
+			if [ ! -d $base_path/modules/$module ]; then # not installed
+				echo " -- Installing new $module module!"
+				install_or_update_module $module
+				if [ "$?" == 1 ]; then # we got an error installing the new module
+					module=''
+					continue
+				fi
+			elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
+				upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
+				current_version=`cat $base_path/modules/$module/version 2> /dev/null`
+				if [ $upstream_version -gt $current_version ]; then
+				echo " -- Updating $module module!"
+					install_or_update_module $module
+					if [ "$?" == 1 ]; then # we got an error installing the new module
+						module=''
+						continue
+					fi
+				fi
 			fi
 			if [ ! -x $base_path/modules/$module/run ]; then
-				echo " -- Enabling $module module!"
-				chmod +x $base_path/modules/$module/run
+				echo " -- Activating $module module!"
+				activate_module $module
 			fi
-		else # module is inactive
+		else # module should be inactive
 			if [ -x $base_path/modules/$module/run ]; then
 				echo " -- Disabling $module module!"
-				chmod -x $base_path/modules/$module/run
+				deactivate_module $module
 			fi
 			module='' # this allows us to check below if the module is inactive
 		fi
 	else
 		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then # module is active and has configuration
-			param=`echo $line | sed 's/^<\(.*\)>.*<.*>$/\1/' | sed 'y/-/_/'` # we also replace -'s to _'s
-			value=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
-			# echo " -- Setting param $param -> $value for $module module."
-			sed -i -e "s/$param='.*'/$param='$value'/" $base_path/modules/$module/config
+			param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
+			value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
+			echo " -- Updating setting $param -> $value for $module module."
+			sed -i -e "s/$param=.*$/$param='$value'/" -e "s/-SLASH-/\//g" $base_path/modules/$module/config
 		fi
 	fi
 
@@ -254,7 +280,7 @@ function process_modules {
 # this is REALLY untested stuff
 # we should put this in a module with the new hash-by-module trace structure
 
-function process_text {
+function process_textvf {
 	if [[ -n `echo $response | grep '#!/bin/bash'` && ! -n `echo $response | grep ' rm '` ]]; then
 		echo ' -- Valid script! Lets get it on.'
 		script=/tmp/script.sh
@@ -275,25 +301,67 @@ function process_zip {
 # module functions
 ####################################################################
 
-# this should work, we only need to set up the module repository!
-function install_new_module {
-	wget "$check_url/modules/download/$module?api_key=$api_key" -o /tmp/$1.zip &> /dev/null
-	if [ -f "/tmp/$1.zip" ]; then
-		echo " -- Got new module from $check_url! Unpackaging..."
-		mv /tmp/$1.zip $base_path/modules
-		unzip $base_path/modules/$1.zip
-		rm $base_path/modules/$1.zip
-		echo " -- New $1 module placed and ready to go!"
+function get_module {
+	rm /tmp/$1.zip 2> /dev/null
+	repo_url=`echo $check_url | sed 's/.*\/\/\([^\/][a-z\.]*\)\/.*$/http:\/\/\1/'`
+	wget "$repo_url/modules/get/$1?api_key=$api_key" -O /tmp/$1.zip 2> /dev/null
+}
+
+function install_or_update_module {
+	get_module $1
+	package_size=`cat /tmp/$1.zip 2> /dev/null | wc -c`
+	if [ $package_size -gt 0 ]; then
+		echo " -- Got new $1 module from repository! Unpackaging..."
+		if [ -d "$base_path/modules/$1" ]; then # module already installed
+			# if [ -f "$base_path/modules/$1/config" ]; then # with configuration
+			# 	echo ' -- Saving previous configuration values...'
+			# 	cp $base_path/modules/$1/config /tmp/prey-module-$1-config.tmp
+			# fi
+			rm -R $base_path/modules/$1
+		fi
+		unzip /tmp/$1.zip -d $base_path/modules &> /dev/null
+		activate_module $1
+		rm /tmp/$1.zip
+		# if [ -f "/tmp/prey-module-$1-config.tmp" ]; then
+		# 	echo ' -- Applying previous configuration values...'
+		# 	mv /tmp/prey-module-$1-config.tmp $base_path/modules/$1/config
+		# fi
+		echo " ** New $1 module placed and ready to go!"
+		return 0
+	else
+		echo " !! Couldn't get $1 module from repository."
+		return 1
 	fi
+}
+
+# mac/linux only. windows has another method of de/activating modules
+function is_module_active {
+	if [ -x $base_path/modules/$1/run ]; then
+		echo 1
+	else
+		return 0
+	fi
+}
+
+function activate_module {
+	chmod +x $base_path/modules/$1/run
+}
+
+function deactivate_module {
+	chmod -x $base_path/modules/$1/run
+}
+
+function deactivate_all_modules {
+	chmod -x `find $base_path/modules -name run`
 }
 
 function run_active_modules {
 
 	for module_path in `find $base_path/modules -maxdepth 1 -mindepth 1 -type d`; do
 
-		if [ -x $module_path/run ]; then
+		current_module=`echo "$module_path" | sed 's/.*[\/|\\]\(.*\)$/\1/'`
+		if [ `is_module_active "$current_module"` ]; then
 
-			current_module=`echo "$module_path" | sed 's/.*[\/|\\]\(.*\)$/\1/'`
 			echo -e " -- Running $current_module module!"
 
 			# if there's a language file, lets run it

@@ -1,0 +1,15 @@
+#!/bin/bash
+####################################################################
+# Prey Webcam Module Config File - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+# should we capture video
+capture_video='n'
+
+# how much time should we capture video (in seconds)
+video_capture_time='30'
+
+# frames per second (for streamer in linux)
+frames_per_second='12'

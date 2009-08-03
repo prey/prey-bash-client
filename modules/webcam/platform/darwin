@@ -1,0 +1,16 @@
+#!/bin/bash
+####################################################################
+# PREY Webcam Module Mac Functions - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function take_picture {
+	$module_path/lib/isightcapture $picture
+}
+
+function capture_video {
+
+	echo ' !! Feature still in development!'
+
+}

@@ -1,0 +1,30 @@
+#!/bin/bash
+####################################################################
+# Prey Session Module - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+screenshot=/tmp/prey-screenshot.jpg
+
+echo "$STRING_UPTIME_AND_PROCESS"
+get_uptime_and_programs
+add_trace uptime $uptime
+add_trace running_programs $running_programs
+
+echo "$STRING_MODIFIED_FILES"
+get_modified_files
+add_trace modified_files $modified_files
+
+echo "$STRING_ACTIVE_CONNECTIONS"
+get_active_connections
+add_trace active_connections $active_connections
+
+if [ $get_screenshot = 'y' ]; then
+	echo "$STRING_GET_SCREENSHOT"
+	get_screenshot
+
+	if [ -f "$screenshot" ]; then
+		add_file screenshot "$screenshot"
+	fi
+fi

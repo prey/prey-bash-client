@@ -1,7 +1,7 @@
 #!/bin/bash
 ####################################################################
-# Prey Report Module - by Tomas Pollak (bootlog.org)
-# URL : http://preyproject.com
+# Prey Network Module - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
 
@@ -22,21 +22,7 @@ if [ -n "$wifi_info" ]; then
 	add_trace wifi_info $wifi_info
 fi
 
-echo "$STRING_UPTIME_AND_PROCESS"
-get_uptime_and_processes
-
-# echo "$STRING_MODIFIED_FILES"
-# get_modified_files
-
-# echo "$STRING_ACTIVE_CONNECTIONS"
-# get_active_connections
-
-echo "$STRING_TAKE_IMAGE"
-get_images
-if [ -f "$picture" ]; then
-	add_file picture "$picture"
+if [ $trace_route = 'y' ]; then
+	echo "$STRING_TRACE"
+	trace_route
 fi
-if [ -f "$screenshot" ]; then
-	add_file screenshot "$screenshot"
-fi
-echo "$STRING_TAKE_IMAGE_DONE"

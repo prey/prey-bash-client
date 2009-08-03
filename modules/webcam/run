@@ -1,0 +1,27 @@
+#!/bin/bash
+####################################################################
+# Prey Webcam Module - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+picture=/tmp/prey-picture.jpg
+video=/tmp/prey-video.mov
+
+echo "$STRING_TAKE_PICTURE"
+take_picture
+
+if [ -f "$picture" ]; then
+	add_file picture "$picture"
+fi
+
+if [ $capture_video = 'y' ]; then
+
+	echo "$STRING_CAPTURE_VIDEO"
+	capture_video
+
+	if [ -f "$video" ]; then
+		add_file video "$video"
+	fi
+
+fi

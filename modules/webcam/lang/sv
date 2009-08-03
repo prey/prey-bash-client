@@ -1,0 +1,9 @@
+#!/bin/bash
+####################################################################
+# Prey Webcam Module Lang File - by Tomas Pollak (http://bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_TAKE_PICTURE=" -- Tar foto av tjuven..."
+STRING_CAPTURE_VIDEO=" -- Capturing $video_capture_time seconds of video..."
