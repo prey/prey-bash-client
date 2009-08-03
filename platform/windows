@@ -33,9 +33,13 @@ function activate_module {
 }
 
 function deactivate_module {
-	echo 0 > $base_path/modules/$1/active
+	# echo 0 > $base_path/modules/$1/active
+	rm $base_path/modules/$1/active 2> /dev/null
 }
 
 function deactivate_all_modules {
-	echo 0 > `find $base_path/modules -name active`
+	for file in `find $base_path/modules -name active`; do
+		# echo 0 > $file
+		rm $file
+	done
 }
