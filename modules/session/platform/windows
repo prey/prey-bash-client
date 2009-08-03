@@ -5,9 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-# we dont have a /tmp folder over here!
-screenshot="c:\windows\temp\prey-screenshot.bmp"
-
 function get_mac_address {
 	mac_address=`ipconfig -all | grep Physical | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }

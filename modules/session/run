@@ -5,8 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-screenshot=/tmp/prey-screenshot.jpg
-
 echo "$STRING_UPTIME_AND_PROCESS"
 get_uptime_and_programs
 add_trace uptime $uptime

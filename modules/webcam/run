@@ -5,9 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-picture=/tmp/prey-picture.jpg
-video=/tmp/prey-video.mov
-
 echo "$STRING_TAKE_PICTURE"
 take_picture
 

@@ -5,6 +5,9 @@
 # License: GPLv3
 ####################################################################
 
+picture=$module_path/prey-picture.jpg
+video=$module_path/prey-video.mov
+
 # should we capture video
 capture_video='n'
 
