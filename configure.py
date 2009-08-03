@@ -44,7 +44,7 @@ class PreyConfigurator:
         self.current_post_method = self.get_current_var('post_method')
 
         self.current_api_key = self.get_current_var('api_key')
-        self.current_device_key = self.get_current_var('device_url')
+        self.current_device_key = self.get_current_var('device_key')
 
         self.current_mail_to = self.get_current_var('mail_to')
         self.current_smtp_server = self.get_current_var('smtp_server')
@@ -59,7 +59,7 @@ class PreyConfigurator:
         model = lang.get_model()
         index = lang.get_active()
         l = model[index][0]
-        if l == 'English': 
+        if l == 'English':
             language = 'en'
         elif l == 'Espanol':
             language = 'es'
@@ -68,11 +68,11 @@ class PreyConfigurator:
 
         model = post_method.get_model()
         index = post_method.get_active()
-        if index == 0: 
+        if index == 0:
             real_post_method = 'http'
-        elif index == 1: 
+        elif index == 1:
             real_post_method = 'email'
-        elif index == 2: 
+        elif index == 2:
             real_post_method = 'scp'
 
         # print "Lang: %s" % language
@@ -91,7 +91,7 @@ class PreyConfigurator:
         self.edit_param('mail_to', mail_to.get_text())
         self.edit_param('smtp_server', smtp_server.get_text())
         self.edit_param('smtp_username', smtp_username.get_text())
-        
+
         if smtp_password.get_text() != '':
             encoded_pass = os.popen('echo -n "'+ smtp_password.get_text() + '" | openssl enc -base64').read().strip()
             self.edit_param('smtp_password', encoded_pass)
@@ -183,7 +183,7 @@ class PreyConfigurator:
 
         check_url.set_text(self.current_check_url)
         vbox.pack_start(check_url, False, True, 0)
-           
+
         # posting method
 
         label = gtk.Label("Data posting method:")
@@ -196,11 +196,11 @@ class PreyConfigurator:
         post_method.append_text('Secure Copy (SCP)')
 
         post_method.set_active(0)
-        vbox.pack_start(post_method, False, True, 0)           
-                   
+        vbox.pack_start(post_method, False, True, 0)
+
         # we need to set it up after the post method exists
         check_url.set_editable(post_method.get_active() != 0)
-                                  
+
         # second frame
 
         table = gtk.Table(30,6, False)
@@ -242,25 +242,27 @@ class PreyConfigurator:
 
         label = gtk.Label("API Key:")
         label.set_alignment(0, 0.5)
-        vbox.pack_start(label, False, True, 0)  
+        vbox.pack_start(label, False, True, 0)
 
         api_key = gtk.Entry()
         api_key.set_max_length(12)
-        vbox.pack_start(api_key, False, True, 0)  
-              
+        api_key.set_text(self.current_api_key)
+        vbox.pack_start(api_key, False, True, 0)
+
         label = gtk.Label("Device Key:")
         label.set_alignment(0, 0.5)
-        vbox.pack_start(label, False, True, 0)  
+        vbox.pack_start(label, False, True, 0)
 
         device_key = gtk.Entry()
         device_key.set_max_length(6)
+        device_key.set_text(self.current_device_key)
         device_key.connect("insert-at-cursor", self.changed_device_key, device_key, check_url)
-        vbox.pack_start(device_key, False, True, 0)  
+        vbox.pack_start(device_key, False, True, 0)
 
         label = gtk.Label("Remember to register in \n http://preyproject.com for your\n API and Device keys!")
         label.set_justify(gtk.JUSTIFY_CENTER)
         label.set_alignment(0, 0.5)
-        vbox.pack_start(label, False, True, 10)  
+        vbox.pack_start(label, False, True, 10)
 
         label = gtk.Label('HTTP Settings')
         notebook.append_page(vbox, label)
@@ -276,15 +278,15 @@ class PreyConfigurator:
 
         mail_to = gtk.Entry()
         mail_to.set_text(self.current_mail_to)
-        vbox.pack_start(mail_to, False, True, 0)  
-              
+        vbox.pack_start(mail_to, False, True, 0)
+
         label = gtk.Label("SMTP Server:")
         label.set_alignment(0, 0.5)
         vbox.add(label)
 
         smtp_server = gtk.Entry()
         smtp_server.set_text(self.current_smtp_server)
-        vbox.pack_start(smtp_server, False, True, 0)  
+        vbox.pack_start(smtp_server, False, True, 0)
 
         label = gtk.Label("Username/mailbox:")
         label.set_alignment(0, 0.5)
@@ -292,8 +294,8 @@ class PreyConfigurator:
 
         smtp_username = gtk.Entry()
         smtp_username.set_text(self.current_smtp_username)
-        vbox.pack_start(smtp_username, False, True, 0) 
-        
+        vbox.pack_start(smtp_username, False, True, 0)
+
         label = gtk.Label("Password:")
         label.set_alignment(0, 0.5)
         vbox.add(label)
@@ -301,7 +303,7 @@ class PreyConfigurator:
         smtp_password = gtk.Entry()
         smtp_password.set_visibility(False)
         # smtp_password.set_text(self.current_smtp_password)
-        vbox.pack_start(smtp_password, False, True, 0) 
+        vbox.pack_start(smtp_password, False, True, 0)
 
         label = gtk.Label('Email Settings')
         notebook.append_page(vbox, label)
@@ -313,37 +315,37 @@ class PreyConfigurator:
 
         label = gtk.Label("SCP Server:")
         label.set_alignment(0, 0.5)
-        vbox.pack_start(label, False, True, 0)  
+        vbox.pack_start(label, False, True, 0)
 
         scp_server = gtk.Entry()
         scp_server.set_text("my.server.com")
-        vbox.pack_start(scp_server, False, True, 0)  
-              
+        vbox.pack_start(scp_server, False, True, 0)
+
         label = gtk.Label("SCP Path:")
         label.set_alignment(0, 0.5)
-        vbox.pack_start(label, False, True, 0)  
+        vbox.pack_start(label, False, True, 0)
 
         scp_path = gtk.Entry()
         scp_path.set_text("~")
-        vbox.pack_start(scp_path, False, True, 0)  
+        vbox.pack_start(scp_path, False, True, 0)
 
         label = gtk.Label('SCP Settings')
         notebook.append_page(vbox, label)
-        
+
         # end notebook
-        
+
         notebook.set_current_page(post_method.get_active())
         post_method.connect('changed', self.changed_post_method, notebook, check_url)
- 
+
         # horizontal box and close button
-  
+
         hbox = gtk.HBox(False, 0)
         main_vbox.add(hbox)
 
         button = gtk.Button("Cancel")
         button.connect("clicked", lambda w: gtk.main_quit())
         hbox.pack_start(button, True, True, 0)
-                                   
+
         button = gtk.Button("Accept")
         button.connect("clicked", self.apply_settings, lang, minutes, check_url, post_method, api_key, device_key, mail_to, smtp_server, smtp_username, smtp_password, scp_server, scp_path )
         hbox.pack_start(button, True, True, 0)
@@ -359,4 +361,3 @@ def main():
 if __name__ == "__main__":
     PreyConfigurator()
     main()
-

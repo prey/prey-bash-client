@@ -54,8 +54,13 @@ else # prey status messages
 	STRING_TRY_TO_CONNECT=" -- Försöker ansluta till öppna trådlösa nätverk..."
 	STRING_NO_CONNECT_TO_WIFI=" -- Kunde inte ansluta till ett öppet trådlöst nät!"
 	STRING_CHECK_URL=" -- Kontrollerar URL..."
-	STRING_PROBLEM=" -- Hoppla!!"
 	STRING_NO_PROBLEM=" -- Inget att oroa sig över. :)\n"
+	STRING_PROBLEM=" -- Hoppla!!"
+	STRING_WRITE_EMAIL=" -- Skapar epostmeddelande..."
+	STRING_SENDING_EMAIL=" -- Skickar report..."
+	STRING_ERROR_EMAIL="\n\033[1m !! Det gick inte att skicka epost. Är du säker på att inställningarna är korrekta?
+		Om du använder Gmail, testa att ta bort '@gmail.com' i användarnamnet för SMTP i Preys konfigurationsfil.\033[0m\n"
+	STRING_REMOVE_EVIDENCE=" -- Tar bort alla spår av bevis..."
 	STRING_DONE=" -- Klar! Lycka till med jakten! :)\n"
 
 fi

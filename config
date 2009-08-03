@@ -12,7 +12,7 @@ lang='en'
 check_url='http://preyproject.com'
 
 # you can use send the report via email or to the web service
-# valid values: http, scp, email
+# valid values: http, email or scp
 post_method='http'
 
 ####################################################################
@@ -22,16 +22,6 @@ post_method='http'
 # you can get both of these from Prey's web service
 api_key=''
 device_key=''
-
-####################################################################
-# scp posting configuration
-# we dont use user/pass but RSA keys
-# for more info check http://tinyurl.com/sshtip
-####################################################################
-
-# remember you should have write access to the folder
-scp_server='my.server.com'
-scp_path='~'
 
 ####################################################################
 # SMTP settings, for email posting
@@ -50,3 +40,13 @@ smtp_password='password'
 # you dont need to change this
 mail_from='Prey <no-reply@gmail.com>'
 mail_subject='Prey -- status report'
+
+####################################################################
+# scp posting configuration
+# we dont use user/pass but RSA keys
+# for more info check http://tinyurl.com/sshtip
+####################################################################
+
+# remember you should have write access to the folder
+scp_server='my.server.com'
+scp_path='~'

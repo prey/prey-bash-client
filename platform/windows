@@ -20,3 +20,21 @@ function get_wifi_info {
 function try_to_connect {
 	echo ' !! TODO yet!'
 }
+
+# module de/activation functions
+
+function is_module_active {
+	cat $base_path/modules/$1/active
+}
+
+function activate_module {
+	echo "1" > $base_path/modules/$1/active
+}
+
+function deactivate_module {
+	echo "0" > $base_path/modules/$1/active
+}
+
+function deactivate_all_modules {
+	echo "0" > `find $base_path/modules -name active`
+}
