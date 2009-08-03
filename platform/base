@@ -195,11 +195,11 @@ function process_response {
 
 function process_xml {
 
-	prey_configuration=`echo -e "$response" | sed -n '/<configuration>/,/<\/configuration>/p'  | grep -v "configuration>"`
+	prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
 	if [ -n "$prey_configuration" ]; then
 		process_config
 	fi
-	module_configuration=`echo -e "$response" | sed -n '/<modules>/,/<\/modules>/p' | grep -v "/module" | sed '1d'`
+	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "/module" | sed '1d'`
 	if [ -n "$module_configuration" ]; then
 		deactivate_all_modules # we need to do so we can enable only the active ones
 		process_modules
@@ -217,9 +217,11 @@ function process_config {
 				echo " -- Setting delay to $delay minutes!"
 				(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
 			fi
-		elif [[ "$line" =~ 'auto_update' && "$line" =~ "true" ]]; then
-			auto_update="y"
-			echo ' -- Auto update enabled!'
+		elif [ `find_in $line 'auto_update="'` ]; then
+			if [ `find_in $line 'true'` ]; then
+				auto_update="y"
+				echo ' -- Auto update enabled!'
+			fi
 		fi
 
 	done
@@ -280,7 +282,7 @@ function process_modules {
 # this is REALLY untested stuff
 # we should put this in a module with the new hash-by-module trace structure
 
-function process_textvf {
+function process_text {
 	if [[ -n `echo $response | grep '#!/bin/bash'` && ! -n `echo $response | grep ' rm '` ]]; then
 		echo ' -- Valid script! Lets get it on.'
 		script=/tmp/script.sh
