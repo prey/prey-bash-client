@@ -12,7 +12,7 @@
 # finds a string within another
 # usage find_in 'foobar' 'foo' -> echoes 1
 function find_in {
-	echo ${1} | grep "${2}" 1>/dev/null && echo 1 || return 0
+	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
 }
 
 # fetches a var and then assigns it as $value
@@ -199,7 +199,7 @@ function process_xml {
 	if [ -n "$prey_configuration" ]; then
 		process_config
 	fi
-	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "/module" | sed '1d'`
+	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	if [ -n "$module_configuration" ]; then
 		deactivate_all_modules # we need to do so we can enable only the active ones
 		process_modules
@@ -211,14 +211,14 @@ function process_config {
 
 	echo -e "$prey_configuration" | while read line; do
 
-		if [ `find_in $line 'delay="'` ]; then
+		if [ `find_in "$line" 'delay="'` ]; then
 			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			if [ -n "$delay" ]; then
 				echo " -- Setting delay to $delay minutes!"
 				(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
 			fi
-		elif [ `find_in $line 'auto_update="'` ]; then
-			if [ `find_in $line 'true'` ]; then
+		elif [ `find_in "$line" 'auto_update="'` ]; then
+			if [ `find_in "$line" 'true'` ]; then
 				auto_update="y"
 				echo ' -- Auto update enabled!'
 			fi
@@ -232,10 +232,10 @@ function process_modules {
 
 	echo -e "$module_configuration" | while read line; do
 
-	if [ `find_in $line 'name="'` ]; then # we have a module node
+	if [ `find_in "$line" 'name='` ]; then # we have a module node
 		module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
-		echo " -- Got instructions for $module module."
-		if [ `find_in $line "true"` ]; then # module is active
+		if [ `find_in "$line" 'true'` ]; then # module should be active
+			echo " ** Got instructions for $module module."
 			if [ ! -d $base_path/modules/$module ]; then # not installed
 				echo " -- Installing new $module module!"
 				install_or_update_module $module
@@ -255,12 +255,12 @@ function process_modules {
 					fi
 				fi
 			fi
-			if [ ! -x $base_path/modules/$module/run ]; then
+			if [ ! `is_module_active $module` ]; then
 				echo " -- Activating $module module!"
 				activate_module $module
 			fi
 		else # module should be inactive
-			if [ -x $base_path/modules/$module/run ]; then
+			if [ `is_module_active $module` ]; then
 				echo " -- Disabling $module module!"
 				deactivate_module $module
 			fi
@@ -271,7 +271,7 @@ function process_modules {
 			param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
 			value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
 			echo " -- Updating setting $param -> $value for $module module."
-			sed -i -e "s/$param=.*$/$param='$value'/" -e "s/-SLASH-/\//g" $base_path/modules/$module/config
+			update_config_for "$module" "$param" "$value"
 		fi
 	fi
 
@@ -333,6 +333,18 @@ function install_or_update_module {
 	else
 		echo " !! Couldn't get $1 module from repository."
 		return 1
+	fi
+}
+
+# module, param, value
+function update_config_for {
+	if [ "$os" == "windows" ]; then
+		tmp_config=`cat $base_path/modules/$1/config | sed -e "s/$2=.*$/$2='$3'/" -e 's/-SLASH-/\//g'`
+		rm $base_path/modules/$1/config
+		touch $base_path/modules/$1/config
+		echo "$tmp_config" > $base_path/modules/$1/config
+	else
+		sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" $base_path/modules/$1/config
 	fi
 }
 
@@ -428,7 +440,7 @@ function send_via_email {
 	decoded_pass=`decrypt "$smtp_password"`
 	complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
 	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file tls=auto username=$smtp_username password=$decoded_pass`
-	if [ `find_in $response 'ERROR'` ]; then
+	if [ `find_in "$response" 'ERROR'` ]; then
 		echo -e "$STRING_ERROR_EMAIL"
 		echo -e "\n This is the complete error message: \n $response\n"
 	fi

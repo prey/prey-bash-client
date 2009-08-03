@@ -5,10 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-function get_mac_address {
-	mac_address=`ipconfig -all | grep Physical | sed 's/^.*: //g' | grep -v '^$' | head -1`
-}
-
 function get_uptime_and_programs {
 	uptime=`net stats srv | grep Statistics`
 	running_programs=`tasklist -v`
