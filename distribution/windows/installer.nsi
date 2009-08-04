@@ -105,7 +105,16 @@ Section "Prey" PreySection
 	File /r /x /a .* ..\..\modules\network
 	File /r /x /a .* ..\..\modules\session
 	File /r /x /a .* ..\..\modules\webcam
-	;File /r /x /a .* ..\..\modules\location
+	;File /r /x /a .* ..\..\modules\geo
+
+	SetOutPath "$INSTDIR\modules\network"
+	File /r /x /a .* active
+
+	SetOutPath "$INSTDIR\modules\session"
+	File /r /x /a .* active
+
+	SetOutPath "$INSTDIR\modules\webcam"
+	File /r /x /a .* active
 
 	SetOutPath "$INSTDIR"
 

@@ -212,7 +212,6 @@ Function nsDialogsPageLeave
 	${If} "$5" != "'$0'"
 	Base64::Encode "$0"
 	Pop $R0
-	MessageBox MB_OK|MB_ICONINFORMATION "Crpyted: $R0"
 	!insertmacro ReplaceInFile "c:\prey\config" "smtp_password" "smtp_password='$R0'"
 	${EndIf}
 
