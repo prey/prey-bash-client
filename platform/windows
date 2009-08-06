@@ -19,8 +19,8 @@ function get_current_delay {
 }
 
 function update_execution_delay {
-	schtasks.exe -delete -f -tn "Prey"
-	schtasks.exe -create -ru "System" -sc MINUTE -mo $delay -tn "Prey" -tr "c:\Prey\prey.bat"
+	schtasks.exe -delete -f -tn "Prey" > /dev/null
+	schtasks.exe -create -ru "System" -sc MINUTE -mo $delay -tn "Prey" -tr "c:\Prey\prey.bat" > /dev/null
 }
 
 # module de/activation functions
