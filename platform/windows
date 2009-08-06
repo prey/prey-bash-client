@@ -14,13 +14,13 @@ function try_to_connect {
 	echo ' !! Autoconnect in Windows still in development. Thanks for your patience!'
 }
 
-# TODO: Finish this!
 function get_current_delay {
-	schtasks.exe -query -fo LIST | grep "Modifier"
+	schtasks.exe -query -fo LIST -v | egrep "TaskName|Repeat" | grep -A1 "Prey" | grep -v "Prey" | sed 's/[^0-9]//g'
 }
 
 function update_execution_delay {
-	schtasks.exe -change -tn "Prey" -sc MINUTE -mo $delay
+	schtasks.exe -delete -f -tn "Prey"
+	schtasks.exe -create -ru "System" -sc MINUTE -mo $delay -tn "Prey" -tr "c:\Prey\prey.bat"
 }
 
 # module de/activation functions
