@@ -12,3 +12,7 @@ function get_internal_ip {
 function get_mac_address {
 	mac_address=`ipconfig -all | grep Physical | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }
+
+function get_wifi_info {
+	wifi_info=`$base_path/lib/wifi_config.exe -aps`
+}

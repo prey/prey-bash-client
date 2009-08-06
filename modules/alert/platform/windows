@@ -5,10 +5,13 @@
 # License: GPLv3
 ####################################################################
 
+# never tested!
 function change_wallpaper {
-	echo ' !! TODO yet!'
+	reg add "hkcu\control panel\desktop" /v wallpaper /t REG_SZ /d "$wallpaper" /f
+	RUNDLL32.EXE user32.dll,UpdatePerUserSystemParameters
 }
 
+# that's right, never tested as well
 function alert_user {
-	echo ' !! TODO yet!'
+	wscript $module_path/lib/msgbox.js "$alert_message"
 }
