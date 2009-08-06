@@ -94,6 +94,14 @@ function remove_files {
 	done
 }
 
+function get_current_delay {
+	crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
+}
+
+function update_execution_delay {
+	(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
+}
+
 ####################################################################
 # string functions
 ####################################################################
@@ -211,13 +219,15 @@ function process_config {
 
 	echo -e "$prey_configuration" | while read line; do
 
-		if [ `find_in "$line" 'delay="'` ]; then
+		if [ `find_in "$line" '<delay>'` ]; then
 			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			if [ -n "$delay" ]; then
-				echo " -- Setting delay to $delay minutes!"
-				(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
+				if [ `get_current_delay` != "$delay" ]; then
+					echo " -- Setting delay to $delay minutes!"
+					update_execution_delay
+				fi
 			fi
-		elif [ `find_in "$line" 'auto_update="'` ]; then
+		elif [ `find_in "$line" '<auto_update>'` ]; then
 			if [ `find_in "$line" 'true'` ]; then
 				auto_update="y"
 				echo ' -- Auto update enabled!'
