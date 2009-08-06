@@ -14,6 +14,15 @@ function try_to_connect {
 	echo ' !! Autoconnect in Windows still in development. Thanks for your patience!'
 }
 
+# TODO: Finish this!
+function get_current_delay {
+	schtasks.exe -query -fo LIST | grep "Modifier"
+}
+
+function update_execution_delay {
+	schtasks.exe -change -tn "Prey" -sc MINUTE -mo $delay
+}
+
 # module de/activation functions
 
 function is_module_active {

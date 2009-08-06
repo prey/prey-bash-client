@@ -133,7 +133,7 @@ Section "Prey" PreySection
 	!insertmacro MUI_STARTMENU_WRITE_END
 
 	; add scheduled task
-	nsExec::Exec '"schtasks.exe" -create -ru "Administrator" -rp "password" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
+	nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
 
 SectionEnd
 
