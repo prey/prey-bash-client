@@ -10,6 +10,11 @@ function get_uptime_and_programs {
 	running_programs=`tasklist -v`
 }
 
+# removed the regex for hidden files stuff
+function get_modified_files {
+	modified_files=`find $modified_files_path -type f -mmin -$modified_files_time`
+}
+
 function get_screenshot {
 	$module_path/lib/boxcutter-fs.exe $screenshot
 }
