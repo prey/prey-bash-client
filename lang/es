@@ -17,20 +17,30 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 	INVALID_INSTALL_PATH=" !! Ruta invalida de instalacion. La carpeta superior no existe!\n"
 	SETTING_INSTALL_PATH=" -- Ok, instalaremos Prey en $INSTALLPATH."
 
+	IT_SEEMS_PATH="Parece que ya tenias instalado Prey en"
+	DIFFERENT_PATH="\nLa nueva version usa una ruta diferente para la instalacion,"
+	REMOVE_OLD_FILES="asi que deberemos eliminar los viejos archivos ya que no se usaran más.."
+	ASK_RM_OLD_FILES="Lo hacemos automaticamente por ti?"
 	DELETING_OLD_FILES=" -- Eliminando archivos antiguos de Prey...\n"
 	CONFIG_FILE_EXISTS=" -> Archivo de configuracion existe! Quieres que nos saltemos las preguntas de configuracion? (No recomendado) [n] "
 
 	SKIP_INSTALL_QUESTIONS=" -- Muy bien, solo actualizaremos los archivos necesarios!\n"
 
-	# TODO: finish translating this.
-	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email] "
-	DEFAULT_REPORT_METHOD=" -- Using email as our reporting method. All good!"
-	ADD_API_KEY=" -> Please enter the 12-digit API Key as supplied by the web service: "
-	INVALID_API_KEY=" !! Invalid API key! Remember to signup at preyproject.com to get one.\n"
-	ADD_DEVICE_KEY=" -> Please enter the six-digit Device Key as supplied by the web service."
-	INVALID_DEVICE_KEY=" !! Invalid device key! Remember to register your device in preyproject.com to get one."
+	DEFINE_REPORT_METHOD=" -> Que metodo de reporte te gustaria usar? (email, tunnel, web) [email] "
+	IS_REGISTERED_ON_WEB=" -- Estas registrado en el sitio?"
+	DEFAULT_REPORT_METHOD=" -- Usando e-mail como metodo de reporte. Todo bien!"
+	ADD_API_KEY=" -> Por favor entra el Codigo API de 12 digitos que te entrego el servicio web: "
+	INVALID_API_KEY=" !! Codigo API Invalido! Recuerda que debes registrarte en preyproject.com para obtener uno.\n"
+	ADD_DEVICE_KEY=" -> Por favor entra el Codigo de Dispositivo de 6 digitos que te entrego el servicio web:"
+	INVALID_DEVICE_KEY=" !! Codigo de Dispositivo Invalido! Recuerda registrar tu dispositivo en preyproject.com para obtener uno."
 
-	USING_DEFAULT_APP_URL=" -- Using routes for the web application. Nothing to write in here!"
+	DESIRED_USER_WEB=" -- OK, entonces dejanos hacerlo por ti. Por favor entra tu usuario deseado: "
+	ASK_EMAIL_WEB=" -- Por favor entra tu correo: "
+	DESIRED_PASS_WEB=" -- Por favor entra tu contrasena deseada: (Solo la usaremos para registrarte!) "
+	PROBLEM_SIGNUP_WEB="Hubo un problema registrandote en el servicio web. Por favor intentalo de nuevo o hazlo directamente en"
+	PROBLEM_RESPONSE_WEB="La respuesta que llego fue:"
+
+	USING_DEFAULT_APP_URL=" -- Usando rutas para la aplicacion web. Nada que escribir aqui!"
 
 	ENTER_EMAIL_ADDRESS=" -> A que casilla de email quieres que Prey envie el correo? (i.e. casilla@dominio.com) [] "
 	INVALID_EMAIL_ADDRESS=" !! Necesitas escribir una casilla de correo valida! Saliendo...\n"
