@@ -34,9 +34,8 @@ separator="---------------------------------------------------------------------
 	elif [ -e "lang/$LANGUAGE" ]; then
 		. lang/$LANGUAGE
 		echo "$HELLO_IN_LANGUAGE"
-		echo "$YES_NO"
 	else
-		echo -e " !! Unsupported language! Remember to write its valid code (en for english, es for espanol, de for deutsche, etc)\n"
+		echo -e " !! Unsupported language! Remember to write its valid code (en for english, es for espanol, sv for svenka, etc)\n"
 		exit
 	fi
 
@@ -54,9 +53,9 @@ separator="---------------------------------------------------------------------
 
 	if [ -n "$previous_path" ]; then
 
-		echo -e "It seems you had already installed Prey in $previous_path.\nThe new version uses a different path for the installation,"
-		echo -e "so we should remove the old files since they won't be used anymore."
-		echo -n "Should we do this automatically for you? ($YES_NO) [$YES] "
+		echo -e "$IT_SEEMS_PATH $previous_path.$DIFFERENT_PATH"
+		echo -e "$REMOVE_OLD_FILES"
+		echo -n "$ASK_RM_OLD_FILES ($YES_NO) [$YES] "
 		read DELETE
 		if [[ "$DELETE" == "" || $DELETE == "$YES" ]]; then
 
@@ -126,7 +125,7 @@ separator="---------------------------------------------------------------------
 		elif [ "$REPORT_METHOD" == 'web' ]; then
 
 			echo -e $separator
-			echo -n " -- Have you already registered on the site? ($YES_NO) [n] "
+			echo -n "$IS_REGISTERED_ON_WEB ($YES_NO) [n] "
 			read USER_REGISTERED
 			if [ "$USER_REGISTERED" == "$YES" ]; then
 
@@ -139,20 +138,20 @@ separator="---------------------------------------------------------------------
 				fi
 
 			else
-
-				echo -n " -- OK, then let us do so for you. Please type in your desired username: "
+				#TODO: Translate and put in lang files.
+				echo -n "$DESIRED_USER_WEB"
 				read WEB_USERNAME
-				echo -n " -- Please type in your email: "
+				echo -n "$ASK_EMAIL_WEB"
 				read WEB_EMAIL
-				echo -n " -- Please type in your desired password: (We just use it to sign up for you!) "
+				echo -n "$DESIRED_PASS_WEB"
 				read -s WEB_PASSWORD
 
 				if [[ -n "$WEB_USERNAME" && -n "$WEB_EMAIL" && -n "$WEB_PASSWORD" ]]; then
 
 					user_response=`curl -s -d "user[login]=$WEB_USERNAME&user[email]=$WEB_EMAIL&user[password]=$WEB_PASSWORD&user[password_confirmation]=$WEB_PASSWORD" $WEB_SERVICE_URL/users.xml`
 					if [[ "$user_response" =~ 'error' ]]; then
-						echo -e -n "\n\n !! There was a problem signing up in the web service. Please try again or just do so directly in $WEB_SERVICE_URL.\n\n"
-						echo -e " !! The response we got was this: \n\n$user_response.\n\n"
+						echo -e -n "\n\n !! $PROBLEM_SIGNUP_WEB $WEB_SERVICE_URL.\n\n"
+						echo -e " !! $PROBLEM_RESPONSE_WEB \n\n$user_response.\n\n"
 						exit
 					fi
 
