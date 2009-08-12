@@ -10,23 +10,34 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
 	# installer messages
 
-#	HELLO_IN_LANGUAGE=" -- Prey will speak english then!"
+	HELLO_IN_LANGUAGE=" -- Prey will speak english then!"
 	WHERE_TO_INSTALL_PREY=" -> Where do you want us to install Prey? [$DEFAULT_INSTALLPATH] "
 	USING_DEFAULT_INSTALL_PATH=" -- Good, using the default install path..."
 	INVALID_INSTALL_PATH=" !! Invalid installation path. Parent directory doesn't exist!\n"
 	SETTING_INSTALL_PATH=" -- Ok, setting $INSTALLPATH as our install path."
 
+	IT_SEEMS_PATH="It seems you had already installed Prey in"
+	DIFFERENT_PATH="\nThe new version uses a different path for the installation,"
+	REMOVE_OLD_FILES="so we should remove the old files since they won't be used anymore."
+	ASK_RM_OLD_FILES="Should we do this automatically for you?"
 	DELETING_OLD_FILES=" -- Deleting old Prey installation files...\n"
 	CONFIG_FILE_EXISTS=" -> Config file exists! Would you like to skip all the boring questions? (Not recommended) [n] "
 
 	SKIP_INSTALL_QUESTIONS=" -- Alright, well just update the necesary files!\n"
 
 	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email] "
+	IS_REGISTERED_ON_WEB=" -- Have you already registered on the site?"
 	DEFAULT_REPORT_METHOD=" -- Using email as our reporting method. All good!"
 	ADD_API_KEY=" -> Please enter your API Key as supplied by the web service: "
 	INVALID_API_KEY=" !! Invalid API key! Remember to signup at preyproject.com to get one.\n"
 	ADD_DEVICE_KEY=" -> Please enter the Device Key for this PC as supplied by the web service: "
 	INVALID_DEVICE_KEY=" !! Invalid device key! Remember to register your device in preyproject.com to get one.\n"
+
+	DESIRED_USER_WEB=" -- OK, then let us do so for you. Please type in your desired username: "
+	ASK_EMAIL_WEB=" -- Please type in your email: "
+	DESIRED_PASS_WEB=" -- Please type in your desired password: (We just use it to sign up for you!) "
+	PROBLEM_SIGNUP_WEB="There was a problem signing up in the web service. Please try again or just do so directly in"
+	PROBLEM_RESPONSE_WEB="The response we got was this:"
 
 	USING_DEFAULT_APP_URL=" -- Using routes for the web application. Nothing to write in here!"
 
