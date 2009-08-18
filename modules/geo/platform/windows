@@ -7,5 +7,5 @@
 
 function get_wifi_access_points {
 	# $base_path/lib/wifi_config.exe -aps | sed 's/PUT_THE_MAGIC_IN_HERE//'
-	echo ''
+	echo ' ** Wifi geolocation still in development in Windows.'
 }

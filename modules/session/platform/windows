@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-screenshot=$base_path/prey-screenshot.jpg
+screenshot=$base_path/prey-screenshot
 
 function get_uptime_and_programs {
 	uptime=`net stats srv | grep Statistics`
@@ -18,5 +18,7 @@ function get_modified_files {
 }
 
 function get_screenshot {
-	$module_path/lib/boxcutter-fs.exe $screenshot
+	$module_path/lib/boxcutter-fs.exe $screenshot.bmp
+	$base_path/lib/bmp2png.exe $screenshot.bmp
+	screenshot=$base_path/prey-screenshot.png
 }

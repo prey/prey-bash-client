@@ -80,15 +80,6 @@ Function nsDialogsPage
 			${NSD_SetState} $POST_METHOD 1
 		${EndIf}
 
-		; CHECK URL
-		${ConfigRead} "c:\prey\config" "check_url=" $2
-		${GetInQuotes} $2 $CHECK_URL
-
-		${NSD_CreateLabel} 270 0 75% 10u "Check URL"
-		Pop $0
-		${NSD_CreateText} 270 20 40% 12u $CHECK_URL
-		Pop $CHECK_URL
-
 		; API KEY
 		${ConfigRead} "c:\prey\config" "api_key=" $3
 		${GetInQuotes} $3 $API_KEY
@@ -109,17 +100,26 @@ Function nsDialogsPage
 		Pop $DEVICE_KEY
 		${NSD_SetTextLimit} $DEVICE_KEY 6
 
-		${NSD_CreateLabel} 0 145 25% 100u "You can get these $\r$\nboth in Prey's new$\r$\nweb service at$\r$\nwww.preyproject.com."
+		${NSD_CreateLabel} 0 145 25% 100u "You can get these $\r$\nboth in Prey's new$\r$\nweb service at$\r$\preyproject.com."
 		Pop $0
 
 		; MAIL TO
 		${ConfigRead} "c:\prey\config" "mail_to=" $5
 		${GetInQuotes} $5 $MAIL_TO
 
-		${NSD_CreateLabel} 120 50 75% 10u "Mail to"
+		${NSD_CreateLabel} 120 50 30% 10u "Mail to"
 		Pop $0
 		${NSD_CreateText} 120 65 30% 12u $MAIL_TO
 		Pop $MAIL_TO
+
+		; CHECK URL
+		${ConfigRead} "c:\prey\config" "check_url=" $2
+		${GetInQuotes} $2 $CHECK_URL
+
+		${NSD_CreateLabel} 270 0 40% 10u "Check URL"
+		Pop $0
+		${NSD_CreateText} 270 20 40% 12u $CHECK_URL
+		Pop $CHECK_URL
 
 		; SMTP SERVER
 		${ConfigRead} "c:\prey\config" "smtp_server=" $6
