@@ -31,8 +31,21 @@ cp $basedir/configure.py ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/lib ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/lang ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/platform ./build/tmp/prey/usr/share/prey/
-cp -r $basedir/modules ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/pixmaps ./build/tmp/prey/usr/share/prey/
+
+# add available modules
+mkdir -p ./build/tmp/prey/usr/share/prey/modules
+cp -r $basedir/modules/alert ./build/tmp/prey/usr/share/prey/modules
+cp -r $basedir/modules/geo ./build/tmp/prey/usr/share/prey/modules
+cp -r $basedir/modules/network ./build/tmp/prey/usr/share/prey/modules
+cp -r $basedir/modules/session ./build/tmp/prey/usr/share/prey/modules
+cp -r $basedir/modules/webcam ./build/tmp/prey/usr/share/prey/modules
+
+# remove unneeded files
+rm -f `find ./build/tmp/prey/usr/share/prey -name "*~"`
+rm -f `find build/tmp/prey/usr/share/prey -name "windows"`
+rm -f `find build/tmp/prey/usr/share/prey -name "*.exe"`
+rm -f `find build/tmp/prey/usr/share/prey -name "*.dll"`
 
 cp $basedir/CHANGELOG ./build/tmp/prey/usr/share/prey/
 cp $basedir/LICENSE ./build/tmp/prey/usr/share/prey/
@@ -50,4 +63,3 @@ dpkg-deb -b ./build/tmp/prey ./build
 mv build/*.deb .
 # Remove temporary directory
 sudo rm -rf ./build
-
