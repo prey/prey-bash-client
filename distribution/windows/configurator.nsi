@@ -116,9 +116,9 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "check_url=" $2
 		${GetInQuotes} $2 $CHECK_URL
 
-		${NSD_CreateLabel} 270 0 40% 10u "Check URL"
+		${NSD_CreateLabel} 270 50 40% 10u "Check URL"
 		Pop $0
-		${NSD_CreateText} 270 20 40% 12u $CHECK_URL
+		${NSD_CreateText} 270 65 40% 12u $CHECK_URL
 		Pop $CHECK_URL
 
 		; SMTP SERVER
