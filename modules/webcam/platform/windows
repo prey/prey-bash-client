@@ -5,14 +5,14 @@
 # License: GPLv3
 ####################################################################
 
-picture="c:\windows\temp\prey-picture.jpg"
+picture="c:\windows\temp\prey-picture.png"
 
 function take_picture {
 
 	# $module_path/lib/simplecapture.exe /filename $picture /suffix ' ' /jpgquality 80 /imgperfect 500 /imgcaption hh:nn:ss
 	$module_path/lib/webcam_capture.exe
-	$base_path/lib/bmp2png.exe $module_path/lib/vfw-0.bmp
-	mv $module_path/lib/vfw-0.png "$picture"
+	$base_path/lib/bmp2png.exe $base_path/vfw-0.bmp 2> /dev/null
+	mv $base_path/vfw-0.png "$picture"
 
 }
 

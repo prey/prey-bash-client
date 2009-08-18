@@ -125,7 +125,7 @@ Section "Prey" PreySection
 
 		;Create shortcuts
 		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
-		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Prey.lnk" "$INSTDIR\prey.bat"
+		; CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Prey.lnk" "$INSTDIR\prey.bat"
 		; CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$PROGRAMFILES\Windows NT\Accessories\wordpad.exe" "$INSTDIR\config"
 		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$INSTDIR\prey-config.exe"
 		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
@@ -176,7 +176,7 @@ Section "Uninstall"
 
 	Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
 	Delete "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk"
-	Delete "$SMPROGRAMS\$StartMenuFolder\Prey.lnk"
+	; Delete "$SMPROGRAMS\$StartMenuFolder\Prey.lnk"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
 	DeleteRegKey /ifempty HKCU "Software\Prey"
