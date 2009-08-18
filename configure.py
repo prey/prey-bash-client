@@ -22,8 +22,8 @@ class PreyConfigurator:
         index = combobox.get_active()
         notebook.set_current_page(index)
         check_url.set_editable(index != 0)
-        if index == 0:
-            check_url.set_text('http://control.preyproject.com')
+        #if index == 0:
+            #check_url.set_text('http://control.preyproject.com')
 
     def changed_device_key(self, widget, device_key, check_url):
         check_url.set_text("http://control.preyproject.com/"+device_key.get_text())
@@ -80,6 +80,9 @@ class PreyConfigurator:
         # print "Check URL: %s" % check_url.get_text()
         # print "API Key: %s" % api_key.get_text()
         # print "Device Key: %s" % device_key.get_text()
+
+        if real_post_method == 'http':
+            check_url.set_text('http://control.preyproject.com')
 
         self.edit_param('lang', language)
         self.edit_param('check_url', check_url.get_text())
@@ -172,18 +175,6 @@ class PreyConfigurator:
         # adj.connect("value_changed", self.change_digits, minutes)
         vbox.pack_start(minutes, False, True, 0)
 
-        # check url
-
-        label = gtk.Label("Check URL:")
-        label.set_alignment(0, 0.5)
-        vbox.add(label)
-
-        check_url = gtk.Entry()
-        check_url.set_max_length(100)
-
-        check_url.set_text(self.current_check_url)
-        vbox.pack_start(check_url, False, True, 0)
-
         # posting method
 
         label = gtk.Label("Data posting method:")
@@ -193,13 +184,10 @@ class PreyConfigurator:
         post_method = gtk.combo_box_new_text()
         post_method.append_text('Web service (Recommended)')
         post_method.append_text('SMTP Email')
-        post_method.append_text('Secure Copy (SCP)')
+        # post_method.append_text('Secure Copy (SCP)')
 
         post_method.set_active(0)
         vbox.pack_start(post_method, False, True, 0)
-
-        # we need to set it up after the post method exists
-        check_url.set_editable(post_method.get_active() != 0)
 
         # second frame
 
@@ -256,10 +244,10 @@ class PreyConfigurator:
         device_key = gtk.Entry()
         device_key.set_max_length(6)
         device_key.set_text(self.current_device_key)
-        device_key.connect("insert-at-cursor", self.changed_device_key, device_key, check_url)
+        # device_key.connect("insert-at-cursor", self.changed_device_key, device_key, check_url)
         vbox.pack_start(device_key, False, True, 0)
 
-        label = gtk.Label("Remember to register in \n http://preyproject.com for your\n API and Device keys!")
+        label = gtk.Label("Remember to register in \n preyproject.com for your\n API and Device keys!")
         label.set_justify(gtk.JUSTIFY_CENTER)
         label.set_alignment(0, 0.5)
         vbox.pack_start(label, False, True, 10)
@@ -271,6 +259,21 @@ class PreyConfigurator:
 
         vbox = gtk.VBox(False, 0)
         vbox.set_border_width(5)
+
+        # check url
+
+        label = gtk.Label("Check URL:")
+        label.set_alignment(0, 0.5)
+        vbox.add(label)
+
+        check_url = gtk.Entry()
+        check_url.set_max_length(100)
+
+        check_url.set_text(self.current_check_url)
+        vbox.pack_start(check_url, False, True, 0)
+
+        # we need to set it up after the post method exists
+        check_url.set_editable(post_method.get_active() != 0)
 
         label = gtk.Label("Mail to:")
         label.set_alignment(0, 0.5)
@@ -331,6 +334,11 @@ class PreyConfigurator:
 
         label = gtk.Label('SCP Settings')
         notebook.append_page(vbox, label)
+
+        label = gtk.Label("This is experimental stuff!")
+        label.set_justify(gtk.JUSTIFY_CENTER)
+        label.set_alignment(0, 0.5)
+        vbox.pack_start(label, False, True, 10)
 
         # end notebook
 
