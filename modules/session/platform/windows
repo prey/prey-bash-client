@@ -5,6 +5,8 @@
 # License: GPLv3
 ####################################################################
 
+screenshot=$base_path/prey-screenshot.jpg
+
 function get_uptime_and_programs {
 	uptime=`net stats srv | grep Statistics`
 	running_programs=`tasklist -v`

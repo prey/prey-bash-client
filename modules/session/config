@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-screenshot=$base_path/prey-screenshot.jpg
+screenshot=/tmp/prey-screenshot.jpg
 
 # timelapse to watch for modified files, in minutes
 modified_files_time='60'

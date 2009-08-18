@@ -23,10 +23,10 @@ class PreyConfigurator:
         notebook.set_current_page(index)
         check_url.set_editable(index != 0)
         if index == 0:
-            check_url.set_text('http://preyproject.com')
+            check_url.set_text('http://control.preyproject.com')
 
     def changed_device_key(self, widget, device_key, check_url):
-        check_url.set_text("http://preyproject.com/"+device_key.get_text())
+        check_url.set_text("http://control.preyproject.com/"+device_key.get_text())
         print "Device Key: %s" % device_key.get_text()
 
     def get_current_var(self, var):

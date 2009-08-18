@@ -9,7 +9,7 @@
 lang='en'
 
 # verification URL, if left empty Prey will always activate and run
-check_url='http://preyproject.com'
+check_url='http://control.preyproject.com'
 
 # you can use send the report via email or to the web service
 # valid values: http, email or scp
@@ -42,7 +42,7 @@ mail_from='Prey <no-reply@gmail.com>'
 mail_subject='Prey -- status report'
 
 ####################################################################
-# scp posting configuration
+# scp posting configuration -- EXPERIMENTAL!
 # we dont use user/pass but RSA keys
 # for more info check http://tinyurl.com/sshtip
 ####################################################################

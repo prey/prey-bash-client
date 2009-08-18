@@ -9,7 +9,7 @@ picture="c:\windows\temp\prey-picture.jpg"
 
 function take_picture {
 
-	$module_path/lib/simplecapture.exe /filename $picture /suffix ' ' /jpgquality 80 /imgperfect 500 /imgcaption hh:nn:ss”
+	$module_path/lib/simplecapture.exe /filename $picture /suffix ' ' /jpgquality 80 /imgperfect 500 /imgcaption hh:nn:ss
 
 }
 

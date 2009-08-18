@@ -172,7 +172,7 @@ FunctionEnd
 Function EnableHTTP
 		EnableWindow $API_KEY 1
 		EnableWindow $DEVICE_KEY 1
-		${NSD_SetText} $CHECK_URL "http://fly.preyproject.com"
+		${NSD_SetText} $CHECK_URL "http://control.preyproject.com"
 		EnableWindow $CHECK_URL 0
 		EnableWindow $MAIL_TO 0
 		EnableWindow $SMTP_SERVER 0
