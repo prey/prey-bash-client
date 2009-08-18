@@ -354,7 +354,7 @@ function update_config_for {
 		touch $base_path/modules/$1/config
 		echo "$tmp_config" > $base_path/modules/$1/config
 	else
-		sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" $base_path/modules/$1/config
+		sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" $base_path/modules/$1/config 2> /dev/null
 	fi
 }
 
@@ -368,15 +368,15 @@ function is_module_active {
 }
 
 function activate_module {
-	chmod +x $base_path/modules/$1/run
+	chmod +x $base_path/modules/$1/run 2> /dev/null
 }
 
 function deactivate_module {
-	chmod -x $base_path/modules/$1/run
+	chmod -x $base_path/modules/$1/run 2> /dev/null
 }
 
 function deactivate_all_modules {
-	chmod -x `find $base_path/modules -name run`
+	chmod -x `find $base_path/modules -name run` 2> /dev/null
 }
 
 function run_active_modules {

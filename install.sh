@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-version='0.2'
+version='0.3'
 config_file=config
 temp_config_file=temp_config
 prey_file=prey.sh
@@ -14,7 +14,7 @@ linux_packages='wget traceroute scrot'
 
 TIMING=10
 DEFAULT_INSTALLPATH='/usr/share/prey'
-WEB_SERVICE_URL='http://prey.rails'
+WEB_SERVICE_URL='http://control.preyproject.com'
 
 separator="--------------------------------------------------------------------------------"
 
@@ -159,7 +159,7 @@ separator="---------------------------------------------------------------------
 					echo -e "\n\n -- Registration succesful! Remember to log in as $WEB_USERNAME in $WEB_SERVICE_URL whenever you want to change your settings or view your reports."
 					echo -e " -- By the way, your API Key is $API_KEY. We'll add it to your config file."
 
-				else 
+				else
 
 					echo -e " !!  Some of the fields for the web service registration are missing! Please try again.\n"
 					exit
@@ -238,7 +238,7 @@ separator="---------------------------------------------------------------------
 					echo -e "$INVALID_SMTP_PASS"
 					exit
 				fi
-			
+
 			fi
 
 		fi
@@ -263,7 +263,7 @@ separator="---------------------------------------------------------------------
 					exit
 				fi
 			fi
-			# dirty hack so that wget can actually resolve the slashes. 
+			# dirty hack so that wget can actually resolve the slashes.
 			# urlencoding is unneccesary if you can pull a dirty hack, right?
 			URL=`echo $URL | sed "s/\//-SLASH-/g"`
 		;;

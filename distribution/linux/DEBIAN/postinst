@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-TIMING=20
+TIMING=10
 INSTALLPATH=/usr/share/prey
 PREY_FILE=prey.sh
 
