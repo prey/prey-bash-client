@@ -83,6 +83,6 @@ else # prey status messages
 	STRING_DONE=" -- Done! Happy hunting! :)\n"
 
 	EMAIL_HEADER="Good news my friend, it seems we found it.\n\nHere's the report from your computer:\n\n"
-	EMAIL_FOOTER="Ahora a atrapar al maldito!\n\n--\nTu fiel servidor, Prey\nhttp://preyproject.com"
+	EMAIL_FOOTER="\n\nNow, go catch the bastard!\n\n--\nYour humble servant, Prey\nhttp://preyproject.com"
 
 fi
