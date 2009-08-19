@@ -100,7 +100,7 @@ Function nsDialogsPage
 		Pop $DEVICE_KEY
 		${NSD_SetTextLimit} $DEVICE_KEY 6
 
-		${NSD_CreateLabel} 0 145 25% 100u "You can get these $\r$\nboth in Prey's new$\r$\nweb service at$\r$\preyproject.com."
+		${NSD_CreateLabel} 0 145 25% 100u "You can get these $\r$\nboth in Prey's new$\r$\nweb service at$\r$\npreyproject.com."
 		Pop $0
 
 
@@ -110,7 +110,7 @@ Function nsDialogsPage
 
 		${NSD_CreateLabel} 120 50 40% 10u "Check URL"
 		Pop $0
-		${NSD_CreateText} 120 65 70% 12u $CHECK_URL
+		${NSD_CreateText} 120 65 63% 12u $CHECK_URL
 		Pop $CHECK_URL
 
 		; MAIL TO
