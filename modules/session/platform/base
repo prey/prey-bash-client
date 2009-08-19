@@ -11,8 +11,10 @@ function get_uptime_and_programs {
 }
 
 function get_modified_files {
+ # we need to translate ~ to the user path
+	modified_files_path=`eval echo $modified_files_path`
 	# we dont include hidden files
-	modified_files=`find $modified_files_path \( ! -regex '.*/\..*/..*' \) -type f -mmin -$modified_files_time 2>&1`
+	modified_files=`find $modified_files_path \( ! -regex '.*/\..*/..*' \) -type f -mmin -$modified_files_time`
 	# modified_files=`find ~/. \( ! -regex '.*/\..*/\.DS_Store' \) -type f -mmin -$minutos`
 }
 

@@ -5,6 +5,8 @@
 # License: GPLv3
 ####################################################################
 
+separator='########################################################'
+
 ####################################################################
 # base functions
 ####################################################################
@@ -34,15 +36,15 @@ function get_file {
 
 function add_trace {
 	trace="${current_module}__$1=$2"
-	echo " -- Adding trace for $current_module: $1 -> $2"
+	echo " ++ Adding trace for $current_module: $1"
 	# we need to encode whitespaces, otherwise well get into trouble
-	trace=`echo $trace | sed 's/ /%20/g'`
+	trace=`echo -e "$trace" | sed 's/ /%20/g'`
 	traces[${#traces[*]}]="$trace"
 }
 
 function add_file {
 	if [ -f "$2" ]; then
-		echo " -- Adding file for $current_module: $1 -> $2"
+		echo " ++ Adding file for $current_module: $1 -> $2"
 		files[${#files[*]}]=${current_module}__$1=$2
 	fi
 }
@@ -52,18 +54,18 @@ function list_traces {
 	for t in "${traces[@]}"
 	do
 		current_node=`echo $t | sed 's/^\([^_].*\)__\(.*\)$/\1/'`
-		# if [ $current_node != $previous_node ]; then
-			# echo $current_node
-		# fi
 		if [ "$post_method" == 'http' ]; then
 			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
 			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
 			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
 		else
+			if [ "$current_node" != "$previous_node" ]; then
+				echo -e "$separator\n# $current_node\n$separator\n"
+			fi
 			# removes module name and replaces _'s with whitespaces
-			echo -e "$t\n" | sed -e 's/^\([^_].*\)__//' -e 's/_/ /'
+			echo -e "$t\n" | sed -e 's/^\([^_].*\)__/ :: /' -e 's/%20/ /g' -e 's/_/ /'
 		fi
-		# previous_node=$current_node
+		previous_node=$current_node
 	done
 }
 
@@ -431,7 +433,7 @@ function post_data {
 			echo ' >> This is where the data gets sent. Though not in test mode!'
 		else
 			trace_file=/tmp/prey_traces.tmp
-			echo "$trace_list" > $trace_file
+			echo -e "$trace_list" > $trace_file
 			eval 'send_via_'"${post_method}"''
 			rm $trace_file
 		fi
@@ -443,17 +445,24 @@ function post_data {
 }
 
 function send_via_email {
+
 	mailsender="$base_path/lib/sendEmail"
 	if [ "$os" == "windows" ]; then
 		mailsender=$mailsender.exe
 	fi
+
 	decoded_pass=`decrypt "$smtp_password"`
 	complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
-	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file tls=auto username=$smtp_username password=$decoded_pass`
+	echo -e "$EMAIL_HEADER" | cat - $trace_file > $trace_file.msg && echo -e "$EMAIL_FOOTER" >> $trace_file.msg
+
+	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file.msg tls=auto username=$smtp_username password=$decoded_pass`
+
 	if [ `find_in "$response" 'ERROR'` ]; then
 		echo -e "$STRING_ERROR_EMAIL"
 		echo -e "\n This is the complete error message: \n $response\n"
 	fi
+
+	rm $trace_file.msg
 }
 
 function send_via_http {
@@ -473,8 +482,8 @@ function send_via_scp {
 	if [[ -n "$scp_server" && -n "$scp_path" ]]; then
 		echo -e " -- Uploading the stuff to $scp_path in $scp_server..."
 		new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
-		ssh $scp_server mkdir $scp_path/$new_folder
-		status=`scp $trace_file $file_list $scp_server:$scp_path/$new_folder`
+		ssh $scp_user@$scp_server mkdir $scp_path/$new_folder
+		status=`scp $trace_file $file_list $scp_user@$scp_server:$scp_path/$new_folder`
 	else
 		echo ' !! You need to set up a server in order to send the report via SCP!'
 	fi

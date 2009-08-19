@@ -12,4 +12,4 @@ parse_location_response
 
 add_trace 'lat' $current_lat
 add_trace 'lng' $current_lng
-add_trace 'address' $current_address
+# add_trace 'address' $current_address
