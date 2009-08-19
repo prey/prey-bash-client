@@ -59,7 +59,7 @@ Function nsDialogsPage
 		GetFunctionAddress $0 OnBack
 		nsDialogs::OnBack $0
 
-		${NSD_CreateLabel} 0 0 150 10u "Are you using Prey with the control panel (http) or directly to your email?"
+		${NSD_CreateLabel} 0 0 100% 10u "Are you using Prey with the control panel (http) or directly to your email?"
 		Pop $0
 
 		; POST METHOD
@@ -110,7 +110,7 @@ Function nsDialogsPage
 
 		${NSD_CreateLabel} 120 50 40% 10u "Check URL"
 		Pop $0
-		${NSD_CreateText} 120 65 40% 12u $CHECK_URL
+		${NSD_CreateText} 120 65 70% 12u $CHECK_URL
 		Pop $CHECK_URL
 
 		; MAIL TO
