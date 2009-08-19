@@ -59,7 +59,7 @@ Function nsDialogsPage
 		GetFunctionAddress $0 OnBack
 		nsDialogs::OnBack $0
 
-		${NSD_CreateLabel} 0 0 150 10u "Data posting method"
+		${NSD_CreateLabel} 0 0 150 10u "Are you using Prey with the control panel (http) or directly to your email?"
 		Pop $0
 
 		; POST METHOD
@@ -103,13 +103,23 @@ Function nsDialogsPage
 		${NSD_CreateLabel} 0 145 25% 100u "You can get these $\r$\nboth in Prey's new$\r$\nweb service at$\r$\preyproject.com."
 		Pop $0
 
+
+		; CHECK URL
+		${ConfigRead} "c:\prey\config" "check_url=" $2
+		${GetInQuotes} $2 $CHECK_URL
+
+		${NSD_CreateLabel} 120 50 40% 10u "Check URL"
+		Pop $0
+		${NSD_CreateText} 120 65 40% 12u $CHECK_URL
+		Pop $CHECK_URL
+
 		; MAIL TO
 		${ConfigRead} "c:\prey\config" "mail_to=" $5
 		${GetInQuotes} $5 $MAIL_TO
 
-		${NSD_CreateLabel} 120 50 30% 10u "Mail to"
+		${NSD_CreateLabel} 120 90 30% 10u "Mail to"
 		Pop $0
-		${NSD_CreateText} 120 65 30% 12u $MAIL_TO
+		${NSD_CreateText} 120 105 30% 12u $MAIL_TO
 		Pop $MAIL_TO
 
 		; CHECK URL
@@ -125,27 +135,27 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "smtp_server=" $6
 		${GetInQuotes} $6 $SMTP_SERVER
 
-		${NSD_CreateLabel} 120 90 75% 10u "STMP Server"
+		${NSD_CreateLabel} 120 130 75% 10u "STMP Server"
 		Pop $0
-		${NSD_CreateText} 120 105 30% 12u $SMTP_SERVER
+		${NSD_CreateText} 120 145 30% 12u $SMTP_SERVER
 		Pop $SMTP_SERVER
 
 		; SMTP USERNAME
 		${ConfigRead} "c:\prey\config" "smtp_username=" $7
 		${GetInQuotes} $7 $SMTP_USERNAME
 
-		${NSD_CreateLabel} 120 130 75% 10u "STMP Username"
+		${NSD_CreateLabel} 270 130 75% 10u "STMP Username"
 		Pop $0
-		${NSD_CreateText} 120 145 30% 12u $SMTP_USERNAME
+		${NSD_CreateText} 270 145 30% 12u $SMTP_USERNAME
 		Pop $SMTP_USERNAME
 
 		; SMTP PASSWORD
 		${ConfigRead} "c:\prey\config" "smtp_password=" $8
 		${GetInQuotes} $8 $SMTP_PASSWORD
 
-		${NSD_CreateLabel} 120 170 75% 10u "STMP Password"
+		${NSD_CreateLabel} 270 130 75% 10u "STMP Password"
 		Pop $0
-		${NSD_CreatePassword} 120 185 30% 12u $SMTP_PASSWORD
+		${NSD_CreatePassword} 270 145 30% 12u $SMTP_PASSWORD
 		Pop $SMTP_PASSWORD
 
 		${If} $1 == "'http'"
