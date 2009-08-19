@@ -48,5 +48,6 @@ mail_subject='Prey -- status report'
 ####################################################################
 
 # remember you should have write access to the folder
+scp_user='username'
 scp_server='my.server.com'
 scp_path='~'

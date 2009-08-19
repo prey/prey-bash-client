@@ -83,4 +83,8 @@ else # prey status messages
 	STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
 	STRING_DONE=" -- Todo listo! Suerte con la caceria! :)\n"
 
+	EMAIL_HEADER="Buenas noticias amigo mio, al parecer lo encontramos!\n\nAqui va el reporte de tu computador:\n\n"
+	EMAIL_FOOTER="Now, go catch the bastard!\n\n--\nYour humble servant, Prey\nhttp://preyproject.com"
+
+
 fi

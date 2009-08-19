@@ -24,14 +24,15 @@ else
 	fi
 fi
 
-# get configuration & language file
-. $base_path/config
+####################################################################
+# base files inclusion
+####################################################################
 
+. $base_path/config
 if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
 fi
 . $base_path/lang/$lang
-
 . $base_path/platform/base
 . $base_path/platform/$os
 
@@ -39,6 +40,7 @@ echo -e "\E[36m$STRING_START\E[0m"
 
 if [ "$1" == "-t" ]; then
 	echo -e "\033[1m -- TEST MODE ENABLED. WON'T CHECK URL OR SEND STUFF!\033[0m\n"
+	. $base_path/config.test 2> /dev/null
 	test_mode=1
 	check_url=''
 fi
