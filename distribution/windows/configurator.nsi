@@ -122,15 +122,6 @@ Function nsDialogsPage
 		${NSD_CreateText} 120 105 30% 12u $MAIL_TO
 		Pop $MAIL_TO
 
-		; CHECK URL
-		${ConfigRead} "c:\prey\config" "check_url=" $2
-		${GetInQuotes} $2 $CHECK_URL
-
-		${NSD_CreateLabel} 270 50 40% 10u "Check URL"
-		Pop $0
-		${NSD_CreateText} 270 65 40% 12u $CHECK_URL
-		Pop $CHECK_URL
-
 		; SMTP SERVER
 		${ConfigRead} "c:\prey\config" "smtp_server=" $6
 		${GetInQuotes} $6 $SMTP_SERVER
@@ -144,9 +135,9 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "smtp_username=" $7
 		${GetInQuotes} $7 $SMTP_USERNAME
 
-		${NSD_CreateLabel} 270 130 75% 10u "STMP Username"
+		${NSD_CreateLabel} 270 90 75% 10u "STMP Username"
 		Pop $0
-		${NSD_CreateText} 270 145 30% 12u $SMTP_USERNAME
+		${NSD_CreateText} 270 105 30% 12u $SMTP_USERNAME
 		Pop $SMTP_USERNAME
 
 		; SMTP PASSWORD
