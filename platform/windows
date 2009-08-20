@@ -11,7 +11,7 @@ function get_gateway_ip {
 
 function try_to_connect {
 	# netsh wlan connect name=Profile2 ssid=SSID2 interface="Wireless Network Connection"
-	echo ' !! Autoconnect in Windows still in development. Thanks for your patience!'
+	echo ' !! Autoconnect in Windows still in development/testing mode. Thanks for your patience!'
 }
 
 function get_current_delay {
