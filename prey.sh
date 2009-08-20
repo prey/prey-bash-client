@@ -10,18 +10,8 @@ base_path=`dirname $0`
 start_time=`date +"%F %T"`
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 
-if [ $os == "windowsnt" ]
-then
+if [ $os == "windowsnt" ]; then
 	os=windows
-else
-	# are we running?
-	running_prey=`ps aux | grep "prey.sh" | grep -v grep | wc -l`
-	if [[ "$running_prey" -gt 2 && "$1" != "-f" ]]; then # prey is already running
-
-		echo -e "\n !! Prey is already running! Kill the other process or run with -f to force execution.\n"
-		exit
-
-	fi
 fi
 
 ####################################################################
