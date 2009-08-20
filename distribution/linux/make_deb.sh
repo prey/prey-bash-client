@@ -1,6 +1,8 @@
 #!/bin/sh
 # Debian Package Builder, by Tomas Pollak
 
+version="0.3"
+
 if [ `whoami` != 'root' ]; then
 	echo 'Since we need to set up root permissions you need to run this as root. A simple "sudo" will do. :)'
 	exit
@@ -18,6 +20,7 @@ cd $cwd
 # Remove temporary directory and .DEBs
 rm -rf ./build
 rm *.deb 2> /dev/null
+rm *.zip 2> /dev/null
 
 # Configure control folder and file
 mkdir -p ./build/tmp/prey
@@ -42,7 +45,7 @@ cp -r $basedir/modules/session ./build/tmp/prey/usr/share/prey/modules
 cp -r $basedir/modules/webcam ./build/tmp/prey/usr/share/prey/modules
 
 # remove unneeded files
-rm -f `find ./build/tmp/prey/usr/share/prey -name "*~"`
+rm -f `find build/tmp/prey/usr/share/prey -name "*~"`
 rm -f `find build/tmp/prey/usr/share/prey -name "windows"`
 rm -f `find build/tmp/prey/usr/share/prey -name "*.exe"`
 rm -f `find build/tmp/prey/usr/share/prey -name "*.dll"`
@@ -50,6 +53,11 @@ rm -f `find build/tmp/prey/usr/share/prey -name "*.dll"`
 cp $basedir/CHANGELOG ./build/tmp/prey/usr/share/prey/
 cp $basedir/LICENSE ./build/tmp/prey/usr/share/prey/
 cp $basedir/README ./build/tmp/prey/usr/share/prey/
+
+cp -r build/tmp/prey/usr/share/prey .
+zip -9 -r prey-$version-linux.zip prey 1> /dev/null
+echo "Built unix .zip package in prey-$version-linux.zip"
+rm -r prey
 
 # lets copy the config shortcut
 mkdir -p ./build/tmp/prey/usr/share/applications

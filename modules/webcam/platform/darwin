@@ -6,7 +6,9 @@
 ####################################################################
 
 function take_picture {
-	$module_path/lib/isightcapture $picture
+
+	$module_path/lib/isightcapture $picture 2> /dev/null
+
 }
 
 function capture_video {
