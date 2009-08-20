@@ -388,7 +388,7 @@ function run_active_modules {
 		current_module=`echo "$module_path" | sed 's/.*[\/|\\]\(.*\)$/\1/'`
 		if [ `is_module_active "$current_module"` ]; then
 
-			echo -e " -- Running $current_module module!"
+			echo -e "\n\033[1m >> Running $current_module module!\n\033[0m"
 
 			# if there's a language file, lets run it
 			if [ -f $module_path/lang/$lang ]; then

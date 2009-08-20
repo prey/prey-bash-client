@@ -29,7 +29,7 @@ fi
 echo -e "\E[36m$STRING_START\E[0m"
 
 if [ "$1" == "-t" ]; then
-	echo -e "\033[1m -- TEST MODE ENABLED. WON'T CHECK URL OR SEND STUFF!\033[0m\n"
+	echo -e "\033[1m -- TEST MODE ENABLED. WON'T CHECK URL OR SEND DATA!\033[0m\n"
 	. $base_path/config.test 2> /dev/null
 	test_mode=1
 	check_url=''
