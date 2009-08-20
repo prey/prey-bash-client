@@ -15,7 +15,7 @@
 
 	;Name and file
 	Name "Prey"
-	OutFile "prey-installer-win32.exe"
+	OutFile "prey-installer-0.3-win32.exe"
 
 	;Default installation folder
 	;InstallDir "$LOCALAPPDATA\Prey"

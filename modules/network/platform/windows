@@ -14,5 +14,10 @@ function get_mac_address {
 }
 
 function get_wifi_info {
-	wifi_info=`$base_path/lib/wifi_config.exe -aps`
+	echo ' !! Wifi info getter in testing/development in Windows!'
+	# wifi_info=`$base_path/lib/wifi_config.exe -aps 2> /dev/null`
+}
+
+function trace_route {
+	complete_trace=`tracert.exe www.google.com 2> /dev/null`
 }

@@ -22,7 +22,7 @@ if [ -n "$wifi_info" ]; then
 	add_trace wifi_info $wifi_info
 fi
 
-if [ $trace_route = 'y' ]; then
+if [ "$trace_route" = 'y' ]; then
 	echo "$STRING_TRACE"
 	trace_route
 fi
