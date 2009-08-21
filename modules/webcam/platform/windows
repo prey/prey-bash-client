@@ -9,7 +9,13 @@ picture="c:\windows\temp\prey-picture.png"
 
 function take_picture {
 
-	# $module_path/lib/simplecapture.exe /filename $picture /suffix ' ' /jpgquality 80 /imgperfect 500 /imgcaption hh:nn:ss
+	if [ ! -f "c:\windows\system32\msvbvm50.dll" ]; then
+		if [ ! -f "$base_path\bin\msvbvm50.dll" ]; then
+			echo ' ** Fetching necessary DLL for Webcam capture to work... (about 1 MB)'
+			wget http://examples.oreilly.com/error/CDROM/MsLibs/MSVBVM50.DLL -O $base_path/bin/msvbvm50.dll 2> /dev/null
+		fi
+	fi
+
 	$module_path/lib/webcam_capture.exe
 	if [ -f $base_path/lib/vfw-0.bmp ]; then
 		$base_path/lib/bmp2png.exe $base_path/vfw-0.bmp 2> /dev/null
