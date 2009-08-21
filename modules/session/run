@@ -10,9 +10,11 @@ get_uptime_and_programs
 add_trace uptime "$uptime"
 add_trace running_programs "$running_programs"
 
-echo "$STRING_MODIFIED_FILES"
-get_modified_files
-add_trace modified_files "$modified_files"
+if [ "$get_modified_files" == 'y' ]; then
+	echo "$STRING_MODIFIED_FILES"
+	get_modified_files
+	add_trace modified_files "$modified_files"
+fi
 
 echo "$STRING_ACTIVE_CONNECTIONS"
 get_active_connections
