@@ -468,7 +468,8 @@ function send_via_email {
 function send_via_http {
 
 	if [ "$os" == "windows" ]; then
-		if [ "`uname -m`" == 'x64' ]; then
+		arch=`uname -m`
+		if [ `find_in "$arch" '64'` ]; then
 			getter='curl64 -s'
 		fi
 	fi
