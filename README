@@ -94,11 +94,11 @@ diverse contributors, specially these amazing people:
 	o Diego Torres - http://warorface.com
 	o Juan Carlos Mardones - http://juanmardones.com
 
-Prey also works thanks to Michal Ludvig's excellent command-line SMTP client
+Prey also works thanks to Brandon Zehm's excellent command-line SMTP client
 and Axel Bauer's iSightCapture program for capturing pictures on the
 Mac. And of course, a bunch of other powerful open source utilities.
 
-Command line SMTP client: http://www.logix.cz/michal/devel/smtp
+Command line SMTP client: http://caspian.dotconf.net/menu/Software/SendEmail
 iSightCapture: http://www.intergalactic.de/pages/iSight.html
 
 --
