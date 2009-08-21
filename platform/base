@@ -224,7 +224,7 @@ function process_config {
 		if [ `find_in "$line" '<delay>'` ]; then
 			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			if [ -n "$delay" ]; then
-				if [ `get_current_delay` != "$delay" ]; then
+				if [ "`get_current_delay`" != "$delay" ]; then
 					echo " -- Setting delay to $delay minutes!"
 					update_execution_delay
 				fi
