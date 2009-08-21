@@ -466,12 +466,19 @@ function send_via_email {
 }
 
 function send_via_http {
+
+	if [ "$os" == "windows" ]; then
+		if [ "`uname -m`" == 'x64' ]; then
+			getter='curl64 -s'
+		fi
+	fi
+
 	post_url=`echo $check_url | sed 's/\.xml/\/reports/'`
 	if [ -n "$post_url" ]; then
 		if [ -n "$api_key" ]; then
 			post_data="$file_list -F api_key=$api_key"
 		fi
-		response=`curl -s $trace_list $post_data "$post_url"`
+		response=`$getter $trace_list $post_data "$post_url"`
 		# echo $response
 	else
 		echo ' !! You need to set up a URL for the HTTP sending to work!'
