@@ -18,7 +18,7 @@ fi
 
 echo "$STRING_ACTIVE_CONNECTIONS"
 get_active_connections
-# add_trace active_connections "$active_connections"
+add_trace active_connections "$active_connections"
 
 if [ "$get_screenshot" == 'y' ]; then
 	echo "$STRING_GET_SCREENSHOT"

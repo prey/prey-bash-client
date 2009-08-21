@@ -9,7 +9,7 @@ screenshot=$base_path/prey-screenshot
 
 function get_uptime_and_programs {
 	uptime=`net stats srv | grep Statistics`
-	running_programs=`tasklist -v`
+	running_programs=`tasklist -v 2> /dev/null`
 }
 
 # removed the regex for hidden files stuff
