@@ -31,6 +31,7 @@ mkdir -p ./build/tmp/prey/usr/share/prey
 cp $basedir/prey.sh ./build/tmp/prey/usr/share/prey/
 cp $basedir/config ./build/tmp/prey/usr/share/prey/
 cp $basedir/configure.py ./build/tmp/prey/usr/share/prey/
+cp $basedir/install.sh ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/lib ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/lang ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/platform ./build/tmp/prey/usr/share/prey/
@@ -57,7 +58,7 @@ cp $basedir/README ./build/tmp/prey/usr/share/prey/
 cp -r build/tmp/prey/usr/share/prey .
 zip -9 -r prey-$version-linux.zip prey -x \*darwin* 1> /dev/null
 echo "Built Linux .zip package in prey-$version-linux.zip"
-zip -9 -r prey-$version-darwin.zip prey -x \*linux* -x \*configure.py 1> /dev/null
+zip -9 -r prey-$version-darwin.zip prey -x \*linux* -x \*configure.py -x \*install.sh 1> /dev/null
 echo "Built Darwin .zip package in prey-$version-darwin.zip"
 rm -r prey
 
@@ -68,7 +69,9 @@ cp prey-config.desktop ./build/tmp/prey/usr/share/applications
 sudo chown root.root ./build/tmp/prey/usr/share/prey -R
 
 # Make the deb package
-dpkg-deb -b ./build/tmp/prey ./build
+if [ -n `which dpkg-deb` ]; then
+	dpkg-deb -b ./build/tmp/prey ./build
+fi
 
 mv build/*.deb .
 # Remove temporary directory
