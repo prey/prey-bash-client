@@ -468,7 +468,6 @@ function send_via_email {
 function send_via_http {
 
 	if [ "$os" == "windows" ]; then
-		getter='curl -s'
 		arch=`echo $PROCESSOR_ARCHITECTURE`
 		if [ `find_in "$arch" '64'` ]; then
 			getter='curl64 -s'
