@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-version='0.3'
+version='0.3.1'
 config_file=config
 temp_config_file=temp_config
 prey_file=prey.sh
@@ -122,7 +122,7 @@ separator="---------------------------------------------------------------------
 		if [ "$REPORT_METHOD" == "" ]; then
 			REPORT_METHOD='email'
 			echo -e "$DEFAULT_REPORT_METHOD"
-		elif [ "$REPORT_METHOD" == 'web' ]; then
+		elif [ "$REPORT_METHOD" == 'http' ]; then
 
 			echo -e $separator
 			echo -n "$IS_REGISTERED_ON_WEB ($YES_NO) [n] "
@@ -198,7 +198,7 @@ separator="---------------------------------------------------------------------
 
 		fi
 
-		if [ "$REPORT_METHOD" != 'web' ]; then
+		if [ "$REPORT_METHOD" != 'http' ]; then
 
 			# get the email
 			echo -e $separator
@@ -250,8 +250,8 @@ separator="---------------------------------------------------------------------
 		case "$CHECK" in
 		[yY] )
 
-			if [ "$REPORT_METHOD" == 'web' ]; then
-				URL="$WEB_SERVICE_URL/devices/$DEVICE_KEY.xml"
+			if [ "$REPORT_METHOD" == 'http' ]; then
+				# URL="$WEB_SERVICE_URL/devices/$DEVICE_KEY.xml"
 				echo -e "$USING_DEFAULT_APP_URL"
 			else
 				# which url then
@@ -283,18 +283,18 @@ separator="---------------------------------------------------------------------
 			TIMING=10
 		fi
 
-		WEB_SERVICE_URL=`echo $WEB_SERVICE_URL | sed "s/\//-SLASH-/g"`
+		# WEB_SERVICE_URL=`echo $WEB_SERVICE_URL | sed "s/\//-SLASH-/g"`
 
 		echo -e $separator
 		echo -e " -- Ok, setting up configuration values..."
 		cp $config_file $temp_config_file
 		sed -i -e "s/lang='.*'/lang='$LANGUAGE'/" $temp_config_file
-		sed -i -e "s/web_service='.*'/web_service='$WEB_SERVICE_URL'/" $temp_config_file
-		sed -i -e "s/report_method='.*'/report_method='$REPORT_METHOD'/" $temp_config_file
+		# sed -i -e "s/web_service='.*'/web_service='$WEB_SERVICE_URL'/" $temp_config_file
+		sed -i -e "s/post_method='.*'/post_method='$REPORT_METHOD'/" $temp_config_file
 		sed -i -e "s/api_key='.*'/api_key='$API_KEY'/" $temp_config_file
 		sed -i -e "s/device_key='.*'/device_key='$DEVICE_KEY'/" $temp_config_file
-		sed -i -e "s/emailtarget='.*'/emailtarget='$EMAIL'/" $temp_config_file
-		sed -i -e "s/url='.*'/url='$URL'/" $temp_config_file
+		sed -i -e "s/mail_to='.*'/mail_to='$EMAIL'/" $temp_config_file
+		sed -i -e "s/check_url='.*'/check_url='$URL'/" $temp_config_file
 		sed -i -e "s/smtp_server='.*'/smtp_server='$SMTP_SERVER'/" $temp_config_file
 		sed -i -e "s/smtp_username='.*'/smtp_username='$SMTP_USER'/" $temp_config_file
 		sed -i -e "s/smtp_password='.*'/smtp_password='$SMTP_PASS'/" $temp_config_file
@@ -344,11 +344,11 @@ separator="---------------------------------------------------------------------
 	echo -e $separator
 	echo -e "$COPYING_FILES"
 	# first the basic files
-	sudo cp -f $prey_file sendEmail $INSTALLPATH
-	sudo chmod +x $INSTALLPATH/sendEmail $INSTALLPATH/$prey_file
+	sudo cp -f $prey_file configure.py $INSTALLPATH
+	sudo chmod +x $INSTALLPATH/$prey_file
 
 	# now the language and specific platform files
-	sudo cp -R lang alerts platform $INSTALLPATH
+	sudo cp -R lang lib modules platform pixmaps $INSTALLPATH
 	sudo chmod +x $INSTALLPATH/lang/* $INSTALLPATH/platform/*
 
 	if [ "$SKIP" != "$YES" ]; then
@@ -362,7 +362,7 @@ separator="---------------------------------------------------------------------
 	echo -e $separator
 	echo -e "$ADDING_CRONTAB"
 	# well also remove any line invoking prey if it was already there, just to make sure
-	(sudo crontab -l | grep -v prey; echo "*/$TIMING * * * * cd $INSTALLPATH; ./$prey_file") | sudo crontab -
+	(sudo crontab -l | grep -v prey; echo "*/$TIMING * * * * $INSTALLPATH/$prey_file > /dev/null") | sudo crontab -
 
 	echo -e $separator
 	echo -e "$INSTALL_OK"
