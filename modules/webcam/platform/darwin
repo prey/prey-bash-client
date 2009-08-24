@@ -7,8 +7,13 @@
 
 function take_picture {
 
-	$module_path/lib/isightcapture $picture 2> /dev/null
-
+	LOGINWINDOW_PID=`killall -s loginwindow | sed  's/.*[^0-9]//'`
+	if [ "$LOGINWINDOW_PID" = "" ]
+	then
+		$module_path/lib/isightcapture $picture 2> /dev/null
+	else
+		launchctl bsexec $LOGINWINDOW_PID $module_path/lib/isightcapture $picture 2> /dev/null
+	fi
 }
 
 function capture_video {
