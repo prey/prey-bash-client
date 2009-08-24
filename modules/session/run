@@ -16,9 +16,11 @@ if [ "$get_modified_files" == 'y' ]; then
 	add_trace modified_files "$modified_files"
 fi
 
-echo "$STRING_ACTIVE_CONNECTIONS"
-get_active_connections
-add_trace active_connections "$active_connections"
+if [ "$get_active_connections" == 'y' ]; then
+	echo "$STRING_ACTIVE_CONNECTIONS"
+	get_active_connections
+	add_trace active_connections "$active_connections"
+fi
 
 if [ "$get_screenshot" == 'y' ]; then
 	echo "$STRING_GET_SCREENSHOT"
