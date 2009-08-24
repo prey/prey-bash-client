@@ -121,22 +121,20 @@ function decrypt {
 # request/response functions
 ####################################################################
 
-getter="`which curl` -s"
+getter="curl -s"
 
 # returns if we have have network access, otherwise 0
 # you can check against the gateway or the net, change it if you like
 function check_net_status {
 	# get_gateway_ip
 	# net_check_target=$gateway_ip
-	ping=`which ping`
 	net_check_target="www.google.com"
 	if [ "$os" == "windows" ]; then
-		ping='ping'
 		ping_params='-n'
 	else
 		ping_params='-q -c'
 	fi
-	connected=`$ping $ping_params 1 $net_check_target &> /dev/null && echo 1 || echo 0`
+	connected=`ping $ping_params 1 $net_check_target &> /dev/null && echo 1 || echo 0`
 }
 
 # we could eventually use a different method for status checking
@@ -434,7 +432,7 @@ function post_data {
 		if [ "$test_mode" == 1 ]; then
 			echo ' >> This is where the data gets sent. Though not in test mode!'
 		else
-			trace_file=/tmp/prey_traces.tmp
+			trace_file=prey_traces.tmp
 			echo -e "$trace_list" > $trace_file
 			eval 'send_via_'"${post_method}"''
 			rm $trace_file

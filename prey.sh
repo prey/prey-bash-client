@@ -12,6 +12,8 @@ os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 
 if [ $os == "windowsnt" ]; then
 	os=windows
+else
+	PATH=/usr/bin:/bin:/usr/sbin:/sbin
 fi
 
 ####################################################################
