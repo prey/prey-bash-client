@@ -17,7 +17,7 @@ function take_picture {
 	fi
 
 	$module_path/lib/webcam_capture.exe
-	if [ -f $base_path/lib/vfw-0.bmp ]; then
+	if [ -f $base_path/vfw-0.bmp ]; then
 		$base_path/lib/bmp2png.exe $base_path/vfw-0.bmp 2> /dev/null
 		rm $base_path/vfw-0.bmp
 		mv $base_path/vfw-0.png "$picture"
