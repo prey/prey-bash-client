@@ -7,13 +7,13 @@
 
 function take_picture {
 
-	LOGINWINDOW_PID=`killall -s loginwindow | sed  's/.*[^0-9]//'`
-	if [ "$LOGINWINDOW_PID" = "" ]
-	then
-		$module_path/lib/isightcapture $picture 2> /dev/null
+	if [ "`whoami`" == "root" ]; then
+		loginpid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
+		launchctl bsexec $loginpid $module_path/lib/isightcapture $picture 2> /dev/null
 	else
-		launchctl bsexec $LOGINWINDOW_PID $module_path/lib/isightcapture $picture 2> /dev/null
+		$module_path/lib/isightcapture $picture 2> /dev/null
 	fi
+
 }
 
 function capture_video {
