@@ -470,7 +470,8 @@ function send_via_http {
 	if [ "$os" == "windows" ]; then
 		arch=`echo $PROCESSOR_ARCHITECTURE`
 		if [ `find_in "$arch" '64'` ]; then
-			getter='curl64 -s'
+			# getter='curl64 -s'
+			echo -e " ** 64 bit architecture detected! Remember we're still working on support for 64 bit systems, so some things may not work."
 		fi
 	fi
 
