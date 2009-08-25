@@ -176,7 +176,7 @@ function process_response {
 	eval 'process_'"${response_type}"''
 }
 
-# REALLY untested. function expects a <modules> section in the xml and activates de modules as requested
+# function expects a <modules> section in the xml and activates de modules as requested
 # format should be as follows:
 
 # <device>
@@ -343,7 +343,7 @@ function install_or_update_module {
 		echo " ** New $1 module placed and ready to go!"
 		return 0
 	else
-		echo " !! Couldn't get $1 module from repository."
+		echo " !! Couldn't install $1 module from repository."
 		return 1
 	fi
 }
@@ -468,10 +468,10 @@ function send_via_email {
 function send_via_http {
 
 	if [ "$os" == "windows" ]; then
-		arch=`echo $PROCESSOR_ARCHITECTURE`
+		arch=`echo $PROCESSOR_ARCHITEW6432`
 		if [ `find_in "$arch" '64'` ]; then
-			# getter='curl64 -s'
-			echo -e " ** 64 bit architecture detected! Remember we're still working on support for 64 bit systems, so some things may not work."
+			getter='curl64 -s'
+			echo -e " ** 64 bit architecture detected!"
 		fi
 	fi
 

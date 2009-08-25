@@ -1,5 +1,5 @@
 Package: prey
-Version: 0.3-ubuntu2
+Version: 0.3.1-ubuntu2
 Architecture: all
 Maintainer: Tomas Pollak <tomas@bootlog.org>
 Priority: optional

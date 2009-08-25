@@ -19,8 +19,8 @@ function get_current_delay {
 }
 
 function update_execution_delay {
-	schtasks.exe -delete -f -tn "Prey" > /dev/null
-	schtasks.exe -create -ru "System" -sc MINUTE -mo $delay -tn "Prey" -tr "c:\Prey\prey.bat" > /dev/null
+	schtasks.exe -delete -f -tn "Prey" 2> /dev/null
+	schtasks.exe -create -ru "System" -sc MINUTE -mo $delay -tn "Prey" -tr "c:\Prey\prey.bat" 2> /dev/null
 }
 
 # module de/activation functions
@@ -36,12 +36,12 @@ function activate_module {
 
 function deactivate_module {
 	# echo 0 > $base_path/modules/$1/active
-	rm $base_path/modules/$1/active 2> /dev/null
+	rm -f $base_path/modules/$1/active 2> /dev/null
 }
 
 function deactivate_all_modules {
 	for file in `find $base_path/modules -name active`; do
 		# echo 0 > $file
-		rm $file
+		rm -f $file 2> /dev/null
 	done
 }
