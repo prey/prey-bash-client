@@ -1,0 +1,92 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# Italian lang file v 0.2 - by Giovanni Mauri (http://thejoe.co.nr/)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+ 
+if [ -n "$DEFAULT_INSTALLPATH" ]; then # stiamo avviando l'installer
+ 
+# installer messages
+ 
+HELLO_IN_LANGUAGE=" -- da ora Prey parla in italiano!"
+WHERE_TO_INSTALL_PREY=" -> Dove vuoi che installiamo Prey? [$DEFAULT_INSTALLPATH] "
+USING_DEFAULT_INSTALL_PATH=" -- Ottimo, usiamo il percorso di default..."
+INVALID_INSTALL_PATH=" !! Percorso non valido. La directory non esiste!\n"
+SETTING_INSTALL_PATH=" -- Ok, imposto $INSTALLPATH come percorso di installazione."
+ 
+IT_SEEMS_PATH="Sembra che Prey fosse già installato"
+DIFFERENT_PATH="\nLa nuova versione usa un differente percorso per l'installazione,"
+REMOVE_OLD_FILES="quindi dovremo rimuovere i vecchi file visto che non verranno più usati."
+ASK_RM_OLD_FILES="Vuoi che venga fatto in automatico?"
+DELETING_OLD_FILES=" -- Cancello i vecchi file di installazione di Prey...\n"
+CONFIG_FILE_EXISTS=" -> Il file Config esiste! Vuoi saltare tutte le noiose domande?(non consigliato)[n] "
+ 
+SKIP_INSTALL_QUESTIONS=" -- Ottimo, faccio l'update dei file!\n"
+ 
+DEFINE_REPORT_METHOD=" -> Quale metodo vuoi usare per i rapporti? (email, tunnel, web) [email] "
+IS_REGISTERED_ON_WEB=" -- Sei già registrato sul sito?"
+DEFAULT_REPORT_METHOD=" -- Usiamo le email per i rapporti. Tutto ok!"
+ADD_API_KEY=" -> Inserisci la tua API Key come riportato dal servizio web"
+INVALID_API_KEY=" !! API key invalida! Ricordati di registrarti su preyproject.com per ottenerne una.\n"
+ADD_DEVICE_KEY=" -> Inserisci la Device Key per questo PC come indicato sul sito: "
+INVALID_DEVICE_KEY=" !! Device Key invalida! Ricordati di registrarti su preyproject.com per ottenerne una.\n"
+ 
+DESIRED_USER_WEB=" -- Inserisci il tuo username: "
+ASK_EMAIL_WEB=" -- Inserisci la tua email: "
+DESIRED_PASS_WEB=" -- Inserisci la password: "
+PROBLEM_SIGNUP_WEB="C'è un problema col servizio web. Prova ancora."
+PROBLEM_RESPONSE_WEB="La risposta che abbiamo avuto è questa:"
+ 
+USING_DEFAULT_APP_URL=" -- Uso le route per l'applicazione web. Niente di nuovo!"
+ 
+ENTER_EMAIL_ADDRESS=" -> A quale indirizzo vuoi che arrivino le mail? (es. mailbox@domain.com) [] "
+INVALID_EMAIL_ADDRESS=" !! Devi specificare un'inbox. Esco...\n"
+ 
+ENTER_SMTP_SERVER=" -> Quale server SMTP vuoi che usiamo? (e la porta?) [smtp.gmail.com:587] "
+DEFAULT_SMTP_SERVER=" -- Ok, useremo gmail! "
+ENTER_SMTP_USER=" -> Il tuo username SMTP: (es. mailbox@gmail.com)"
+DEFAULT_SMTP_USER=" -- Ok, il tuo username SMTP è" # the installer appends the email var
+ENTER_SMTP_PASS=" -> La tua password SMTP: (non sarà mostrata) [] "
+INVALID_SMTP_PASS=" !! Devi inserire una password valida. Esco...\n"
+YES_NO="y/n"
+YES="y"
+CHECK_URL_OR_NOT=" -- Vuoi che Prey controlli periodicamente una url? (Rispondere no significa far generare automaticamente i rapporti allo startup del programma) [n] "
+ENTER_URL=" -- Ok, inserisci la URL? [es. http://myserver.com/prey_check_url] "
+INVALID_URL=" !! Specifica una URL. Esco...\n"
+SET_TIMING=" -- Ok, ultima.. quanto spesso (in minuti) vuoi che Prey si avvii? [$TIMING] "
+ 
+INSTALLING_SOFTWARE=" -- Ok, installo i programmi necessari...\n"
+COPYING_ISIGHTCAPTURE=" -- Copio iSightCapture in $INSTALLPATH..."
+COPYING_FILES="\n -- Copio i file necessari in $INSTALLPATH e imposto i permessi..."
+ADDING_CRONTAB=" -- Aggiungo la entry su crontab..."
+INSTALL_OK="\033[1m\n -- Tutto a posto! Prey è installato ed avviato. Ora puoi cancellare questa directory in sicurezza.
+-- Semmai volessi disinstallare Prey, ti basta cancellare la directory $INSTALLPATH
+e rimuovere la riga di Prey in crontab: \n
+\t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
+-- Per gli aggiornamenti ricordati di controllare il sito http://preyproject.com!\033[0m\n\n"
+ 
+else # prey status messages
+ 
+STRING_START="\n ### PREY $version, mi sto avviando!\n"
+STRING_TRY_TO_CONNECT=" -- Provo a connettermi alla prima rete wifi disponibile..."
+STRING_NO_CONNECT_TO_WIFI=" -- Non ci sono reti wifi disponibili!"
+STRING_CHECK_URL=" -- Controllo la URL..."
+STRING_NO_PROBLEM=" -- Niente di cui preoccuparsi. :)\n"
+STRING_PROBLEM=" -- Problema!!"
+STRING_WRITE_EMAIL=" -- Scrivo l'email..."
+STRING_SENDING_EMAIL=" -- Mando il rapporto..."
+STRING_ERROR_EMAIL="\n\033[1m !! C'è stato un problema con l'invio della mail. Sicuro di averla impostata correttamente?
+Se stai usando Gmail, prova a cancellare '@gmail.com' dal campo smtp_username nel file config di Prey.\033[0m\n"
+STRING_REMOVE_EVIDENCE=" -- Rimuovo ogni traccia..."
+STRING_DONE=" -- Fatto. Buona caccia! :)\n"
+ 
+EMAIL_HEADER="Buone notizie, amico.. sembra che lo abbiamo trovato.\n\nEcco il rapporto del tuo computer:\n\n"
+EMAIL_FOOTER="\n\nOra, vai a pigliare il bastardo!\n\n--\nIl vostro umile servitore, Prey\nhttp://preyproject.com"
+ 
+fi
+ 
+
+
+
