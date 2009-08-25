@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-picture="c:\windows\temp\prey-picture.png"
+picture="$base_path/prey-picture.png"
 
 function take_picture {
 
