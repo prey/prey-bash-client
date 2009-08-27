@@ -26,9 +26,9 @@ if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
 	SKIP_INSTALL_QUESTIONS=" -- Muy bien, solo actualizaremos los archivos necesarios!\n"
 
-	DEFINE_REPORT_METHOD=" -> Que metodo de reporte te gustaria usar? (email, tunnel, web) [email] "
+	DEFINE_REPORT_METHOD=" -> Que metodo de reporte te gustaria usar? (http, email) [http] "
 	IS_REGISTERED_ON_WEB=" -- Estas registrado en el sitio?"
-	DEFAULT_REPORT_METHOD=" -- Usando e-mail como metodo de reporte. Todo bien!"
+	DEFAULT_REPORT_METHOD=" -- Usando el panel de control (http) como metodo de reporte. Todo bien!"
 	ADD_API_KEY=" -> Por favor entra el Codigo API de 12 digitos que te entrego el servicio web: "
 	INVALID_API_KEY=" !! Codigo API Invalido! Recuerda que debes registrarte en preyproject.com para obtener uno.\n"
 	ADD_DEVICE_KEY=" -> Por favor entra el Codigo de Dispositivo de 6 digitos que te entrego el servicio web:"
