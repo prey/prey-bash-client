@@ -39,15 +39,16 @@ function alert_user {
 			# TODO: inventar buena talla
 		# fi
 
-		 # mensaje de informacion
+		# mensaje de informacion
 		# zenity --info --text "Obtuvimos la informacion"
 
-		 # mejor, mensaje de error!
-		$zenity --error --text "$alert_message"
+		# mejor, mensaje de error!
+		$zenity --error --text "$alert_message" &
 
 	elif [ -n "$kdialog" ]; then #untested!
 
-		$kdialog --error "$alert_message"
+		$kdialog --error "$alert_message" &
 
 	fi
+
 }

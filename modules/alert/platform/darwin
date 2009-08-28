@@ -22,11 +22,12 @@ function alert_user {
 
 	osascript -e "say \"$alert_message\" using \"$alert_voice\"" &
 
-# this must go in column 0
-osascript<<END
-	tell application "Finder"
-		activate #Le da el foco al Finder
-		set dd to display dialog "\n$alert_message\n" buttons {"OK, I'm afraid."} default button 1 with icon caution #Despliega el diálogo.
-	end tell
-END
+	show_message_script="
+		tell application \"Finder\"
+			activate
+			set dd to display dialog \"\n$alert_message\n\" buttons {\"OK, I'm afraid.\"} default button 1 with icon caution
+		end tell"
+
+	osascript -e "$show_message_script" &
+
 }

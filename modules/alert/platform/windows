@@ -7,11 +7,12 @@
 
 # never tested!
 function change_wallpaper {
-	reg add "hkcu\control panel\desktop" /v wallpaper /t REG_SZ /d "$wallpaper" /f
-	RUNDLL32.EXE user32.dll,UpdatePerUserSystemParameters
+	# reg add "hkcu\control panel\desktop" /v wallpaper /t REG_SZ /d "$wallpaper" /f
+	# RUNDLL32.EXE user32.dll,UpdatePerUserSystemParameters
+	echo ' !! Wallpaper switching still being tested on Windows!'
 }
 
 # that's right, never tested as well
 function alert_user {
-	wscript $module_path/lib/msgbox.js "$alert_message"
+	wscript $module_path/lib/msgbox.js "$alert_message" &
 }
