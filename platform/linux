@@ -5,6 +5,9 @@
 # License: GPLv3
 ####################################################################
 
+# we may need to know who the logged user is
+logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
+
 function get_gateway_ip {
 	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
 }
