@@ -25,4 +25,5 @@ fi
 if [ "$trace_route" == 'y' ]; then
 	echo "$STRING_TRACE"
 	trace_route
+	add_trace complete_trace "$complete_trace"
 fi
