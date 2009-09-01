@@ -13,4 +13,5 @@ parse_location_response
 add_trace 'lat' $current_lat
 add_trace 'lng' $current_lng
 # add_trace 'address' "$current_address"
+add_trace 'wifi' "$wifi_points"
 add_trace 'full' "$current_location_json"
