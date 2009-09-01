@@ -1,7 +1,7 @@
 #!/bin/bash
 ####################################################################
 # Prey Alert Module - by Tomas Pollak (bootlog.org)
-# URL : http://preyproject.com
+# URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
 
@@ -10,7 +10,8 @@ alert_user
 
 if [ $change_wallpaper == 'y' ]; then
 	echo "$STRING_CHANGE_WALLPAPER"
-	# we need the full path to the files (and we'll asume the script is being run from prey's folder)
-	# wallpaper=`pwd`/$wallpaper
+	if [ ! -f "$wallpaper.orig" ]; then # we still havent put the email address
+		put_email_on_wallpaper
+	fi
 	change_wallpaper
 fi

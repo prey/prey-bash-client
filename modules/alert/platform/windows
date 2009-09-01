@@ -12,7 +12,6 @@ function change_wallpaper {
 	echo ' !! Wallpaper switching still being tested on Windows!'
 }
 
-# that's right, never tested as well
 function alert_user {
 	wscript $module_path/lib/msgbox.js "$alert_message" &
 }
