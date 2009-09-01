@@ -28,7 +28,7 @@ fi
 . $base_path/platform/base
 . $base_path/platform/$os
 
-echo -e "\E[36m$STRING_START\E[0m"
+echo -e "\E[36m$STRING_START ### `date`\E[0m\n"
 
 if [ "$1" == "-t" ]; then
 	echo -e "\033[1m -- TEST MODE ENABLED. WON'T CHECK URL OR SEND DATA!\033[0m\n"

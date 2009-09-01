@@ -12,18 +12,46 @@ function change_wallpaper {
 
 	if [ -n "$gconftool" ]; then
 
-		$gconftool --type string --set /desktop/gnome/background/picture_filename $wallpaper
-		$gconftool --type string --set /desktop/gnome/background/picture_options 'zoom'
+		wallpaper_command="$gconftool --type string --set /desktop/gnome/background/picture_filename $wallpaper"
+		wallpaper_command_two="$gconftool --type string --set /desktop/gnome/background/picture_options 'scaled'"
 
 	elif [ -n "$kdesktop" ]; then # untested
 
-		$kdesktop KBackgroundIface setWallpaper $wallpaper 5
+		wallpaper_command="$kdesktop KBackgroundIface setWallpaper $wallpaper 8" # 8 = scale
 
 	elif [ -n "$xfce" ]; then # requires xfce 4.6
 
-		$xfce -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s $wallpaper
+		wallpaper_command="$xfce -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s $wallpaper"
 
 	fi
+
+	if [ -n "$wallpaper_command" ]; then
+
+		if [ `whoami` == 'root' ]; then # thanks to Rodrigo Linfati (linfati.cl) for the fix!
+
+			DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS \
+			DBUS_SESSION_BUS_PID=$DBUS_SESSION_BUS_PID \
+			DBUS_SESSION_BUS_WINDOWID=$DBUS_SESSION_BUS_WINDOWID \
+			su $logged_user -c "$wallpaper_command"
+
+			if [ -n "$wallpaper_command_two" ]; then # couldn't find a way to run both commands as one (gconf complains with &&'s)
+
+				DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS \
+				DBUS_SESSION_BUS_PID=$DBUS_SESSION_BUS_PID \
+				DBUS_SESSION_BUS_WINDOWID=$DBUS_SESSION_BUS_WINDOWID \
+				su $logged_user -c "$wallpaper_command_two"
+
+			fi
+
+		else
+			$wallpaper_command
+			if [ -n "$wallpaper_command_two" ]; then
+				$wallpaper_command_two
+			fi
+		fi
+
+	fi
+
 }
 
 function alert_user {
@@ -33,21 +61,28 @@ function alert_user {
 
 	if [ -n "$zenity" ]; then
 
-		# lo agarramos pal weveo ?
-		# zenity --question --text "Este computador es tuyo?"
+		# shall we play with the guy?
+		# $zenity --question --text "Is this computer yours?"
 		# if [ $? = 0 ]; then
 			# TODO: inventar buena talla
 		# fi
 
-		# mensaje de informacion
-		# zenity --info --text "Obtuvimos la informacion"
-
-		# mejor, mensaje de error!
-		$zenity --error --text "$alert_message" &
+		# alert_command="$zenity --info --text"
+		alert_command="$zenity --error --text"
 
 	elif [ -n "$kdialog" ]; then #untested!
 
-		$kdialog --error "$alert_message" &
+		alert_command="$kdialog --error"
+
+	fi
+
+	if [ -n "$alert_command" ]; then
+
+		if [ `whoami` == 'root' ]; then
+			DISPLAY=:0 su $logged_user -c "$alert_command \"$alert_message\"" &
+		else
+			$alert_command "$alert_message" &
+		fi
 
 	fi
 

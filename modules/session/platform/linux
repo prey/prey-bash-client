@@ -5,9 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-# we may need to know who the logged user is
-logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
-
 function get_screenshot {
 
 	scrot=`which scrot` # scrot es mas liviano y mas rapido
