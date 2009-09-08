@@ -1,0 +1,32 @@
+#!/bin/bash
+####################################################################
+# PREY Webcam Module Windows Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+picture="$base_path/prey-picture.png"
+
+function take_picture {
+
+	if [ ! -f "c:\windows\system32\msvbvm50.dll" ]; then
+		if [ ! -f "$base_path\bin\msvbvm50.dll" ]; then
+			echo ' ** Fetching necessary DLL for Webcam capture to work... (about 1 MB)'
+			wget http://examples.oreilly.com/error/CDROM/MsLibs/MSVBVM50.DLL -O $base_path/bin/msvbvm50.dll 2> /dev/null
+		fi
+	fi
+
+	$module_path/lib/webcam_capture.exe
+	if [ -f $base_path/vfw-0.bmp ]; then
+		$base_path/lib/bmp2png.exe $base_path/vfw-0.bmp 2> /dev/null
+		rm $base_path/vfw-0.bmp
+		mv $base_path/vfw-0.png "$picture"
+	fi
+
+}
+
+function capture_video {
+
+	echo ' !! Video capture still in development!'
+
+}

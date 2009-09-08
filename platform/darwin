@@ -1,0 +1,35 @@
+#!/bin/bash
+####################################################################
+# PREY Darwin (Mac) Base Functions - by Tomas Pollak (bootlog.org) and Diego Torres (warorface.com)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
+
+function get_gateway_ip {
+	gateway_ip=`netstat -rn | grep default | cut -c20-35`
+}
+
+function get_wifi_info {
+		wifi_info=`$airport -I | grep -v "Off"`
+}
+
+function try_to_connect {
+	# restart airport service
+	networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
+	networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
+
+	# power on the airport
+	networksetup -setairportpower off 2>/dev/null
+	networksetup -setairportpower on 2>/dev/null
+
+	# list available access points and parse to get first SSID with security "NONE"
+	essid=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
+
+	if [ -n "$essid" ]; then
+
+		networksetup -setairportnetwork $essid 2>/dev/null
+
+	fi
+}

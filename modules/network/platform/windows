@@ -1,0 +1,23 @@
+#!/bin/bash
+####################################################################
+# PREY Network Module Windows Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function get_internal_ip {
+	internal_ip=`ipconfig | grep "IP Address" | sed 's/^.*: //g' | grep -v '^$' | head -1`
+}
+
+function get_mac_address {
+	mac_address=`ipconfig -all | grep Physical | sed 's/^.*: //g' | grep -v '^$' | head -1`
+}
+
+function get_wifi_info {
+	echo ' !! Wifi info getter in testing/development in Windows!'
+	# wifi_info=`$base_path/lib/wifi_config.exe -aps 2> /dev/null`
+}
+
+function trace_route {
+	complete_trace=`tracert.exe www.google.com 2> /dev/null`
+}

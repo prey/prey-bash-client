@@ -1,0 +1,88 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# English lang file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
+
+	# installer messages
+
+	HELLO_IN_LANGUAGE=" -- Prey will speak english then!"
+	WHERE_TO_INSTALL_PREY=" -> Where do you want us to install Prey? [$DEFAULT_INSTALLPATH] "
+	USING_DEFAULT_INSTALL_PATH=" -- Good, using the default install path..."
+	INVALID_INSTALL_PATH=" !! Invalid installation path. Parent directory doesn't exist!\n"
+	SETTING_INSTALL_PATH=" -- Ok, setting $INSTALLPATH as our install path."
+
+	IT_SEEMS_PATH="It seems you had already installed Prey in"
+	DIFFERENT_PATH="\nThe new version uses a different path for the installation,"
+	REMOVE_OLD_FILES="so we should remove the old files since they won't be used anymore."
+	ASK_RM_OLD_FILES="Should we do this automatically for you?"
+	DELETING_OLD_FILES=" -- Deleting old Prey installation files...\n"
+	CONFIG_FILE_EXISTS=" -> Config file exists! Would you like to skip all the boring questions? (Not recommended) [n] "
+
+	SKIP_INSTALL_QUESTIONS=" -- Alright, well just update the necesary files!\n"
+
+	DEFINE_REPORT_METHOD=" -> Which reporting method would you like to use? (email, tunnel, web) [email] "
+	IS_REGISTERED_ON_WEB=" -- Have you already registered on the site?"
+	DEFAULT_REPORT_METHOD=" -- Using email as our reporting method. All good!"
+	ADD_API_KEY=" -> Please enter your API Key as supplied by the web service: "
+	INVALID_API_KEY=" !! Invalid API key! Remember to signup at preyproject.com to get one.\n"
+	ADD_DEVICE_KEY=" -> Please enter the Device Key for this PC as supplied by the web service: "
+	INVALID_DEVICE_KEY=" !! Invalid device key! Remember to register your device in preyproject.com to get one.\n"
+
+	DESIRED_USER_WEB=" -- OK, then let us do so for you. Please type in your desired username: "
+	ASK_EMAIL_WEB=" -- Please type in your email: "
+	DESIRED_PASS_WEB=" -- Please type in your desired password: (We just use it to sign up for you!) "
+	PROBLEM_SIGNUP_WEB="There was a problem signing up in the web service. Please try again or just do so directly in"
+	PROBLEM_RESPONSE_WEB="The response we got was this:"
+
+	USING_DEFAULT_APP_URL=" -- Using routes for the web application. Nothing to write in here!"
+
+	ENTER_EMAIL_ADDRESS=" -> What email address would you like the email sent to? (i.e. mailbox@domain.com) [] "
+	INVALID_EMAIL_ADDRESS=" !! You need to define an inbox. Exiting...\n"
+
+	ENTER_SMTP_SERVER=" -> Which smtp server should we use? (with port) [smtp.gmail.com:587] "
+	DEFAULT_SMTP_SERVER=" -- We'll be using Gmail then! "
+	ENTER_SMTP_USER=" -> Type in your smtp username: (i.e. mailbox@gmail.com)"
+	DEFAULT_SMTP_USER=" -- Ok, our SMTP username will be" # the installer appends the email var
+	ENTER_SMTP_PASS=" -> Type in your smtp password: (It won't be shown) [] "
+	INVALID_SMTP_PASS=" !! You need to type in a valid password. Exiting...\n"
+	YES_NO="y/n"
+	YES="y"
+	CHECK_URL_OR_NOT=" -- Would you like Prey to check a URL? (No means the report is generated each time the program runs) [n] "
+	ENTER_URL=" -- Ok, which URL would it be then? [i.e. http://myserver.com/prey_check_url] "
+	INVALID_URL=" !! You need to define a URL. Exiting...\n"
+	SET_TIMING=" -- Ok, last one. How frequent (in minutes) would you like Prey to be ran? [$TIMING] "
+
+	INSTALLING_SOFTWARE=" -- Ok, installing necessary software...\n"
+	COPYING_ISIGHTCAPTURE=" -- Copying iSightCapture to $INSTALLPATH..."
+	COPYING_FILES="\n -- Copying necessary files to $INSTALLPATH and setting permissions..."
+	ADDING_CRONTAB=" -- Adding crontab entry..."
+	INSTALL_OK="\033[1m\n -- Everything OK! Prey is up and running now. You can now delete this directory safely.
+ -- If you ever want to uninstall Prey, just delete the $INSTALLPATH directory
+    and remove Prey's line in root's crontab: \n
+\t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
+ -- For updates remember to check http://preyproject.com!\033[0m\n\n"
+
+else # prey status messages
+
+	STRING_START="\n ### PREY $version spreads its wings!\n"
+	STRING_TRY_TO_CONNECT=" -- Trying to connect to first open wifi network available..."
+	STRING_NO_CONNECT_TO_WIFI=" -- Couldn't find a way to connect to an open wifi network!"
+	STRING_CHECK_URL=" -- Checking URL..."
+	STRING_NO_PROBLEM=" -- Nothing to worry about. :)\n"
+	STRING_PROBLEM=" -- HOLY GUACAMOLE!!"
+	STRING_WRITE_EMAIL=" -- Writing our email..."
+	STRING_SENDING_EMAIL=" -- Sending the report..."
+	STRING_ERROR_EMAIL="\n\033[1m !! There was a problem sending the email. Are you sure it was setup correctly?
+	If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file.\033[0m\n"
+	STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
+	STRING_DONE=" -- Done! Happy hunting! :)\n"
+
+	EMAIL_HEADER="Good news my friend, it seems we found it.\n\nHere's the report from your computer:\n\n"
+	EMAIL_FOOTER="\n\nNow, go catch the bastard!\n\n--\nYour humble servant, Prey\nhttp://preyproject.com"
+
+fi

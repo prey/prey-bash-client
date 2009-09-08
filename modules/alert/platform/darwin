@@ -1,0 +1,32 @@
+#!/bin/bash
+####################################################################
+# PREY Alert Module Darwin (Mac) Functions - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function change_wallpaper {
+	# this code belongs to Katy Richard
+	# http://thingsthatwork.net/index.php/2008/02/07/fun-with-os-x-defaults-and-launchd/
+
+	defaults write com.apple.Desktop Background "{default = {ChangePath = '~/Pictures'; ChooseFolderPath = '~/Pictures'; CollectionString = Wallpapers; ImageFileAlias = <00000000 00e00003 00000000 c2cc314a 0000482b 00000000 00089e0c 001be568 0000c2fe 8ab30000 00000920 fffe0000 00000000 0000ffff ffff0001 00100008 9e0c0007 4cea0007 4cb40013 52b2000e 00260012 00740068 00650065 006d0070 00690072 0065005f 00310036 00380030 002e006a 00700067 000f001a 000c004d 00610063 0069006e 0074006f 00730068 00200048 00440012 00355573 6572732f 6b726963 68617264 2f506963 74757265 732f5761 6c6c7061 70657273 2f746865 656d7069 72655f31 3638302e 6a706700 00130001 2f000015 0002000f ffff0000 >; ImageFilePath = $wallpaper; Placement = Crop; TimerPopUpTag = 6; };}"
+
+	# we need to restart the dock to make the new wallpaper visible
+	killall Dock
+}
+
+# Mac alert msg code by Matias Halles (http://halles.cl)
+function alert_user {
+	alert_voice='Zarvox'
+	# can be Agnes, Kathy, Princess, Vicki, Victoria, Bruce, Fred, Junior, Ralph, Albert, Bad News, Bahh, Bells, Boing, Bubbles, Cellos , Deranged, Good News, Hysterical, Pipe Organ, Trinoids, Whisper, Zarvox
+
+	osascript -e "say \"$alert_message\" using \"$alert_voice\"" &
+
+# this must go in column 0
+osascript<<END
+	tell application "Finder"
+		activate #Le da el foco al Finder
+		set dd to display dialog "\n$alert_message\n" buttons {"OK, I'm afraid."} default button 1 with icon caution #Despliega el diálogo.
+	end tell
+END
+}

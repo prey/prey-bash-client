@@ -1,0 +1,11 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# Spanish language file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_CHANGE_WALLPAPER=" -- Cambiando el fondo de pantalla para alertar a la persona y a los que esten cerca..."
+STRING_SHOW_ALERT=" -- Mostrando nuestro mensaje de alerta..."
+

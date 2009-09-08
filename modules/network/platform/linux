@@ -1,0 +1,15 @@
+#!/bin/bash
+####################################################################
+# PREY Network Module Linux Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function get_mac_address {
+	# mac_address=`ifconfig | grep 'HWaddr' | cut -d: -f2-7`
+	mac_address=`ifconfig | grep 'HWaddr' | cut -d ' ' -f11-15`
+}
+
+function get_wifi_info {
+	wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
+}

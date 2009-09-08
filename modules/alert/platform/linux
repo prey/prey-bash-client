@@ -1,0 +1,53 @@
+#!/bin/bash
+####################################################################
+# PREY Alert Module Linux Functions - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function change_wallpaper {
+	gconftool=`which gconftool-2`
+	kdesktop=`which kdesktop`
+	xfce=`which xfconf-query`
+
+	if [ -n "$gconftool" ]; then
+
+		$gconftool --type string --set /desktop/gnome/background/picture_filename $wallpaper
+		$gconftool --type string --set /desktop/gnome/background/picture_options 'zoom'
+
+	elif [ -n "$kdesktop" ]; then # untested
+
+		$kdesktop KBackgroundIface setWallpaper $wallpaper 5
+
+	elif [ -n "$xfce" ]; then # requires xfce 4.6
+
+		$xfce -c xfce4-desktop -p /backdrop/screen0/monitor0/image-path -s $wallpaper
+
+	fi
+}
+
+function alert_user {
+	# veamos si tenemos zenity o kdialog
+	zenity=`which zenity`
+	kdialog=`which kdialog`
+
+	if [ -n "$zenity" ]; then
+
+		# lo agarramos pal weveo ?
+		# zenity --question --text "Este computador es tuyo?"
+		# if [ $? = 0 ]; then
+			# TODO: inventar buena talla
+		# fi
+
+		 # mensaje de informacion
+		# zenity --info --text "Obtuvimos la informacion"
+
+		 # mejor, mensaje de error!
+		$zenity --error --text "$alert_message"
+
+	elif [ -n "$kdialog" ]; then #untested!
+
+		$kdialog --error "$alert_message"
+
+	fi
+}

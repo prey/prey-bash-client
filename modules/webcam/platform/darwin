@@ -1,0 +1,23 @@
+#!/bin/bash
+####################################################################
+# PREY Webcam Module Mac Functions - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function take_picture {
+
+	if [ "`whoami`" == "root" ]; then
+		loginpid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
+		launchctl bsexec $loginpid $module_path/lib/isightcapture $picture 2> /dev/null
+	else
+		$module_path/lib/isightcapture $picture 2> /dev/null
+	fi
+
+}
+
+function capture_video {
+
+	echo ' !! Feature still in development!'
+
+}

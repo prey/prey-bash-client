@@ -1,0 +1,11 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# Swedish lang file v 0.1 - by Dan Sellberg (dan@dkcp.com)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_CHANGE_WALLPAPER=" -- Ändrar bakgrundsbild för att göra tjuven och folk runt omkring uppmärksamma..."
+STRING_SHOW_ALERT=" -- Visar tjuven vårt varningsmeddelande..."
+

@@ -1,0 +1,17 @@
+#!/bin/bash
+####################################################################
+# PREY Alert Module Windows Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+# never tested!
+function change_wallpaper {
+	reg add "hkcu\control panel\desktop" /v wallpaper /t REG_SZ /d "$wallpaper" /f
+	RUNDLL32.EXE user32.dll,UpdatePerUserSystemParameters
+}
+
+# that's right, never tested as well
+function alert_user {
+	wscript $module_path/lib/msgbox.js "$alert_message"
+}

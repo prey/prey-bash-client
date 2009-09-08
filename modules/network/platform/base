@@ -1,0 +1,21 @@
+#!/bin/bash
+####################################################################
+# PREY Network Module Base Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+function get_public_ip {
+	public_ip=`$getter checkip.dyndns.org|sed -e 's/.*Current IP Address: //' -e 's/<.*$//'`
+}
+
+function get_internal_ip {
+	internal_ip=`ifconfig | grep "inet " | grep -v "127.0.0.1" | awk '{ print $2}' | sed 's/addr://' | head -1`
+}
+
+function trace_route {
+	traceroute=`which traceroute`
+	if [ -n "$traceroute" ]; then
+		complete_trace=`$traceroute -q1 www.google.com 2>&1`
+	fi
+}

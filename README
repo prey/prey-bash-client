@@ -1,0 +1,104 @@
+##############################################
+# Prey - Track down your stolen laptop
+# http://preyproject.com
+# A project by Tomas Pollak
+##############################################
+
+Prey is a lightweight application for tracking your stolen laptop.
+
+It runs in Windows and *NIX systems as well (Mac, Linux). It is licenced
+by the GPLv3 which means you can do just about anything with it.
+
+##############################################
+1. How it works
+##############################################
+
+The script runs at a specified interval in your machine, and checks
+for a specified URL in the web. If the URL exists it means the
+computer/laptop has been stolen, and thus goes through the information
+gathering routine and sends all that info through to a previously defined
+email address. You can also not define a URL and in that case the program
+will send the data every time it runs.
+
+You can also use the Prey web control panel (control.preyproject.com)
+to manage the computer state, as well as toggling different modules for
+triggering certain behaviours remotely. In this case you don't have to
+worry about the URL thing since it takes care of that for you. You only
+need to register and insert the API and Device keys in the Prey
+configuration.
+
+##############################################
+2. Installation
+##############################################
+
+ -- Windows, Mac & Ubuntu Linux users
+
+Download the package/installer and run it.
+
+Once all files are in place you’ll need to configure Prey, where you’ll
+be able to choose between both operation modes. In case you want to use
+Prey along with the control panel (recommended), you’ll have to register
+and add your device to obtain your API and Device keys. Prey needs them
+both so make sure you add them correctly.
+
+If you want to use Prey in an independent way, you’ll have to set up your
+mail server (SMTP) settings. Sometimes email sending doesn’t work at once,
+so please try using a different target mailbox just in case — in fact
+that’s how the problem generally gets fixed.
+
+ -- Linux users (not Debian/Ubuntu)
+
+Once you’ve downloaded the package, unzip it and execute the installation
+script. It will prompt for all the necesary fields, and even sign up in
+Prey for you if case you haven’t registered yet:
+
+	$ chmod +x install.sh
+	$ ./install.sh
+
+Note: You should use the full URL in Prey's setup, such as
+http://preyproject.com (not just preyproject.com).
+
+##############################################
+3. Requisites for Linux
+##############################################
+
+Mac comes with everything needed to run Prey. However Linux users should make
+sure they have the following installed: (note the installer does this
+automatically!)
+
+	o curl / wget
+	o scrot or imagemagick (for screenshot capture)
+	o streamer (for webcam capture) --> in Fedora the xawtv package includes it
+	o Perl libs IO::Socket::SSL and NET::SSLeay
+
+##############################################
+4. Usage
+##############################################
+
+The idea is that when your laptop gets stolen -- hopefully never, that is --
+you should immediately activate Prey, by declaring the device as missing
+in the control panel, or by creating the URL you specified in Prey's
+configuration. This depends on the operation mode (post method) you set up
+when installing Prey.
+
+Prey expects a status code 200 to run. If it receives a status 404 it will
+simply shut down and wait for the next interval tu check the URL.
+
+##############################################
+5. Acknowledgements
+##############################################
+
+Prey is a collaborative project which has kept alive thanks to the help of
+diverse contributors, specially these amazing people:
+
+	o Diego Torres - http://warorface.com
+	o Juan Carlos Mardones - http://juanmardones.com
+
+Prey also works thanks to Brandon Zehm's excellent command-line SMTP client
+and Axel Bauer's iSightCapture program for capturing pictures on the
+Mac. And of course, a bunch of other powerful open source utilities.
+
+Command line SMTP client: http://caspian.dotconf.net/menu/Software/SendEmail
+iSightCapture: http://www.intergalactic.de/pages/iSight.html
+
+--

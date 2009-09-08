@@ -1,0 +1,10 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_CHANGE_WALLPAPER=" -- Changing the wallpaper to alert him and nearby users..."
+STRING_SHOW_ALERT=" -- Showing the guy our alert message..."
+

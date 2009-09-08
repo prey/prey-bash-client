@@ -1,0 +1,11 @@
+#!/bin/bash
+####################################################################
+# Prey Network Module Lang File - by Juan C. Mardones (http://juanmardones.com)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_GET_IP=" -- Getting public IP address..."
+STRING_GET_LAN_IP=" -- Getting private LAN IP address..."
+STRING_GET_MAC_AND_WIFI=" -- Getting MAC address, routing and Wifi info..."
+STRING_TRACE=" -- Tracing our complete route to the Internet..."
