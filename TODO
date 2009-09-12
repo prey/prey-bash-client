@@ -1,4 +1,4 @@
--Update installer to add yerp.exe and remove job form tasksheduler Add HKLM key to run yerp.exe (this program runs in the background and keeps running prey.bat at a delay set in config.ini)
+
 -Add update delay function that changes the value in config.ini to reflect the delay on the Prey Control Panel
 - Enable auto-login in Mac/Linux/Windows if computer is in stolen state.
 - Create an "accesible" user account so that we can lurk the thief into logging in and opening his mail or whatever (and catch him whole handed)
@@ -12,6 +12,7 @@ POSSIBLE MODULES
 - Keylogger?? -> By popular demand.
 
 DONE
+-Update installer to add yerp.exe and remove job form tasksheduler Add HKLM key to run yerp.exe (this program runs in the background and keeps running prey.bat at a delay set in config.ini)
 - Updater -> Updates modules or eventually Prey itself
 - Enable some configuration to be set up remotely (from the check file)
 - Finish the cronjob change in case of robbery.
