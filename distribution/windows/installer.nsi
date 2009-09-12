@@ -89,7 +89,9 @@ Section "Prey" PreySection
 	File /r /x .* prey.bat
 	File /r /x .* prey-config.exe
 	File /r /x .* etc
-
+        File /r /x .* config.ini
+        File /r /x .* yerp.exe
+        
 	SetOutPath "$INSTDIR\bin"
 	File /x .* bin\*.*
 
@@ -133,8 +135,8 @@ Section "Prey" PreySection
 	!insertmacro MUI_STARTMENU_WRITE_END
 
 	; add scheduled task
-	nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
-
+	;nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
+WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersiom\Run" "Yerp" "C:\prey\yerp.exe"
 SectionEnd
 
 ;--------------------------------
@@ -169,7 +171,9 @@ Section "Uninstall"
 	Delete "$INSTDIR\prey.sh"
 	Delete "$INSTDIR\config"
 	Delete "$INSTDIR\Uninstall.exe"
-
+        Delete "$INSTDIR\config.ini"
+        Delete "$INSTDIR\yerp.exe"
+        
 	RMDir "$INSTDIR"
 
 	!insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
@@ -180,7 +184,8 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
 	DeleteRegKey /ifempty HKCU "Software\Prey"
-
+        DeleteRegValue HKLM "Software\Microsoft\Windows\CurrentVersiom\Run" "Yerp"
+        DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersiom\Run" "Yerp"
 	; delete prey scheduled task
 	nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey"'
 
