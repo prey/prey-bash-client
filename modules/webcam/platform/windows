@@ -16,11 +16,11 @@ function take_picture {
 		fi
 	fi
 
-	$module_path/lib/webcam_capture.exe
-	if [ -f $base_path/vfw-0.bmp ]; then
-		$base_path/lib/bmp2png.exe $base_path/vfw-0.bmp 2> /dev/null
-		rm $base_path/vfw-0.bmp
-		mv $base_path/vfw-0.png "$picture"
+	$base_path/modules/webcam/lib/webcam_capture.exe
+	if [ -f $base_path/modules/webcam/lib/vfw-1.bmp ]; then
+		$base_path/lib/bmp2png.exe $base_path/modules/webcam/lib/vfw-1.bmp 2> /dev/null
+		rm $base_path/modules/webcam/lib/vfw-1.bmp
+		mv $base_path/modules/webcam/lib/vfw-1.png "$picture"
 	fi
 
 }
