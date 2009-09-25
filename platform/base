@@ -140,7 +140,11 @@ function check_net_status {
 # we could eventually use a different method for status checking
 function check_status {
 	if [ "$post_method" == 'http' ]; then
-		check_url="$check_url/devices/$device_key.xml"
+		if [ -n "$device_key" ]; then
+			check_url="$check_url/devices/$device_key.xml"
+		else
+			echo ' !! You need to enter your Device Key for HTTP Check!'
+		fi
 	fi
 	headers=`$getter -I $check_url`
 	status=`echo -e "$headers" | grep HTTP | sed -e 's/[^200|302|400|404|500]//g' -e 's/^0//'`
