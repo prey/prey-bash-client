@@ -1,0 +1,53 @@
+#!/bin/bash
+####################################################################
+# PREY Configuration File - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+# language, en (english) or es (espanol)
+lang='en'
+
+# verification URL, if left empty Prey will always activate and run
+check_url='http://control.preyproject.com'
+
+# you can use send the report via email or to the web service
+# valid values: http, email or scp
+post_method='http'
+
+####################################################################
+# http posting configuration
+####################################################################
+
+# you can get both of these from Prey's web service
+api_key=''
+device_key=''
+
+####################################################################
+# SMTP settings, for email posting
+####################################################################
+
+# mailbox to send the report
+mail_to='mailbox@domain.com'
+
+# the password is now stored base64 encrypted
+# if you wish to generate it by hand, run
+# $ echo -n "password" | openssl enc -base64
+smtp_server='smtp.gmail.com:587'
+smtp_username='username@gmail.com'
+smtp_password='password'
+
+# you dont need to change this
+mail_from='Prey <no-reply@gmail.com>'
+mail_subject='Prey -- status report'
+
+####################################################################
+# scp posting configuration -- EXPERIMENTAL!
+# we dont use user/pass but RSA keys
+# for more info check http://tinyurl.com/sshtip
+####################################################################
+
+# remember you should have write access to the folder
+scp_user='username'
+scp_server='my.server.com'
+scp_path='~'
