@@ -25,19 +25,13 @@
 		257572CA072881A4000BE9CA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		257572CC072881A4000BE9CA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		257572CD072881A4000BE9CA /* AppleScriptKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA206CF1015C4E2903C91932 /* AppleScriptKit.framework */; };
-		5A90F2290FD4AC6600696802 /* prey-wallpaper-en.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F21D0FD4AC6600696802 /* prey-wallpaper-en.png */; };
-		5A90F22A0FD4AC6600696802 /* prey-wallpaper-es.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F21E0FD4AC6600696802 /* prey-wallpaper-es.png */; };
-		5A90F22B0FD4AC6600696802 /* config in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F21F0FD4AC6600696802 /* config */; };
-		5A90F22C0FD4AC6600696802 /* isightcapture in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2200FD4AC6600696802 /* isightcapture */; };
-		5A90F22D0FD4AC6600696802 /* en in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2220FD4AC6600696802 /* en */; };
-		5A90F22E0FD4AC6600696802 /* es in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2230FD4AC6600696802 /* es */; };
-		5A90F22F0FD4AC6600696802 /* base in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2250FD4AC6600696802 /* base */; };
-		5A90F2300FD4AC6600696802 /* darwin in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2260FD4AC6600696802 /* darwin */; };
-		5A90F2310FD4AC6600696802 /* prey.sh in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2270FD4AC6600696802 /* prey.sh */; };
-		5A90F2320FD4AC6600696802 /* sendEmail in Resources */ = {isa = PBXBuildFile; fileRef = 5A90F2280FD4AC6600696802 /* sendEmail */; };
+		5A291EBB103CA3160090BFFD /* prey.zip in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A291EBA103CA3160090BFFD /* prey.zip */; };
+		5A291ED1103CA98B0090BFFD /* config in Resources */ = {isa = PBXBuildFile; fileRef = 5A291ED0103CA98B0090BFFD /* config */; };
+		5A62F5D71037A1AA003755DA /* header.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A62F5D61037A1AA003755DA /* header.png */; };
+		5A886812103B6ABD00E0AE83 /* Imagen-4.png in Resources */ = {isa = PBXBuildFile; fileRef = 5A886811103B6ABD00E0AE83 /* Imagen-4.png */; };
 		5AFA974D0FD48EE8004A3823 /* prey-installer.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5AFA974A0FD48EE8004A3823 /* prey-installer.icns */; };
-		5AFA974E0FD48EE8004A3823 /* prey.png in Resources */ = {isa = PBXBuildFile; fileRef = 5AFA974B0FD48EE8004A3823 /* prey.png */; };
 		60A014C40DBD2AA20071D9A8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 60A014C20DBD2AA20071D9A8 /* MainMenu.xib */; };
+		D045BE6C103E34490013FE9F /* prey.png in Resources */ = {isa = PBXBuildFile; fileRef = D045BE6B103E34490013FE9F /* prey.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,21 +42,14 @@
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		5A90F1C10FD4A2F600696802 /* Spanish */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Spanish; path = Spanish.lproj/MainMenu.xib; sourceTree = "<group>"; };
-		5A90F21D0FD4AC6600696802 /* prey-wallpaper-en.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "prey-wallpaper-en.png"; sourceTree = "<group>"; };
-		5A90F21E0FD4AC6600696802 /* prey-wallpaper-es.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "prey-wallpaper-es.png"; sourceTree = "<group>"; };
-		5A90F21F0FD4AC6600696802 /* config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config; sourceTree = "<group>"; };
-		5A90F2200FD4AC6600696802 /* isightcapture */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = isightcapture; sourceTree = "<group>"; };
-		5A90F2220FD4AC6600696802 /* en */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = en; sourceTree = "<group>"; };
-		5A90F2230FD4AC6600696802 /* es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = es; sourceTree = "<group>"; };
-		5A90F2250FD4AC6600696802 /* base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = base; sourceTree = "<group>"; };
-		5A90F2260FD4AC6600696802 /* darwin */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = darwin; sourceTree = "<group>"; };
-		5A90F2270FD4AC6600696802 /* prey.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = prey.sh; sourceTree = "<group>"; };
-		5A90F2280FD4AC6600696802 /* sendEmail */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.perl; path = sendEmail; sourceTree = "<group>"; };
+		5A291EBA103CA3160090BFFD /* prey.zip */ = {isa = PBXFileReference; lastKnownFileType = archive.zip; path = prey.zip; sourceTree = "<group>"; };
+		5A291ED0103CA98B0090BFFD /* config */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = config; sourceTree = "<group>"; };
+		5A62F5D61037A1AA003755DA /* header.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = header.png; sourceTree = "<group>"; };
+		5A886811103B6ABD00E0AE83 /* Imagen-4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Imagen-4.png"; sourceTree = "<group>"; };
 		5AFA974A0FD48EE8004A3823 /* prey-installer.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = "prey-installer.icns"; sourceTree = "<group>"; };
-		5AFA974B0FD48EE8004A3823 /* prey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = prey.png; sourceTree = "<group>"; };
 		60A014C30DBD2AA20071D9A8 /* English */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = English; path = English.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		65359356078DD41800E8BB2F /* AppleScriptKit.sdef */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.sdef; name = AppleScriptKit.sdef; path = /System/Library/Frameworks/AppleScriptKit.framework/Versions/A/Resources/AppleScriptKit.sdef; sourceTree = "<absolute>"; };
+		D045BE6B103E34490013FE9F /* prey.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = prey.png; sourceTree = "<group>"; };
 		DA206CF1015C4E2903C91932 /* AppleScriptKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppleScriptKit.framework; path = /System/Library/Frameworks/AppleScriptKit.framework; sourceTree = "<absolute>"; };
 		DA206CF3015C4E8B03C91932 /* Prey Installer.applescript */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.applescript; path = "Prey Installer.applescript"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -74,6 +61,7 @@
 			files = (
 				257572CC072881A4000BE9CA /* Cocoa.framework in Frameworks */,
 				257572CD072881A4000BE9CA /* AppleScriptKit.framework in Frameworks */,
+				5A291EBB103CA3160090BFFD /* prey.zip in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,7 +107,6 @@
 			children = (
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				080E96DDFE201D6D7F000001 /* Scripts */,
-				5A90F2020FD4AC2000696802 /* preyfiles */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
@@ -139,11 +126,15 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5A291ED0103CA98B0090BFFD /* config */,
+				5A886811103B6ABD00E0AE83 /* Imagen-4.png */,
 				5AFA974A0FD48EE8004A3823 /* prey-installer.icns */,
-				5AFA974B0FD48EE8004A3823 /* prey.png */,
+				D045BE6B103E34490013FE9F /* prey.png */,
+				5A62F5D61037A1AA003755DA /* header.png */,
 				60A014C20DBD2AA20071D9A8 /* MainMenu.xib */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				65359356078DD41800E8BB2F /* AppleScriptKit.sdef */,
+				5A291EBA103CA3160090BFFD /* prey.zip */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -155,47 +146,6 @@
 				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		5A90F2020FD4AC2000696802 /* preyfiles */ = {
-			isa = PBXGroup;
-			children = (
-				5A90F21C0FD4AC6600696802 /* alerts */,
-				5A90F21F0FD4AC6600696802 /* config */,
-				5A90F2200FD4AC6600696802 /* isightcapture */,
-				5A90F2210FD4AC6600696802 /* lang */,
-				5A90F2240FD4AC6600696802 /* platform */,
-				5A90F2270FD4AC6600696802 /* prey.sh */,
-				5A90F2280FD4AC6600696802 /* sendEmail */,
-			);
-			name = preyfiles;
-			sourceTree = "<group>";
-		};
-		5A90F21C0FD4AC6600696802 /* alerts */ = {
-			isa = PBXGroup;
-			children = (
-				5A90F21D0FD4AC6600696802 /* prey-wallpaper-en.png */,
-				5A90F21E0FD4AC6600696802 /* prey-wallpaper-es.png */,
-			);
-			path = alerts;
-			sourceTree = "<group>";
-		};
-		5A90F2210FD4AC6600696802 /* lang */ = {
-			isa = PBXGroup;
-			children = (
-				5A90F2220FD4AC6600696802 /* en */,
-				5A90F2230FD4AC6600696802 /* es */,
-			);
-			path = lang;
-			sourceTree = "<group>";
-		};
-		5A90F2240FD4AC6600696802 /* platform */ = {
-			isa = PBXGroup;
-			children = (
-				5A90F2250FD4AC6600696802 /* base */,
-				5A90F2260FD4AC6600696802 /* darwin */,
-			);
-			path = platform;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,17 +213,10 @@
 				257572C8072881A4000BE9CA /* InfoPlist.strings in Resources */,
 				60A014C40DBD2AA20071D9A8 /* MainMenu.xib in Resources */,
 				5AFA974D0FD48EE8004A3823 /* prey-installer.icns in Resources */,
-				5AFA974E0FD48EE8004A3823 /* prey.png in Resources */,
-				5A90F2290FD4AC6600696802 /* prey-wallpaper-en.png in Resources */,
-				5A90F22A0FD4AC6600696802 /* prey-wallpaper-es.png in Resources */,
-				5A90F22B0FD4AC6600696802 /* config in Resources */,
-				5A90F22C0FD4AC6600696802 /* isightcapture in Resources */,
-				5A90F22D0FD4AC6600696802 /* en in Resources */,
-				5A90F22E0FD4AC6600696802 /* es in Resources */,
-				5A90F22F0FD4AC6600696802 /* base in Resources */,
-				5A90F2300FD4AC6600696802 /* darwin in Resources */,
-				5A90F2310FD4AC6600696802 /* prey.sh in Resources */,
-				5A90F2320FD4AC6600696802 /* sendEmail in Resources */,
+				5A62F5D71037A1AA003755DA /* header.png in Resources */,
+				5A886812103B6ABD00E0AE83 /* Imagen-4.png in Resources */,
+				5A291ED1103CA98B0090BFFD /* config in Resources */,
+				D045BE6C103E34490013FE9F /* prey.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,7 +246,6 @@
 			isa = PBXVariantGroup;
 			children = (
 				60A014C30DBD2AA20071D9A8 /* English */,
-				5A90F1C10FD4A2F600696802 /* Spanish */,
 			);
 			name = MainMenu.xib;
 			sourceTree = "<group>";
