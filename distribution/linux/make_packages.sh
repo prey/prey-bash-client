@@ -51,14 +51,15 @@ rm -f `find build/tmp/prey/usr/share/prey -name "windows"`
 rm -f `find build/tmp/prey/usr/share/prey -name "*.exe"`
 rm -f `find build/tmp/prey/usr/share/prey -name "*.dll"`
 
-cp $basedir/CHANGELOG ./build/tmp/prey/usr/share/prey/
+# cp $basedir/CHANGELOG ./build/tmp/prey/usr/share/prey/
 cp $basedir/LICENSE ./build/tmp/prey/usr/share/prey/
 cp $basedir/README ./build/tmp/prey/usr/share/prey/
 
 cp -r build/tmp/prey/usr/share/prey .
 zip -9 -r prey-$version-linux.zip prey -x \*darwin* 1> /dev/null
 echo "Built Linux .zip package in prey-$version-linux.zip"
-zip -9 -r prey-$version-darwin.zip prey -x \*linux* -x \*configure.py -x \*install.sh 1> /dev/null
+rm -Rf prey/pixmaps
+zip -9 -r prey-$version-darwin.zip prey -x \*linux* -x \*configure.py -x \*install.sh -x \*config 1> /dev/null
 echo "Built Darwin .zip package in prey-$version-darwin.zip"
 rm -r prey
 
