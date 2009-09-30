@@ -143,7 +143,8 @@ function check_status {
 		if [ -n "$device_key" ]; then
 			check_url="$check_url/devices/$device_key.xml"
 		else
-			echo ' !! You need to enter your Device Key for HTTP Check!'
+			echo -e " !! You need to enter your Device Key for HTTP Check!\n"
+			exit
 		fi
 	fi
 	headers=`$getter -I $check_url`
@@ -484,7 +485,10 @@ function send_via_http {
 		if [ -n "$api_key" ]; then
 			post_data="$file_list -F api_key=$api_key"
 		fi
-		response=`$getter $trace_list $post_data "$post_url"`
+		# curl_version=`$getter --version | head -1 | sed 's/\([^)].*\)).*/\1)/'`
+		# user_agent="-A \"$curl_version :: Prey $version :: `hostname` :: $device_key\""
+		user_agent="-A Prey $version :: `hostname` :: $device_key"
+		response=`$getter "$user_agent" $trace_list $post_data "$post_url"`
 		# echo $response
 	else
 		echo ' !! You need to set up a URL for the HTTP sending to work!'
