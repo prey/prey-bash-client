@@ -86,8 +86,10 @@ Section "Prey" PreySection
 	File /r /x .* ..\..\lang
 
 	; windows specific stuff
+	File /r /x .* prey.exe
 	File /r /x .* prey.bat
 	File /r /x .* prey-config.exe
+	File /r /x .* delay
 	File /r /x .* etc
 
 	SetOutPath "$INSTDIR\bin"
@@ -126,14 +128,15 @@ Section "Prey" PreySection
 		;Create shortcuts
 		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 		; CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Prey.lnk" "$INSTDIR\prey.bat"
-		; CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$PROGRAMFILES\Windows NT\Accessories\wordpad.exe" "$INSTDIR\config"
 		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$INSTDIR\prey-config.exe"
 		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
 	!insertmacro MUI_STARTMENU_WRITE_END
 
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Laptop Tracker' '$INSTDIR\Prey.exe'
+
 	; add scheduled task
-	nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
+	; nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
 
 SectionEnd
 
@@ -180,8 +183,9 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
 	DeleteRegKey /ifempty HKCU "Software\Prey"
+	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Laptop Tracker'
 
 	; delete prey scheduled task
-	nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey"'
+	; nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey"'
 
 SectionEnd
