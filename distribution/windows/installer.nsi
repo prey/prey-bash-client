@@ -133,7 +133,9 @@ Section "Prey" PreySection
 
 	!insertmacro MUI_STARTMENU_WRITE_END
 
+	; create the registry and start the program
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Laptop Tracker' '$INSTDIR\Prey.exe'
+	nsExec::Exec '"$INSTDIR\prey.exe"'
 
 	; add scheduled task
 	; nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
@@ -184,6 +186,8 @@ Section "Uninstall"
 
 	DeleteRegKey /ifempty HKCU "Software\Prey"
 	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Laptop Tracker'
+
+	nsExec::Exec '"taskkill.exe" /IM "prey.exe"'
 
 	; delete prey scheduled task
 	; nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey"'
