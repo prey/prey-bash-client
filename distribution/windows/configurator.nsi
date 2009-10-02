@@ -242,13 +242,24 @@ Function nsDialogsPageLeave
 		!insertmacro ReplaceInFile "c:\prey\config" "smtp_password" "smtp_password='$R0'"
 	${EndIf}
 
-	${If} $POST_METHOD == 'http'
+	${ConfigRead} "c:\prey\config" "post_method=" $0
+	${If} $0 == "'http'"
+		GetDlgItem $1 $HWNDPARENT 1
+		SendMessage $1 ${WM_SETTEXT} 0 "STR:Checking..."
+		${NSD_GetText} $API_KEY $3
+		${NSD_GetText} $DEVICE_KEY $4
 		# Error Code = $0. Output = $1.
-		nsExec::ExecToStack '"c:\prey\bin\curl.exe" -s -X PUT http://control.preyproject.com/devices/$4.xml -d api_key=$3&device[synced]=1 | head -1'
+		nsExec::ExecToStack '"c:\prey\bin\curl.exe" -s -X PUT http://control.preyproject.com/devices/$4.xml -d api_key=$3&device[synced]=1'
+		Pop $0
 		Pop $1
-		${If} $1 != "HTTP/1.1 200 OK"
+		${If} $1 != "OK"
 			MessageBox MB_OK "Synchronization failed. Please make sure your API and Device keys are set up correctly, and we have an active Internet connection available."
+			GetDlgItem $1 $HWNDPARENT 1
+			SendMessage $1 ${WM_SETTEXT} 0 "STR:Apply"
 			Abort
+		${Else}
+			GetDlgItem $1 $HWNDPARENT 1
+			SendMessage $1 ${WM_SETTEXT} 0 "STR:OK!"
 		${EndIf}
 	${EndIf}
 
