@@ -487,7 +487,7 @@ function send_via_http {
 		fi
 		# curl_version=`$getter --version | head -1 | sed 's/\([^)].*\)).*/\1)/'`
 		# user_agent="-A \"$curl_version :: Prey $version :: `hostname` :: $device_key\""
-		user_agent="-A Prey/$version (`hostname`, $device_key)"
+		user_agent="-A Prey/$version ($os, `hostname`, $device_key)"
 		response=`$getter "$user_agent" $trace_list $post_data "$post_url"`
 		# echo $response
 	else
