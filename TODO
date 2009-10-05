@@ -3,6 +3,7 @@
 - La idea es que durante el proceso de recolección de datos, también se adjunte en el email un pequeño volcado de los paquetes TCP que se hayan generado mientras el ladrón navega por internet. tcpdump/wireshark > tcpxtract (Idea de Salamander).
 
 POSSIBLE MODULES
+- Blocker -> Block system on third attempt to put password (as in ATMs or PIN/PUK codes in SIMs).
 - Video -> Grab video with streamer or something else
 - Alarm -> play a mp3 file REAL loud
 - Delete -> Delete requested files & folders.
