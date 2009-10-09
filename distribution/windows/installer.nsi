@@ -133,11 +133,11 @@ Section "Prey" PreySection
 	!insertmacro MUI_STARTMENU_WRITE_END
 
 	; create the registry and start the program
-	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Cron for Prey Laptop Tracker' '$INSTDIR\cron.exe'
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe'
 	Exec '"$INSTDIR\cron.exe"'
 
 	; add scheduled task
-	; nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
+	nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey Laptop Tracker" -tr "$INSTDIR\cron.exe"'
 
 SectionEnd
 
@@ -184,11 +184,11 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
 	DeleteRegKey /ifempty HKCU "Software\Prey"
-	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Cron for Prey Laptop Tracker'
+	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker'
 
-	Exec '"taskkill.exe" /IM "cron.exe"'
+	nsExec::Exec '"taskkill.exe" /IM "cron.exe"'
 
 	; delete prey scheduled task
-	; nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey"'
+	nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey Laptop Tracker"'
 
 SectionEnd
