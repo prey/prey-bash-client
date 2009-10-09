@@ -1,8 +1,6 @@
 #!/bin/sh
 # Debian Package Builder, by Tomas Pollak
 
-version="0.3.1"
-
 if [ `whoami` != 'root' ]; then
 	echo 'Since we need to set up root permissions you need to run this as root. A simple "sudo" will do. :)'
 	exit
@@ -16,6 +14,7 @@ done
 
 basedir=`pwd`
 cd $cwd
+. $basedir/version
 
 # Remove temporary directory and .DEBs
 rm -rf ./build

@@ -15,11 +15,12 @@ function try_to_connect {
 }
 
 function get_current_delay {
-	cat $base_path/delay
+	delay_in_miliseconds=`cat $base_path/delay`
+	echo $(($delay_in_miliseconds/60000))
 }
 
 function update_execution_delay {
-	$delay_in_miliseconds=$$(($delay*60*1000))
+	delay_in_miliseconds=$(($delay*60*1000))
 	echo "$delay_in_miliseconds" > $base_path/delay
 }
 
