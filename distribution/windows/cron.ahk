@@ -11,15 +11,15 @@ ExecutionDelay = 1200000 ; twenty minutes
 Loop
 {
 	Run, %comspec% /c %PreyPath%\bin\bash.exe %PreyPath%\prey.sh >> %PreyPath%/prey.log, %PreyPath%, hide
-	IFExist, %PreyPath%\delay
+	IFExist, %PreyPath%\delay.tmp
 	{
-		FileRead, Contents, %PreyPath%\delay
+		FileRead, Contents, %PreyPath%\delay.tmp
 		if (not ErrorLevel and Contents > MinDelay)
 		{
 			ExecutionDelay = %Contents%
-			FileDelete, %PreyPath%\delay
 			Contents =  ; Free the memory.
 		}
+		FileMove, %PreyPath%\delay.tmp, %PreyPath%\delay
 	}
 	Sleep %ExecutionDelay%
 }
