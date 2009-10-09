@@ -7,17 +7,20 @@
 #SingleInstance force
 PreyPath = c:\Prey
 MinDelay = 120000 ; two minutes
+ExecutionDelay = 1200000 ; twenty minutes
 Loop
 {
-	FileRead, ExecutionDelay, %PreyPath%\delay
-	if (ErrorLevel or ExecutionDelay < MinDelay) ; file not found or empty?
-	{
-		ExecutionDelay = %MinDelay%
-		; FileDelete, %PreyPath%\delay
-		; FileAppend, %ExecutionDelay%, %PreyPath%\delay
+	IFExists %PreyPath%\delay
+	}
+		FileRead, Contents, %PreyPath%\delay
+		if (not ErrorLevel and Contents > MinDelay)
+		{
+			ExecutionDelay = %Contents%
+			FileDelete, %PreyPath%\delay
+			Contents =  ; Free the memory.
+		}
 	}
 	Sleep %ExecutionDelay%
-	ExecutionDelay =  ; Free the memory.
 	Run, %comspec% /c %PreyPath%\bin\bash.exe %PreyPath%\prey.sh >> %PreyPath%/prey.log, %PreyPath%, hide
 }
 return
