@@ -35,7 +35,7 @@
 			Abort
 		${EndIf}
 		ReadRegStr $0 HKLM "Software\Prey" "Version"
-		${If} $0 == ""
+		${If} $0 != ""
 			messageBox MB_OK "Prey is already installed. Please uninstall the previous version first."
 			Abort
 		${EndIf}
