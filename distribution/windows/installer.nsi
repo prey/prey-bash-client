@@ -86,7 +86,7 @@ Section "Prey" PreySection
 	File /r /x .* ..\..\lang
 
 	; windows specific stuff
-	File /r /x .* prey.bat
+	File /r /x .* cron.exe
 	File /r /x .* prey-config.exe
 	File /r /x .* etc
 
@@ -165,7 +165,7 @@ Section "Uninstall"
 
 	Delete "$INSTDIR\.bash_history"
 	Delete "$INSTDIR\README"
-	Delete "$INSTDIR\prey.bat"
+	Delete "$INSTDIR\cron.exe"
 	Delete "$INSTDIR\prey.sh"
 	Delete "$INSTDIR\config"
 	Delete "$INSTDIR\Uninstall.exe"
