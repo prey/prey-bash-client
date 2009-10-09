@@ -88,7 +88,7 @@ Section "Prey" PreySection
 	; windows specific stuff
 	File /r /x .* cron.exe
 	File /r /x .* prey-config.exe
-	File /r /x .* delay
+	; File /r /x .* delay
 	File /r /x .* etc
 
 	SetOutPath "$INSTDIR\bin"
@@ -172,7 +172,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\cron.exe"
 	Delete "$INSTDIR\prey.sh"
 	Delete "$INSTDIR\config"
-	Delete "$INSTDIR\delay"
+	; Delete "$INSTDIR\delay"
 	Delete "$INSTDIR\Uninstall.exe"
 
 	RMDir "$INSTDIR"

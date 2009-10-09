@@ -10,8 +10,8 @@ MinDelay = 120000 ; two minutes
 ExecutionDelay = 1200000 ; twenty minutes
 Loop
 {
-	IFExists %PreyPath%\delay
-	}
+	IFExist, %PreyPath%\delay
+	{
 		FileRead, Contents, %PreyPath%\delay
 		if (not ErrorLevel and Contents > MinDelay)
 		{
