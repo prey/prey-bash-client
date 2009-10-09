@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-version='0.3.1'
+version='0.3.3'
 base_path=`dirname $0`
 start_time=`date +"%F %T"`
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`

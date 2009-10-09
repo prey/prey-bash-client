@@ -15,12 +15,12 @@ function try_to_connect {
 }
 
 function get_current_delay {
-	schtasks.exe -query -fo LIST -v | egrep "TaskName|Repeat" | grep -A1 "Prey" | grep -v "Prey" | sed 's/[^0-9]//g'
+	cat $base_path/delay
 }
 
 function update_execution_delay {
-	schtasks.exe -delete -f -tn "Prey" 2> /dev/null
-	schtasks.exe -create -ru "System" -sc MINUTE -mo $delay -tn "Prey" -tr "c:\Prey\prey.bat" 2> /dev/null
+	$delay_in_miliseconds=$$(($delay*60*1000))
+	echo "$delay_in_miliseconds" > $base_path/delay
 }
 
 # module de/activation functions
