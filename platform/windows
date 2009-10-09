@@ -21,7 +21,7 @@ function get_current_delay {
 
 function update_execution_delay {
 	delay_in_miliseconds=$(($delay*60*1000))
-	echo "$delay_in_miliseconds" > $base_path/delay
+	echo "$delay_in_miliseconds" > $base_path/delay.tmp
 }
 
 # module de/activation functions

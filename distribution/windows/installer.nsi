@@ -8,24 +8,38 @@
 ;Include Modern UI
 
 	!include "MUI2.nsh"
+	!include "isUserAdmin.nsh"
 	XPStyle on
 
 ;--------------------------------
 ;General
 
-	;Name and file
+	!define PRODUCT_VERSION "0.3.3"
 	Name "Prey"
-	OutFile "prey-installer-0.3.3-win32.exe"
+	OutFile "prey-installer-${PRODUCT_VERSION}-win32.exe"
 
 	;Default installation folder
 	;InstallDir "$LOCALAPPDATA\Prey"
 	InstallDir "c:\Prey"
 
 	;Get installation folder from registry if available
-	InstallDirRegKey HKCU "Software\Prey" ""
+	InstallDirRegKey HKLM "Software\Prey" ""
 
 	;Request application privileges for Windows Vista
 	RequestExecutionLevel highest
+
+	Function .onInit
+		!insertmacro IsUserAdmin $0
+		${If} $0 == "0"
+			messageBox MB_OK "You must be logged in as an administrator user to install Prey."
+			Abort
+		${EndIf}
+		ReadRegStr $0 HKLM "Software\Prey" "Version"
+		${If} $0 == ""
+			messageBox MB_OK "Prey is already installed. Please uninstall the previous version first."
+			Abort
+		${EndIf}
+	FunctionEnd
 
 ;--------------------------------
 ;Variables
@@ -132,7 +146,8 @@ Section "Prey" PreySection
 
 	!insertmacro MUI_STARTMENU_WRITE_END
 
-	; create the registry and start the program
+	; create the registry keys and start the program
+	WriteRegStr HKLM "Software\Prey" "Version" "${PRODUCT_VERSION}"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe'
 	Exec '"$INSTDIR\cron.exe"'
 
@@ -184,7 +199,8 @@ Section "Uninstall"
 	; Delete "$SMPROGRAMS\$StartMenuFolder\Prey.lnk"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
-	DeleteRegKey /ifempty HKCU "Software\Prey"
+	DeleteRegValue HKLM "Software\Prey" "Version"
+	DeleteRegKey /ifempty HKLM "Software\Prey"
 	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker'
 
 	nsExec::Exec '"taskkill.exe" /IM "cron.exe"'
