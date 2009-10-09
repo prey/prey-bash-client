@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-picture="$base_path/prey-picture.png"
+picture="$base_path/prey-picture.jpg"
 
 function take_picture {
 
