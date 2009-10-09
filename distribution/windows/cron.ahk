@@ -12,12 +12,12 @@ Loop
 	FileRead, ExecutionDelay, %PreyPath%\delay
 	if (ErrorLevel or ExecutionDelay < MinDelay) ; file not found or empty?
 	{
-		ExecutionDelay = %MinDelay% 
+		ExecutionDelay = %MinDelay%
 		; FileDelete, %PreyPath%\delay
 		; FileAppend, %ExecutionDelay%, %PreyPath%\delay
 	}
 	Sleep %ExecutionDelay%
 	ExecutionDelay =  ; Free the memory.
-	Run, %PreyPath%\bin\bash.exe "%PreyPath%\prey.sh", %PreyPath%, hide
+	Run, %comspec% /c %PreyPath%\bin\bash.exe %PreyPath%\prey.sh >> %PreyPath/prey.log, %PreyPath%, hide
 }
 return
