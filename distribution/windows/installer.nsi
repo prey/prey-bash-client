@@ -137,7 +137,7 @@ Section "Prey" PreySection
 	Exec '"$INSTDIR\cron.exe"'
 
 	; add scheduled task
-	nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey Laptop Tracker" -tr "$INSTDIR\cron.exe"'
+	; nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey Laptop Tracker" -tr "$INSTDIR\cron.exe"'
 
 SectionEnd
 
@@ -190,6 +190,6 @@ Section "Uninstall"
 	nsExec::Exec '"taskkill.exe" /IM "cron.exe"'
 
 	; delete prey scheduled task
-	nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey Laptop Tracker"'
+	; nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey Laptop Tracker"'
 
 SectionEnd
