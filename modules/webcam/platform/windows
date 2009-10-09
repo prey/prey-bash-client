@@ -16,13 +16,8 @@ function take_picture {
 		fi
 	fi
 
-	$module_path/lib/webcam_capture.exe
-	if [ -f $base_path/vfw-0.bmp ]; then
-		$base_path/lib/bmp2png.exe $base_path/vfw-0.bmp 2> /dev/null
-		rm $base_path/vfw-0.bmp
-		mv $base_path/vfw-0.png "$picture"
-	fi
-
+	# we could add dimensions to the image (-w 640 -h 480)
+	$module_path/lib/snapshot.exe -q 90 -t jpeg "$picture"
 }
 
 function capture_video {
