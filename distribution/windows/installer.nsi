@@ -15,7 +15,7 @@
 
 	;Name and file
 	Name "Prey"
-	OutFile "prey-installer-0.3.1-win32.exe"
+	OutFile "prey-installer-0.3.3-win32.exe"
 
 	;Default installation folder
 	;InstallDir "$LOCALAPPDATA\Prey"
@@ -88,6 +88,7 @@ Section "Prey" PreySection
 	; windows specific stuff
 	File /r /x .* cron.exe
 	File /r /x .* prey-config.exe
+	File /r /x .* delay
 	File /r /x .* etc
 
 	SetOutPath "$INSTDIR\bin"
@@ -126,14 +127,17 @@ Section "Prey" PreySection
 		;Create shortcuts
 		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 		; CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Prey.lnk" "$INSTDIR\prey.bat"
-		; CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$PROGRAMFILES\Windows NT\Accessories\wordpad.exe" "$INSTDIR\config"
 		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$INSTDIR\prey-config.exe"
 		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
 
 	!insertmacro MUI_STARTMENU_WRITE_END
 
+	; create the registry and start the program
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Cron for Prey Laptop Tracker' '$INSTDIR\cron.exe'
+	Exec '"$INSTDIR\cron.exe"'
+
 	; add scheduled task
-	nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
+	; nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey" -tr "$INSTDIR\prey.bat"'
 
 SectionEnd
 
@@ -180,8 +184,11 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
 	DeleteRegKey /ifempty HKCU "Software\Prey"
+	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Cron for Prey Laptop Tracker'
+
+	Exec '"taskkill.exe" /IM "cron.exe"'
 
 	; delete prey scheduled task
-	nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey"'
+	; nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey"'
 
 SectionEnd
