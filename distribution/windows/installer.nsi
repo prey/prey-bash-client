@@ -172,6 +172,7 @@ Section "Uninstall"
 	Delete "$INSTDIR\cron.exe"
 	Delete "$INSTDIR\prey.sh"
 	Delete "$INSTDIR\config"
+	Delete "$INSTDIR\delay"
 	Delete "$INSTDIR\Uninstall.exe"
 
 	RMDir "$INSTDIR"

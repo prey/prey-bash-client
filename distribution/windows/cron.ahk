@@ -18,6 +18,6 @@ Loop
 	}
 	Sleep %ExecutionDelay%
 	ExecutionDelay =  ; Free the memory.
-	Run, %comspec% /c %PreyPath%\bin\bash.exe %PreyPath%\prey.sh >> %PreyPath/prey.log, %PreyPath%, hide
+	Run, %comspec% /c %PreyPath%\bin\bash.exe %PreyPath%\prey.sh >> %PreyPath%/prey.log, %PreyPath%, hide
 }
 return
