@@ -5,6 +5,7 @@
 # License: GPLv3
 ####################################################################
 
+PATH=/bin:$PATH
 version='0.3.3'
 base_path=`dirname $0`
 start_time=`date +"%F %T"`
