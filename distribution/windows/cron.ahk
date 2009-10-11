@@ -19,7 +19,7 @@ Loop
 			ExecutionDelay = %Contents%
 			Contents =  ; Free the memory.
 		}
-		FileMove, %PreyPath%\delay.tmp, %PreyPath%\delay
+		FileMove, %PreyPath%\delay.tmp, %PreyPath%\delay, 1
 	}
 	Sleep %ExecutionDelay%
 }

@@ -19,7 +19,7 @@ function get_modified_files {
 
 function get_screenshot {
 	$module_path/lib/boxcutter-fs.exe $screenshot.bmp
-	$base_path/lib/bmp2png.exe $screenshot.bmp 2> /dev/null
+	$base_path/lib/bmp2png.exe $screenshot.bmp &> /dev/null
 	rm $screenshot.bmp
 	screenshot=$base_path/prey-screenshot.png
 }

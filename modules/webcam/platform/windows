@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-picture="$base_path/prey-picture.jpg"
+picture="$base_path/out.jpg"
 
 function take_picture {
 
@@ -17,7 +17,7 @@ function take_picture {
 	fi
 
 	# we could add dimensions to the image (-w 640 -h 480)
-	$module_path/lib/snapshot.exe -q 90 -t jpeg "$picture"
+	$module_path/lib/snapshot.exe -q 90
 }
 
 function capture_video {
