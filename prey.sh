@@ -65,7 +65,7 @@ if [ -n "$check_url" ]; then
 	echo "$STRING_CHECK_URL"
 	check_status
 
-	if [ "$status" == '200' ]; then
+	if [ "$status" == "$missing_status_code" ]; then
 		echo -e "$STRING_PROBLEM"
 		parse_headers
 		process_response
