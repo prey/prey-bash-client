@@ -8,8 +8,15 @@
 # language, en (english) or es (espanol)
 lang='en'
 
-# verification URL, if left empty Prey will always activate and run
+# verification URL, if left empty Prey will always activate and run,
+# which is certainly *not* recommended.
 check_url='http://control.preyproject.com'
+
+# IMPORTANT: on what HTTP response code will Prey be activated (200 or 404)
+# control panel users don't touch this! standalone users may want to
+# change it back to 200 (previous setting), if you wish to wake Prey up by
+# creating the URL (as before) instead of removing an existing one
+missing_status_code='404'
 
 # you can use send the report via email or to the web service
 # valid values: http, email or scp

@@ -6,6 +6,8 @@
 import pygtk
 pygtk.require('2.0')
 import gtk
+# if having trouble with the GTK theme as root, do this:
+# sudo ln -s ~/.themes/ /root/.themes
 import os
 
 class PreyConfigurator:
