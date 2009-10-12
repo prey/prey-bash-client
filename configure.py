@@ -137,9 +137,9 @@ class PreyConfigurator:
         image.set_from_file("/usr/share/prey/pixmaps/prey.png")
         main_vbox.add(image)
 
-        label = gtk.Label("Prey Configurator")
-        label.set_alignment(0, 0.5)
-        main_vbox.pack_start(label, False, False, 5)
+        # label = gtk.Label("Prey Configurator")
+        # label.set_alignment(0, 0.5)
+        # main_vbox.pack_start(label, False, False, 5)
 
         # first frame
 
