@@ -8,7 +8,7 @@
 ;Include Modern UI
 
 	!include "MUI2.nsh"
-	!include "isUserAdmin.nsh"
+	!include "nsis\isUserAdmin.nsh"
 	XPStyle on
 
 ;--------------------------------
@@ -49,8 +49,10 @@
 ;--------------------------------
 ;Interface Settings
 
-	!define MUI_WELCOMEFINISHPAGE_BITMAP "${NSISDIR}\Contrib\Graphics\Wizard\win.bmp"
+	!define MUI_WELCOMEFINISHPAGE_BITMAP "nsis\prey-wizard.bmp"
 	!define MUI_ABORTWARNING
+    BrandingText "Prey ${PRODUCT_VERSION} Installer"
+
 
 ;--------------------------------
 ;Pages
@@ -94,45 +96,49 @@ Section "Prey" PreySection
 	SetOutPath "$INSTDIR"
 	; %NSIS_INSTALL_FILES
 
-	File /r /x .* ..\..\prey.sh
-	File /r /x .* ..\..\config
-	File /r /x .* ..\..\README
-	File /r /x .* ..\..\lang
+	File ..\..\prey.sh
+	File ..\..\config
+	File ..\..\README
+	File /r ..\..\lang
 
 	; windows specific stuff
-	File /r /x .* cron.exe
-	File /r /x .* prey-config.exe
-	; File /r /x .* delay
-	File /r /x .* etc
+	File prey.log
+	File delay
+	File cron.exe
+	File prey-config.exe
+	File /r etc
 
 	SetOutPath "$INSTDIR\bin"
-	File /x .* bin\*.*
+	File bin\*.*
 
 	SetOutPath "$INSTDIR\platform"
-	File /r /x .* ..\..\platform\base
-	File /r /x .* ..\..\platform\windows
+	File ..\..\platform\base
+	File ..\..\platform\windows
 
 	SetOutPath "$INSTDIR\lib"
-	File /r /x .* ..\..\lib\*.*
+	File /r ..\..\lib\*.exe
 
 	SetOutPath "$INSTDIR\modules"
-	File /r /x /a .* ..\..\modules\alert
-	File /r /x /a .* ..\..\modules\network
-	File /r /x /a .* ..\..\modules\session
-	File /r /x /a .* ..\..\modules\webcam
-	;File /r /x /a .* ..\..\modules\geo
+	File /r /x linux /x darwin ..\..\modules\alert
+	File /r /x linux /x darwin ..\..\modules\network
+	File /r /x linux /x darwin ..\..\modules\session
+	File /r /x linux /x darwin ..\..\modules\webcam
+	;File /r /x linux /x darwin ..\..\modules\geo
 
 	SetOutPath "$INSTDIR\modules\network"
-	File /r /x /a .* active
+	File /a active
 
 	SetOutPath "$INSTDIR\modules\session"
-	File /r /x /a .* active
+	File /a active
 
 	SetOutPath "$INSTDIR\modules\webcam"
-	File /r /x /a .* active
+	File /a active
 
 	SetOutPath "$INSTDIR"
 
+	AccessControl::GrantOnFile "$INSTDIR\prey.log" "(BU)" "FullAccess"
+	AccessControl::GrantOnFile "$INSTDIR\delay" "(BU)" "FullAccess"	
+	
 	;Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -173,6 +179,8 @@ SectionEnd
 
 Section "Uninstall"
 
+	Processes::KillProcess "cron.exe"
+
 	RMDir /r "$INSTDIR\bin"
 	RMDir /r "$INSTDIR\etc"
 	RMDir /r "$INSTDIR\platform"
@@ -180,14 +188,14 @@ Section "Uninstall"
 	RMDir /r "$INSTDIR\lib"
 	RMDir /r "$INSTDIR\modules"
 
-	;%NSIS_UNINSTALL_FILES
-
+	Delete "$INSTDIR\prey.log"
 	Delete "$INSTDIR\.bash_history"
 	Delete "$INSTDIR\README"
 	Delete "$INSTDIR\cron.exe"
+	Delete "$INSTDIR\prey-config.exe"
 	Delete "$INSTDIR\prey.sh"
 	Delete "$INSTDIR\config"
-	; Delete "$INSTDIR\delay"
+	Delete "$INSTDIR\delay"
 	Delete "$INSTDIR\Uninstall.exe"
 
 	RMDir "$INSTDIR"
@@ -202,8 +210,6 @@ Section "Uninstall"
 	DeleteRegValue HKLM "Software\Prey" "Version"
 	DeleteRegKey /ifempty HKLM "Software\Prey"
 	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker'
-
-	nsExec::Exec '"taskkill.exe" /IM "cron.exe"'
 
 	; delete prey scheduled task
 	; nsExec::Exec '"schtasks.exe" -delete -f -tn "Prey Laptop Tracker"'
