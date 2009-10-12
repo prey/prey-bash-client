@@ -6,7 +6,7 @@
 
 Prey is a lightweight application for tracking your stolen laptop.
 
-It runs in Windows and *NIX systems as well (Mac, Linux). It is licenced
+It runs in Windows and *NIX systems as well (Mac, Linux). It is licensed
 by the GPLv3 which means you can do just about anything with it.
 
 ##############################################
@@ -93,6 +93,9 @@ diverse contributors, specially these amazing people:
 
 	o Diego Torres - http://warorface.com
 	o Juan Carlos Mardones - http://juanmardones.com
+	o Newstart/MKHCB
+	o Rodrigo Linfati - http://linfati.cl
+	o Michael Smith
 
 Prey also works thanks to Brandon Zehm's excellent command-line SMTP client
 and Axel Bauer's iSightCapture program for capturing pictures on the
