@@ -9,20 +9,19 @@
 
 	!include "MUI2.nsh"
 	!include "nsDialogs.nsh"
-	!include "StringFunctions.nsh"
-	!include "isUserAdmin.nsh"
+	!include "nsis\StringFunctions.nsh"
+	!include "nsis\isUserAdmin.nsh"
 	XPStyle on
 
 ;--------------------------------
 ;General
 
 	;Name and file
+	!define PRODUCT_VERSION "0.3.3"
 	Name "Prey"
 	Caption "Prey Configurator"
 	SubCaption 0 "Settings for Prey"
 	OutFile "prey-config.exe"
-
-	MiscButtonText "Back" "Next" "Cancel" "Apply"
 
 	;Request application privileges for Windows Vista
 	RequestExecutionLevel highest
@@ -38,9 +37,12 @@
 ;--------------------------------
 ;Interface Configuration
  
+  MiscButtonText "Back" "Next" "Cancel" "Apply"
+  BrandingText "Prey Configurator for version ${PRODUCT_VERSION}"
   !define MUI_HEADERIMAGE
-  !define MUI_HEADERIMAGE_BITMAP "prey-header.bmp" ; optional
-  !define MUI_ABORTWARNING
+  !define MUI_HEADERIMAGE_BITMAP "nsis\prey-header.bmp" ; optional
+  !define MUI_ABORTWARNING 
+  !define  MUI_ABORTWARNING_TEXT "Are you sure you want to quit? Settings will not be saved."
 
 ;--------------------------------
 ;Variables
@@ -68,13 +70,16 @@
 
 Function nsDialogsPage
 
+	!insertmacro MUI_HEADER_TEXT " Prey Setup" "Remember to get your API/Device keys at preyproject.com."
+
 		nsDialogs::Create 1018
 		Pop $0
 
-		GetFunctionAddress $0 OnBack
-		nsDialogs::OnBack $0
+		; Were not using any back buttons
+		; GetFunctionAddress $0 OnBack
+		; nsDialogs::OnBack $0
 
-		${NSD_CreateLabel} 0 0 100% 10u "Are you using Prey with the control panel (http) or directly to your email?"
+		${NSD_CreateLabel} 0 0 100% 10u "Are you using Prey with the control panel (http) or in standalone mode (email)?"
 		Pop $0
 
 		; POST METHOD
@@ -99,7 +104,7 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "api_key=" $3
 		${GetInQuotes} $3 $API_KEY
 
-		${NSD_CreateLabel} 0 50 75% 10u "API Key"
+		${NSD_CreateLabel} 0 50 75% 9u "API Key"
 		Pop $0
 		${NSD_CreateText} 0 65 20% 12u $API_KEY
 		Pop $API_KEY
@@ -109,21 +114,21 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "device_key=" $4
 		${GetInQuotes} $4 $DEVICE_KEY
 
-		${NSD_CreateLabel} 0 90 75% 10u "Device Key"
+		${NSD_CreateLabel} 0 90 75% 9u "Device Key"
 		Pop $0
 		${NSD_CreateText} 0 105 20% 12u $DEVICE_KEY
 		Pop $DEVICE_KEY
 		${NSD_SetTextLimit} $DEVICE_KEY 6
 
-		${NSD_CreateLabel} 0 145 25% 100u "You can get these $\r$\nboth in Prey's new$\r$\nweb service at$\r$\npreyproject.com."
-		Pop $0
+		; ${NSD_CreateLabel} 0 145 25% 100u "You can get these $\r$\nboth in Prey's new$\r$\nweb service at$\r$\npreyproject.com."
+		; Pop $0
 
 
 		; CHECK URL
 		${ConfigRead} "c:\prey\config" "check_url=" $2
 		${GetInQuotes} $2 $CHECK_URL
 
-		${NSD_CreateLabel} 120 50 40% 10u "Check URL"
+		${NSD_CreateLabel} 120 50 70% 9u "Check URL (You'll need to create it later to activate Prey)"
 		Pop $0
 		${NSD_CreateText} 120 65 63% 12u $CHECK_URL
 		Pop $CHECK_URL
@@ -132,7 +137,7 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "mail_to=" $5
 		${GetInQuotes} $5 $MAIL_TO
 
-		${NSD_CreateLabel} 120 90 30% 10u "Mail to"
+		${NSD_CreateLabel} 120 90 30% 9u "Mail to"
 		Pop $0
 		${NSD_CreateText} 120 105 30% 12u $MAIL_TO
 		Pop $MAIL_TO
@@ -141,7 +146,7 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "smtp_server=" $6
 		${GetInQuotes} $6 $SMTP_SERVER
 
-		${NSD_CreateLabel} 120 130 75% 10u "STMP Server"
+		${NSD_CreateLabel} 120 130 75% 9u "STMP Server"
 		Pop $0
 		${NSD_CreateText} 120 145 30% 12u $SMTP_SERVER
 		Pop $SMTP_SERVER
@@ -150,7 +155,7 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "smtp_username=" $7
 		${GetInQuotes} $7 $SMTP_USERNAME
 
-		${NSD_CreateLabel} 270 90 75% 10u "STMP Username"
+		${NSD_CreateLabel} 270 90 75% 9u "STMP Username"
 		Pop $0
 		${NSD_CreateText} 270 105 30% 12u $SMTP_USERNAME
 		Pop $SMTP_USERNAME
@@ -159,7 +164,7 @@ Function nsDialogsPage
 		${ConfigRead} "c:\prey\config" "smtp_password=" $8
 		${GetInQuotes} $8 $SMTP_PASSWORD
 
-		${NSD_CreateLabel} 270 130 75% 10u "STMP Password"
+		${NSD_CreateLabel} 270 130 75% 9u "STMP Password"
 		Pop $0
 		${NSD_CreatePassword} 270 145 30% 12u $SMTP_PASSWORD
 		Pop $SMTP_PASSWORD
@@ -278,6 +283,7 @@ Function nsDialogsPageLeave
 		${EndIf}
 	${EndIf}
 
+	AccessControl::GrantOnFile "c:\prey\config" "(BU)" "GenericRead"
 	MessageBox MB_OK "Configuration OK! $\r$\nThanks for installing Prey."
 
 FunctionEnd

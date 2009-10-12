@@ -10,16 +10,13 @@ MinDelay = 120000 ; two minutes
 ExecutionDelay = 1200000 ; twenty minutes
 Loop
 {
-	Run, %comspec% /c %PreyPath%\bin\bash.exe %PreyPath%\prey.sh >> %PreyPath%/prey.log, %PreyPath%, hide
-	IFExist, %PreyPath%\delay.tmp
+	RunWait, %comspec% /c %PreyPath%\bin\bash.exe %PreyPath%\prey.sh > %PreyPath%/prey.log, %PreyPath%, hide
+	FileRead, Contents, %PreyPath%\delay
+	if (not ErrorLevel and Contents > MinDelay)
 	{
-		FileRead, Contents, %PreyPath%\delay.tmp
-		if (not ErrorLevel and Contents > MinDelay)
-		{
-			ExecutionDelay = %Contents%
-			Contents =  ; Free the memory.
-		}
-		FileMove, %PreyPath%\delay.tmp, %PreyPath%\delay, 1
+		ExecutionDelay = %Contents%
+		; FileAppend, "Prey now running every %ExecutionDelay% miliseconds.`n", %PreyPath%\prey.log
+		Contents =  ; Free the memory.
 	}
 	Sleep %ExecutionDelay%
 }
