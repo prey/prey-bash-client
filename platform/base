@@ -166,7 +166,7 @@ function process_response {
 	if [ "$content_type" == "application/xml" ]; then
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
-	else if [ "$content_type" == "text/xml" ]; then
+	elif [ "$content_type" == "text/xml" ]; then
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
 	elif [ "$content_type" == "application/octet-stream" ]; then
