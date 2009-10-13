@@ -33,15 +33,15 @@
 		Abort
 	${EndIf}
  FunctionEnd
- 
+
 ;--------------------------------
 ;Interface Configuration
- 
+
   MiscButtonText "Back" "Next" "Cancel" "Apply"
   BrandingText "Prey Configurator for version ${PRODUCT_VERSION}"
   !define MUI_HEADERIMAGE
   !define MUI_HEADERIMAGE_BITMAP "nsis\prey-header.bmp" ; optional
-  !define MUI_ABORTWARNING 
+  !define MUI_ABORTWARNING
   !define  MUI_ABORTWARNING_TEXT "Are you sure you want to quit? Settings will not be saved."
 
 ;--------------------------------
@@ -269,7 +269,7 @@ Function nsDialogsPageLeave
 		${NSD_GetText} $API_KEY $3
 		${NSD_GetText} $DEVICE_KEY $4
 		# Error Code = $0. Output = $1.
-		nsExec::ExecToStack '"c:\prey\bin\curl.exe" -s -X PUT http://control.preyproject.com/devices/$4.xml -d api_key=$3&device[synced]=1'
+		nsExec::ExecToStack '"c:\prey\bin\curl.exe" -s -X PUT -u $3:x http://control.preyproject.com/devices/$4.xml -d device[synced]=1'
 		Pop $0
 		Pop $1
 		${If} $1 != "OK"
@@ -284,7 +284,7 @@ Function nsDialogsPageLeave
 	${EndIf}
 
 	AccessControl::GrantOnFile "c:\prey\config" "(BU)" "GenericRead"
-	MessageBox MB_OK "Configuration OK! $\r$\nThanks for installing Prey."
+	MessageBox MB_OK "Configuration OK! Your device is now synchronized and being tracked by Prey. $\r$\nThanks for installing!"
 
 FunctionEnd
 
