@@ -8,6 +8,9 @@
 # language, en (english) or es (espanol)
 lang='en'
 
+# autoconnect feature, disabled by default until we sort out *all* bugs
+auto_connect='n'
+
 # verification URL, if left empty Prey will always activate and run,
 # which is certainly *not* recommended.
 check_url='http://control.preyproject.com'
