@@ -273,7 +273,7 @@ Function nsDialogsPageLeave
 		Pop $0
 		Pop $1
 		${If} $1 != "OK"
-			MessageBox MB_OK "Synchronization failed. Please make sure your API and Device keys are set up correctly, and the device is not marked as missing."
+			MessageBox MB_OK "Synchronization failed. Please make sure your API and Device keys are set up correctly, and we have an active Internet connection available."
 			GetDlgItem $1 $HWNDPARENT 1
 			SendMessage $1 ${WM_SETTEXT} 0 "STR:Apply"
 			Abort
