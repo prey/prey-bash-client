@@ -165,6 +165,9 @@ function process_response {
 	if [ "$content_type" == "application/xml" ]; then
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
+	else if [ "$content_type" == "text/xml" ]; then
+		echo ' -- Got XML. Parsing...'
+		response_type='xml'
 	elif [ "$content_type" == "application/octet-stream" ]; then
 		echo ' -- Got a ZIP file! What shall we do with it?'
 		response_type='zip'
@@ -172,7 +175,7 @@ function process_response {
 		echo ' -- Got a text file! Lets see if its something we can actually run.'
 		response_type='text'
 	elif [ "$content_type" == "text/html" ]; then
-		echo " -- Response was just an HTML file. Lets just do our job."
+		echo " -- Response was an HTML file. Lets just do our job."
 		return
 	else
 		return
@@ -480,10 +483,10 @@ function send_via_http {
 		fi
 	fi
 
-	post_url=`echo $check_url | sed 's/\.xml/\/reports/'`
+	post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`
 	if [ -n "$post_url" ]; then
 		if [ -n "$api_key" ]; then
-			post_data="$file_list -F api_key=$api_key"
+			post_data="$file_list -u '$api_key:x'"
 		fi
 		# curl_version=`$getter --version | head -1 | sed 's/\([^)].*\)).*/\1)/'`
 		# user_agent="-A \"$curl_version :: Prey $version :: `hostname` :: $device_key\""
