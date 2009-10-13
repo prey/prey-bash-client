@@ -122,6 +122,7 @@ function decrypt {
 ####################################################################
 
 getter="curl -s"
+user_agent="-A Prey/$version ($os, `hostname`, $device_key)"
 
 # returns if we have have network access, otherwise 0
 # you can check against the gateway or the net, change it if you like
@@ -147,7 +148,7 @@ function check_status {
 			exit
 		fi
 	fi
-	headers=`$getter -I $check_url`
+	headers=`$getter -I "$user_agent" $check_url`
 	status=`echo -e "$headers" | grep HTTP | sed -e 's/[^200|302|400|404|500]//g' -e 's/^0//'`
 }
 
@@ -490,7 +491,6 @@ function send_via_http {
 		fi
 		# curl_version=`$getter --version | head -1 | sed 's/\([^)].*\)).*/\1)/'`
 		# user_agent="-A \"$curl_version :: Prey $version :: `hostname` :: $device_key\""
-		user_agent="-A Prey/$version ($os, `hostname`, $device_key)"
 		response=`$getter "$user_agent" $trace_list $post_data "$post_url"`
 		# echo $response
 	else
