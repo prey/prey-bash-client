@@ -210,6 +210,7 @@ Section "Uninstall"
 
 	DeleteRegValue HKLM "Software\Prey" "Version"
 	DeleteRegKey /ifempty HKLM "Software\Prey"
+	DeleteRegKey /ifempty HKCU "Software\Prey"
 	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker'
 
 	; delete prey scheduled task

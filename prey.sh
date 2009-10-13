@@ -45,8 +45,11 @@ fi
 
 check_net_status
 if [ $connected == 0 ]; then
-	echo "$STRING_TRY_TO_CONNECT"
-	try_to_connect
+
+	if [ "$auto_connect" == "y" ]; then
+		echo "$STRING_TRY_TO_CONNECT"
+		try_to_connect
+	fi
 
 	# ok, lets check again
 	check_net_status

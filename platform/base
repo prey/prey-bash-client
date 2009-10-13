@@ -121,8 +121,8 @@ function decrypt {
 # request/response functions
 ####################################################################
 
-getter="curl -s"
 user_agent="-A Prey/$version ($os, `hostname`, $device_key)"
+getter="curl -s $user_agent"
 
 # returns if we have have network access, otherwise 0
 # you can check against the gateway or the net, change it if you like
@@ -148,7 +148,7 @@ function check_status {
 			exit
 		fi
 	fi
-	headers=`$getter -I "$user_agent" $check_url`
+	headers=`$getter -I $check_url`
 	status=`echo -e "$headers" | grep HTTP | sed -e 's/[^200|302|400|404|500]//g' -e 's/^0//'`
 }
 
@@ -479,7 +479,7 @@ function send_via_http {
 	if [ "$os" == "windows" ]; then
 		arch=`echo $PROCESSOR_ARCHITEW6432`
 		if [ `find_in "$arch" '64'` ]; then
-			getter='curl64 -s'
+			getter="curl64 -s $user_agent"
 			echo -e " ** 64 bit architecture detected!"
 		fi
 	fi
@@ -491,7 +491,7 @@ function send_via_http {
 		fi
 		# curl_version=`$getter --version | head -1 | sed 's/\([^)].*\)).*/\1)/'`
 		# user_agent="-A \"$curl_version :: Prey $version :: `hostname` :: $device_key\""
-		response=`$getter "$user_agent" $trace_list $post_data "$post_url"`
+		response=`$getter $trace_list $post_data "$post_url"`
 		# echo $response
 	else
 		echo ' !! You need to set up a URL for the HTTP sending to work!'
