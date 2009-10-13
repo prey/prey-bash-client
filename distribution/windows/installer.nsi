@@ -34,8 +34,9 @@
 			messageBox MB_OK "You must be logged in as an administrator user to install Prey."
 			Abort
 		${EndIf}
-		ReadRegStr $0 HKLM "Software\Prey" "Version"
-		${If} $0 != ""
+		ReadRegStr $0 HKCU "Software\Prey" "Start Menu Folder"
+		ReadRegStr $1 HKLM "Software\Prey" "Version"
+		${If} $0$1 != ""
 			messageBox MB_OK "Prey is already installed. Please uninstall the previous version first."
 			Abort
 		${EndIf}
