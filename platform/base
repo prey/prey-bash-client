@@ -487,7 +487,7 @@ function send_via_http {
 	post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`
 	if [ -n "$post_url" ]; then
 		if [ -n "$api_key" ]; then
-			post_data="$file_list -u '$api_key:x'"
+			post_data="$file_list -u $api_key:x"
 		fi
 		# curl_version=`$getter --version | head -1 | sed 's/\([^)].*\)).*/\1)/'`
 		# user_agent="-A \"$curl_version :: Prey $version :: `hostname` :: $device_key\""
