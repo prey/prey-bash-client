@@ -34,6 +34,13 @@
 	${EndIf}
  FunctionEnd
 
+	ReadRegStr $0 HKLM "Software\Prey" "Path"
+	${If} $0 != ""
+		!define PREYPATH "c:\prey"
+	${Else}
+		!define PREYPATH "$0"
+	${EndIf}
+
 ;--------------------------------
 ;Interface Configuration
 
@@ -42,7 +49,7 @@
   !define MUI_HEADERIMAGE
   !define MUI_HEADERIMAGE_BITMAP "nsis\prey-header.bmp" ; optional
   !define MUI_ABORTWARNING
-  !define  MUI_ABORTWARNING_TEXT "Are you sure you want to quit? Settings will not be saved."
+  !define MUI_ABORTWARNING_TEXT "Are you sure you want to quit? Settings will not be saved."
 
 ;--------------------------------
 ;Variables
@@ -83,7 +90,7 @@ Function nsDialogsPage
 		Pop $0
 
 		; POST METHOD
-		${ConfigRead} "c:\prey\config" "post_method=" $1
+		${ConfigRead} "$PREYPATH\config" "post_method=" $1
 		${GetInQuotes} $1 $POST_METHOD
 
 		${NSD_CreateRadioButton} 0 20 100 12u "http"
@@ -101,7 +108,7 @@ Function nsDialogsPage
 		${EndIf}
 
 		; API KEY
-		${ConfigRead} "c:\prey\config" "api_key=" $3
+		${ConfigRead} "$PREYPATH\config" "api_key=" $3
 		${GetInQuotes} $3 $API_KEY
 
 		${NSD_CreateLabel} 0 50 75% 9u "API Key"
@@ -111,7 +118,7 @@ Function nsDialogsPage
 		${NSD_SetTextLimit} $API_KEY 12
 
 		; DEVICE KEY
-		${ConfigRead} "c:\prey\config" "device_key=" $4
+		${ConfigRead} "$PREYPATH\config" "device_key=" $4
 		${GetInQuotes} $4 $DEVICE_KEY
 
 		${NSD_CreateLabel} 0 90 75% 9u "Device Key"
@@ -125,7 +132,7 @@ Function nsDialogsPage
 
 
 		; CHECK URL
-		${ConfigRead} "c:\prey\config" "check_url=" $2
+		${ConfigRead} "$PREYPATH\config" "check_url=" $2
 		${GetInQuotes} $2 $CHECK_URL
 
 		${NSD_CreateLabel} 120 50 70% 9u "Check URL (You'll need to create it later to activate Prey)"
@@ -134,7 +141,7 @@ Function nsDialogsPage
 		Pop $CHECK_URL
 
 		; MAIL TO
-		${ConfigRead} "c:\prey\config" "mail_to=" $5
+		${ConfigRead} "$PREYPATH\config" "mail_to=" $5
 		${GetInQuotes} $5 $MAIL_TO
 
 		${NSD_CreateLabel} 120 90 30% 9u "Mail to"
@@ -143,7 +150,7 @@ Function nsDialogsPage
 		Pop $MAIL_TO
 
 		; SMTP SERVER
-		${ConfigRead} "c:\prey\config" "smtp_server=" $6
+		${ConfigRead} "$PREYPATH\config" "smtp_server=" $6
 		${GetInQuotes} $6 $SMTP_SERVER
 
 		${NSD_CreateLabel} 120 130 75% 9u "STMP Server"
@@ -152,7 +159,7 @@ Function nsDialogsPage
 		Pop $SMTP_SERVER
 
 		; SMTP USERNAME
-		${ConfigRead} "c:\prey\config" "smtp_username=" $7
+		${ConfigRead} "$PREYPATH\config" "smtp_username=" $7
 		${GetInQuotes} $7 $SMTP_USERNAME
 
 		${NSD_CreateLabel} 270 90 75% 9u "STMP Username"
@@ -161,7 +168,7 @@ Function nsDialogsPage
 		Pop $SMTP_USERNAME
 
 		; SMTP PASSWORD
-		${ConfigRead} "c:\prey\config" "smtp_password=" $8
+		${ConfigRead} "$PREYPATH\config" "smtp_password=" $8
 		${GetInQuotes} $8 $SMTP_PASSWORD
 
 		${NSD_CreateLabel} 270 130 75% 9u "STMP Password"
@@ -222,54 +229,54 @@ Function nsDialogsPageLeave
 
 	${If} $POST_METHOD_CHANGED == "1"
 		${NSD_GetText} $POST_METHOD $0
-		!insertmacro ReplaceInFile "c:\prey\config" "post_method" "post_method='$0'"
+		!insertmacro ReplaceInFile "$PREYPATH\config" "post_method" "post_method='$0'"
 	${EndIf}
 
 	${NSD_GetText} $CHECK_URL $0
 	${If} "$2" != "'$0'"
-		!insertmacro ReplaceInFile "c:\prey\config" "check_url" "check_url='$0'"
+		!insertmacro ReplaceInFile "$PREYPATH\config" "check_url" "check_url='$0'"
 	${EndIf}
 
 	${NSD_GetText} $API_KEY $0
 	${If} "$3" != "'$0'"
-		!insertmacro ReplaceInFile "c:\prey\config" "api_key" "api_key='$0'"
+		!insertmacro ReplaceInFile "$PREYPATH\config" "api_key" "api_key='$0'"
 	${EndIf}
 
 	${NSD_GetText} $DEVICE_KEY $0
 	${If} "$4" != "'$0'"
-		!insertmacro ReplaceInFile "c:\prey\config" "device_key" "device_key='$0'"
+		!insertmacro ReplaceInFile "$PREYPATH\config" "device_key" "device_key='$0'"
 	${EndIf}
 
 	${NSD_GetText} $MAIL_TO $0
 	${If} "$5" != "'$0'"
-		!insertmacro ReplaceInFile "c:\prey\config" "mail_to" "mail_to='$0'"
+		!insertmacro ReplaceInFile "$PREYPATH\config" "mail_to" "mail_to='$0'"
 	${EndIf}
 
 	${NSD_GetText} $SMTP_SERVER $0
 	${If} "$6" != "'$0'"
-		!insertmacro ReplaceInFile "c:\prey\config" "smtp_server" "smtp_server='$0'"
+		!insertmacro ReplaceInFile "$PREYPATH\config" "smtp_server" "smtp_server='$0'"
 	${EndIf}
 
 	${NSD_GetText} $SMTP_USERNAME $0
 	${If} "$7" != "'$0'"
-		!insertmacro ReplaceInFile "c:\prey\config" "smtp_username" "smtp_username='$0'"
+		!insertmacro ReplaceInFile "$PREYPATH\config" "smtp_username" "smtp_username='$0'"
 	${EndIf}
 
 	${NSD_GetText} $SMTP_PASSWORD $0
 	${If} "$8" != "'$0'"
 		Base64::Encode "$0"
 		Pop $R0
-		!insertmacro ReplaceInFile "c:\prey\config" "smtp_password" "smtp_password='$R0'"
+		!insertmacro ReplaceInFile "$PREYPATH\config" "smtp_password" "smtp_password='$R0'"
 	${EndIf}
 
-	${ConfigRead} "c:\prey\config" "post_method=" $0
+	${ConfigRead} "$PREYPATH\config" "post_method=" $0
 	${If} $0 == "'http'"
 		GetDlgItem $1 $HWNDPARENT 1
 		SendMessage $1 ${WM_SETTEXT} 0 "STR:Checking..."
 		${NSD_GetText} $API_KEY $3
 		${NSD_GetText} $DEVICE_KEY $4
 		# Error Code = $0. Output = $1.
-		nsExec::ExecToStack '"c:\prey\bin\curl.exe" -s -X PUT -u $3:x http://control.preyproject.com/devices/$4.xml -d device[synced]=1'
+		nsExec::ExecToStack '"$PREYPATH\bin\curl.exe" -s -X PUT -u $3:x http://control.preyproject.com/devices/$4.xml -d device[synced]=1'
 		Pop $0
 		Pop $1
 		${If} $1 != "OK"
@@ -283,7 +290,8 @@ Function nsDialogsPageLeave
 		${EndIf}
 	${EndIf}
 
-	AccessControl::GrantOnFile "c:\prey\config" "(BU)" "GenericRead"
+	AccessControl::GrantOnFile "$PREYPATH\config" "(BU)" "GenericRead"
+	Exec '"$PREYPATH\cron.exe"'
 	MessageBox MB_OK "Configuration OK! Your device is now synchronized and being tracked by Prey. $\r$\nThanks for installing!"
 
 FunctionEnd

@@ -138,8 +138,8 @@ Section "Prey" PreySection
 	SetOutPath "$INSTDIR"
 
 	AccessControl::GrantOnFile "$INSTDIR\prey.log" "(BU)" "FullAccess"
-	AccessControl::GrantOnFile "$INSTDIR\delay" "(BU)" "FullAccess"	
-	
+	AccessControl::GrantOnFile "$INSTDIR\delay" "(BU)" "FullAccess"
+
 	;Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -155,8 +155,9 @@ Section "Prey" PreySection
 
 	; create the registry keys and start the program
 	WriteRegStr HKLM "Software\Prey" "Version" "${PRODUCT_VERSION}"
+	WriteRegStr HKLM "Software\Prey" "Path" "${INSTDIR}"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe'
-	Exec '"$INSTDIR\cron.exe"'
+	; Exec '"$INSTDIR\cron.exe"'
 
 	; add scheduled task
 	; nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey Laptop Tracker" -tr "$INSTDIR\cron.exe"'
@@ -209,6 +210,7 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
 	DeleteRegValue HKLM "Software\Prey" "Version"
+	DeleteRegValue HKLM "Software\Prey" "Path"
 	DeleteRegKey /ifempty HKLM "Software\Prey"
 	DeleteRegKey /ifempty HKCU "Software\Prey"
 	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker'
