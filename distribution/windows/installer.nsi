@@ -20,7 +20,8 @@
 
 	;Default installation folder
 	;InstallDir "$LOCALAPPDATA\Prey"
-	InstallDir "c:\Prey"
+	!define PREY_PATH "c:\Prey"
+	InstallDir "${PREY_PATH}"
 
 	;Get installation folder from registry if available
 	InstallDirRegKey HKLM "Software\Prey" ""
@@ -154,8 +155,8 @@ Section "Prey" PreySection
 	!insertmacro MUI_STARTMENU_WRITE_END
 
 	; create the registry keys and start the program
+	WriteRegStr HKLM "Software\Prey" "Path" "${PRODUCT_VERSION}"
 	WriteRegStr HKLM "Software\Prey" "Version" "${PRODUCT_VERSION}"
-	WriteRegStr HKLM "Software\Prey" "Path" "${INSTDIR}"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe'
 	; Exec '"$INSTDIR\cron.exe"'
 
@@ -180,6 +181,12 @@ SectionEnd
 ;Uninstaller Section
 
 Section "Uninstall"
+
+	!insertmacro IsUserAdmin $0
+	${If} $0 == "0"
+		messageBox MB_OK "You must be logged in as an administrator user to install Prey."
+		Abort
+	${EndIf}
 
 	Processes::KillProcess "cron.exe"
 
