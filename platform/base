@@ -17,6 +17,10 @@ function find_in {
 	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
 }
 
+function is_command_running {
+	ps ax | grep -v grep | grep "$1" > /dev/null && echo 1 || return 0
+}
+
 # fetches a var and then assigns it as $value
 # expects the name of hash and then the name of var
 function get_var {

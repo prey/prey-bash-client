@@ -10,7 +10,7 @@ alert_user
 
 if [ $change_wallpaper == 'y' ]; then
 
-	if [ ! -f "$wallpaper" ]; then
+	# if [ ! -f "$wallpaper" ]; then
 
 		# TODO: finish this, to allow setting the wallpaper remotely
 		# if [ `find_in "$wallpaper" 'http://'` ]; then
@@ -19,7 +19,7 @@ if [ $change_wallpaper == 'y' ]; then
 		# sed -i -e $module_path/config 'wallpaper=.*$/wallpaper=\'$module_path/lib/prey-wallpaper-$lang.png\'/'
 		# fi
 
-	fi
+	# fi
 
 	echo "$STRING_CHANGE_WALLPAPER"
 	if [ ! -f "$wallpaper.orig" ]; then # we still havent put the email address
