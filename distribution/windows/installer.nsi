@@ -155,7 +155,7 @@ Section "Prey" PreySection
 	!insertmacro MUI_STARTMENU_WRITE_END
 
 	; create the registry keys and start the program
-	WriteRegStr HKLM "Software\Prey" "Path" "${PRODUCT_VERSION}"
+	WriteRegStr HKLM "Software\Prey" "Path" "${PREY_PATH}"
 	WriteRegStr HKLM "Software\Prey" "Version" "${PRODUCT_VERSION}"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe'
 	; Exec '"$INSTDIR\cron.exe"'
