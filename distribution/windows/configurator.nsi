@@ -36,9 +36,9 @@
 	${EndIf}
 	ReadRegStr $1 HKLM "Software\Prey" "Path"
 	${If} $1 != ""
-		StrCpy PREY_PATH "c:\Prey"
-	${Else}
 		StrCpy PREY_PATH "$1"
+	${Else}
+		StrCpy PREY_PATH "c:\Prey"
 	${EndIf}
  FunctionEnd
 
