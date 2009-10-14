@@ -38,7 +38,8 @@
 		ReadRegStr $0 HKCU "Software\Prey" "Start Menu Folder"
 		ReadRegStr $1 HKLM "Software\Prey" "Version"
 		${If} $0$1 != ""
-			messageBox MB_OK "Prey is already installed. Please uninstall the previous version first."
+			messageBox MB_OK "Prey is already installed. We need to uninstall the previous version first.$\r$\nPress OK and well send you there."
+			Exec $INSTDIR\Uninstall.exe
 			Abort
 		${EndIf}
 	FunctionEnd
@@ -180,13 +181,17 @@ SectionEnd
 ;--------------------------------
 ;Uninstaller Section
 
-Section "Uninstall"
-
+Function un.onInit
 	!insertmacro IsUserAdmin $0
 	${If} $0 == "0"
 		messageBox MB_OK "You must be logged in as an administrator user to install Prey."
 		Abort
 	${EndIf}
+	MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
+	Abort
+FunctionEnd
+
+Section "Uninstall"
 
 	Processes::KillProcess "cron.exe"
 
