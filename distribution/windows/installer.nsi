@@ -184,7 +184,7 @@ SectionEnd
 Function un.onInit
 	!insertmacro IsUserAdmin $0
 	${If} $0 == "0"
-		messageBox MB_OK "You must be logged in as an administrator user to install Prey."
+		messageBox MB_OK "You must be logged in as an administrator user to uninstall Prey."
 		Abort
 	${EndIf}
 	MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
