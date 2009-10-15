@@ -9,7 +9,7 @@
 lang='en'
 
 # autoconnect feature, disabled by default until we are 200% sure it
-works flawlessly in all platforms. feel free to try it out though.
+# works flawlessly in all platforms. feel free to try it out though.
 auto_connect='n'
 
 # verification URL, if left empty Prey will always activate and run,
