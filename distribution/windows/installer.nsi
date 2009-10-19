@@ -158,7 +158,7 @@ Section "Prey" PreySection
 	; create the registry keys and start the program
 	WriteRegStr HKLM "Software\Prey" "Path" "${PREY_PATH}"
 	WriteRegStr HKLM "Software\Prey" "Version" "${PRODUCT_VERSION}"
-	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe'
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe --log'
 	; Exec '"$INSTDIR\cron.exe"'
 
 	; add scheduled task
