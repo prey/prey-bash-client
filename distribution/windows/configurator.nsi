@@ -40,6 +40,14 @@
 	${Else}
 		StrCpy $PREY_PATH "c:\Prey"
 	${EndIf}
+	Processes::FindProcess "cron.exe"
+	${If} $R0 == "0"
+		messageBox MB_OK|MB_ICONINFORMATION "Welcome! It seems you've just installed Prey. Please remember to register in preyproject.com to get your API and Device keys if you still haven't."
+		; messageBox MB_YESNO|MB_ICONINFORMATION "Welcome! It seems you've just installed Prey. Please remember to register in preyproject.com if you haven't, to get your API and Device keys." IDYES "OK" IDNO "Signup Now"
+		; signup:
+		;	ExecShell "open" "http://control.preyproject.com/signup"
+		; ok:
+	${EndIf}
  FunctionEnd
 
 ;--------------------------------
