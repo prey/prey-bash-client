@@ -13,7 +13,7 @@ Test = ;
 
 Loop, %0% { ; for each command line parameter
 	If (%A_Index% = "--log")
-		Log_to = "> %PreyPath%/prey.log"
+		Log_to = > %PreyPath%/prey.log
 	Else If (%A_Index% = "--test")
 		Test = -t ;
 }
