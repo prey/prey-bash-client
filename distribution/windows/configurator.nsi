@@ -300,7 +300,7 @@ Function nsDialogsPageLeave
 	${EndIf}
 
 	AccessControl::GrantOnFile "$PREY_PATH\config" "(BU)" "GenericRead"
-	Exec '"$PREY_PATH\cron.exe"'
+	Exec '"$PREY_PATH\cron.exe" --log'
 	MessageBox MB_OK "Configuration OK! Your device is now synchronized and being tracked by Prey. $\r$\nThanks for installing!"
 
 FunctionEnd
