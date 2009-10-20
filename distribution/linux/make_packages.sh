@@ -30,7 +30,7 @@ mkdir -p ./build/tmp/prey/usr/share/prey
 cp $basedir/prey.sh ./build/tmp/prey/usr/share/prey/
 cp $basedir/config ./build/tmp/prey/usr/share/prey/
 cp $basedir/configure.py ./build/tmp/prey/usr/share/prey/
-cp $basedir/install.sh ./build/tmp/prey/usr/share/prey/
+# cp $basedir/distribution/linux/install.sh ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/lib ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/lang ./build/tmp/prey/usr/share/prey/
 cp -r $basedir/platform ./build/tmp/prey/usr/share/prey/
