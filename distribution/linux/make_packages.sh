@@ -28,6 +28,7 @@ cp -r DEBIAN ./build/tmp/prey/
 # copying the base dir stuff
 mkdir -p ./build/tmp/prey/usr/share/prey
 cp $basedir/prey.sh ./build/tmp/prey/usr/share/prey/
+cp $basedir/version ./build/tmp/prey/usr/share/prey/
 cp $basedir/config ./build/tmp/prey/usr/share/prey/
 cp $basedir/configure.py ./build/tmp/prey/usr/share/prey/
 # cp $basedir/distribution/linux/install.sh ./build/tmp/prey/usr/share/prey/
@@ -66,6 +67,8 @@ rm -r prey
 mkdir -p ./build/tmp/prey/usr/share/applications
 cp prey-config.desktop ./build/tmp/prey/usr/share/applications
 
+rm -f `find build/tmp/prey/usr/share/prey -name "darwin"`
+
 sudo chown root.root ./build/tmp/prey/usr/share/prey -R
 
 # Make the deb package
@@ -76,3 +79,6 @@ fi
 mv build/*.deb .
 # Remove temporary directory
 sudo rm -rf ./build
+
+cp prey-$version-linux.zip $basedir/releases
+cp *.deb $basedir/releases
