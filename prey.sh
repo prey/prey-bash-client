@@ -6,7 +6,6 @@
 ####################################################################
 
 PATH=/bin:$PATH
-version='0.3.3'
 base_path=`dirname $0`
 start_time=`date +"%F %T"`
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
@@ -21,6 +20,7 @@ fi
 # base files inclusion
 ####################################################################
 
+. $base_path/version
 . $base_path/config
 if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
