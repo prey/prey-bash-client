@@ -68,10 +68,11 @@ if [ -n "$check_url" ]; then
 	echo "$STRING_CHECK_URL"
 	check_status
 
+	parse_headers
+	process_response
+
 	if [ "$status" == "$missing_status_code" ]; then
 		echo -e "$STRING_PROBLEM"
-		parse_headers
-		process_response
 	else
 		echo -e "$STRING_NO_PROBLEM"
 		exit

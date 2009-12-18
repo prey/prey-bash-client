@@ -152,13 +152,13 @@ function check_status {
 			exit
 		fi
 	fi
-	headers=`$getter "$user_agent" -I $check_url`
-	status=`echo -e "$headers" | grep HTTP | sed -e 's/[^200|302|400|404|500]//g' -e 's/^0//'`
+	response=`$getter "$user_agent" -i $check_url`
+	status=`echo -e "$response" | grep HTTP | sed -e 's/[^200|302|400|404|500]//g' -e 's/^0//'`
 }
 
 # we may eventually use a specific header for Prey
 function parse_headers {
-	content_type=`echo "$headers" | grep "Content-Type" | sed 's/.*: \([a-z\/-]*\).*/\1/'`
+	content_type=`echo "$response" | grep "Content-Type" | sed 's/.*: \([a-z\/-]*\).*/\1/'`
 }
 
 # this is where the magic will happen. :)
@@ -185,7 +185,6 @@ function process_response {
 	else
 		return
 	fi
-	response=`$getter "$user_agent" $check_url`
 	eval 'process_'"${response_type}"''
 }
 
@@ -220,10 +219,12 @@ function process_xml {
 
 	prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
 	if [ -n "$prey_configuration" ]; then
+		echo -e "\n\033[1m >> Reading configuration...\n\033[0m"
 		process_config
 	fi
 	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	if [ -n "$module_configuration" ]; then
+		echo -e "\n\033[1m >> Reading module configuration...\n\033[0m"
 		deactivate_all_modules # we need to do so we can enable only the active ones
 		process_modules
 	fi
@@ -234,7 +235,13 @@ function process_config {
 
 	echo -e "$prey_configuration" | while read line; do
 
-		if [ `find_in "$line" '<delay>'` ]; then
+		if [ `find_in "$line" '<current_release>'` ]; then
+			current_release=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
+			if [ $current_release -gt $version ]; then
+				echo " -- Updating Prey!"
+				update_prey
+			fi
+		elif [ `find_in "$line" '<delay>'` ]; then
 			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			if [ -n "$delay" ]; then
 				if [ "`get_current_delay`" != "$delay" ]; then
@@ -323,6 +330,21 @@ function process_text {
 function process_zip {
 	echo ' -- Processing ZIP... (well, not really :)'
 }
+
+####################################################################
+# prey updater
+####################################################################
+
+function update_prey {
+
+	base_url="http://cloud.github.com/downloads/tomas/prey/"
+	update_package=$base_url"prey-$version-$os.zip"
+
+	wget "$update_package" -O $base_path/update_package.zip 2> /dev/null
+	unzip -u $base_path/update_package.zip -d $base_path
+
+}
+
 
 ####################################################################
 # module functions
