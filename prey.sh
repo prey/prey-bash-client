@@ -32,10 +32,9 @@ fi
 echo -e "\E[36m$STRING_START ### `date`\E[0m\n"
 
 if [ "$1" == "-t" ]; then
-	echo -e "\033[1m -- TEST MODE ENABLED. WON'T CHECK URL OR SEND DATA!\033[0m\n"
+	echo -e "\033[1m -- TEST MODE ENABLED. WON'T SEND DATA!\033[0m\n"
 	. $base_path/config.test 2> /dev/null
 	test_mode=1
-	check_url=''
 fi
 
 ####################################################################
@@ -72,9 +71,9 @@ if [ -n "$check_url" ]; then
 	process_response
 
 	if [ "$status" == "$missing_status_code" ]; then
-		echo -e "$STRING_PROBLEM"
+		echo -e "\n$STRING_PROBLEM"
 	else
-		echo -e "$STRING_NO_PROBLEM"
+		echo -e "\n$STRING_NO_PROBLEM"
 		exit
 	fi
 fi

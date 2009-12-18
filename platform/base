@@ -153,7 +153,7 @@ function check_status {
 		fi
 	fi
 	response=`$getter "$user_agent" -i $check_url`
-	status=`echo -e "$response" | grep HTTP | sed -e 's/[^200|302|400|404|500]//g' -e 's/^0//'`
+	status=`echo -e "$response" | grep HTTP | sed -e 's/[^200|302|400|401|403|404|500]//g' -e 's/^0//'`
 }
 
 # we may eventually use a specific header for Prey
