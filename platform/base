@@ -338,10 +338,20 @@ function process_zip {
 function update_prey {
 
 	base_url="http://cloud.github.com/downloads/tomas/prey/"
-	update_package=$base_url"prey-$version-$os.zip"
+	update_package=$base_url"prey-$current_release-$os.zip"
 
+	echo ' -- Fetching new Prey release...'
 	wget "$update_package" -O $base_path/update_package.zip 2> /dev/null
+	echo ' -- Unpacking!'
+
 	unzip -u $base_path/update_package.zip -d $base_path
+
+	if [ -f "changes.diff" ]; then
+		patch --dry-run -f -b -p1 < changes.diff
+		rm changes.diff
+	fi
+
+	rm "$base_path/update_package.zip"
 
 }
 
