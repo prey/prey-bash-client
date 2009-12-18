@@ -237,10 +237,6 @@ function process_config {
 
 		if [ `find_in "$line" '<current_release>'` ]; then
 			current_release=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
-			if [ $current_release -gt $version ]; then
-				echo " -- Updating Prey!"
-				update_prey
-			fi
 		elif [ `find_in "$line" '<delay>'` ]; then
 			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			if [ -n "$delay" ]; then
@@ -253,6 +249,10 @@ function process_config {
 			if [ `find_in "$line" 'true'` ]; then
 				auto_update="y"
 				echo ' -- Auto update enabled!'
+				if [ $current_release -gt $version ]; then
+					echo " -- Updating Prey!"
+					update_prey
+				fi
 			fi
 		fi
 
