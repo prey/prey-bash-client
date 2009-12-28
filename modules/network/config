@@ -1,9 +1,0 @@
-#!/bin/bash
-####################################################################
-# PREY Network Module Config File - by Tomas Pollak (bootlog.org)
-# URL: http://preyproject.com
-# License: GPLv3
-####################################################################
-
-# should we trace the complete route? (it's a bit slow)
-trace_route='n'
