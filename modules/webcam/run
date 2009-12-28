@@ -12,7 +12,7 @@ if [ -f "$picture" ]; then
 	add_file picture "$picture"
 fi
 
-if [ $capture_video = 'y' ]; then
+if [ $capture_video == 'y' ]; then
 
 	echo "$STRING_CAPTURE_VIDEO"
 	capture_video
