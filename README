@@ -48,12 +48,16 @@ that’s how the problem generally gets fixed.
 
  -- Linux users (not Debian/Ubuntu)
 
-Once you’ve downloaded the package, unzip it and execute the installation
-script. It will prompt for all the necesary fields, and even sign up in
-Prey for you if case you haven’t registered yet:
+Once you’ve downloaded the package, unzip it and move all the contents to a
+folder of your choice (we use /usr/share/prey). Then you need to open up the
+config file and change your settings according to your configuration. If
+you’re using the Control Panel, then you only need to insert your API and
+Device keys; otherwise you need to set up your SMTP server settings.
 
-	$ chmod +x install.sh
-	$ ./install.sh
+Finally, you need to add a crontab entry for root. You can do this by typing
+the following in a terminal:
+
+$ (sudo crontab -l | grep -v prey; echo "*/20 * * * * /usr/share/prey.sh > /dev/null") | sudo crontab -
 
 Note: You should use the full URL in Prey's setup, such as
 http://preyproject.com (not just preyproject.com).
