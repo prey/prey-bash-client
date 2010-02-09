@@ -14,14 +14,14 @@ by the GPLv3 which means you can do just about anything with it.
 ##############################################
 
 The script runs at a specified interval in your machine, and checks
-for a specified URL in the web. If the URL exists it means the
+for a specified URL on the web. If the URL does not exist it means the
 computer/laptop has been stolen, and thus goes through the information
 gathering routine and sends all that info through to a previously defined
 email address. You can also not define a URL and in that case the program
-will send the data every time it runs.
+will send the data every time it runs, although it is *not* recommended.
 
-You can also use the Prey web control panel (control.preyproject.com)
-to manage the computer state, as well as toggling different modules for
+Since 0.3.3, you can use a web control panel (control.preyproject.com)
+to manage your computer's state, as well as toggling different modules for
 triggering certain behaviours remotely. In this case you don't have to
 worry about the URL thing since it takes care of that for you. You only
 need to register and insert the API and Device keys in the Prey
@@ -77,12 +77,12 @@ automatically!)
 
 The idea is that when your laptop gets stolen -- hopefully never, that is --
 you should immediately activate Prey, by declaring the device as missing
-in the control panel, or by creating the URL you specified in Prey's
+in the Control Panel, or by deleting the URL you specified in Prey's
 configuration. This depends on the operation mode (post method) you set up
 when installing Prey.
 
-Prey expects a status code 200 to run. If it receives a status 404 it will
-simply shut down and wait for the next interval tu check the URL.
+Prey expects a status code 404 to run. If it receives a status 200 it will
+simply shut down and wait for the next interval to check the URL.
 
 ##############################################
 5. Acknowledgements
@@ -96,6 +96,7 @@ diverse contributors, specially these amazing people:
 	o Newstart/MKHCB
 	o Rodrigo Linfati - http://linfati.cl
 	o Michael Smith
+	o Pablo Poo
 
 Prey also works thanks to Brandon Zehm's excellent command-line SMTP client
 and Axel Bauer's iSightCapture program for capturing pictures on the
