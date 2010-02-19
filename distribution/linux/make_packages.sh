@@ -59,7 +59,7 @@ cp -r build/tmp/prey/usr/share/prey .
 zip -9 -r prey-$version-linux.zip prey -x \*darwin* 1> /dev/null
 echo "Built Linux .zip package in prey-$version-linux.zip"
 rm -Rf prey/pixmaps
-zip -9 -r prey-$version-darwin.zip prey -x \*linux* -x \*configure.py -x \*install.sh -x \*config 1> /dev/null
+zip -9 -r prey-$version-darwin.zip prey -x \*linux* -x \*configure.py -x \*install.sh -x \*config -x \*__MACOSX 1> /dev/null
 echo "Built Darwin .zip package in prey-$version-darwin.zip"
 rm -r prey
 

@@ -65,8 +65,8 @@ fi
 
 if [ -n "$check_url" ]; then
 	echo "$STRING_CHECK_URL"
-	check_status
 
+	check_status
 	parse_headers
 	process_response
 
@@ -74,7 +74,7 @@ if [ -n "$check_url" ]; then
 		echo -e "\n$STRING_PROBLEM"
 	else
 		echo -e "\n$STRING_NO_PROBLEM"
-		exit
+		exit 0
 	fi
 fi
 

@@ -29,20 +29,3 @@ function update_execution_delay {
 function is_module_active {
 	cat $base_path/modules/$1/active 2> /dev/null
 }
-
-function activate_module {
-	touch $base_path/modules/$1/active
-	echo 1 > $base_path/modules/$1/active
-}
-
-function deactivate_module {
-	# echo 0 > $base_path/modules/$1/active
-	rm -f $base_path/modules/$1/active 2> /dev/null
-}
-
-function deactivate_all_modules {
-	for file in `find $base_path/modules -name active`; do
-		# echo 0 > $file
-		rm -f $file 2> /dev/null
-	done
-}

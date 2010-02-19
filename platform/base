@@ -13,32 +13,45 @@ separator='########################################################'
 
 # finds a string within another
 # usage find_in 'foobar' 'foo' -> echoes 1
-function find_in {
+find_in(){
 	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
 }
 
-function is_command_running {
+is_command_running(){
 	ps ax | grep -v grep | grep "$1" > /dev/null && echo 1 || return 0
 }
 
+callback(){
+	until read -st 1; do
+		echo -n ""
+	done
+
+	echo "Done. Running callback!"
+	eval '$1 $REPLY'
+}
+
+####################################################################
+# local var storage
+####################################################################
+
 # fetches a var and then assigns it as $value
 # expects the name of hash and then the name of var
-function get_var {
+get_var(){
 	HASH="$1[*]"
 	local ${!HASH}
 	eval 'echo ${'"${2}"'} | sed "s/%20/ /g"'
 }
 
 # if you need to fetch a specific trace or file
-function get_trace {
+get_trace(){
 	get_var traces ${current_module}__$1
 }
 
-function get_file {
+get_file(){
 	get_var files ${current_module}__$1
 }
 
-function add_trace {
+add_trace(){
 	trace="${current_module}__$1=$2"
 	echo " ++ Adding trace for $current_module: $1"
 	# we need to encode whitespaces, otherwise well get into trouble
@@ -46,14 +59,14 @@ function add_trace {
 	traces[${#traces[*]}]="$trace"
 }
 
-function add_file {
+add_file(){
 	if [ -f "$2" ]; then
 		echo " ++ Adding file for $current_module: $1 -> $2"
 		files[${#files[*]}]=${current_module}__$1=$2
 	fi
 }
 
-function list_traces {
+list_traces(){
 	# echo " -- ${#traces[*]} traces gathered!"
 	for t in "${traces[@]}"
 	do
@@ -73,7 +86,7 @@ function list_traces {
 	done
 }
 
-function list_files {
+list_files(){
 	# echo " -- ${#files[*]} files gathered!"
 	for f in "${files[@]}"
 	do
@@ -86,12 +99,12 @@ function list_files {
 	done
 }
 
-function remove_traces {
+remove_traces(){
 	unset -v traces
 	echo ' -- Dropping all traces!'
 }
 
-function remove_files {
+remove_files(){
 	for f in "${files[@]}"
 	do
 		file=`echo $f | sed 's/^.*=\(.*\)/\1/'`
@@ -100,11 +113,11 @@ function remove_files {
 	done
 }
 
-function get_current_delay {
+get_current_delay(){
 	crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
 }
 
-function update_execution_delay {
+update_execution_delay(){
 	(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
 }
 
@@ -113,11 +126,11 @@ function update_execution_delay {
 ####################################################################
 
 # TODO: should switch to more advanced forms of encryption!
-function encrypt {
+encrypt(){
 	echo -n "$1" | openssl enc -base64
 }
 
-function decrypt {
+decrypt(){
 	echo "$1" | openssl enc -base64 -d
 }
 
@@ -130,7 +143,7 @@ getter="curl -s"
 
 # returns if we have have network access, otherwise 0
 # you can check against the gateway or the net, change it if you like
-function check_net_status {
+check_net_status(){
 	# get_gateway_ip
 	# net_check_target=$gateway_ip
 	net_check_target="www.google.com"
@@ -143,7 +156,7 @@ function check_net_status {
 }
 
 # we could eventually use a different method for status checking
-function check_status {
+check_status(){
 	if [ "$post_method" == 'http' ]; then
 		if [ -n "$device_key" ]; then
 			check_url="$check_url/devices/$device_key.xml"
@@ -153,11 +166,11 @@ function check_status {
 		fi
 	fi
 	response=`$getter "$user_agent" -i $check_url`
-	status=`echo -e "$response" | grep HTTP | sed -e 's/[^200|302|400|401|403|404|500]//g' -e 's/^0//'`
+	status=`echo -e "$response" | head -1 | cut -d" " -f2`
 }
 
 # we may eventually use a specific header for Prey
-function parse_headers {
+parse_headers(){
 	content_type=`echo "$response" | grep "Content-Type" | sed 's/.*: \([a-z\/-]*\).*/\1/'`
 }
 
@@ -166,16 +179,16 @@ function parse_headers {
 	# if its a shell script, run it and post back the response
 	# if its a zip file, unzip it in modules and run the active modules (the executable ones)
 	# if its a xml/json file, parse it and assign config values correspondingly
-function process_response {
+process_response(){
 	if [ "$content_type" == "application/xml" ]; then
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
 	elif [ "$content_type" == "text/xml" ]; then
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
-	elif [ "$content_type" == "application/octet-stream" ]; then
-		echo ' -- Got a ZIP file! What shall we do with it?'
-		response_type='zip'
+	# elif [ "$content_type" == "application/octet-stream" ]; then
+	# 	echo ' -- Got a stream! What shall we do with it?'
+	#		response_type='zip'
 	elif [ "$content_type" == "text/plain" ]; then
 		echo ' -- Got a text file! Lets see if its something we can actually run.'
 		response_type='text'
@@ -188,7 +201,7 @@ function process_response {
 	eval 'process_'"${response_type}"''
 }
 
-# function expects a <modules> section in the xml and activates de modules as requested
+# expects a <modules> section in the xml and activates de modules as requested
 # format should be as follows:
 
 # <device>
@@ -215,7 +228,7 @@ function process_response {
 #
 # <module name="location" active="true" />
 
-function process_xml {
+process_xml(){
 
 	prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
 	if [ -n "$prey_configuration" ]; then
@@ -225,13 +238,12 @@ function process_xml {
 	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	if [ -n "$module_configuration" ]; then
 		echo -e "\n\033[1m >> Reading module configuration...\n\033[0m"
-		deactivate_all_modules # we need to do so we can enable only the active ones
 		process_modules
 	fi
 
 }
 
-function process_config {
+process_config(){
 
 	echo -e "$prey_configuration" | while read line; do
 
@@ -260,46 +272,39 @@ function process_config {
 
 }
 
-function process_modules {
+# module, param, value
+update_config_for(){
+	sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" $base_path/modules/$1/config 2> /dev/null
+}
+
+process_modules(){
 
 	echo -e "$module_configuration" | while read line; do
 
 	if [ `find_in "$line" 'name='` ]; then # we have a module node
 		module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
-		if [ `find_in "$line" 'true'` ]; then # module should be active
-			echo " ** Got instructions for $module module."
-			if [ ! -d $base_path/modules/$module ]; then # not installed
-				echo " -- Installing new $module module!"
+		echo " ** Got instructions for $module module."
+		if [ ! -d $base_path/modules/$module ]; then # not installed
+			echo " -- Installing new $module module!"
+			install_or_update_module $module
+			if [ "$?" == 1 ]; then # we got an error installing the new module
+				module=''
+				continue
+			fi
+		elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
+			upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
+			current_version=`cat $base_path/modules/$module/version 2> /dev/null`
+			if [ $upstream_version -gt $current_version ]; then
+			echo " -- Updating $module module!"
 				install_or_update_module $module
 				if [ "$?" == 1 ]; then # we got an error installing the new module
 					module=''
 					continue
 				fi
-			elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
-				upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
-				current_version=`cat $base_path/modules/$module/version 2> /dev/null`
-				if [ $upstream_version -gt $current_version ]; then
-				echo " -- Updating $module module!"
-					install_or_update_module $module
-					if [ "$?" == 1 ]; then # we got an error installing the new module
-						module=''
-						continue
-					fi
-				fi
 			fi
-			if [ ! `is_module_active $module` ]; then
-				echo " -- Activating $module module!"
-				activate_module $module
-			fi
-		else # module should be inactive
-			if [ `is_module_active $module` ]; then
-				echo " -- Disabling $module module!"
-				deactivate_module $module
-			fi
-			module='' # this allows us to check below if the module is inactive
 		fi
-	else
-		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then # module is active and has configuration
+	else # config line for module $module
+		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then
 			param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
 			value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
 			echo " -- Updating setting $param -> $value for $module module."
@@ -314,7 +319,7 @@ function process_modules {
 # this is REALLY untested stuff
 # we should put this in a module with the new hash-by-module trace structure
 
-function process_text {
+process_text(){
 	if [[ -n `echo $response | grep '#!/bin/bash'` && ! -n `echo $response | grep ' rm '` ]]; then
 		echo ' -- Valid script! Lets get it on.'
 		script=/tmp/script.sh
@@ -327,15 +332,11 @@ function process_text {
 	fi
 }
 
-function process_zip {
-	echo ' -- Processing ZIP... (well, not really :)'
-}
-
 ####################################################################
 # prey updater
 ####################################################################
 
-function update_prey {
+update_prey(){
 
 	base_url="http://cloud.github.com/downloads/tomas/prey/"
 	update_package=$base_url"prey-$current_release-$os.zip"
@@ -360,13 +361,34 @@ function update_prey {
 # module functions
 ####################################################################
 
-function get_module {
+# mac/linux only. windows has another method of de/activating modules
+is_module_active(){
+	if [ -x $base_path/modules/$1/run ]; then
+		echo 1
+	else
+		return 0
+	fi
+}
+
+active_modules(){
+	if [ "$post_method" == "http" ]; then
+		echo -e "$module_configuration" | grep "<module " | sed 's/.*name="\([a-z_]*\)".*/\1/'
+	else
+		for module in `find $base_path/modules -maxdepth 1 -mindepth 1 -type d -printf "\n%f"`; do
+			if [ `is_module_active "$module"` ]; then
+				echo $module
+			fi
+		done
+	fi
+}
+
+get_module(){
 	rm $base_path/modules/$1.zip 2> /dev/null
 	repo_url=`echo $check_url | sed 's/.*\/\/\([^\/][a-z\.]*\)\/.*$/http:\/\/\1/'`
 	wget "$repo_url/modules/get/$1?api_key=$api_key" -O $base_path/modules/$1.zip 2> /dev/null
 }
 
-function install_or_update_module {
+install_or_update_module(){
 	get_module $1
 	package_size=`cat $base_path/modules/$1.zip 2> /dev/null | wc -c`
 	if [ $package_size -gt 0 ]; then
@@ -393,73 +415,38 @@ function install_or_update_module {
 	fi
 }
 
-# module, param, value
-function update_config_for {
-	if [ "$os" == "windows" ]; then
-		tmp_config=`cat $base_path/modules/$1/config | sed -e "s/$2=.*$/$2='$3'/" -e 's/-SLASH-/\//g'`
-		rm $base_path/modules/$1/config
-		touch $base_path/modules/$1/config
-		echo "$tmp_config" > $base_path/modules/$1/config
-	else
-		sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" $base_path/modules/$1/config 2> /dev/null
-	fi
-}
+run_active_modules() {
 
-# mac/linux only. windows has another method of de/activating modules
-function is_module_active {
-	if [ -x $base_path/modules/$1/run ]; then
-		echo 1
-	else
-		return 0
-	fi
-}
+	for current_module in `active_modules`; do
 
-function activate_module {
-	chmod +x $base_path/modules/$1/run 2> /dev/null
-}
+		module_path="$base_path/modules/$current_module"
 
-function deactivate_module {
-	chmod -x $base_path/modules/$1/run 2> /dev/null
-}
+		echo -e "\n\033[1m >> Running $current_module module!\n\033[0m"
 
-function deactivate_all_modules {
-	chmod -x `find $base_path/modules -name run` 2> /dev/null
-}
-
-function run_active_modules {
-
-	for module_path in `find $base_path/modules -maxdepth 1 -mindepth 1 -type d`; do
-
-		current_module=`echo "$module_path" | sed 's/.*[\/|\\]\(.*\)$/\1/'`
-		if [ `is_module_active "$current_module"` ]; then
-
-			echo -e "\n\033[1m >> Running $current_module module!\n\033[0m"
-
-			# if there's a language file, lets run it
-			if [ -f $module_path/lang/$lang ]; then
-			. $module_path/lang/$lang
-			elif [ -f $module_path/lang/$lang ]; then
-			. $module_path/lang/en
-			fi
-
-			# if there's a config file, lets run it as well
-			if [ -f $module_path/config ]; then
-				. $module_path/config
-			fi
-
-			# lets load the base functions for the module
-			if [ -f $module_path/platform/base ]; then
-				. $module_path/platform/base
-			fi
-
-			# and the OS-specific if there are
-			if [ -f $module_path/platform/$os ]; then
-				. $module_path/platform/$os
-			fi
-
-			# now, go!
-			. $module_path/run
+		# if there's a language file, lets run it
+		if [ -f $module_path/lang/$lang ]; then
+		. $module_path/lang/$lang
+		elif [ -f $module_path/lang/$lang ]; then
+		. $module_path/lang/en
 		fi
+
+		# if there's a config file, lets run it as well
+		if [ -f $module_path/config ]; then
+			. $module_path/config
+		fi
+
+		# lets load the base functions for the module
+		if [ -f $module_path/platform/base ]; then
+			. $module_path/platform/base
+		fi
+
+		# and the OS-specific if there are
+		if [ -f $module_path/platform/$os ]; then
+			. $module_path/platform/$os
+		fi
+
+		# now, go!
+		. $module_path/run
 
 	done
 	unset -v current_module
@@ -470,7 +457,7 @@ function run_active_modules {
 # data posting functions
 ####################################################################
 
-function post_data {
+post_data(){
 	trace_list=`list_traces`
 	file_list=`list_files`
 	if [[ $trace_list || $file_list ]]; then
@@ -489,7 +476,7 @@ function post_data {
 	fi
 }
 
-function send_via_email {
+send_via_email(){
 
 	mailsender="$base_path/lib/sendEmail"
 	if [ "$os" == "windows" ]; then
@@ -510,7 +497,7 @@ function send_via_email {
 	rm $trace_file.msg
 }
 
-function send_via_http {
+send_via_http(){
 
 	if [ "$os" == "windows" ]; then
 		arch=`echo $PROCESSOR_ARCHITEW6432`
@@ -525,14 +512,14 @@ function send_via_http {
 		if [ -n "$api_key" ]; then
 			post_data="$file_list -u $api_key:x"
 		fi
-		response=`$getter "$user_agent" $trace_list $post_data "$post_url"`
+		response=`$getter "$user_agent" "$trace_list" $post_data "$post_url"`
 		# echo $response
 	else
 		echo ' !! You need to set up a URL for the HTTP sending to work!'
 	fi
 }
 
-function send_via_scp {
+send_via_scp(){
 	if [[ -n "$scp_server" && -n "$scp_path" ]]; then
 		echo -e " -- Uploading the stuff to $scp_path in $scp_server..."
 		new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
