@@ -7,6 +7,16 @@
 
 airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 
+function get_current_delay {
+        grep "<integer>.*<.integer>" /Library/LaunchDaemons/com.preyproject.PreyMac.plist | sed -e "s/^.*<integer/<integer/" | cut -f2 -d">"| cut -f1 -d"<"
+}
+
+function update_execution_delay {
+        sudo launchctl unload /Library/LaunchDaemons/com.preyproject.PreyMac.plist
+        sed -i -e "s/<integer>.*<\/integer>/<integer>$delay<\/integer>/" /Library/LaunchDaemons/com.preyproject.PreyMac.plist
+        sudo launchctl load /Library/LaunchDaemons/com.preyproject.PreyMac.plist
+}
+
 function get_gateway_ip {
 	gateway_ip=`netstat -rn | grep default | cut -c20-35`
 }
