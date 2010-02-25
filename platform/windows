@@ -1,5 +1,5 @@
 #!/bin/bash
-####################################################################
+###################################################################
 # PREY Windows Base Functions - by Tomas Pollak (bootlog.org)
 # URL: http://preyproject.com
 # License: GPLv3
@@ -15,16 +15,16 @@ function try_to_connect {
 }
 
 function get_current_delay {
-	delay_in_miliseconds=`cat $base_path/delay`
+	delay_in_miliseconds=`reg query "HKLM\Software\Prey" /v Delay | grep Delay | sed "s/[^0-9]*//"`
 	echo $(($delay_in_miliseconds/60000))
 }
 
 function update_execution_delay {
 	delay_in_miliseconds=$(($delay*60*1000))
-	echo "$delay_in_miliseconds" > $base_path/delay
+	reg add "HKLM\Software\Prey" /v Delay /d $delay_in_miliseconds
 }
 
-# module de/activation functions
+# module functions
 
 function is_module_active {
 	cat $base_path/modules/$1/active 2> /dev/null
