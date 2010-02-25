@@ -15,13 +15,13 @@ function try_to_connect {
 }
 
 function get_current_delay {
-	delay_in_miliseconds=`reg query "HKLM\Software\Prey" /v Delay | grep Delay | sed "s/[^0-9]*//"`
+	delay_in_miliseconds=`reg query "HKLM\Software\Prey" //v "Delay" | grep Delay | sed "s/[^0-9]*//"`
 	echo $(($delay_in_miliseconds/60000))
 }
 
 function update_execution_delay {
 	delay_in_miliseconds=$(($delay*60*1000))
-	reg add "HKLM\Software\Prey" /v Delay /d $delay_in_miliseconds
+	reg add "HKLM\Software\Prey" //v "Delay" //d "$delay_in_miliseconds" //f > /dev/null
 }
 
 # module functions

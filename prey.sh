@@ -70,6 +70,8 @@ if [ -n "$check_url" ]; then
 	parse_headers
 	process_response
 
+	echo " -- Got status code $status."
+
 	if [ "$status" == "$missing_status_code" ]; then
 		echo -e "\n$STRING_PROBLEM"
 	else
