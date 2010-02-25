@@ -1,5 +1,5 @@
 ; -------------------------------
-; Prey Windows Installer Script
+; Prey Windows Configuration
 ; By Tomas Pollak (bootlog.org)
 ; http://preyproject.com
 ; Licence: GPLv3
@@ -9,301 +9,933 @@
 
 	!include "MUI2.nsh"
 	!include "nsDialogs.nsh"
+	!include "InstallOptions.nsh"
 	!include "nsis\StringFunctions.nsh"
 	!include "nsis\isUserAdmin.nsh"
+	!include "nsis\windowsVersion.nsh"
+
+	!include "nsis\NSISpcre.nsh"
+	!insertmacro REMatches
+
 	XPStyle on
 
-;--------------------------------
-;General
-
-	;Name and file
-	!define PRODUCT_VERSION "0.3.3"
-	Name "Prey"
-	Caption "Prey Configurator"
-	SubCaption 0 "Settings for Prey"
-	OutFile "prey-config.exe"
-
-	;Request application privileges for Windows Vista
+	;Request application privileges for Windows Vista/7
 	RequestExecutionLevel highest
 
+;--------------------------------
+; General
+
+	!define CONTROL_PANEL_URL "http://control.preyproject.com"
+	!define EXAMPLE_CHECK_URL "http://www.myserver.com/stolen_page"
+	!define GUEST_ACCOUNT_NAME "GuestUser"
+
+	Name "Prey"
+	OutFile "prey-config.exe"
+
+;--------------------------------
+; Language & Interface stuff
+
+  !define MUI_HEADERIMAGE
+  !define MUI_HEADERIMAGE_BITMAP "nsis\prey-header.bmp" ; optional
+
+	!ifndef LANGUAGE
+		!define LANGUAGE English
+	!endif
+
+	!include "nsis\langs\${LANGUAGE}.nsh"
+
+  !define MUI_ABORTWARNING
+  !define MUI_ABORTWARNING_TEXT $(ABORT_WARNING)
+
+	Caption $(CAPTION)
+	SubCaption 0 $(SUBCAPTION)
+  MiscButtonText $(BACK_BUTTON) $(NEXT_BUTTON) $(CANCEL_BUTTON) $(APPLY_BUTTON)
+  BrandingText $(BRANDING_TEXT)
+
+	!insertmacro MUI_LANGUAGE "English"
+	!insertmacro MUI_LANGUAGE "Spanish"
+	; !insertmacro MUI_LANGUAGE "${LANGUAGE}"
+
+;-------------------------------------------
+; Pre-checks, is admin? is Prey running?
+
 	Var PREY_PATH
+	VAR GUEST_ACCOUNT_EXISTS ; we get the var onload so we call it once (faster)
 
  Function .onInit
+
+	; check if user is admin
 	!insertmacro IsUserAdmin $0
 	${If} $0 == "0"
-		messageBox MB_OK "You must be logged in as an administrator user to edit the configuration."
+		messageBox MB_OK $(NOT_ADMIN_MESSAGE)
 		Abort
 	${EndIf}
+
+	; get path
 	ReadRegStr $1 HKLM "Software\Prey" "Path"
 	${If} $1 != ""
 		StrCpy $PREY_PATH "$1"
 	${Else}
-		StrCpy $PREY_PATH "c:\Prey"
+		StrCpy $PREY_PATH "C:\Prey"
 	${EndIf}
-	Processes::FindProcess "cron.exe"
-	${If} $R0 == "0"
-		messageBox MB_OK|MB_ICONINFORMATION "Welcome! It seems you've just installed Prey. Please remember to register in preyproject.com to get your API and Device keys if you still haven't."
-		; messageBox MB_YESNO|MB_ICONINFORMATION "Welcome! It seems you've just installed Prey. Please remember to register in preyproject.com if you haven't, to get your API and Device keys." IDYES "OK" IDNO "Signup Now"
-		; signup:
-		;	ExecShell "open" "http://control.preyproject.com/signup"
-		; ok:
-	${EndIf}
+
+  IfSilent 0 +2
+		call do_silent_config ; and finish as well (nothing below is run)
+
+	call isPreyRunning
+	call checkIfGuestAccountExists
+
+	; call languageSelection
+	; messageBox MB_OK $LANGUAGE
+
  FunctionEnd
 
 ;--------------------------------
-;Interface Configuration
+; installer vars
+	Var DESTINY_ONE
+	Var DESTINY_TWO
+	Var CHOSE_TO_RERUN
+	Var IMAGE
+	Var IMAGEHANDLE
 
-  MiscButtonText "Back" "Next" "Cancel" "Apply"
-  BrandingText "Prey Configurator for version ${PRODUCT_VERSION}"
-  !define MUI_HEADERIMAGE
-  !define MUI_HEADERIMAGE_BITMAP "nsis\prey-header.bmp" ; optional
-  !define MUI_ABORTWARNING
-  !define MUI_ABORTWARNING_TEXT "Are you sure you want to quit? Settings will not be saved."
+; prey settings
+	Var CURRENT_DELAY
+	Var ENABLE_GUEST_ACCOUNT
+	Var WIFI_CONNECT
+	Var WIFI_CONNECT_ENABLED
 
-;--------------------------------
-;Variables
+; prey base configuration
+	Var DELAY
+	Var POST_METHOD 		; r1
+	Var CHOSEN_POST_METHOD
+	Var POST_METHOD_BUTTON ; r1
+	Var CHECK_URL 			; r2
 
-	Var POST_METHOD
-	Var POST_METHOD_CHANGED
-	Var API_KEY
-	Var DEVICE_KEY
-	Var CHECK_URL
-	Var MAIL_TO
-	Var SMTP_SERVER
-	Var SMTP_USERNAME
-	Var SMTP_PASSWORD
+; prey control panel configuration
+	Var API_KEY 				; r3
+	Var DEVICE_KEY			; r4
+
+; prey email configuration
+	Var MAIL_TO					; r5
+	Var SMTP_SERVER			; r6
+	Var SMTP_USERNAME		; r7
+	Var SMTP_PASSWORD		;	r8
+
+; temp vars for fetching api and device keys
+	Var CONTROL_PANEL_DEVICE_TITLE
+	Var CONTROL_PANEL_DEVICE_TYPE
+
+	Var CONTROL_PANEL_NAME
+	Var CONTROL_PANEL_EMAIL
+	Var CONTROL_PANEL_PASSWORD
+	Var CONTROL_PANEL_PASSWORD_TWO
 
 ;--------------------------------
 ;Pages
 
-	Page custom nsDialogsPage nsDialogsPageLeave
+	Page custom welcomePage welcomePageExit
+	Page custom settingsPage settingsPageExit
+	Page custom reportsPage reportsPageExit
+	Page custom emailPage emailPageExit
+	Page custom controlPanelPage controlPanelPageExit
+	Page custom newUser newUserExit
+	Page custom existingUser existingUserExit
 
 ;--------------------------------
-;Languages
 
-	!insertmacro MUI_LANGUAGE "English"
-	!insertmacro MUI_LANGUAGE "Spanish"
+Function welcomePage
 
-Function nsDialogsPage
+	!insertmacro MUI_HEADER_TEXT " $(CAPTION)" $(HEADER_TEXT)
 
-	!insertmacro MUI_HEADER_TEXT " Prey Setup" "Remember to get your API/Device keys at preyproject.com."
+	nsDialogs::Create 1018
+	Pop $0
 
-		nsDialogs::Create 1018
-		Pop $0
+	${NSD_CreateLabel} 0 0 100% 10u $(WELCOME_DESC)
+	Pop $0
 
-		; Were not using any back buttons
-		; GetFunctionAddress $0 OnBack
-		; nsDialogs::OnBack $0
+	${NSD_CreateBitmap} 0 40 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\connect.bmp $IMAGEHANDLE
 
-		${NSD_CreateLabel} 0 0 100% 10u "Are you using Prey with the control panel (http) or in standalone mode (email)?"
-		Pop $0
+	${NSD_CreateRadioButton} 55 42 200 12u $(SETUP_REPORTS_OPTION)
+	Pop $DESTINY_ONE
+	${NSD_SetState} $DESTINY_ONE 1
 
-		; POST METHOD
-		${ConfigRead} "$PREY_PATH\config" "post_method=" $1
-		${GetInQuotes} $1 $POST_METHOD
+	${NSD_CreateLabel} 57 65 88% 30 $(SETUP_REPORTS_SUMMARY)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
 
-		${NSD_CreateRadioButton} 0 20 100 12u "http"
-		Pop $POST_METHOD
-		${NSD_OnClick} $POST_METHOD TogglePostMethod
-		${If} $1 == "'http'"
-			${NSD_SetState} $POST_METHOD 1
-		${EndIf}
+	${NSD_CreateHLine} 55 92 88% 3 LabelLine
 
-		${NSD_CreateRadioButton} 120 20 50 12u "email"
-		Pop $POST_METHOD
-		${NSD_OnClick} $POST_METHOD TogglePostMethod
-		${If} $1 == "'email'"
-			${NSD_SetState} $POST_METHOD 1
-		${EndIf}
+	${NSD_CreateBitmap} 0 107 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\settings.bmp $IMAGEHANDLE
 
-		; API KEY
-		${ConfigRead} "$PREY_PATH\config" "api_key=" $3
-		${GetInQuotes} $3 $API_KEY
+	${NSD_CreateRadioButton} 55 105 200 12u $(CHANGE_SETTINGS_OPTION)
+	Pop $DESTINY_ONE
 
-		${NSD_CreateLabel} 0 50 75% 9u "API Key"
-		Pop $0
-		${NSD_CreateText} 0 65 20% 12u $API_KEY
-		Pop $API_KEY
-		${NSD_SetTextLimit} $API_KEY 12
+	${NSD_CreateLabel} 57 130 88% 30 $(CHANGE_SETTINGS_SUMMARY)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
 
-		; DEVICE KEY
-		${ConfigRead} "$PREY_PATH\config" "device_key=" $4
-		${GetInQuotes} $4 $DEVICE_KEY
+	nsDialogs::Show
 
-		${NSD_CreateLabel} 0 90 75% 9u "Device Key"
-		Pop $0
-		${NSD_CreateText} 0 105 20% 12u $DEVICE_KEY
-		Pop $DEVICE_KEY
-		${NSD_SetTextLimit} $DEVICE_KEY 6
+	${NSD_FreeImage} $IMAGEHANDLE
 
-		; ${NSD_CreateLabel} 0 145 25% 100u "You can get these $\r$\nboth in Prey's new$\r$\nweb service at$\r$\npreyproject.com."
-		; Pop $0
+FunctionEnd
 
+Function welcomePageExit
 
-		; CHECK URL
-		${ConfigRead} "$PREY_PATH\config" "check_url=" $2
-		${GetInQuotes} $2 $CHECK_URL
+	${NSD_GetState} $DESTINY_ONE $0
+	StrCpy $DESTINY_ONE $0
 
-		${NSD_CreateLabel} 120 50 70% 9u "Check URL (You'll need to create it later to activate Prey)"
-		Pop $0
-		${NSD_CreateText} 120 65 63% 12u $CHECK_URL
-		Pop $CHECK_URL
+FunctionEnd
 
-		; MAIL TO
-		${ConfigRead} "$PREY_PATH\config" "mail_to=" $5
-		${GetInQuotes} $5 $MAIL_TO
+Function settingsPage
 
-		${NSD_CreateLabel} 120 90 30% 9u "Mail to"
-		Pop $0
-		${NSD_CreateText} 120 105 30% 12u $MAIL_TO
-		Pop $MAIL_TO
+	!insertmacro MUI_HEADER_TEXT " $(CAPTION)" $(CHANGE_SETTINGS_TITLE)
 
-		; SMTP SERVER
-		${ConfigRead} "$PREY_PATH\config" "smtp_server=" $6
-		${GetInQuotes} $6 $SMTP_SERVER
+	GetDlgItem $1 $HWNDPARENT 1
+	SendMessage $1 ${WM_SETTEXT} 0 "STR:$(APPLY_BUTTON)"
 
-		${NSD_CreateLabel} 120 130 75% 9u "STMP Server"
-		Pop $0
-		${NSD_CreateText} 120 145 30% 12u $SMTP_SERVER
-		Pop $SMTP_SERVER
-
-		; SMTP USERNAME
-		${ConfigRead} "$PREY_PATH\config" "smtp_username=" $7
-		${GetInQuotes} $7 $SMTP_USERNAME
-
-		${NSD_CreateLabel} 270 90 75% 9u "STMP Username"
-		Pop $0
-		${NSD_CreateText} 270 105 30% 12u $SMTP_USERNAME
-		Pop $SMTP_USERNAME
-
-		; SMTP PASSWORD
-		${ConfigRead} "$PREY_PATH\config" "smtp_password=" $8
-		${GetInQuotes} $8 $SMTP_PASSWORD
-
-		${NSD_CreateLabel} 270 130 75% 9u "STMP Password"
-		Pop $0
-		${NSD_CreatePassword} 270 145 30% 12u $SMTP_PASSWORD
-		Pop $SMTP_PASSWORD
-
-		${If} $1 == "'http'"
-			Call EnableHTTP
-		${Else}
-			Call EnableEmail
-		${EndIf}
-
-		nsDialogs::Show
-
-	FunctionEnd
-
-Function TogglePostMethod
-	Pop $POST_METHOD
-	${NSD_GetText} $POST_METHOD $0
-	${If} $0 == "http"
-		Call EnableHTTP
-	${Else}
-		Call EnableEmail
+	${If} $DESTINY_ONE == 0
+		Abort
 	${EndIf}
-	StrCpy $POST_METHOD_CHANGED "1"
+
+	nsDialogs::Create 1018
+	Pop $0
+
+	${NSD_CreateLabel} 0 0 100% 20u $(CHANGE_SETTINGS_DESC)
+	Pop $0
+
+	;------------------------------------------
+	; delay
+
+	${NSD_CreateBitmap} 0 40 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\delay.bmp $IMAGEHANDLE
+
+	${NSD_CreateDroplist} 55 38 38 12u $DELAY
+	Pop $DELAY
+
+  ${NSD_CB_AddString} $DELAY 5
+  ${NSD_CB_AddString} $DELAY 10
+  ${NSD_CB_AddString} $DELAY 15
+  ${NSD_CB_AddString} $DELAY 20
+  ${NSD_CB_AddString} $DELAY 25
+  ${NSD_CB_AddString} $DELAY 30
+  ${NSD_CB_AddString} $DELAY 35
+  ${NSD_CB_AddString} $DELAY 40
+  ${NSD_CB_AddString} $DELAY 45
+  ${NSD_CB_AddString} $DELAY 50
+  ${NSD_CB_AddString} $DELAY 55
+
+	call getCurrentDelay
+
+	${NSD_CB_SelectString} $DELAY $CURRENT_DELAY
+
+	${NSD_CreateLabel} 98 42 200 12u $(SETTING_DELAY_TITLE)
+	Pop $0
+
+	${NSD_CreateLabel} 57 62 88% 30 $(SETTING_DELAY_DESC)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	;------------------------------------------
+	; enable guest account
+
+	${NSD_CreateBitmap} 0 102 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\user.bmp $IMAGEHANDLE
+
+	${NSD_CreateCheckbox} 55 100 200 12u $(SETTING_GUEST_TITLE)
+	Pop $ENABLE_GUEST_ACCOUNT
+
+	${If} $GUEST_ACCOUNT_EXISTS == 1 ; guest account exists
+		${NSD_SetState} $ENABLE_GUEST_ACCOUNT 1
+	${EndIf}
+
+	${NSD_CreateLabel} 57 120 88% 30 $(SETTING_GUEST_DESC)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	;------------------------------------------
+	; wifi autoconnect
+
+	${NSD_CreateBitmap} 0 167 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\wifi.bmp $IMAGEHANDLE
+
+	${NSD_CreateCheckbox} 55 165 200 12u $(SETTING_WIFI_TITLE)
+	Pop $WIFI_CONNECT
+
+	${ConfigRead} "$PREY_PATH\config" "auto_connect=" $1
+	${If} $1 == "'y'"
+		StrCpy $WIFI_CONNECT_ENABLED 1
+		${NSD_SetState} $WIFI_CONNECT 1
+	${EndIf}
+
+	${NSD_CreateLabel} 57 185 88% 30 $(SETTING_WIFI_DESC)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	nsDialogs::Show
+
 FunctionEnd
 
-Function EnableHTTP
-		EnableWindow $API_KEY 1
-		EnableWindow $DEVICE_KEY 1
-		${NSD_SetText} $CHECK_URL "http://control.preyproject.com"
-		EnableWindow $CHECK_URL 0
-		EnableWindow $MAIL_TO 0
-		EnableWindow $SMTP_SERVER 0
-		EnableWindow $SMTP_USERNAME 0
-		EnableWindow $SMTP_PASSWORD 0
-FunctionEnd
+Function settingsPageExit
 
-Function EnableEmail
-		EnableWindow $API_KEY 0
-		EnableWindow $DEVICE_KEY 0
-		EnableWindow $CHECK_URL 1
-		EnableWindow $MAIL_TO 1
-		EnableWindow $SMTP_SERVER 1
-		EnableWindow $SMTP_USERNAME 1
-		EnableWindow $SMTP_PASSWORD 1
-FunctionEnd
-
-Function OnBack
-
-	MessageBox MB_YESNO "Inserted values will be lost. Are you sure?" IDYES +2
-	Abort
+	call applyBasicSettings
 
 FunctionEnd
 
-Function nsDialogsPageLeave
+Function reportsPage
 
-	${If} $POST_METHOD_CHANGED == "1"
-		${NSD_GetText} $POST_METHOD $0
-		!insertmacro ReplaceInFile "$PREY_PATH\config" "post_method" "post_method='$0'"
+	!insertmacro MUI_HEADER_TEXT " $(CAPTION)" $(SETUP_REPORTS_TITLE)
+
+	nsDialogs::Create 1018
+	Pop $0
+
+	${NSD_CreateLabel} 0 0 100% 20u $(SETUP_REPORTS_DESC)
+	Pop $0
+
+	; POST METHOD
+	${ConfigRead} "$PREY_PATH\config" "post_method=" $1
+	${GetInQuotes} $1 $POST_METHOD ; global post_method holds the value
+
+	${NSD_CreateBitmap} 0 40 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\controlpanel.bmp $IMAGEHANDLE
+
+	${NSD_CreateRadioButton} 55 42 150 12u $(CONTROL_PANEL_OPTION)
+	Pop $POST_METHOD_BUTTON
+
+	${If} $POST_METHOD == "http"
+		${NSD_SetState} $POST_METHOD_BUTTON 1
+	${EndIf}
+
+	${NSD_CreateLabel} 57 65 88% 30 $(CONTROL_PANEL_SUMMARY)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	${NSD_CreateHLine} 55 99 88% 3 LabelLine
+
+	${NSD_CreateBitmap} 0 107 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\email.bmp $IMAGEHANDLE
+
+	${NSD_CreateRadioButton} 55 105 150 12u $(STANDALONE_OPTION)
+	Pop $POST_METHOD_BUTTON
+
+	${If} $POST_METHOD == "email"
+		${NSD_SetState} $POST_METHOD_BUTTON 1
+	${EndIf}
+
+	${NSD_CreateLabel} 57 130 88% 30 $(STANDALONE_SUMMARY)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	nsDialogs::Show
+
+	${NSD_FreeImage} $IMAGEHANDLE
+
+FunctionEnd
+
+Function reportsPageExit
+
+	; get the variable from the radio button and assign it to the global var (CHOSEN_POST_METHOD)
+	${NSD_GetState} $POST_METHOD_BUTTON $0
+	${If} $0 == 1
+		StrCpy $CHOSEN_POST_METHOD 'email'
+	${Else}
+		StrCpy $CHOSEN_POST_METHOD 'http'
+
+		${ConfigRead} "$PREY_PATH\config" "api_key=" $1
+		${GetInQuotes} $1 $API_KEY
+
+		${If} $API_KEY != ''
+			${AndIf} $CHOSE_TO_RERUN != 1
+			messageBox MB_YESNO $(CONTROL_PANEL_CONFIGURED_MESSAGE) IDYES proceed
+			Abort
+			proceed:
+			; StrCpy $CHOSE_TO_RERUN 1 ; uncomment this to only show the window once
+		${EndIf}
+
+	${EndIf}
+
+FunctionEnd
+
+Function emailPage
+
+	${If} $CHOSEN_POST_METHOD == 'http'
+		Abort
+	${EndIf}
+
+	nsDialogs::Create 1018
+	Pop $0
+
+	${NSD_CreateLabel} 0 0 100% 10u $(STANDALONE_DESC)
+	Pop $0
+
+	; CHECK URL
+	${ConfigRead} "$PREY_PATH\config" "check_url=" $2
+	${GetInQuotes} $2 $CHECK_URL
+
+	${NSD_CreateLabel} 80 50 70% 9u $(STANDALONE_CHECK_URL)
+	Pop $0
+	${NSD_CreateText} 80 65 63% 12u $CHECK_URL ; url actual
+	Pop $CHECK_URL
+
+	; si la URL de chequeo actual es el panel de control
+	; mostramos la de ejemplo (ya que estamos en modo email)
+	${If} $2 == "'${CONTROL_PANEL_URL}'"
+		${NSD_SetText} $CHECK_URL ${EXAMPLE_CHECK_URL}
+	${EndIf}
+
+	; MAIL TO
+	${ConfigRead} "$PREY_PATH\config" "mail_to=" $5
+	${GetInQuotes} $5 $MAIL_TO
+
+	${NSD_CreateLabel} 80 90 30% 9u $(STANDALONE_MAIL_TO)
+	Pop $0
+	${NSD_CreateText} 80 105 30% 12u $MAIL_TO
+	Pop $MAIL_TO
+
+	; SMTP SERVER
+	${ConfigRead} "$PREY_PATH\config" "smtp_server=" $6
+	${GetInQuotes} $6 $SMTP_SERVER
+
+	${NSD_CreateLabel} 80 130 75% 9u $(STANDALONE_SMTP_SERVER)
+	Pop $0
+	${NSD_CreateText} 80 145 30% 12u $SMTP_SERVER
+	Pop $SMTP_SERVER
+
+	; SMTP USERNAME
+	${ConfigRead} "$PREY_PATH\config" "smtp_username=" $7
+	${GetInQuotes} $7 $SMTP_USERNAME
+
+	${NSD_CreateLabel} 230 90 75% 9u $(STANDALONE_SMTP_USERNAME)
+	Pop $0
+	${NSD_CreateText} 230 105 30% 12u $SMTP_USERNAME
+	Pop $SMTP_USERNAME
+
+	; SMTP PASSWORD
+	; ${ConfigRead} "$PREY_PATH\config" "smtp_password=" $8
+	; ${GetInQuotes} $8 $SMTP_PASSWORD
+
+	${NSD_CreateLabel} 230 130 75% 9u $(STANDALONE_SMTP_PASSWORD)
+	Pop $0
+	${NSD_CreatePassword} 230 145 30% 12u ""
+	Pop $SMTP_PASSWORD
+
+	GetDlgItem $1 $HWNDPARENT 1
+	SendMessage $1 ${WM_SETTEXT} 0 "STR:$(APPLY_BUTTON)"
+
+	nsDialogs::Show
+
+FunctionEnd
+
+Function emailPageExit
+
+	call applyEmailSettings
+
+FunctionEnd
+
+Function controlPanelPage
+
+	nsDialogs::Create 1018
+	Pop $0
+
+	${NSD_CreateLabel} 0 0 100% 20u $(CONTROL_PANEL_DESC)
+	Pop $0
+
+	${NSD_CreateBitmap} 0 40 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\user.bmp $IMAGEHANDLE
+
+	${NSD_CreateRadioButton} 55 42 300 12u $(CONTROL_PANEL_NEW_USER_OPTION)
+	Pop $DESTINY_TWO
+	${NSD_SetState} $DESTINY_TWO 1
+
+	${NSD_CreateLabel} 57 65 88% 30 $(CONTROL_PANEL_NEW_USER_SUMMARY)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	${NSD_CreateBitmap} 0 107 48 48 ""
+	Pop $IMAGE
+	${NSD_SetImage} $IMAGE pixmaps\user.bmp $IMAGEHANDLE
+
+	${NSD_CreateRadioButton} 55 105 300 12u $(CONTROL_PANEL_EXISTING_USER_TITLE)
+	Pop $DESTINY_TWO
+
+	${NSD_CreateLabel} 57 130 88% 30 $(CONTROL_PANEL_EXISTING_USER_SUMMARY)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	nsDialogs::Show
+
+FunctionEnd
+
+Function controlPanelPageExit
+
+	${NSD_GetState} $DESTINY_TWO $0
+	StrCpy $DESTINY_TWO $0
+
+FunctionEnd
+
+Function newUser
+
+	${If} $DESTINY_TWO == 1
+		Abort
+	${EndIf}
+
+	nsDialogs::Create 1018
+	Pop $0
+
+	${NSD_CreateLabel} 0 0 100% 20u $(CONTROL_PANEL_NEW_USER_DESC)
+	Pop $0
+
+	${NSD_CreateLabel} 0 40 100% 10u $(CONTROL_PANEL_ACCOUNT_SETTINGS)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	${NSD_CreateHLine} 0 58 230 3 LabelLine
+
+	${NSD_CreateLabel} 0 75 80 9u $(CONTROL_PANEL_USER_NAME)
+	Pop $0
+	${NSD_CreateText} 100 72 27% 12u ""
+	Pop $CONTROL_PANEL_NAME
+
+	${NSD_CreateLabel} 0 105 80 9u $(CONTROL_PANEL_USER_EMAIL)
+	Pop $0
+	${NSD_CreateText} 100 102 27% 12u ""
+	Pop $CONTROL_PANEL_EMAIL
+
+	${NSD_CreateLabel} 0 135 80 9u $(CONTROL_PANEL_USER_PASSWORD)
+	Pop $0
+	${NSD_CreatePassword} 100 132 27% 12u ""
+	Pop $CONTROL_PANEL_PASSWORD
+
+	${NSD_CreateLabel} 0 165 90 9u $(CONTROL_PANEL_USER__PASSWORD_TWO)
+	Pop $0
+	${NSD_CreatePassword} 100 162 27% 12u ""
+	Pop $CONTROL_PANEL_PASSWORD_TWO
+
+	call showDeviceSettings
+
+	GetDlgItem $1 $HWNDPARENT 1
+	SendMessage $1 ${WM_SETTEXT} 0 "STR:$(CREATE_BUTTON)"
+
+	nsDialogs::Show
+
+FunctionEnd
+
+Function newUserExit
+
+	call createUser
+	call addDeviceToUser
+	call applyReportSettings
+
+FunctionEnd
+
+Function existingUser
+
+	${If} $DESTINY_TWO == 0
+		Abort
+	${EndIf}
+
+	nsDialogs::Create 1018
+	Pop $0
+
+	; Were not using any back buttons
+	; GetFunctionAddress $0 OnBack
+	; nsDialogs::OnBack $0
+
+	${NSD_CreateLabel} 0 0 100% 30u $(CONTROL_PANEL_EXISTING_USER_DESC)
+	Pop $0
+
+	${NSD_CreateLabel} 0 40 100% 10u $(CONTROL_PANEL_ACCOUNT_SETTINGS)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	${NSD_CreateHLine} 0 58 230 3 LabelLine
+
+	${NSD_CreateLabel} 0 75 80 9u $(CONTROL_PANEL_USER_EMAIL)
+	Pop $0
+	${NSD_CreateText} 100 72 27% 12u ""
+	Pop $CONTROL_PANEL_EMAIL
+
+	${NSD_CreateLabel} 0 105 80 9u $(CONTROL_PANEL_USER_PASSWORD)
+	Pop $0
+	${NSD_CreatePassword} 100 102 27% 12u ""
+	Pop $CONTROL_PANEL_PASSWORD
+
+	call showDeviceSettings
+
+	GetDlgItem $1 $HWNDPARENT 1
+	SendMessage $1 ${WM_SETTEXT} 0 "STR:$(ADD_DEVICE_BUTTON)"
+
+	nsDialogs::Show
+
+FunctionEnd
+
+Function existingUserExit
+
+	call getUserKey
+	call addDeviceToUser
+	call applyReportSettings
+
+	; get api and associate device to user
+
+FunctionEnd
+
+Function showDeviceSettings
+
+	${NSD_CreateLabel} 245 40 100% 10u $(CONTROL_PANEL_DEVICE_SETTINGS)
+	Pop $0
+	SetCtlColors $0 0x666666 'transparent'
+
+	${NSD_CreateHLine} 245 58 230 3 LabelLine
+
+	${NSD_CreateLabel} 245 75 60 9u $(DEVICE_TITLE)
+	Pop $0
+	${NSD_CreateText} 310 72 30% 12u ""
+	Pop $CONTROL_PANEL_DEVICE_TITLE
+
+	${NSD_CreateLabel} 245 105 60 9u $(DEVICE_TYPE)
+	Pop $0
+
+	${NSD_CreateDroplist} 310 102 90 12u
+	Pop $CONTROL_PANEL_DEVICE_TYPE
+
+  ${NSD_CB_AddString} $CONTROL_PANEL_DEVICE_TYPE "Portable"
+  ${NSD_CB_AddString} $CONTROL_PANEL_DEVICE_TYPE "Desktop"
+
+	${NSD_CB_SelectString} $CONTROL_PANEL_DEVICE_TYPE "Portable"
+
+FunctionEnd
+
+;------------------------------------------------------
+; control panel helper functions
+
+Function createUser
+
+	GetDlgItem $1 $HWNDPARENT 1
+	SendMessage $1 ${WM_SETTEXT} 0 "STR:$(CREATING_BUTTON)..."
+
+	; get vars to send
+	${NSD_GetText} $CONTROL_PANEL_NAME $3
+	${NSD_GetText} $CONTROL_PANEL_EMAIL $4
+	${NSD_GetText} $CONTROL_PANEL_PASSWORD $5
+	${NSD_GetText} $CONTROL_PANEL_PASSWORD_TWO $6
+
+	; Error Code = $0. Output = $1.
+	nsExec::ExecToStack '"$PREY_PATH\bin\curl.exe" -s ${CONTROL_PANEL_URL}/users.xml -d "user[name]=$3&user[email]=$4&user[password]=$5&user[password_confirmation]=$6"'
+
+	Pop $0
+	Pop $1
+	; MessageBox MB_OK $1
+
+	${If} $1 =~ "errors"
+
+		${If} $1 =~ "Email\shas\salready\sbeen\staken"
+			MessageBox MB_OK $(EMAIL_EXISTS_MESSAGE)
+		${Else}
+			MessageBox MB_OK $(INVALID_PARAMS_MESSAGE)
+		${EndIf}
+
+		GetDlgItem $1 $HWNDPARENT 1
+		SendMessage $1 ${WM_SETTEXT} 0 "STR:Create"
+		Abort
+
+	${Else}
+
+		; parse xml to get api key
+		${RECaptureMatches} $0 "key>([^<].+)<" $1 1
+		Pop $1
+		StrCpy $API_KEY $1
+
+		MessageBox MB_OK $(ACCOUNT_CREATED_MESSAGE)
+
+	${EndIf}
+
+FunctionEnd
+
+Function getUserKey
+
+	GetDlgItem $1 $HWNDPARENT 1
+	SendMessage $1 ${WM_SETTEXT} 0 "STR:$(CONNECTING_BUTTON)..."
+
+	; get vars to send
+	${NSD_GetText} $CONTROL_PANEL_EMAIL $4
+	${NSD_GetText} $CONTROL_PANEL_PASSWORD $5
+
+	; Error Code = $0. Output = $1.
+	nsExec::ExecToStack '"$PREY_PATH\bin\curl.exe" -s -u $4:$5 ${CONTROL_PANEL_URL}/profile.xml'
+
+	Pop $0
+	Pop $1
+	; MessageBox MB_OK $1
+
+	${If} $1 =~ "denied"
+
+		MessageBox MB_OK $(UNAUTHORIZED_MESSAGE)
+
+		GetDlgItem $1 $HWNDPARENT 1
+		SendMessage $1 ${WM_SETTEXT} 0 "STR:$(ADD_DEVICE_BUTTON)"
+		Abort
+
+	${Else}
+
+		; parse xml to get api key
+		${RECaptureMatches} $0 "key>([^<].+)<" $1 1
+		Pop $1
+		StrCpy $API_KEY $1
+
+	${EndIf}
+
+FunctionEnd
+
+Function addDeviceToUser
+
+	GetDlgItem $1 $HWNDPARENT 1
+	SendMessage $1 ${WM_SETTEXT} 0 "STR:$(ASSOCIATING_BUTTON)..."
+
+	${NSD_GetText} $CONTROL_PANEL_DEVICE_TITLE $4
+	${NSD_GetText} $CONTROL_PANEL_DEVICE_TYPE $5
+	${GetWindowsVersion} $6
+
+	; Error Code = $0. Output = $1.
+	nsExec::ExecToStack '"$PREY_PATH\bin\curl.exe" -s -u $API_KEY:x ${CONTROL_PANEL_URL}/devices.xml -d "device[title]=$4&device[os]=Windows&device[device_type]=$5&device[os_version]=$6"'
+
+	Pop $0
+	Pop $1
+	; MessageBox MB_OK $1
+
+	${If} $1 =~ "errors"
+
+		MessageBox MB_OK $(PROBLEM_ADDING_DEVICE_MESSAGE)
+
+		GetDlgItem $1 $HWNDPARENT 1
+		SendMessage $1 ${WM_SETTEXT} 0 "STR:$(APPLY_BUTTON)"
+		Abort
+
+	${Else}
+
+		; get device key from response
+		${RECaptureMatches} $0 "key>([^<].+)<" $1 1
+		Pop $1
+		StrCpy $DEVICE_KEY $1
+
+	${EndIf}
+
+FunctionEnd
+
+;------------------------------------------------------
+; helper functions for applying configuration
+
+
+Function applyBasicSettings
+
+	${NSD_GetState} $WIFI_CONNECT $0
+	${If} $0 == 1 ; wifi connect enabled
+		${AndIf} $WIFI_CONNECT_ENABLED != 1
+		!insertmacro ReplaceInFile "$PREY_PATH\config" "auto_connect" "auto_connect='y'"
+		; MessageBox MB_OK "Wifi activated."
+	${ElseIf} $0 != 1 ; wifi_connect disabled
+		${AndIf} $WIFI_CONNECT_ENABLED == 1
+		!insertmacro ReplaceInFile "$PREY_PATH\config" "auto_connect" "auto_connect='n'"
+		; MessageBox MB_OK "Wifi deactivated."
+	${EndIf}
+
+	${NSD_GetText} $DELAY $0
+	${If} $CURRENT_DELAY != $0
+		call setCurrentDelay
+	${EndIf}
+
+	${NSD_GetState} $ENABLE_GUEST_ACCOUNT $0
+	${If} $0 == 1 ; guest account checkbox enabled
+		${AndIf} $GUEST_ACCOUNT_EXISTS != 1
+			call createGuestAccount
+			Pop $0
+			Pop $1
+			${If} $1 == 0
+				MessageBox MB_OK $(GUEST_ACCOUNT_ADDED_MESSAGE)
+			${EndIf}
+	${ElseIf} $0 != 1 ; guest account checkbox disabled
+		${AndIf} $GUEST_ACCOUNT_EXISTS == 1
+			call removeGuestAccount
+			Pop $0
+			Pop $1
+			${If} $1 == 0
+				MessageBox MB_OK  $(GUEST_ACCOUNT_REMOVED_MESSAGE)
+			${EndIf}
+	${EndIf}
+
+	MessageBox MB_OK $(SETTINGS_UPDATED_MESSAGE)
+	Quit
+
+FunctionEnd
+
+Function applyReportSettings
+
+	${If} $POST_METHOD == "email" ; change if its currently email
+		!insertmacro ReplaceInFile "$PREY_PATH\config" "post_method" "post_method='http'"
+	${EndIf}
+
+	; lets make sure the right check url gets set
+	; in case the var is currently empty, or its different than what it should be
+	${If} $CHECK_URL == ''
+		${OrIf} $CHECK_URL != $CONTROL_PANEL_URL
+		!insertmacro ReplaceInFile "$PREY_PATH\config" "check_url" "check_url='${CONTROL_PANEL_URL}'"
+	${EndIf}
+
+	!insertmacro ReplaceInFile "$PREY_PATH\config" "api_key" "api_key='$API_KEY'"
+	!insertmacro ReplaceInFile "$PREY_PATH\config" "device_key" "device_key='$DEVICE_KEY'"
+
+	call exitConfigurator
+
+FunctionEnd
+
+Function applyEmailSettings
+
+	${If} $POST_METHOD == "http" ; change if its currently http
+		!insertmacro ReplaceInFile "$PREY_PATH\config" "post_method" "post_method='email'"
 	${EndIf}
 
 	${NSD_GetText} $CHECK_URL $0
-	${If} "$2" != "'$0'"
+	${If} "$CHECK_URL" != "$0"
 		!insertmacro ReplaceInFile "$PREY_PATH\config" "check_url" "check_url='$0'"
 	${EndIf}
 
-	${NSD_GetText} $API_KEY $0
-	${If} "$3" != "'$0'"
-		!insertmacro ReplaceInFile "$PREY_PATH\config" "api_key" "api_key='$0'"
-	${EndIf}
-
-	${NSD_GetText} $DEVICE_KEY $0
-	${If} "$4" != "'$0'"
-		!insertmacro ReplaceInFile "$PREY_PATH\config" "device_key" "device_key='$0'"
-	${EndIf}
-
 	${NSD_GetText} $MAIL_TO $0
-	${If} "$5" != "'$0'"
+	${If} "$MAIL_TO" != "$0"
 		!insertmacro ReplaceInFile "$PREY_PATH\config" "mail_to" "mail_to='$0'"
 	${EndIf}
 
 	${NSD_GetText} $SMTP_SERVER $0
-	${If} "$6" != "'$0'"
+	${If} "$SMTP_SERVER" != "$0"
 		!insertmacro ReplaceInFile "$PREY_PATH\config" "smtp_server" "smtp_server='$0'"
 	${EndIf}
 
 	${NSD_GetText} $SMTP_USERNAME $0
-	${If} "$7" != "'$0'"
+	${If} "$SMTP_USERNAME" != "$0"
 		!insertmacro ReplaceInFile "$PREY_PATH\config" "smtp_username" "smtp_username='$0'"
 	${EndIf}
 
 	${NSD_GetText} $SMTP_PASSWORD $0
-	${If} "$8" != "'$0'"
+	${If} "$0" != ""
 		Base64::Encode "$0"
 		Pop $R0
 		!insertmacro ReplaceInFile "$PREY_PATH\config" "smtp_password" "smtp_password='$R0'"
 	${EndIf}
 
-	${ConfigRead} "$PREY_PATH\config" "post_method=" $0
-	${If} $0 == "'http'"
-		GetDlgItem $1 $HWNDPARENT 1
-		SendMessage $1 ${WM_SETTEXT} 0 "STR:Checking..."
-		${NSD_GetText} $API_KEY $3
-		${NSD_GetText} $DEVICE_KEY $4
-		# Error Code = $0. Output = $1.
-		nsExec::ExecToStack '"$PREY_PATH\bin\curl.exe" -s -X PUT -u $3:x http://control.preyproject.com/devices/$4.xml -d device[synced]=1'
-		Pop $0
-		Pop $1
-		${If} $1 != "OK"
-			MessageBox MB_OK "Synchronization failed. Please make sure your API and Device keys are set up correctly, and we have an active Internet connection available."
-			GetDlgItem $1 $HWNDPARENT 1
-			SendMessage $1 ${WM_SETTEXT} 0 "STR:Apply"
+	call exitConfigurator
+
+FunctionEnd
+
+Function do_silent_config
+
+	!include FileFunc.nsh
+	!insertmacro GetParameters
+	!insertmacro GetOptions
+
+	${GetParameters} $R0
+	ClearErrors
+	${GetOptions} $R0 /API_KEY= $API_KEY
+	${GetOptions} $R0 /DEVICE_KEY= $DEVICE_KEY
+
+	${If} $API_KEY == ''
+		${OrIf} $DEVICE_KEY == ''
+			MessageBox MB_OK 'No API or Device keys entered. Try again.'
 			Abort
-		${Else}
-			GetDlgItem $1 $HWNDPARENT 1
-			SendMessage $1 ${WM_SETTEXT} 0 "STR:OK!"
-		${EndIf}
 	${EndIf}
 
+	call applyReportSettings
+FunctionEnd
+
+Function exitConfigurator
+
+	; other users may not modify our config file
 	AccessControl::GrantOnFile "$PREY_PATH\config" "(BU)" "GenericRead"
+
+	; lets run (or rerun) prey with the new configuration
 	Exec '"$PREY_PATH\cron.exe" --log'
-	MessageBox MB_OK "Configuration OK! Your device is now synchronized and being tracked by Prey. $\r$\nThanks for installing!"
+
+	IfSilent 0 +2 ; dont show shit!
+		Quit
+
+	MessageBox MB_OK $(CONFIGURATION_OK_MESSAGE)
+	Quit
+
+FunctionEnd
+
+Function isPreyRunning
+
+	Processes::FindProcess "cron.exe"
+	${If} $R0 == "0"
+		messageBox MB_OK|MB_ICONINFORMATION $(FIRST_TIME_MESSAGE)
+		; Abort
+	${EndIf}
+
+FunctionEnd
+
+Function getCurrentDelay
+
+	ReadRegStr $1 HKLM "Software\Prey" "Delay"
+	Math::Script "R0 = $1 / (60 * 1000)"
+	StrCpy $CURRENT_DELAY $R0
+
+FunctionEnd
+
+Function setCurrentDelay
+
+	${NSD_GetText} $DELAY $1
+	Math::Script "R0 = $1 * (60 * 1000)"
+	WriteRegStr HKLM "Software\Prey" "Delay" "$R0"
+
+FunctionEnd
+
+Function checkIfGuestAccountExists
+	nsExec::ExecToStack 'net user ${GUEST_ACCOUNT_NAME}'
+	Pop $0
+	Pop $1
+
+	${If} $0 == 0
+		; messageBox MB_OK "Guest account ${GUEST_ACCOUNT_NAME} exists!"
+		StrCpy $GUEST_ACCOUNT_EXISTS 1
+	${EndIf}
+
+FunctionEnd
+
+Function createGuestAccount
+	nsExec::ExecToStack 'net user ${GUEST_ACCOUNT_NAME} /add'
+	Pop $1
+	Pop $0
+FunctionEnd
+
+Function removeGuestAccount
+	nsExec::ExecToStack 'net user ${GUEST_ACCOUNT_NAME} /delete'
+	Pop $1
+	Pop $0
+FunctionEnd
+
+Function languageSelection
+
+	Push ""
+	Push ${LANG_ENGLISH}
+	Push English
+	Push ${LANG_SPANISH}
+	Push Spanish
+	Push A ; A means auto count languages
+	       ; for the auto count to work the first empty push (Push "") must remain
+	LangDLL::LangDialog "Installer Language" "Please select the language of the installer"
+
+	Pop $LANGUAGE
+	StrCmp $LANGUAGE "cancel" 0 +2
+		Abort
 
 FunctionEnd
 
 Section
-SectionEnd
+SectionEnd ; this is only for the thingy to compile

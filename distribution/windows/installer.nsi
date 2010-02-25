@@ -9,25 +9,29 @@
 
 	!include "MUI2.nsh"
 	!include "nsis\isUserAdmin.nsh"
+	!include "nsis\dotNet.nsh"
 	XPStyle on
 
 ;--------------------------------
 ;General
 
-	!define PRODUCT_VERSION "0.3.3"
+	!define INITIAL_DELAY 120000
+	!define PRODUCT_VERSION "0.3.5"
 	Name "Prey"
-	OutFile "prey-installer-${PRODUCT_VERSION}-win32.exe"
+	OutFile "prey-${PRODUCT_VERSION}-win.exe"
 
 	;Default installation folder
 	;InstallDir "$LOCALAPPDATA\Prey"
-	!define PREY_PATH "c:\Prey"
-	InstallDir "${PREY_PATH}"
+	; !define PREY_PATH "c:\Prey"
+	InstallDir "$WINDIR\Prey"
 
 	;Get installation folder from registry if available
-	InstallDirRegKey HKLM "Software\Prey" ""
+	InstallDirRegKey HKLM "Software\Prey" "Path"
 
 	;Request application privileges for Windows Vista
 	RequestExecutionLevel highest
+
+	!define DOTNET_VERSION "2.0.50727"
 
 	Function .onInit
 		!insertmacro IsUserAdmin $0
@@ -56,14 +60,13 @@
 	!define MUI_ABORTWARNING
     BrandingText "Prey ${PRODUCT_VERSION} Installer"
 
-
 ;--------------------------------
 ;Pages
 
 	!insertmacro MUI_PAGE_WELCOME
 	!insertmacro MUI_PAGE_LICENSE "..\..\LICENSE"
 	;!insertmacro MUI_PAGE_COMPONENTS
-	;!insertmacro MUI_PAGE_DIRECTORY
+	!insertmacro MUI_PAGE_DIRECTORY
 
 	; Page custom nsDialogsPage
 
@@ -97,7 +100,10 @@
 Section "Prey" PreySection
 
 	SetOutPath "$INSTDIR"
+	SetOverwrite ifnewer
 	; %NSIS_INSTALL_FILES
+
+	!insertmacro CheckDotNET ${DOTNET_VERSION}
 
 	File ..\..\prey.sh
 	File ..\..\config
@@ -106,9 +112,9 @@ Section "Prey" PreySection
 
 	; windows specific stuff
 	File prey.log
-	File delay
 	File cron.exe
 	File prey-config.exe
+	File /r pixmaps
 	File /r etc
 
 	SetOutPath "$INSTDIR\bin"
@@ -140,7 +146,6 @@ Section "Prey" PreySection
 	SetOutPath "$INSTDIR"
 
 	AccessControl::GrantOnFile "$INSTDIR\prey.log" "(BU)" "FullAccess"
-	AccessControl::GrantOnFile "$INSTDIR\delay" "(BU)" "FullAccess"
 
 	;Create uninstaller
 	WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -156,8 +161,9 @@ Section "Prey" PreySection
 	!insertmacro MUI_STARTMENU_WRITE_END
 
 	; create the registry keys and start the program
-	WriteRegStr HKLM "Software\Prey" "Path" "${PREY_PATH}"
+	WriteRegStr HKLM "Software\Prey" "Path" "$INSTDIR"
 	WriteRegStr HKLM "Software\Prey" "Version" "${PRODUCT_VERSION}"
+	WriteRegStr HKLM "Software\Prey" "Delay" "${INITIAL_DELAY}"
 	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe --log'
 	; Exec '"$INSTDIR\cron.exe"'
 
@@ -165,18 +171,6 @@ Section "Prey" PreySection
 	; nsExec::Exec '"schtasks.exe" -create -ru "System" -sc MINUTE -mo 10 -tn "Prey Laptop Tracker" -tr "$INSTDIR\cron.exe"'
 
 SectionEnd
-
-;--------------------------------
-;Descriptions
-
-	;Language strings
-	LangString DESC_PreySection ${LANG_ENGLISH} "Prey application and modules."
-	LangString DESC_PreySection ${LANG_SPANISH} "Aplicacion y modulos para Prey."
-
-	;Assign language strings to sections
-	!insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-		!insertmacro MUI_DESCRIPTION_TEXT ${PreySection} $(DESC_PreySection)
-	!insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Section
@@ -197,6 +191,7 @@ Section "Uninstall"
 
 	RMDir /r "$INSTDIR\bin"
 	RMDir /r "$INSTDIR\etc"
+	RMDir /r "$INSTDIR\pixmaps"
 	RMDir /r "$INSTDIR\platform"
 	RMDir /r "$INSTDIR\lang"
 	RMDir /r "$INSTDIR\lib"
@@ -209,7 +204,6 @@ Section "Uninstall"
 	Delete "$INSTDIR\prey-config.exe"
 	Delete "$INSTDIR\prey.sh"
 	Delete "$INSTDIR\config"
-	Delete "$INSTDIR\delay"
 	Delete "$INSTDIR\Uninstall.exe"
 
 	RMDir "$INSTDIR"
@@ -221,10 +215,12 @@ Section "Uninstall"
 	; Delete "$SMPROGRAMS\$StartMenuFolder\Prey.lnk"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
+	DeleteRegValue HKLM "Software\Prey" "Delay"
 	DeleteRegValue HKLM "Software\Prey" "Version"
 	DeleteRegValue HKLM "Software\Prey" "Path"
 	DeleteRegKey /ifempty HKLM "Software\Prey"
 	DeleteRegKey /ifempty HKCU "Software\Prey"
+
 	DeleteRegValue HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker'
 
 	; delete prey scheduled task

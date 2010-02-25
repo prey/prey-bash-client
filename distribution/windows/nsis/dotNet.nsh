@@ -9,6 +9,9 @@
 # No output
 
 !macro CheckDotNET DotNetReqVer
+
+	IfSilent NewDotNet +1
+
   !define DOTNET_URL "http://download.microsoft.com/download/5/6/7/567758a3-759e-473e-bf8f-52154438565a/dotnetfx.exe"
 	!define DOTNET_URL_64 "http://download.microsoft.com/download/a/3/f/a3f1bf98-18f3-4036-9b68-8e6de530ce0a/NetFx64.exe"
 

@@ -5,7 +5,7 @@
 #Persistent
 #NoTrayIcon
 #SingleInstance force
-PreyPath = c:\Prey
+RegRead, PreyPath, HKEY_LOCAL_MACHINE, SOFTWARE\Prey, Path
 MinDelay = 120000 ; two minutes
 ExecutionDelay = 1200000 ; twenty minutes
 Log_to = ;
@@ -21,12 +21,12 @@ Loop, %0% { ; for each command line parameter
 Loop
 {
 	RunWait, %comspec% /c %PreyPath%\bin\bash.exe %PreyPath%\prey.sh %Test% %Log_to%, %PreyPath%, hide
-	FileRead, Contents, %PreyPath%\delay
-	if (not ErrorLevel and Contents > MinDelay)
+	RegRead, setDelay, HKEY_LOCAL_MACHINE, SOFTWARE\Prey, Delay
+	if (not ErrorLevel and setDelay > MinDelay)
 	{
-		ExecutionDelay = %Contents%
+		ExecutionDelay = %setDelay%
 		; FileAppend, "Prey now running every %ExecutionDelay% miliseconds.`n", %PreyPath%\prey.log
-		Contents =  ; Free the memory.
+		setDelay =  ; Free the memory.
 	}
 	Sleep %ExecutionDelay%
 }
