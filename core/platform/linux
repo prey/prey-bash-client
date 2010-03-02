@@ -8,17 +8,17 @@
 # we may need to know who the logged user is
 logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 
-function get_gateway_ip {
+get_gateway_ip() {
 	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
 }
 
-function get_wifi_device {
+get_wifi_device() {
 	if [ ! -n "$wifi_device" ]; then
 		wifi_device=`cat /proc/net/wireless | tail -1 | grep -v "nwid" | sed -e 's/^\([^:].*\):.*/\1/' -e 's/\s//g'`
 	fi
 }
 
-function get_wifi_info {
+get_wifi_info() {
 	if [ ! -n "$wifi_info" ]; then
 		wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
 	fi
@@ -26,7 +26,7 @@ function get_wifi_info {
 
 # attempts to connect to the first open public wifi network
 # if we dont have NetworkManager available, we use plain iwconfig
-function try_to_connect {
+try_to_connect() {
 
 	if [ `which nm-applet` ]; then
 
@@ -56,4 +56,16 @@ function try_to_connect {
 
 	fi
 
+}
+
+get_current_delay(){
+	crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
+}
+
+update_execution_delay(){
+	(crontab -l | grep -v prey; echo "*/$delay * * * * $base_path/prey.sh > /dev/null") | crontab -
+}
+
+remove_unneeded_stuff_from_module(){
+	rm -Rf `find $base_path/modules/$1 -name darwin -name windows -name *.exe`
 }

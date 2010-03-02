@@ -1,0 +1,106 @@
+#!/bin/bash
+####################################################################
+# Prey Core Module Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+# mac/linux only. windows has another method of de/activating modules
+is_module_active(){
+	if [ -x $base_path/modules/$1/run ]; then
+		echo 1
+	else
+		return 0
+	fi
+}
+
+active_modules(){
+	if [ "$post_method" == "http" ]; then
+		echo -e "$module_configuration" | grep "<module " | sed 's/.*name="\([a-z_]*\)".*/\1/'
+	else
+		for module in `find $base_path/modules -maxdepth 1 -mindepth 1 -type d -printf "\n%f"`; do
+			if [ `is_module_active "$module"` ]; then
+				echo $module
+			fi
+		done
+	fi
+}
+
+get_module(){
+	rm $base_path/modules/$1.zip 2> /dev/null
+	repo_url=`echo $check_url | sed 's/.*\/\/\([^\/][a-z\.]*\)\/.*$/http:\/\/\1/'`
+	wget "$repo_url/modules/get/$1?api_key=$api_key" -O $base_path/modules/$1.zip 2> /dev/null
+}
+
+install_or_update_module(){
+	get_module $1
+	package_size=`cat $base_path/modules/$1.zip 2> /dev/null | wc -c`
+	if [ $package_size -gt 0 ]; then
+		echo " -- Got new $1 module from repository! Unpackaging..."
+		if [ -d "$base_path/modules/$1" ]; then # module already installed
+			# if [ -f "$base_path/modules/$1/config" ]; then # with configuration
+			# 	echo ' -- Saving previous configuration values...'
+			# 	cp $base_path/modules/$1/config /tmp/prey-module-$1-config.tmp
+			# fi
+			rm -R $base_path/modules/$1
+		fi
+		unzip $base_path/modules/$1.zip -d $base_path/modules &> /dev/null
+		remove_unneeded_stuff $base_path/modules/$1
+		rm $base_path/modules/$1.zip
+		activate_module $1
+		# if [ -f "/tmp/prey-module-$1-config.tmp" ]; then
+		# 	echo ' -- Applying previous configuration values...'
+		# 	mv /tmp/prey-module-$1-config.tmp $base_path/modules/$1/config
+		# fi
+		echo " ** New $1 module placed and ready to go!"
+		return 0
+	else
+		echo " !! Couldn't install $1 module from repository."
+		return 1
+	fi
+}
+
+run_active_modules() {
+
+	# this should be in prey's base file
+	mkdir $tmpdir 2> /dev/null
+	chmod 700 $tmpdir
+
+	for current_module in `active_modules`; do
+
+		module_path="$base_path/modules/$current_module"
+
+		echo -e "\n\033[1m >> Running $current_module module!\n\033[0m"
+
+		# if there's a language file, lets run it
+		if [ -f $module_path/lang/$lang ]; then
+		. $module_path/lang/$lang
+		elif [ -f $module_path/lang/$lang ]; then
+		. $module_path/lang/en
+		fi
+
+		# if there's a config file, lets run it as well
+		if [ -f $module_path/config ]; then
+			. $module_path/config
+		fi
+
+		# lets load the base functions for the module
+		if [ -f $module_path/platform/base ]; then
+			. $module_path/platform/base
+		fi
+
+		# and the OS-specific if there are
+		if [ -f $module_path/platform/$os ]; then
+			. $module_path/platform/$os
+		fi
+
+		# now, go!
+		. $module_path/run
+
+		unset -v current_module
+
+	done
+
+	rm -Rf $tmpdir
+
+}

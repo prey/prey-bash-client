@@ -1,0 +1,79 @@
+#!/bin/bash
+####################################################################
+# Prey Core Push Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+post_data(){
+	trace_list=`list_traces`
+	file_list=`list_files`
+	if [[ $trace_list || $file_list ]]; then
+		if [ "$test_mode" == 1 ]; then
+			echo ' >> This is where the data gets sent. Though not in test mode!'
+		else
+			trace_file=prey_traces.tmp
+			echo -e "$trace_list" > $trace_file
+			eval 'send_via_'"${post_method}"''
+			rm $trace_file
+		fi
+		remove_traces
+		remove_files
+	else
+		echo " -- No data to send. We're done!"
+	fi
+}
+
+send_via_email(){
+
+	mailsender="$base_path/lib/sendEmail"
+	if [ "$os" == "windows" ]; then
+		mailsender=$mailsender.exe
+	fi
+
+	decoded_pass=`decrypt "$smtp_password"`
+	complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
+	echo -e "$EMAIL_NOTICE $EMAIL_HEADER" | cat - $trace_file > $trace_file.msg && echo -e "$EMAIL_FOOTER" >> $trace_file.msg
+
+	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file.msg tls=auto username=$smtp_username password=$decoded_pass`
+
+	if [ `find_in "$response" 'ERROR'` ]; then
+		echo -e "$STRING_ERROR_EMAIL"
+		echo -e "\n This is the complete error message: \n $response\n"
+	fi
+
+	rm $trace_file.msg
+}
+
+send_via_http(){
+
+	if [ "$os" == "windows" ]; then
+		arch=`echo $PROCESSOR_ARCHITEW6432`
+		if [ `find_in "$arch" '64'` ]; then
+			getter="curl64 -s"
+			echo -e " ** 64 bit architecture detected!"
+		fi
+	fi
+
+	post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`
+	if [ -n "$post_url" ]; then
+		if [ -n "$api_key" ]; then
+			post_data="$file_list -u $api_key:x"
+		fi
+		response=`$getter "$user_agent" "$trace_list" $post_data "$post_url"`
+		# echo $response
+	else
+		echo ' !! You need to set up a URL for the HTTP sending to work!'
+	fi
+}
+
+send_via_scp(){
+	if [[ -n "$scp_server" && -n "$scp_path" ]]; then
+		echo -e " -- Uploading the stuff to $scp_path in $scp_server..."
+		new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
+		ssh $scp_user@$scp_server mkdir $scp_path/$new_folder
+		status=`scp $trace_file $file_list $scp_user@$scp_server:$scp_path/$new_folder`
+	else
+		echo ' !! You need to set up a server in order to send the report via SCP!'
+	fi
+}

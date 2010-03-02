@@ -1,0 +1,15 @@
+#!/bin/bash
+####################################################################
+# PREY Base Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+user_agent="-A Prey/$version ($os)"
+getter="curl -s"
+
+. ./functions
+. ./pull
+. ./config
+. ./modules
+. ./push

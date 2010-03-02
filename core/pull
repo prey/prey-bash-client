@@ -1,0 +1,66 @@
+#!/bin/bash
+####################################################################
+# Prey Core Pull Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+# returns if we have have network access, otherwise 0
+# you can check against the gateway or the net, change it if you like
+check_net_status(){
+	# get_gateway_ip
+	# net_check_target=$gateway_ip
+	net_check_target="www.google.com"
+	if [ "$os" == "windows" ]; then
+		ping_params='-n'
+	else
+		ping_params='-q -c'
+	fi
+	connected=`ping $ping_params 1 $net_check_target &> /dev/null && echo 1 || echo 0`
+}
+
+# we could eventually use a different method for status checking
+check_status(){
+	if [ "$post_method" == 'http' ]; then
+		if [ -n "$device_key" ]; then
+			check_url="$check_url/devices/$device_key.xml"
+		else
+			echo -e " !! You need to enter your Device Key for HTTP Check!\n"
+			exit
+		fi
+	fi
+	response=`$getter "$user_agent" -i $check_url`
+	status=`echo -e "$response" | head -1 | cut -d" " -f2`
+}
+
+# we may eventually use a specific header for Prey
+parse_headers(){
+	content_type=`echo "$response" | grep "Content-Type" | sed 's/.*: \([a-z\/-]*\).*/\1/'`
+}
+
+# this is where the magic will happen. :)
+# some ideas:
+	# if its a shell script, run it and post back the response
+	# if its a zip file, unzip it in modules and run the active modules (the executable ones)
+	# if its a xml/json file, parse it and assign config values correspondingly
+process_response(){
+	if [ "$content_type" == "application/xml" ]; then
+		echo ' -- Got XML. Parsing...'
+		response_type='xml'
+	elif [ "$content_type" == "text/xml" ]; then
+		echo ' -- Got XML. Parsing...'
+		response_type='xml'
+	# elif [ "$content_type" == "application/octet-stream" ]; then
+	# 	echo ' -- Got a stream! What shall we do with it?'
+	#		response_type='zip'
+	elif [ "$content_type" == "text/plain" ]; then
+		echo ' -- Got a text file! Lets see if its something we can actually run.'
+		response_type='text'
+	elif [ "$content_type" == "text/html" ]; then
+		echo " -- Response was an HTML file. Lets just do our job."
+		return
+	else
+		return
+	fi
+	eval 'process_'"${response_type}"''
+}

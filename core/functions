@@ -1,0 +1,123 @@
+#!/bin/bash
+####################################################################
+# Prey Core Basic Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+# finds a string within another
+# usage find_in 'foobar' 'foo' -> echoes 1
+find_in(){
+	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
+}
+
+is_command_running(){
+	ps ax | grep -v grep | grep "$1" > /dev/null && echo 1 || return 0
+}
+
+callback(){
+	until read -st 1; do
+		echo -n ""
+	done
+
+	echo "Done. Running callback!"
+	eval '$1 $REPLY'
+}
+
+####################################################################
+# local var storage
+####################################################################
+
+# fetches a var and then assigns it as $value
+# expects the name of hash and then the name of var
+get_var(){
+	HASH="$1[*]"
+	local ${!HASH}
+	eval 'echo ${'"${2}"'} | sed "s/%20/ /g"'
+}
+
+# if you need to fetch a specific trace or file
+get_trace(){
+	get_var traces ${current_module}__$1
+}
+
+get_file(){
+	get_var files ${current_module}__$1
+}
+
+add_trace(){
+	trace="${current_module}__$1=$2"
+	echo " ++ Adding trace for $current_module: $1"
+	# we need to encode whitespaces, otherwise well get into trouble
+	trace=`echo -e "$trace" | sed 's/ /%20/g'`
+	traces[${#traces[*]}]="$trace"
+}
+
+add_file(){
+	if [ -f "$2" ]; then
+		echo " ++ Adding file for $current_module: $1 -> $2"
+		files[${#files[*]}]=${current_module}__$1=$2
+	fi
+}
+
+separator='########################################################'
+
+list_traces(){
+	# echo " -- ${#traces[*]} traces gathered!"
+	for t in "${traces[@]}"
+	do
+		current_node=`echo $t | sed 's/^\([^_].*\)__\(.*\)$/\1/'`
+		if [ "$post_method" == 'http' ]; then
+			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
+			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
+			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
+		else
+			if [ "$current_node" != "$previous_node" ]; then
+				echo -e "$separator\n# $current_node\n$separator\n"
+			fi
+			# removes module name and replaces _'s with whitespaces
+			echo -e "$t\n" | sed -e 's/^\([^_].*\)__/ :: /' -e 's/%20/ /g' -e 's/_/ /'
+		fi
+		previous_node=$current_node
+	done
+}
+
+list_files(){
+	# echo " -- ${#files[*]} files gathered!"
+	for f in "${files[@]}"
+	do
+		if [ "$post_method" == 'http' ]; then
+			# echo -e "-F $f" | sed -e 's/=/=@/'
+			echo "-F $f" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=@\3/'
+		else # just list the file paths
+			echo $f | sed 's/^.*=\(.*\)/\1/'
+		fi
+	done
+}
+
+remove_traces(){
+	unset -v traces
+	echo ' -- Dropping all traces!'
+}
+
+remove_files(){
+	for f in "${files[@]}"
+	do
+		file=`echo $f | sed 's/^.*=\(.*\)/\1/'`
+		rm -f $file
+		echo " -- Removed $file"
+	done
+}
+
+####################################################################
+# string functions
+####################################################################
+
+# TODO: should switch to more advanced forms of encryption!
+encrypt(){
+	echo -n "$1" | openssl enc -base64
+}
+
+decrypt(){
+	echo "$1" | openssl enc -base64 -d
+}

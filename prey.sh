@@ -26,8 +26,8 @@ if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
 fi
 . $base_path/lang/$lang
-. $base_path/platform/base
-. $base_path/platform/$os
+. $base_path/core/base
+. $base_path/core/$os
 
 echo -e "\E[36m$STRING_START ### `date`\E[0m\n"
 

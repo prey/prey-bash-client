@@ -1,0 +1,158 @@
+#!/bin/bash
+####################################################################
+# Prey Core Config Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+process_config(){
+
+	echo -e "$prey_configuration" | while read line; do
+
+		if [ `find_in "$line" '<current_release>'` ]; then
+			current_release=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
+		elif [ `find_in "$line" '<delay>'` ]; then
+			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
+			if [ -n "$delay" ]; then
+				if [ "`get_current_delay`" != "$delay" ]; then
+					echo " -- Setting delay to $delay minutes!"
+					update_execution_delay
+				fi
+			fi
+		elif [ `find_in "$line" '<auto_update>'` ]; then
+			if [ `find_in "$line" 'true'` ]; then
+				auto_update="y"
+				echo ' -- Auto update enabled!'
+				if [ $current_release -gt $version ]; then
+					echo " -- Updating Prey!"
+					update_prey
+				fi
+			fi
+		fi
+
+	done
+
+}
+
+####################################################################
+# prey updater
+####################################################################
+
+update_prey(){
+
+	base_url="http://cloud.github.com/downloads/tomas/prey/"
+	update_package=$base_url"prey-$current_release-$os.zip"
+
+	echo ' -- Fetching new Prey release...'
+	wget "$update_package" -O $base_path/update_package.zip 2> /dev/null
+	echo ' -- Unpacking!'
+
+	unzip -u $base_path/update_package.zip -d $base_path
+
+	if [ -f "changes.diff" ]; then
+		patch --dry-run -f -b -p1 < changes.diff
+		rm changes.diff
+	fi
+
+	rm "$base_path/update_package.zip"
+
+}
+
+# expects a <modules> section in the xml and activates de modules as requested
+# format should be as follows:
+
+# <device>
+# 	<device-type>phone</device-type>
+#		<missing>true</missing>
+# </device>
+# <configuration>
+#		<delay>10</delay>
+#		<loop>0</loop>
+# </configuration>
+#	<modules>
+#		<module name="alert" active="true">
+#			<alert-message>Give it back!</alert-message>
+#		</module>
+#		<module name="network" active="true">
+#			<traceroute>n</traceroute>
+#		</module>
+#	</modules>
+
+# it should also work with one-line module entries (with no configuration), such as
+#
+# <module name="location" active="true" />
+
+process_xml(){
+
+	prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
+	if [ -n "$prey_configuration" ]; then
+		echo -e "\n\033[1m >> Reading configuration...\n\033[0m"
+		process_config
+	fi
+	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
+	if [ -n "$module_configuration" ]; then
+		echo -e "\n\033[1m >> Reading module configuration...\n\033[0m"
+		process_modules
+	fi
+
+}
+
+# module, param, value
+update_config_for(){
+	sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" $base_path/modules/$1/config 2> /dev/null
+}
+
+process_modules(){
+
+	echo -e "$module_configuration" | while read line; do
+
+	if [ `find_in "$line" 'name='` ]; then # we have a module node
+		module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
+		echo " ** Got instructions for $module module."
+		if [ ! -d $base_path/modules/$module ]; then # not installed
+			echo " -- Installing new $module module!"
+			install_or_update_module $module
+			if [ "$?" == 1 ]; then # we got an error installing the new module
+				module=''
+				continue
+			fi
+		elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
+			upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
+			current_version=`cat $base_path/modules/$module/version 2> /dev/null`
+			if [ $upstream_version -gt $current_version ]; then
+			echo " -- Updating $module module!"
+				install_or_update_module $module
+				if [ "$?" == 1 ]; then # we got an error installing the new module
+					module=''
+					continue
+				fi
+			fi
+		fi
+	else # config line for module $module
+		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then
+			param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
+			value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
+			echo " -- Updating setting $param -> $value for $module module."
+			update_config_for "$module" "$param" "$value"
+		fi
+	fi
+
+	done
+
+}
+
+# this is REALLY untested stuff
+# we should put this in a module with the new hash-by-module trace structure
+
+process_text(){
+	if [[ -n `echo $response | grep '#!/bin/bash'` && ! -n `echo $response | grep ' rm '` ]]; then
+		echo ' -- Valid script! Lets get it on.'
+		script=/tmp/script.sh
+		echo -e $response > $script
+		chmod +x $script
+		output=`$script`
+		add_trace 'script_output' $output
+	else
+		echo " !! Invalid script. Remember Prey doesn't run any external script which try to destroy things (for security reasons)."
+	fi
+}
