@@ -1,0 +1,28 @@
+#!/bin/bash
+####################################################################
+# Prey Core Async Jobs Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+callback(){
+	until read -st 1; do
+		echo -n ""
+	done
+
+	echo "Done. Running callback!"
+	eval '$1 $REPLY'
+}
+
+add_job(){
+	echo " ++ Adding job for $current_module: $1"
+	jobs[${#jobs[*]}]="$1"
+}
+
+run_delayed_jobs(){
+	for j in "${jobs[@]}"
+	do
+		echo " -- Running job: $j"
+		eval "$j"
+	done
+}

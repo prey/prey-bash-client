@@ -5,6 +5,8 @@
 # License: GPLv3
 ####################################################################
 
+tmpdir="$WINDIR\comingagetcha"
+
 get_gateway_ip() {
 	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }
@@ -15,12 +17,12 @@ try_to_connect() {
 }
 
 get_current_delay() {
-	delay_in_miliseconds=`reg query "HKLM\Software\Prey" //v "Delay" | grep Delay | sed "s/[^0-9]*//"`
+	local delay_in_miliseconds=`reg query "HKLM\Software\Prey" //v "Delay" | grep Delay | sed "s/[^0-9]*//"`
 	echo $(($delay_in_miliseconds/60000))
 }
 
 update_execution_delay() {
-	delay_in_miliseconds=$(($delay*60*1000))
+	local delay_in_miliseconds=$(($1*60*1000))
 	reg add "HKLM\Software\Prey" //v "Delay" //d "$delay_in_miliseconds" //f > /dev/null
 }
 
@@ -30,6 +32,6 @@ is_module_active() {
 	cat $base_path/modules/$1/active 2> /dev/null
 }
 
-remove_unneeded_stuff_from_module(){
+remove_unneeded_stuff_from_module() {
 	rm -Rf `find $base_path/modules/$1 -name linux -name darwin`
 }

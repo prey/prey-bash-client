@@ -1,20 +1,25 @@
 #!/bin/bash
 ####################################################################
-# Prey - by Tomas Pollak (bootlog.org)
+# Prey Client - by Tomas Pollak (bootlog.org)
 # URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
 
-PATH=/bin:$PATH
-base_path=`dirname $0`
-start_time=`date +"%F %T"`
+# Pragmas
+# set -u
+set -e
+
+readonly base_path=`dirname $0`
+readonly start_time=`date +"%F %T"`
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 
 if [ $os == "windowsnt" ]; then
 	os=windows
+	PATH=/bin:$PATH
 else
 	PATH=/usr/bin:/bin:/usr/sbin:/sbin
 fi
+readonly os
 
 ####################################################################
 # base files inclusion
@@ -22,12 +27,12 @@ fi
 
 . $base_path/version
 . $base_path/config
-if [ ! -e "lang/$lang" ]; then # fallback to english in case the lang is missing
+if [ ! -f "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
 fi
 . $base_path/lang/$lang
 . $base_path/core/base
-. $base_path/core/$os
+. $base_path/core/platform/$os
 
 echo -e "\E[36m$STRING_START ### `date`\E[0m\n"
 
@@ -85,6 +90,7 @@ fi
 # for now lets run every module with an executable run.sh script
 ####################################################################
 
+set +e # error mode off, just continue if a module fails
 echo -e " -- Running active modules..."
 run_active_modules
 
@@ -92,8 +98,10 @@ run_active_modules
 # lets send whatever our modules have gathered
 ####################################################################
 
-echo -e " -- Sending data..."
-post_data
+echo -e " -- Sending report..."
+send_report
+run_delayed_jobs
+
 echo -e "$STRING_DONE"
 
 exit 0

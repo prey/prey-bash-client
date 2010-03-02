@@ -5,11 +5,13 @@
 # License: GPLv3
 ####################################################################
 
-user_agent="-A Prey/$version ($os)"
+tmpdir="/tmp/comingagetcha"
 getter="curl -s"
+readonly user_agent="-A Prey/$version ($os)"
 
-. ./functions
-. ./pull
-. ./config
-. ./modules
-. ./push
+. $base_path/core/functions
+. $base_path/core/pull
+. $base_path/core/config
+. $base_path/core/modules
+. $base_path/core/push
+. $base_path/core/jobs

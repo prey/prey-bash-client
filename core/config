@@ -7,30 +7,25 @@
 
 process_config(){
 
-	echo -e "$prey_configuration" | while read line; do
+	# inmense thanks to this post, it saved my day
+	# http://edwardawebb.com/linux/scope-issue-bash-loops
+	STDOUT=$(echo -e "$prey_configuration")
+	while read line; do
 
-		if [ `find_in "$line" '<current_release>'` ]; then
-			current_release=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
-		elif [ `find_in "$line" '<delay>'` ]; then
-			delay=`echo $line | sed 's/^<.*>\([^<].*\)<.*>$/\1/'`
-			if [ -n "$delay" ]; then
-				if [ "`get_current_delay`" != "$delay" ]; then
-					echo " -- Setting delay to $delay minutes!"
-					update_execution_delay
-				fi
-			fi
-		elif [ `find_in "$line" '<auto_update>'` ]; then
-			if [ `find_in "$line" 'true'` ]; then
-				auto_update="y"
-				echo ' -- Auto update enabled!'
-				if [ $current_release -gt $version ]; then
-					echo " -- Updating Prey!"
-					update_prey
-				fi
-			fi
-		fi
+		local var_set=`echo "$line" | sed -e 's/<//' -e "s/>/='/" -e "s/<.*/'/"`
+		eval $var_set
 
-	done
+	done <<< "$STDOUT"
+
+	if [ "`get_current_delay`" != "$delay" ]; then
+		echo " -- Setting delay to $delay minutes!"
+		update_execution_delay $delay
+	fi
+
+	if [[ "$auto_update" == "y" && $current_release -gt $version ]]; then
+		echo " -- New Prey version found! Auto-update selected so updating..."
+		update_prey
+	fi
 
 }
 
@@ -40,8 +35,8 @@ process_config(){
 
 update_prey(){
 
-	base_url="http://cloud.github.com/downloads/tomas/prey/"
-	update_package=$base_url"prey-$current_release-$os.zip"
+	local base_url="http://cloud.github.com/downloads/tomas/prey/"
+	local update_package=$base_url"prey-$current_release-$os.zip"
 
 	echo ' -- Fetching new Prey release...'
 	wget "$update_package" -O $base_path/update_package.zip 2> /dev/null
@@ -107,7 +102,7 @@ process_modules(){
 	echo -e "$module_configuration" | while read line; do
 
 	if [ `find_in "$line" 'name='` ]; then # we have a module node
-		module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
+		local module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
 		echo " ** Got instructions for $module module."
 		if [ ! -d $base_path/modules/$module ]; then # not installed
 			echo " -- Installing new $module module!"
@@ -117,8 +112,8 @@ process_modules(){
 				continue
 			fi
 		elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
-			upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
-			current_version=`cat $base_path/modules/$module/version 2> /dev/null`
+			local upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
+			local current_version=`cat $base_path/modules/$module/version 2> /dev/null`
 			if [ $upstream_version -gt $current_version ]; then
 			echo " -- Updating $module module!"
 				install_or_update_module $module
@@ -130,8 +125,8 @@ process_modules(){
 		fi
 	else # config line for module $module
 		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then
-			param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
-			value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
+			local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
+			local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
 			echo " -- Updating setting $param -> $value for $module module."
 			update_config_for "$module" "$param" "$value"
 		fi
@@ -143,16 +138,6 @@ process_modules(){
 
 # this is REALLY untested stuff
 # we should put this in a module with the new hash-by-module trace structure
-
 process_text(){
-	if [[ -n `echo $response | grep '#!/bin/bash'` && ! -n `echo $response | grep ' rm '` ]]; then
-		echo ' -- Valid script! Lets get it on.'
-		script=/tmp/script.sh
-		echo -e $response > $script
-		chmod +x $script
-		output=`$script`
-		add_trace 'script_output' $output
-	else
-		echo " !! Invalid script. Remember Prey doesn't run any external script which try to destroy things (for security reasons)."
-	fi
+	echo " -- What should we do with the text file?"
 }

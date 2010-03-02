@@ -10,11 +10,11 @@
 check_net_status(){
 	# get_gateway_ip
 	# net_check_target=$gateway_ip
-	net_check_target="www.google.com"
+	local net_check_target="www.google.com"
 	if [ "$os" == "windows" ]; then
-		ping_params='-n'
+		local ping_params='-n'
 	else
-		ping_params='-q -c'
+		local ping_params='-q -c'
 	fi
 	connected=`ping $ping_params 1 $net_check_target &> /dev/null && echo 1 || echo 0`
 }
