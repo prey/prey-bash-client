@@ -8,6 +8,7 @@
 . $base_path/core/functions
 . $base_path/core/setup
 . $base_path/core/pull
+. $base_path/core/updater
 . $base_path/core/config
 . $base_path/core/modules
 . $base_path/core/push

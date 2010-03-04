@@ -1,0 +1,119 @@
+#!/bin/bash
+####################################################################
+# Prey Core Updater Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+####################################################################
+# core files
+####################################################################
+
+update_prey(){
+
+	diff_file="changes.diff"
+	local base_url="http://cloud.github.com/downloads/tomas/prey"
+	local update_package="$base_url/prey-updater-for-$version.zip"
+
+	echo ' -- Fetching new Prey release...'
+	wget "$update_package" -O $base_path/updater.zip 2> /dev/null
+
+	if [ ! -f "$base_path/updater.zip" ]; then
+		echo ' !! Couldnt get updater file! Skipping...'
+		return 0
+	fi
+
+	echo ' -- Unpacking!'
+
+	unzip -u $base_path/updater.zip -d $base_path/updater
+
+	echo ' -- Updating files!'
+
+	if [ -d "$base_path/updater/platform/$os" ]; then
+		cd $base_path/updater/platform/$os
+		cp * -r -u $base_path/platform/$os/ # first, copy the platform specific stuff
+	fi
+
+	cd $base_path/updater
+	rm -Rf platform 2> /dev/null
+	cp * -r -u $base_path/ # this will copy changes.diff to base_path as well
+	cd $base_path
+
+	if [ -f "$diff_file" ]; then
+
+		# -f forces
+		# -p0 apply on current dir
+		if [ `patch --dry-run --backup-if-mismatch -f -p0 -i $diff_file` ]; then
+			echo ' -- Applying patch!'
+			patch --dry-run --backup-if-mismatch -f -p0 -i $diff_file
+		fi
+
+		delete_files_according_to_diff
+
+		rm $diff_file
+	fi
+
+	rm -Rf updater
+	rm "$base_path/updater.zip"
+
+	echo 1
+
+}
+
+delete_files_according_to_diff() {
+
+	STDOUT=$(grep "Binary" $diff_file)
+
+	while read file; do
+
+		original=`echo "$file" | cut -d" " -f3`
+		modified=`echo "$file" | cut -d" " -f5`
+
+		if [ "$modified" == "/dev/null" ]; then # deleted file
+
+			echo " -- Deleting file: $original"
+			rm -f $original
+
+		fi
+
+	done <<< "$STDOUT"
+
+}
+
+####################################################################
+# module updater
+####################################################################
+
+get_module(){
+	rm $base_path/modules/$1.zip 2> /dev/null
+	local repo_url=`echo $check_url | sed 's/.*\/\/\([^\/][a-z\.]*\)\/.*$/http:\/\/\1/'`
+	wget "$repo_url/modules/get/$1?api_key=$api_key" -O $base_path/modules/$1.zip 2> /dev/null
+}
+
+install_or_update_module(){
+	get_module $1
+	local package_size=$(stat -c %s "$base_path/modules/$1.zip")
+	if [ $package_size -gt 0 ]; then
+		echo " -- Got new $1 module from repository! Unpackaging..."
+		if [ -d "$base_path/modules/$1" ]; then # module already installed
+			# if [ -f "$base_path/modules/$1/config" ]; then # with configuration
+			# 	echo ' -- Saving previous configuration values...'
+			# 	cp $base_path/modules/$1/config /tmp/prey-module-$1-config.tmp
+			# fi
+			rm -R $base_path/modules/$1
+		fi
+		unzip $base_path/modules/$1.zip -d $base_path/modules &> /dev/null
+		remove_unneeded_stuff_from_module $1
+		rm $base_path/modules/$1.zip
+		activate_module $1
+		# if [ -f "/tmp/prey-module-$1-config.tmp" ]; then
+		# 	echo ' -- Applying previous configuration values...'
+		# 	mv /tmp/prey-module-$1-config.tmp $base_path/modules/$1/config
+		# fi
+		echo " ** New $1 module placed and ready to go!"
+		return 0
+	else
+		echo " !! Couldn't install $1 module from repository."
+		return 1
+	fi
+}
