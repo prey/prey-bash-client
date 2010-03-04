@@ -7,6 +7,7 @@
 
 # we may need to know who the logged user is
 readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
+readonly unzip_exlude='-x \*darwin* -x \*bin -x \*.exe'
 
 get_gateway_ip() {
 	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`

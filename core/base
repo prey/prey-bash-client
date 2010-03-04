@@ -1,15 +1,12 @@
 #!/bin/bash
 ####################################################################
-# PREY Base Functions - by Tomas Pollak (bootlog.org)
+# Prey Core Functions - by Tomas Pollak (bootlog.org)
 # URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
 
-tmpdir="/tmp/comingagetcha"
-getter="curl -s"
-readonly user_agent="-A Prey/$version ($os)"
-
 . $base_path/core/functions
+. $base_path/core/setup
 . $base_path/core/pull
 . $base_path/core/config
 . $base_path/core/modules

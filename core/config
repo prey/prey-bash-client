@@ -42,10 +42,25 @@ update_prey(){
 	wget "$update_package" -O $base_path/update_package.zip 2> /dev/null
 	echo ' -- Unpacking!'
 
-	unzip -u $base_path/update_package.zip -d $base_path
+	unzip -u $base_path/update_package.zip -d $base_path/updater
+
+	if [ -d "$base_path/updater/platform/$os" ]; then
+		cd $base_path/updater/platform/$os
+		cp * -r -u $base_path/platform/$os # first, copy the platform specific stuff
+	fi
+
+	cd $base_path/updater
+	rm -Rf platform 2> /dev/null
+	cp * -r -u $base_path/ # now update binaries for all platforms
+	cd $base_path
+	rm -Rf updater
 
 	if [ -f "changes.diff" ]; then
-		patch --dry-run -f -b -p1 < changes.diff
+		# -f forces
+		# -p0 apply on current dir
+		if [ `patch --dry-run --backup-if-mismatch -f -p0 -i changes.diff` ]; then
+			patch --dry-run --backup-if-mismatch -f -p0 -i changes.diff
+		fi
 		rm changes.diff
 	fi
 

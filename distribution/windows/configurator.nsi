@@ -155,7 +155,7 @@ Function welcomePage
 
 	${NSD_CreateBitmap} 0 40 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\connect.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\connect.bmp $IMAGEHANDLE
 
 	${NSD_CreateRadioButton} 55 42 200 12u $(SETUP_REPORTS_OPTION)
 	Pop $DESTINY_ONE
@@ -169,7 +169,7 @@ Function welcomePage
 
 	${NSD_CreateBitmap} 0 107 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\settings.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\settings.bmp $IMAGEHANDLE
 
 	${NSD_CreateRadioButton} 55 105 200 12u $(CHANGE_SETTINGS_OPTION)
 	Pop $DESTINY_ONE
@@ -213,7 +213,7 @@ Function settingsPage
 
 	${NSD_CreateBitmap} 0 40 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\delay.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\delay.bmp $IMAGEHANDLE
 
 	${NSD_CreateDroplist} 55 38 38 12u $DELAY
 	Pop $DELAY
@@ -246,7 +246,7 @@ Function settingsPage
 
 	${NSD_CreateBitmap} 0 102 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\user.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\user.bmp $IMAGEHANDLE
 
 	${NSD_CreateCheckbox} 55 100 200 12u $(SETTING_GUEST_TITLE)
 	Pop $ENABLE_GUEST_ACCOUNT
@@ -264,7 +264,7 @@ Function settingsPage
 
 	${NSD_CreateBitmap} 0 167 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\wifi.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\wifi.bmp $IMAGEHANDLE
 
 	${NSD_CreateCheckbox} 55 165 200 12u $(SETTING_WIFI_TITLE)
 	Pop $WIFI_CONNECT
@@ -305,7 +305,7 @@ Function reportsPage
 
 	${NSD_CreateBitmap} 0 40 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\controlpanel.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\controlpanel.bmp $IMAGEHANDLE
 
 	${NSD_CreateRadioButton} 55 42 150 12u $(CONTROL_PANEL_OPTION)
 	Pop $POST_METHOD_BUTTON
@@ -322,7 +322,7 @@ Function reportsPage
 
 	${NSD_CreateBitmap} 0 107 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\email.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\email.bmp $IMAGEHANDLE
 
 	${NSD_CreateRadioButton} 55 105 150 12u $(STANDALONE_OPTION)
 	Pop $POST_METHOD_BUTTON
@@ -451,7 +451,7 @@ Function controlPanelPage
 
 	${NSD_CreateBitmap} 0 40 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\user.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\user.bmp $IMAGEHANDLE
 
 	${NSD_CreateRadioButton} 55 42 300 12u $(CONTROL_PANEL_NEW_USER_OPTION)
 	Pop $DESTINY_TWO
@@ -463,7 +463,7 @@ Function controlPanelPage
 
 	${NSD_CreateBitmap} 0 107 48 48 ""
 	Pop $IMAGE
-	${NSD_SetImage} $IMAGE pixmaps\user.bmp $IMAGEHANDLE
+	${NSD_SetImage} $IMAGE pixmaps\conf\user.bmp $IMAGEHANDLE
 
 	${NSD_CreateRadioButton} 55 105 300 12u $(CONTROL_PANEL_EXISTING_USER_TITLE)
 	Pop $DESTINY_TWO

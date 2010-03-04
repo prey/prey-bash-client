@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-tmpdir="$WINDIR\comingagetcha"
+readonly unzip_exlude='-x \*linux* -x \*darwin*'
 
 get_gateway_ip() {
 	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`

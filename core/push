@@ -26,7 +26,7 @@ send_report(){
 
 send_via_email(){
 
-	local mailsender="$base_path/lib/sendEmail"
+	local mailsender="sendEmail"
 	if [ "$os" == "windows" ]; then
 		mailsender=$mailsender.exe
 	fi
@@ -46,14 +46,6 @@ send_via_email(){
 }
 
 send_via_http(){
-
-	if [ "$os" == "windows" ]; then
-		local arch=`echo $PROCESSOR_ARCHITEW6432`
-		if [ `find_in "$arch" '64'` ]; then
-			getter="curl64 -s"
-			echo -e " ** 64 bit architecture detected!"
-		fi
-	fi
 
 	if [ -z "$post_url" ]; then
 		local post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`

@@ -114,18 +114,20 @@ Section "Prey" PreySection
 	File prey.log
 	File cron.exe
 	File prey-config.exe
-	File /r pixmaps
+	File /r ..\..\pixmaps
 	File /r etc
 
-	SetOutPath "$INSTDIR\bin"
-	File bin\*.*
+	; SetOutPath "$INSTDIR\bin"
+	; File bin\*.*
+
+	SetOutPath "$INSTDIR\core"
+	File ..\..\core\*.*
 
 	SetOutPath "$INSTDIR\platform"
-	File ..\..\platform\base
-	File ..\..\platform\windows
+	File ..\..\platform\windows\core
 
-	SetOutPath "$INSTDIR\lib"
-	File /r ..\..\lib\*.exe
+	SetOutPath "$INSTDIR\platform\bin"
+	File ..\..\platform\windows\bin\*.*
 
 	SetOutPath "$INSTDIR\modules"
 	File /r /x linux /x darwin ..\..\modules\alert

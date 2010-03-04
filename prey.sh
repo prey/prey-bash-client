@@ -5,21 +5,9 @@
 # License: GPLv3
 ####################################################################
 
-# Pragmas
 # set -u
 set -e
-
 readonly base_path=`dirname $0`
-readonly start_time=`date +"%F %T"`
-os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
-
-if [ $os == "windowsnt" ]; then
-	os=windows
-	PATH=/bin:$PATH
-else
-	PATH=/usr/bin:/bin:/usr/sbin:/sbin
-fi
-readonly os
 
 ####################################################################
 # base files inclusion
@@ -32,7 +20,7 @@ if [ ! -f "lang/$lang" ]; then # fallback to english in case the lang is missing
 fi
 . $base_path/lang/$lang
 . $base_path/core/base
-. $base_path/core/platform/$os
+. $base_path/platform/$os/core
 
 echo -e "\E[36m$STRING_START ### `date`\E[0m\n"
 
