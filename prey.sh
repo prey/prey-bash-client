@@ -97,7 +97,6 @@ send_report
 run_delayed_jobs
 
 echo -e "$STRING_DONE"
-
 rm -Rf $tmpdir
 
 exit 0

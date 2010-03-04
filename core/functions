@@ -37,10 +37,10 @@ get_file(){
 }
 
 add_trace(){
-	trace="${current_module}__$1=$2"
+	local trace="${current_module}__$1=$2"
 	echo " ++ Adding trace for $current_module: $1"
 	# we need to encode whitespaces, otherwise well get into trouble
-	trace=`echo -e "$trace" | sed 's/ /%20/g'`
+	local trace=`echo -e "$trace" | sed 's/ /%20/g'`
 	traces[${#traces[*]}]="$trace"
 }
 
