@@ -16,9 +16,12 @@
 ;General
 
 	!define INITIAL_DELAY 120000
-	!define PRODUCT_VERSION "0.3.5"
-	Name "Prey"
+	!define PRODUCT_VERSION '0.3.5'
+
+	Name "Prey ${PRODUCT_VERSION}"
 	OutFile "prey-${PRODUCT_VERSION}-win.exe"
+
+	SetDatablockOptimize on
 
 	;Default installation folder
 	;InstallDir "$LOCALAPPDATA\Prey"
@@ -40,7 +43,7 @@
 			Abort
 		${EndIf}
 		ReadRegStr $0 HKCU "Software\Prey" "Start Menu Folder"
-		ReadRegStr $1 HKLM "Software\Prey" "Version"
+		ReadRegStr $1 HKLM "Software\Prey" "Path"
 		${If} $0$1 != ""
 			messageBox MB_OK "Prey is already installed. We need to uninstall the previous version first.$\r$\nPress OK and well send you there."
 			Exec $INSTDIR\Uninstall.exe
@@ -78,7 +81,7 @@
 	!insertmacro MUI_PAGE_STARTMENU Application $StartMenuFolder
 
 	!insertmacro MUI_PAGE_INSTFILES
-	!define MUI_FINISHPAGE_RUN "$INSTDIR\prey-config.exe"
+	!define MUI_FINISHPAGE_RUN "$INSTDIR\platform\windows\prey-config.exe"
 	; !define MUI_FINISHPAGE_RUN "$PROGRAMFILES\Windows NT\Accessories\wordpad.exe"
 	; !define MUI_FINISHPAGE_RUN_PARAMETERS "$INSTDIR\config"
 	!define MUI_FINISHPAGE_RUN_TEXT "Configure Prey Settings (Recommended)"
@@ -108,33 +111,28 @@ Section "Prey" PreySection
 	File ..\..\prey.sh
 	File ..\..\config
 	File ..\..\README
-	File /r ..\..\lang
+	File ..\..\LICENSE
 
 	; windows specific stuff
-	File prey.log
-	File cron.exe
-	File prey-config.exe
 	File /r ..\..\pixmaps
 	File /r etc
 
-	; SetOutPath "$INSTDIR\bin"
-	; File bin\*.*
+	SetOutPath "$INSTDIR\lang"
+	File ..\..\lang\*.*
 
 	SetOutPath "$INSTDIR\core"
 	File ..\..\core\*.*
 
 	SetOutPath "$INSTDIR\platform\windows"
-	File ..\..\platform\windows\core
-
-	SetOutPath "$INSTDIR\platform\windows\bin"
-	File ..\..\platform\windows\bin\*.*
+	File /r ..\..\platform\windows\*.*
+	File prey.log
 
 	SetOutPath "$INSTDIR\modules"
 	File /r /x linux /x darwin ..\..\modules\alert
 	File /r /x linux /x darwin ..\..\modules\network
 	File /r /x linux /x darwin ..\..\modules\session
 	File /r /x linux /x darwin ..\..\modules\webcam
-	;File /r /x linux /x darwin ..\..\modules\geo
+	File /r /x linux /x darwin ..\..\modules\geo
 
 	SetOutPath "$INSTDIR\modules\network"
 	File /a active
@@ -145,28 +143,31 @@ Section "Prey" PreySection
 	SetOutPath "$INSTDIR\modules\webcam"
 	File /a active
 
+	SetOutPath "$INSTDIR\modules\geo"
+	File /a active
+
 	SetOutPath "$INSTDIR"
 
 	AccessControl::GrantOnFile "$INSTDIR\prey.log" "(BU)" "FullAccess"
 
 	;Create uninstaller
-	WriteUninstaller "$INSTDIR\Uninstall.exe"
+	WriteUninstaller "$INSTDIR\platform\windows\Uninstall.exe"
 
 	!insertmacro MUI_STARTMENU_WRITE_BEGIN Application
 
 		;Create shortcuts
 		CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
 		; CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Prey.lnk" "$INSTDIR\prey.bat"
-		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$INSTDIR\prey-config.exe"
-		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
+		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Configure Prey.lnk" "$INSTDIR\platform\windows\prey-config.exe"
+		CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\platform\windows\Uninstall.exe"
 
 	!insertmacro MUI_STARTMENU_WRITE_END
 
 	; create the registry keys and start the program
 	WriteRegStr HKLM "Software\Prey" "Path" "$INSTDIR"
-	WriteRegStr HKLM "Software\Prey" "Version" "${PRODUCT_VERSION}"
+	; WriteRegStr HKLM "Software\Prey" "Version" "${PRODUCT_VERSION}"
 	WriteRegStr HKLM "Software\Prey" "Delay" "${INITIAL_DELAY}"
-	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\cron.exe --log'
+	WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" 'Prey Laptop Tracker' '$INSTDIR\platform\windows\cron.exe --log'
 	; Exec '"$INSTDIR\cron.exe"'
 
 	; add scheduled task
@@ -183,6 +184,9 @@ Function un.onInit
 		messageBox MB_OK "You must be logged in as an administrator user to uninstall Prey."
 		Abort
 	${EndIf}
+
+	ReadRegStr $INSTDIR HKLM "Software\Prey" "Path"
+
 	MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "Are you sure you want to completely remove $(^Name) and all of its components?" IDYES +2
 	Abort
 FunctionEnd
@@ -191,22 +195,20 @@ Section "Uninstall"
 
 	Processes::KillProcess "cron.exe"
 
-	RMDir /r "$INSTDIR\bin"
+	RMDir /r "$INSTDIR\core"
 	RMDir /r "$INSTDIR\etc"
 	RMDir /r "$INSTDIR\pixmaps"
 	RMDir /r "$INSTDIR\platform"
 	RMDir /r "$INSTDIR\lang"
-	RMDir /r "$INSTDIR\lib"
 	RMDir /r "$INSTDIR\modules"
 
-	Delete "$INSTDIR\prey.log"
 	Delete "$INSTDIR\.bash_history"
+	Delete "$INSTDIR\prey.log"
 	Delete "$INSTDIR\README"
-	Delete "$INSTDIR\cron.exe"
-	Delete "$INSTDIR\prey-config.exe"
+	Delete "$INSTDIR\LICENSE"
 	Delete "$INSTDIR\prey.sh"
 	Delete "$INSTDIR\config"
-	Delete "$INSTDIR\Uninstall.exe"
+	Delete "$INSTDIR\version"
 
 	RMDir "$INSTDIR"
 
@@ -218,7 +220,7 @@ Section "Uninstall"
 	RMDir "$SMPROGRAMS\$StartMenuFolder"
 
 	DeleteRegValue HKLM "Software\Prey" "Delay"
-	DeleteRegValue HKLM "Software\Prey" "Version"
+	; DeleteRegValue HKLM "Software\Prey" "Version"
 	DeleteRegValue HKLM "Software\Prey" "Path"
 	DeleteRegKey /ifempty HKLM "Software\Prey"
 	DeleteRegKey /ifempty HKCU "Software\Prey"

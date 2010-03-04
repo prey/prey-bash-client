@@ -860,7 +860,7 @@ Function exitConfigurator
 	AccessControl::GrantOnFile "$PREY_PATH\config" "(BU)" "GenericRead"
 
 	; lets run (or rerun) prey with the new configuration
-	Exec '"$PREY_PATH\cron.exe" --log'
+	Exec '"$PREY_PATH\platform\windows\cron.exe" --log'
 
 	IfSilent 0 +2 ; dont show shit!
 		Quit

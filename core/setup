@@ -9,7 +9,7 @@ readonly start_time=`date +"%F %T"`
 os=`uname | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"`
 getter="curl -s"
 
-if [ $os == "windowsnt" ]; then
+if [ "$os" == "windowsnt" ]; then
 	os=windows
 	tmpdir="$WINDIR\Temp\x9125jx" # "random" name to make it harder to detect
 	local arch=`echo $PROCESSOR_ARCHITEW6432`
@@ -18,6 +18,9 @@ if [ $os == "windowsnt" ]; then
 		getter="curl64 -s"
 	fi
 else
+	if [ "$os" == "darwin" ];
+		os=mac
+	fi
 	tmpdir="/tmp/x9125jx"
 fi
 
