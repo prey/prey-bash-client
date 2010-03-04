@@ -22,9 +22,18 @@ process_config(){
 		update_execution_delay $delay
 	fi
 
-	if [[ "$auto_update" == "y" && $current_release -gt $version ]]; then
-		echo " -- New Prey version found! Auto-update selected so updating..."
-		update_prey
+	if [ "$auto_update" == "y" ]; then
+
+		while "$current_release" != "$version" ; do
+			echo " -- New Prey version found! Auto-update selected so updating..."
+			if [ `update_prey == 1` ]; then
+				. $base_path/version
+				echo " ** Update OK! New version is $version."
+			else
+				break
+			fi
+		done
+
 	fi
 
 }
@@ -35,36 +44,48 @@ process_config(){
 
 update_prey(){
 
-	local base_url="http://cloud.github.com/downloads/tomas/prey/"
-	local update_package=$base_url"prey-$current_release-$os.zip"
+	local diff_file="changes.diff"
+	local base_url="http://cloud.github.com/downloads/tomas/prey"
+	local update_package="$base_url/prey-updater-for-$version.zip"
 
 	echo ' -- Fetching new Prey release...'
-	wget "$update_package" -O $base_path/update_package.zip 2> /dev/null
+	wget "$update_package" -O $base_path/updater.zip 2> /dev/null
+
+	if [ ! -f "$base_path/updater.zip" ]; then
+		echo ' !! Couldnt get updater file! Skipping...'
+		return 0
+	fi
+
 	echo ' -- Unpacking!'
 
-	unzip -u $base_path/update_package.zip -d $base_path/updater
+	unzip -u $base_path/updater.zip -d $base_path/updater
+
+	echo ' -- Updating files!'
 
 	if [ -d "$base_path/updater/platform/$os" ]; then
 		cd $base_path/updater/platform/$os
-		cp * -r -u $base_path/platform/$os # first, copy the platform specific stuff
+		cp * -r -u $base_path/platform/$os/ # first, copy the platform specific stuff
 	fi
 
 	cd $base_path/updater
 	rm -Rf platform 2> /dev/null
-	cp * -r -u $base_path/ # now update binaries for all platforms
+	cp * -r -u $base_path/ # this will copy changes.diff to base_path as well
 	cd $base_path
-	rm -Rf updater
 
-	if [ -f "changes.diff" ]; then
+	if [ -f "$diff_file" ]; then
 		# -f forces
 		# -p0 apply on current dir
-		if [ `patch --dry-run --backup-if-mismatch -f -p0 -i changes.diff` ]; then
-			patch --dry-run --backup-if-mismatch -f -p0 -i changes.diff
+		if [ `patch --dry-run --backup-if-mismatch -f -p0 -i $diff_file` ]; then
+			echo ' -- Applying patch!'
+			patch --dry-run --backup-if-mismatch -f -p0 -i $diff_file
 		fi
 		rm changes.diff
 	fi
 
-	rm "$base_path/update_package.zip"
+	rm -Rf updater
+	rm "$base_path/updater.zip"
+
+	echo 1
 
 }
 

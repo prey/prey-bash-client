@@ -18,7 +18,7 @@ if [ "$os" == "windowsnt" ]; then
 		getter="curl64 -s"
 	fi
 else
-	if [ "$os" == "darwin" ];
+	if [ "$os" == "darwin" ]; then
 		os=mac
 	fi
 	tmpdir="/tmp/x9125jx"
