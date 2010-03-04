@@ -15,6 +15,7 @@ if [ "$os" == "windowsnt" ]; then
 	arch=`echo $PROCESSOR_ARCHITEW6432`
 	if [ `find_in "$arch" '64'` ]; then
 		echo -e " ** 64 bit architecture detected!"
+		readonly 64bit=1 # so we can check later
 		getter="curl64 -s"
 	fi
 else
