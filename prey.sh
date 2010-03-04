@@ -80,6 +80,10 @@ fi
 # for now lets run every module with an executable run.sh script
 ####################################################################
 
+# lets create our ultramegasecret temp dir
+mkdir -p $tmpdir 2> /dev/null
+chmod 700 $tmpdir
+
 set +e # error mode off, just continue if a module fails
 echo -e " -- Running active modules..."
 run_active_modules
@@ -93,5 +97,7 @@ send_report
 run_delayed_jobs
 
 echo -e "$STRING_DONE"
+
+rm -Rf $tmpdir
 
 exit 0

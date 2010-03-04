@@ -82,7 +82,7 @@ else # prey status messages
 	STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
 	STRING_DONE=" -- Done! Happy hunting! :)\n"
 
-	EMAIL_NOTICE="*** IMPORTANT! PREY'S ACTIVATION METHOD HAS CHANGED.\nIF YOU WANT TO STOP RECEIVING REPORTS PLEASE READ THIS: \npreyproject.com/blog/2009/10/big-news ***\n\n"
+	EMAIL_NOTICE=""
 	EMAIL_HEADER="Good news my friend, it seems we found it.\n\nHere's the report from your computer:\n\n"
 	EMAIL_FOOTER="\n\nNow, go catch the bastard!\n\n--\nYour humble servant, Prey\nhttp://preyproject.com"
 
