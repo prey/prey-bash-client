@@ -123,10 +123,10 @@ Section "Prey" PreySection
 	SetOutPath "$INSTDIR\core"
 	File ..\..\core\*.*
 
-	SetOutPath "$INSTDIR\platform"
+	SetOutPath "$INSTDIR\platform\windows"
 	File ..\..\platform\windows\core
 
-	SetOutPath "$INSTDIR\platform\bin"
+	SetOutPath "$INSTDIR\platform\windows\bin"
 	File ..\..\platform\windows\bin\*.*
 
 	SetOutPath "$INSTDIR\modules"
