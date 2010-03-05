@@ -12,7 +12,7 @@ process_config(){
 	STDOUT=$(echo -e "$prey_configuration")
 	while read line; do
 
-		local var_set=`echo "$line" | sed -e 's/<//' -e "s/>/='/" -e "s/<.*/'/"`
+		local var_set=`echo "$line" | sed -e 's/<//' -e "s/>/=\'/" -e "s/<.*/'/"`
 		eval $var_set
 
 	done <<< "$STDOUT"

@@ -11,19 +11,25 @@ get_gateway_ip() {
 	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }
 
+is_bigger_than() {
+	echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
+}
+
 # returns 1 if it is
 is_net_framework_installed() {
-	local version=`echo $1 | sed 's/\..\./\./'`
-	local results=`reg query "HKLM\Software\Microsoft\NET Framework Setup\NDP'" | sed -e 's/.*NDP\\\v//g' -e 's/\..\./\./'`
-	for result in `echo -e $results`; do
-		if [[ $result == $version || $result -gt $version ]]; then
+	local version=`echo $required_net_version | sed 's/\..\./\./'`
+	local results=`reg query "HKLM\Software\Microsoft\NET Framework Setup\NDP" | sed -e 's/.*NDP\\\v//g' -e 's/\..\./\./' -e 's/[A-Z!].*//g' | grep -v "^$"`
+
+	for result in `echo -e "$results"`; do
+		if [[ "$result" == "$version" || `is_bigger_than $result $version` == 1 ]]; then
 			echo 1
 		fi
 	done
+	return 0
 }
 
 try_to_connect() {
-	if [ `is_net_framework_installed $required_net_version` == 1 ]; then
+	if [ "`is_net_framework_installed`" == 1 ]; then
 		autowc -connect 2> /dev/null
 	else
 		echo " !! .NET framework version $required_net_version or newer not installed!"
