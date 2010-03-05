@@ -20,11 +20,6 @@ readonly base_path=`dirname $0`
 if [ ! -f "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
 fi
-if [ "$1" == "-t" ]; then
-	echo -e "\033[1m -- TEST MODE ENABLED.\033[0m\n"
-	. $base_path/test/include
-	test_mode=1
-fi
 . $base_path/lang/$lang
 . $base_path/core/base
 . $base_path/platform/$os/core

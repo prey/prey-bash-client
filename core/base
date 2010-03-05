@@ -5,6 +5,12 @@
 # License: GPLv3
 ####################################################################
 
+if [ "$1" == "-t" ]; then
+	echo -e "\n\033[1m -- TEST MODE ENABLED.\033[0m\n"
+	. $base_path/test/include 2> /dev/null
+	test_mode=1
+fi
+
 . $base_path/core/functions
 . $base_path/core/setup
 . $base_path/core/pull
