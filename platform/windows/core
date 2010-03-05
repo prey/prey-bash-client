@@ -5,12 +5,29 @@
 # License: GPLv3
 ####################################################################
 
+readonly required_net_version='2.0.50727'
+
 get_gateway_ip() {
 	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }
 
+# returns 1 if it is
+is_net_framework_installed() {
+	local version=`echo $1 | sed 's/\..\./\./'`
+	local results=`reg query "HKLM\Software\Microsoft\NET Framework Setup\NDP'" | sed -e 's/.*NDP\\\v//g' -e 's/\..\./\./'`
+	for result in `echo -e $results`; do
+		if [[ $result == $version || $result -gt $version ]]; then
+			echo 1
+		fi
+	done
+}
+
 try_to_connect() {
-	autowc -connect 2> /dev/null
+	if [ `is_net_framework_installed $required_net_version` == 1 ]; then
+		autowc -connect 2> /dev/null
+	else
+		echo " !! .NET framework version $required_net_version or newer not installed!"
+	fi
 }
 
 get_current_delay() {
