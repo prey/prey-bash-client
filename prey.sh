@@ -76,7 +76,7 @@ fi
 
 # lets create our ultramegasecret temp dir
 mkdir -p $tmpdir 2> /dev/null
-chmod 700 $tmpdir
+chmod 700 $tmpdir 2> /dev/null
 
 set +e # error mode off, just continue if a module fails
 echo -e " -- Running active modules..."
