@@ -20,17 +20,16 @@ readonly base_path=`dirname $0`
 if [ ! -f "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
 fi
+if [ "$1" == "-t" ]; then
+	echo -e "\033[1m -- TEST MODE ENABLED.\033[0m\n"
+	. $base_path/test/include
+	test_mode=1
+fi
 . $base_path/lang/$lang
 . $base_path/core/base
 . $base_path/platform/$os/core
 
 echo -e "\E[36m$STRING_START ### `date`\E[0m\n"
-
-if [ "$1" == "-t" ]; then
-	echo -e "\033[1m -- TEST MODE ENABLED. WON'T SEND DATA!\033[0m\n"
-	. $base_path/config.test 2> /dev/null
-	test_mode=1
-fi
 
 ####################################################################
 # lets check if we're actually connected

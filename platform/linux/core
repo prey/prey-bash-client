@@ -7,7 +7,6 @@
 
 # we may need to know who the logged user is
 readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
-readonly unzip_exlude='-x \*darwin* -x \*bin -x \*.exe'
 
 get_gateway_ip() {
 	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
@@ -65,8 +64,4 @@ get_current_delay(){
 
 update_execution_delay(){
 	(crontab -l | grep -v prey; echo "*/$1 * * * * $base_path/prey.sh > /dev/null") | crontab -
-}
-
-remove_unneeded_stuff_from_module(){
-	rm -Rf `find $base_path/modules/$1 -name darwin -name windows -name *.exe`
 }

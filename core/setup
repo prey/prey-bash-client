@@ -25,6 +25,9 @@ else
 	tmpdir="/tmp/x9125jx"
 fi
 
+readonly control_panel_url="http://control.preyproject.com"
+readonly updates_url="http://cloud.github.com/downloads/tomas/prey"
+readonly modules_url=$control_panel_url
 readonly getter
 readonly tmpdir
 readonly os

@@ -7,7 +7,6 @@
 
 readonly logged_pid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
 readonly airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
-readonly unzip_exlude='-x \*linux* -x \*bin -x \*.exe'
 
 get_gateway_ip() {
 	gateway_ip=`netstat -rn | grep default | cut -c20-35`
@@ -34,8 +33,4 @@ try_to_connect() {
 		networksetup -setairportnetwork $essid 2>/dev/null
 
 	fi
-}
-
-remove_unneeded_stuff_from_module(){
-	rm -Rf `find $base_path/modules/$1 -name linux -name windows -name *.exe`
 }

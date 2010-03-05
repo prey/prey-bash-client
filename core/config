@@ -26,7 +26,8 @@ process_config(){
 
 		while "$current_release" != "$version" ; do
 			echo " -- New Prey version found! Auto-update selected so updating..."
-			if [ `update_prey == 1` ]; then
+			update_prey
+			if [ $? == 0 ]; then
 				. $base_path/version
 				echo " ** Update OK! New version is $version."
 			else
@@ -99,11 +100,11 @@ process_modules(){
 		elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
 			local upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
 			local current_version=`cat $base_path/modules/$module/version 2> /dev/null`
-			if [ $upstream_version -gt $current_version ]; then
+			if [ "$upstream_version" != "$current_version" ]; then
 			echo " -- Updating $module module!"
 				install_or_update_module $module
-				if [ "$?" == 1 ]; then # we got an error installing the new module
-					module=''
+				if [ $? == 1 ]; then # we got an error installing the new module
+					module='' # so we don't try to edit the config on the next loop
 					continue
 				fi
 			fi
