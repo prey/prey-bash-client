@@ -34,3 +34,13 @@ try_to_connect() {
 
 	fi
 }
+
+get_current_delay() {
+	grep "<integer>.*<.integer>" /Library/LaunchDaemons/com.preyproject.PreyMac.plist | sed -e "s/^.*<integer/<integer/" | cut -f2 -d">"| cut -f1 -d"<"
+}
+
+update_execution_delay() {
+	sudo launchctl unload /Library/LaunchDaemons/com.preyproject.PreyMac.plist
+	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay<\/integer>/" /Library/LaunchDaemons/com.preyproject.PreyMac.plist
+	sudo launchctl load /Library/LaunchDaemons/com.preyproject.PreyMac.plist
+}
