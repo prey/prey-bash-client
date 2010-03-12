@@ -8,7 +8,7 @@
 # set -u
 # set -e
 
-PATH=platform/windows/bin:$PATH # for windows
+PATH=/bin:$PATH # for windows
 readonly base_path=`dirname $0`
 
 ####################################################################

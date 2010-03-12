@@ -30,7 +30,7 @@ check_status(){
 		fi
 	fi
 	response=`$getter "$user_agent" -i $check_url`
-	status=`echo -e "$response" | head -1 | cut -d" " -f2`
+	status=`echo -e "$response" | grep "HTTP" | cut -d" " -f2`
 }
 
 # we may eventually use a specific header for Prey

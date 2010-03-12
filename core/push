@@ -46,14 +46,16 @@ send_via_email(){
 }
 
 send_via_http(){
-
 	if [ -z "$post_url" ]; then
 		local post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`
 	fi
 	if [ -n "$api_key" ]; then
 		local post_data="$file_list -u $api_key:x"
 	fi
-	response=`$getter "$user_agent" "$trace_list" $post_data "$post_url"`
+	if [ `find_in "$post_url" 'https'` ]; then
+		local args='-k -3'
+	fi
+	response=`$getter $args "$user_agent" "$trace_list" $post_data "$post_url"`
 	# echo $response
 }
 
