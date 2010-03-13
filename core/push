@@ -9,14 +9,10 @@ send_report(){
 	local trace_list=`list_traces`
 	local file_list=`list_files`
 	if [[ $trace_list || $file_list ]]; then
-		if [ "$test_mode" == 1 ]; then
-			echo ' >> This is where the data gets sent. Though not in test mode!'
-		else
 			trace_file="$tmpdir/prey_traces.tmp"
 			echo -e "$trace_list" > $trace_file
 			eval 'send_via_'"${post_method}"''
 			rm $trace_file
-		fi
 		remove_traces
 		remove_files
 	else
@@ -55,8 +51,10 @@ send_via_http(){
 	if [ `find_in "$post_url" 'https'` ]; then
 		local args='-k -3'
 	fi
-	response=`$getter $args "$user_agent" "$trace_list" $post_data "$post_url"`
-	# echo $response
+	response=`$getter $args "$user_agent" -K "$trace_file" $post_data "$post_url" \
+	--write "\n -- %{size_upload} bytes uploaded in %{time_connect} seconds, at %{speed_upload} bytes/sec."`
+
+	echo " -- $response"
 }
 
 send_via_scp(){

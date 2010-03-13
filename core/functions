@@ -40,7 +40,7 @@ add_trace(){
 	local trace="${current_module}__$1=$2"
 	echo " ++ Adding trace for $current_module: $1"
 	# we need to encode whitespaces, otherwise well get into trouble
-	local trace=`echo -e "$trace" | sed 's/ /%20/g'`
+	local trace=`urlencode "$trace"`
 	traces[${#traces[*]}]="$trace"
 }
 
@@ -57,7 +57,7 @@ list_traces(){
 	# echo " -- ${#traces[*]} traces gathered!"
 	for t in "${traces[@]}"
 	do
-		current_node=`echo $t | sed 's/^\([^_].*\)__\(.*\)$/\1/'`
+		current_node=`echo $t | sed 's/^\([^_].*\)__.*/\1/'`
 		if [ "$post_method" == 'http' ]; then
 			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
 			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
@@ -103,6 +103,10 @@ remove_files(){
 ####################################################################
 # string functions
 ####################################################################
+
+urlencode(){
+	echo "$1" | tr "\n" "\\" | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\\\\$//;s/\\\/%0A/g"
+}
 
 # TODO: should switch to more advanced forms of encryption!
 encrypt(){

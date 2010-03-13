@@ -59,7 +59,7 @@ if [ -n "$check_url" ]; then
 	parse_headers
 	process_response
 
-	echo " -- Got status code $status."
+	echo -e "\n -- Got status code $status!"
 
 	if [ "$status" == "$missing_status_code" ]; then
 		echo -e "\n$STRING_PROBLEM"
@@ -86,7 +86,7 @@ run_active_modules
 # lets send whatever our modules have gathered
 ####################################################################
 
-echo -e " -- Sending report..."
+echo -e "\n -- Sending report..."
 send_report
 run_delayed_jobs
 
