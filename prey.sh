@@ -62,9 +62,9 @@ if [ -n "$check_url" ]; then
 	echo -e "\n -- Got status code $status!"
 
 	if [ "$status" == "$missing_status_code" ]; then
-		echo -e "\n$STRING_PROBLEM"
+		echo -e "$STRING_PROBLEM"
 	else
-		echo -e "\n$STRING_NO_PROBLEM"
+		echo -e "$STRING_NO_PROBLEM"
 		exit 0
 	fi
 fi
@@ -74,9 +74,7 @@ fi
 # for now lets run every module with an executable run.sh script
 ####################################################################
 
-# lets create our ultramegasecret temp dir
-mkdir -p $tmpdir 2> /dev/null
-chmod 700 $tmpdir 2> /dev/null
+create_tmpdir
 
 set +e # error mode off, just continue if a module fails
 echo -e " -- Running active modules..."
@@ -90,7 +88,7 @@ echo -e "\n -- Sending report..."
 send_report
 run_delayed_jobs
 
-echo -e "$STRING_DONE"
+echo -e "\n$STRING_DONE"
 rm -Rf $tmpdir
 
 exit 0
