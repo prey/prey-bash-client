@@ -38,7 +38,7 @@ try_to_connect() {
 get_current_delay() {
 	delay_in_secs=`grep "<integer>.*<.integer>" /Library/LaunchDaemons/com.preyproject.PreyMac.plist | sed -e "s/^.*<integer/<integer/" | cut -f2 -d">"| cut -f1 -d"<"`
 	delay_in_mins=$((delay_in_secs/60))
-	$delay_in_mins
+	echo $delay_in_mins
 }
 
 update_execution_delay() {
