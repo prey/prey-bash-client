@@ -36,15 +36,14 @@ try_to_connect() {
 }
 
 get_current_delay() {
-	delay_in_secs=`grep "<integer>.*<.integer>" /Library/LaunchDaemons/com.preyproject.PreyMac.plist | sed -e "s/^.*<integer/<integer/" | cut -f2 -d">"| cut -f1 -d"<$
+	delay_in_secs=`grep "<integer>.*<.integer>" /Library/LaunchDaemons/com.prey.agent.plist | sed -e "s/^.*<integer/<integer/" | cut -f2 -d">"| cut -f1 -d"<"`
 	delay_in_mins=$((delay_in_secs/60))
 	echo $delay_in_mins
 }
 
 update_execution_delay() {
 	delay_in_secs=$((delay*60))
-	sudo launchctl stop com.preyproject.PreyMac
-	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay_in_secs<\/integer>/" /Library/LaunchDaemons/com.preyproject.PreyMac.plist
-	sudo launchctl start com.preyproject.PreyMac
+	sudo launchctl stop com.prey.agent
+	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay_in_secs<\/integer>/" /Library/LaunchDaemons/com.prey.agent
+	sudo launchctl start com.prey.agent
 }
-
