@@ -23,6 +23,7 @@ is_net_framework_installed() {
 	for result in `echo -e "$results"`; do
 		if [[ "$result" == "$version" || `is_bigger_than $result $version` == 1 ]]; then
 			echo 1
+			break
 		fi
 	done
 	return 0

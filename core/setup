@@ -24,7 +24,9 @@ if [ "$os" == "windowsnt" ]; then
 		readonly x64=1 # so we can check later
 		getter="curl64 -s"
 	fi
+	readonly logged_user=`whoami`
 else
+	readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 	if [ "$os" == "darwin" ]; then
 		os=mac
 	fi
