@@ -74,7 +74,7 @@ fi
 # for now lets run every module with an executable run.sh script
 ####################################################################
 
-create_tmpdir
+create_tmpdir # if it doesnt exist
 
 set +e # error mode off, just continue if a module fails
 echo -e " -- Running active modules..."
@@ -89,6 +89,6 @@ send_report
 run_delayed_jobs
 
 echo -e "\n$STRING_DONE"
-rm -Rf $tmpdir
+# rm -Rf $tmpdir
 
 exit 0

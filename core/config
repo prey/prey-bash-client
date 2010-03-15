@@ -113,7 +113,7 @@ process_modules(){
 		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then
 			local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
 			local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
-			echo " -- Updating setting $param -> $value for $module module."
+			# echo " -- Updating setting $param -> $value for $module module."
 			update_config_for "$module" "$param" "$value"
 		fi
 	fi

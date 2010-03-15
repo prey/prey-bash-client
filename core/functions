@@ -41,7 +41,7 @@ get_file(){
 ####################################################################
 
 add_trace(){
-	local urlencoded=`urlencode $2`
+	local urlencoded=`urlencode "$2"`
 	local trace="${current_module}__$1=$urlencoded"
 	echo " ++ Adding trace for $current_module: $1"
 	# we need to encode whitespaces, otherwise well get into trouble
@@ -77,10 +77,12 @@ list_traces(){
 
 create_tmpdir(){
 	# lets create our ultramegasecret temp dir
-	mkdir -p $tmpdir 2> /dev/null
-	# we need to give access to the logged in user in order to save files
-	if [ `whoami` == 'root' ]; then
-			chmod 777 $tmpdir 2> /dev/null
+	if [ ! -d "$tmpdir" ]; then
+		mkdir -p $tmpdir 2> /dev/null
+		# we need to give access to the logged in user in order to save files
+		if [ `whoami` == 'root' ]; then
+				chmod 777 $tmpdir 2> /dev/null
+		fi
 	fi
 }
 
@@ -88,6 +90,8 @@ add_file(){
 	if [ -f "$2" ]; then
 		echo " ++ Adding file for $current_module: $1 -> $2"
 		files[${#files[*]}]=${current_module}__$1=$2
+	else
+		echo ' --- nope.'
 	fi
 }
 
@@ -123,7 +127,7 @@ remove_files(){
 ####################################################################
 
 urlencode(){
-	echo "$1" | tr "\r\n" "\\" 2> /dev/null | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\\\\$//;s/\\\/%0A/g"
+	echo "$1" | tr $line_breaker "\\" 2> /dev/null | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\\\\$//;s/\\\/%0A/g"
 }
 
 # TODO: should switch to more advanced forms of encryption!

@@ -25,12 +25,14 @@ if [ "$os" == "windowsnt" ]; then
 		getter="curl64 -s"
 	fi
 	readonly logged_user=`whoami`
+	readonly line_breaker="\r\n"
 else
-	readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 	if [ "$os" == "darwin" ]; then
 		os=mac
 	fi
 	tmpdir="/tmp/z9125jz"
+	readonly line_breaker="\n"
+	readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 fi
 
 readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
