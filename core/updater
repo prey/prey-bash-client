@@ -22,16 +22,26 @@ fetch_update() {
 	wget "$update_package" -O $base_path/updater.zip 2> /dev/null
 
 	if [ `package_size "$base_path/updater.zip"` == 0 ]; then
-		echo ' !! Couldnt get updater file! Skipping...'
+		echo " !! Couldn't get updater file! Skipping..."
 		rm $base_path/updater.zip
 		return 1
 	fi
+}
 
-	echo ' -- Unpacking!'
+validate_package(){
+	valid_md5=`$getter $update_package.md5sum`
+	package_md5=`md5sum $base_path/updater.zip | cut -d ' ' -f1`
 
+	if [ "$package_md5" != "$valid_md5" ]; then
+		echo ' -- Invalid checksum for downloaded package. Cannot continue.'
+		return 1
+	fi
+}
+
+unzip_package(){
+	echo ' -- Validated updater from source. Unpacking...'
 	unzip -u $base_path/updater.zip -d $base_path/$updater_path > /dev/null
 	return $?
-
 }
 
 test_and_apply_diff() {
@@ -101,7 +111,10 @@ update_prey() {
 	rejects_file="rejected_changes.diff"
 
 	fetch_update
-
+	if [ $? == 1 ]; then return 1; fi
+	validate_package
+	if [ $? == 1 ]; then return 1; fi
+	unzip_package
 	if [ $? != 0 ]; then
 		echo ' !! Something went wrong while unzipping files. Skipping update.'
 		return 1
