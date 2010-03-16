@@ -76,12 +76,16 @@ delete_files_according_to_diff() {
 
 copy_new_files(){
 
-	if [ -d "$base_path/updater/platform/$os" ]; then
-		cp $base_path/updater/platform/$os/* -r -u $base_path/platform/$os/ # first, copy the platform specific stuff
-	fi
+	mv $base_path/updater $tmpdir
+	mv $base_path $tmpdir/prey.old
+	mv $tmpdir/updater $base_path
 
-	rm -Rf $base_path/updater/platform 2> /dev/null
-	cp updater/* -R $base_path/
+	# if [ -d "$base_path/updater/platform/$os" ]; then
+	# 	cp $base_path/updater/platform/$os/* -r -u $base_path/platform/$os/ # first, copy the platform specific stuff
+	# fi
+
+	# rm -Rf $base_path/updater/platform 2> /dev/null
+	# cp updater/* -R $base_path/
 
 }
 
