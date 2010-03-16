@@ -81,11 +81,18 @@ copy_new_files(){
 	fi
 
 	rm -Rf $base_path/updater/platform 2> /dev/null
-	cp updater/* -r -u $base_path/
+	cp updater/* -R $base_path/
 
 }
 
+remove_temp_stuff(){
+	rm -Rf updater 2> /dev/null
+	rm "$base_path/updater.zip" 2> /dev/null
+}
+
 update_prey() {
+
+	remove_temp_stuff
 
 	updater_path='updater'
 	update_package="$updates_url/prey-updater-for-$version.zip"
@@ -115,9 +122,7 @@ update_prey() {
 
 	rm $diff_file
 	copy_new_files
-
-	rm -Rf updater
-	rm "$base_path/updater.zip"
+	remove_temp_stuff
 
 	return 0
 
