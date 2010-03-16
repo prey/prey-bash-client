@@ -9,55 +9,48 @@
 # core files
 ####################################################################
 
-update_prey(){
+package_size(){
+	echo $(stat -c %s "$1")
+}
 
-	diff_file="changes.diff"
-	local update_package="$updates_url/prey-updater-for-$version.zip"
+####################################################################
+# prey updater
+####################################################################
 
+fetch_update() {
 	echo ' -- Fetching new Prey release...'
 	wget "$update_package" -O $base_path/updater.zip 2> /dev/null
 
-	if [ ! -f "$base_path/updater.zip" ]; then
+	if [ `package_size "$base_path/updater.zip"` == 0 ]; then
 		echo ' !! Couldnt get updater file! Skipping...'
-		return 0
+		rm $base_path/updater.zip
+		return 1
 	fi
 
 	echo ' -- Unpacking!'
 
-	unzip -u $base_path/updater.zip -d $base_path/updater
+	unzip -u $base_path/updater.zip -d $base_path/$updater_path > /dev/null
+	return $?
 
-	echo ' -- Updating files!'
+}
 
-	if [ -f "$diff_file" ]; then
+test_and_apply_diff() {
 
-		# -f forces
-		# -p0 apply on current dir
-		if [ `patch --dry-run --backup-if-mismatch -f -p0 -i $diff_file` ]; then
-			echo ' -- Applying patch!'
-			patch --dry-run --backup-if-mismatch -f -p0 -i $diff_file
-			delete_files_according_to_diff
-		else
-			return 1 # not ok
-		fi
+	# -f forces
+	# -p0 apply on current dir
+	# -s silent
+	# -N Ignore patches that seem to be reversed or already applied.
+	patch_options="-N -f -s --backup-if-mismatch --remove-empty-files  --global-reject-file $rejects_file -p0 -i $diff_file"
 
-		rm $diff_file
+	echo ' -- Testing if patch will apply cleanly...'
+	patch --dry-run $patch_options > /dev/null
 
-	if [ -d "$base_path/updater/platform/$os" ]; then
-		cd $base_path/updater/platform/$os
-		cp * -r -u $base_path/platform/$os/ # first, copy the platform specific stuff
+	if [ $? == 1 ]; then
+		echo ' -- Everything smooth. Applying patch...'
+		patch $patch_options 1> /dev/null
+	else
+		return 1
 	fi
-
-	cd $base_path/updater
-	rm -Rf platform 2> /dev/null
-	cp * -r -u $base_path/ # this will copy changes.diff to base_path as well
-	cd $base_path
-
-	fi
-
-	rm -Rf updater
-	rm "$base_path/updater.zip"
-
-	return 0
 
 }
 
@@ -81,6 +74,55 @@ delete_files_according_to_diff() {
 
 }
 
+copy_new_files(){
+
+	if [ -d "$base_path/updater/platform/$os" ]; then
+		cp $base_path/updater/platform/$os/* -r -u $base_path/platform/$os/ # first, copy the platform specific stuff
+	fi
+
+	rm -Rf $base_path/updater/platform 2> /dev/null
+	cp updater/* -r -u $base_path/
+
+}
+
+update_prey() {
+
+	updater_path='updater'
+	update_package="$updates_url/prey-updater-for-$version.zip"
+
+	diff_file="$updater_path/changes.diff"
+	rejects_file="rejected_changes.diff"
+
+	fetch_update
+
+	if [ $? != 0 ]; then
+		echo ' !! Something went wrong while unzipping files. Skipping update.'
+		return 1
+	fi
+
+	echo ' -- Updating files!'
+
+	if [ -f "$diff_file" ]; then
+		test_and_apply_diff
+		if [ $? == 1 ]; then
+			delete_files_according_to_diff
+		else
+			echo ' -- Something went wrong! Skipping patch...'
+			# let the user know
+			return 1 # not ok
+		fi
+	fi
+
+	rm $diff_file
+	copy_new_files
+
+	rm -Rf updater
+	rm "$base_path/updater.zip"
+
+	return 0
+
+}
+
 ####################################################################
 # module updater
 ####################################################################
@@ -93,9 +135,8 @@ get_module(){
 install_or_update_module(){
 
 	get_module $1
-	local package_size=$(stat -c %s "$base_path/modules/$1.zip")
 
-	if [ $package_size -gt 0 ]; then
+	if [ `package_size "$base_path/modules/$1.zip"` -gt 0 ]; then
 		echo " -- Got new $1 module from repository! Unpackaging..."
 
 		if [ -d "$base_path/modules/$1" ]; then # module already installed

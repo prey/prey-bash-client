@@ -20,19 +20,29 @@ process_config(){
 	if [ "`get_current_delay`" != "$delay" ]; then
 		echo " -- Setting delay to $delay minutes!"
 		update_execution_delay $delay
+	else
+		echo " -- Delay in sync."
 	fi
 
-	if [ "$auto_update" == "y" ]; then
+	if [ "$auto_update" == "true" ]; then
 
-		while "$current_release" != "$version" ; do
+		a=0
+		# in case something goes wrong, lets avoid getting into an endless loop
+		# including an incremental var
+		while [[ $a -lt 3 && `is_bigger_than $current_release $version` == 1 ]]; do
+
 			echo " -- New Prey version found! Auto-update selected so updating..."
+
 			update_prey
+			a=$((a+1))
+
 			if [ $? == 0 ]; then
 				. $base_path/version
 				echo " ** Update OK! New version is $version."
 			else
 				break
 			fi
+
 		done
 
 	fi
