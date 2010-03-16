@@ -28,8 +28,12 @@ fetch_update() {
 	fi
 }
 
+get_checksum_for() {
+	$getter "$1.md5sum" | grep "$1" | cut -d ' ' -f1
+}
+
 validate_package(){
-	valid_md5=`$getter $update_package.md5sum`
+	valid_md5=`get_checksum_for $update_package`
 	package_md5=`md5sum $base_path/updater.zip | cut -d ' ' -f1`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
@@ -98,7 +102,7 @@ copy_new_files(){
 }
 
 remove_temp_stuff(){
-	rm -Rf updater 2> /dev/null
+	rm -Rf $base_path/updater 2> /dev/null
 	rm "$base_path/updater.zip" 2> /dev/null
 }
 
@@ -106,7 +110,7 @@ update_prey() {
 
 	remove_temp_stuff
 
-	updater_path='updater'
+	updater_path="$base_path/updater"
 	update_package="$updates_url/prey-updater-for-$version.zip"
 
 	diff_file="$updater_path/changes.diff"
