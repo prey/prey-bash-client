@@ -11,10 +11,6 @@ get_gateway_ip() {
 	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }
 
-is_bigger_than() {
-	echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
-}
-
 # returns 1 if it is
 is_net_framework_installed() {
 	local version=`echo $required_net_version | sed 's/\..\./\./'`

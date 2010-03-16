@@ -5,12 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-# finds a string within another
-# usage find_in 'foobar' 'foo' -> echoes 1
-find_in(){
-	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
-}
-
 is_command_running(){
 	ps ax | grep -v grep | grep "$1" > /dev/null && echo 1 || return 0
 }
@@ -123,11 +117,21 @@ remove_files(){
 }
 
 ####################################################################
-# string functions
+# string and integer functions
 ####################################################################
 
+# finds a string within another
+# usage find_in 'foobar' 'foo' -> echoes 1
+find_in(){
+	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
+}
+
+is_bigger_than() {
+	echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
+}
+
 urlencode(){
-	echo "$1" | tr $line_breaker "\\" 2> /dev/null | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\\\\$//;s/\\\/%0A/g"
+	echo "$1" | tr $line_breaker "^" | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\^$//;s/\^/%0A/g"
 }
 
 # TODO: should switch to more advanced forms of encryption!
