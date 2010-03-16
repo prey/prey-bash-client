@@ -86,12 +86,14 @@ delete_files_according_to_diff() {
 
 copy_new_files(){
 
+	echo ' -- Updating new binary files in Prey...'
+
 	if [ -d "$base_path/updater/platform/$os" ]; then
 		cp $base_path/updater/platform/$os/* -R $base_path/platform/$os/ # first, copy the platform specific stuff
 	fi
 
 	rm -Rf $base_path/updater/platform 2> /dev/null
-	cp updater/* -R $base_path/
+	cp $base_path/updater/* -R $base_path/
 
 }
 
