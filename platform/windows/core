@@ -7,10 +7,6 @@
 
 readonly required_net_version='2.0.50727'
 
-get_gateway_ip() {
-	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
-}
-
 # returns 1 if it is
 is_net_framework_installed() {
 	local version=`echo $required_net_version | sed 's/\..\./\./'`
@@ -23,6 +19,18 @@ is_net_framework_installed() {
 		fi
 	done
 	return 0
+}
+
+get_gateway_ip() {
+	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
+}
+
+get_wifi_info() {
+	if [ "`is_net_framework_installed`" == 1 ]; then
+		wifi_info=`autowc.exe -list`
+	else
+		echo " !! .NET framework version $required_net_version or newer not installed!"
+	fi
 }
 
 try_to_connect() {
