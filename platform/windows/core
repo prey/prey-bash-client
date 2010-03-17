@@ -27,8 +27,8 @@ is_net_framework_installed() {
 
 # a simple way to check if the current running user can edit files from within prey
 user_has_access(){
-	touch "$base_path/file"
-	if [ $? == 0 ];
+	touch "$base_path/file" 2> /dev/null
+	if [ $? == 0 ]; then
 		rm "$base_path/file"
 		echo 1
 	fi
