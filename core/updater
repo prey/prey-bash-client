@@ -21,7 +21,7 @@ fetch_update() {
 }
 
 get_checksum_for() {
-	$getter "$1.md5sum" | grep "$1" | cut -d ' ' -f1
+	$getter "$1.md5sum" | cut -d ' ' -f1
 }
 
 validate_package(){
