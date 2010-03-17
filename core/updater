@@ -123,7 +123,6 @@ update_prey() {
 	fi
 
 	remove_temp_stuff
-	create_tmpdir # in case it doesnt exit
 
 	updater_path="$tmpdir/updater"
 	updater_file="$tmpdir/updater.zip"

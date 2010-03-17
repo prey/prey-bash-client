@@ -52,6 +52,9 @@ fi
 # if it doesn't, the program will shut down gracefully
 ####################################################################
 
+# create tmpdir for downloading stuff, storing files, etc
+create_tmpdir
+
 if [ -n "$check_url" ]; then
 	echo "$STRING_CHECK_URL"
 
@@ -62,33 +65,31 @@ if [ -n "$check_url" ]; then
 	echo -e "\n -- Got status code $status!"
 
 	if [ "$status" == "$missing_status_code" ]; then
+
 		echo -e "$STRING_PROBLEM"
+
+		####################################################################
+		# fire off active modules
+		####################################################################
+
+		set +e # error mode off, just continue if a module fails
+		echo -e " -- Running active modules..."
+		run_active_modules
+
+		####################################################################
+		# lets send whatever we've gathered and run any pending jobs
+		####################################################################
+
+		echo -e "\n -- Sending report..."
+		send_report
+		run_delayed_jobs
+
+		echo -e "\n$STRING_DONE"
+
 	else
 		echo -e "$STRING_NO_PROBLEM"
-		exit 0
 	fi
 fi
 
-####################################################################
-# ok what shall we do then?
-# for now lets run every module with an executable run.sh script
-####################################################################
-
-create_tmpdir # if it doesnt exist
-
-set +e # error mode off, just continue if a module fails
-echo -e " -- Running active modules..."
-run_active_modules
-
-####################################################################
-# lets send whatever our modules have gathered
-####################################################################
-
-echo -e "\n -- Sending report..."
-send_report
-run_delayed_jobs
-
-echo -e "\n$STRING_DONE"
-rm -Rf "$tmpdir"
-
+delete_tmpdir
 exit 0
