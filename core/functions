@@ -130,6 +130,10 @@ find_in(){
 	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
 }
 
+lowercase(){
+	echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
 is_bigger_than() {
 	echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
 }

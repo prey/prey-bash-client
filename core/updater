@@ -10,8 +10,11 @@
 ####################################################################
 
 fetch_update() {
+
+	create_tmpdir # in case it doesnt exit
+
 	echo ' -- Fetching new Prey release...'
-	wget "$update_package" -O $updater_file 2> /dev/null
+	wget "$update_package" -O "$updater_file" 2> /dev/null
 
 	if [ `file_size "$updater_file"` == 0 ]; then
 		echo " !! Couldn't get updater file! Skipping..."
@@ -27,6 +30,7 @@ get_checksum_for() {
 validate_package(){
 	valid_md5=`get_checksum_for $update_package`
 	package_md5=`md5sum $updater_file | cut -d ' ' -f1`
+	package_md5=`lowercase "$package_md5"`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
 		echo ' -- Invalid checksum for downloaded package. Cannot continue.'
@@ -48,7 +52,10 @@ test_and_apply_diff() {
 	# -N Ignore patches that seem to be reversed or already applied.
 	# -F2 Fuzzyness. Default is 2 lines before and after.
 
-	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files --global-reject-file $rejects_file -d $base_path -p0 -i $diff_file"
+	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
+	if [ "$os" != "windows" ]; then
+		patch_options="--global-reject-file $rejects_file $patch_options"
+	fi
 
 	echo ' -- Testing if patch will apply cleanly...'
 	outcome=`patch --dry-run $patch_options`
@@ -155,7 +162,7 @@ update_prey() {
 ####################################################################
 
 get_module(){
-	rm $module_file 2> /dev/null
+	rm "$module_file" 2> /dev/null
 	wget --user=$api_key --password=x "$modules_url/modules/get/$1" -O "$module_file" 2> /dev/null
 }
 
@@ -169,13 +176,13 @@ install_or_update_module(){
 		echo " -- Got new $1 module from repository! Unpackaging..."
 
 		if [ -d "$base_path/modules/$1" ]; then # module already installed
-			rm -Rf $base_path/modules/$1
+			rm -Rf "$base_path/modules/$1"
 		fi
 
-		unzip "$module_file" -d $base_path/modules &> /dev/null
+		unzip "$module_file" -d "$base_path/modules" &> /dev/null
 		# delete_unneeded_stuff_in $base_path/modules/$1/platform
 
-		rm $module_file 2> /dev/null
+		rm "$module_file" 2> /dev/null
 
 		echo " ** New $1 module placed and ready to go!"
 		return 0
