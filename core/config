@@ -31,10 +31,9 @@ process_config(){
 		# including an incremental var
 		while [[ $a -lt 3 && `is_bigger_than $current_release $version` == 1 ]]; do
 
-			echo " -- New Prey version found! Auto-update selected so updating..."
-
-			update_prey
 			a=$((a+1))
+			echo " -- New Prey version found! Auto-update selected so let's try to update automagically."
+			update_prey
 
 			if [ $? == 0 ]; then
 				. $base_path/version

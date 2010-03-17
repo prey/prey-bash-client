@@ -6,14 +6,6 @@
 ####################################################################
 
 ####################################################################
-# core files
-####################################################################
-
-package_size(){
-	echo $(stat -c %s "$1")
-}
-
-####################################################################
 # prey updater
 ####################################################################
 
@@ -21,7 +13,7 @@ fetch_update() {
 	echo ' -- Fetching new Prey release...'
 	wget "$update_package" -O $updater_file 2> /dev/null
 
-	if [ `package_size "$updater_file"` == 0 ]; then
+	if [ `file_size "$updater_file"` == 0 ]; then
 		echo " !! Couldn't get updater file! Skipping..."
 		rm $updater_file
 		return 1
@@ -50,25 +42,30 @@ unzip_package(){
 
 test_and_apply_diff() {
 
-	# -f forces
-	# -p0 apply on current dir
+	# -f forces, dont ask any questions
+	# -p0 leave paths as they are
 	# -s silent
 	# -N Ignore patches that seem to be reversed or already applied.
-	patch_options="-N -f -s --backup-if-mismatch --remove-empty-files --global-reject-file $rejects_file -d $base_path -p0 -i $diff_file"
+	# -F2 Fuzzyness. Default is 2 lines before and after.
+
+	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files --global-reject-file $rejects_file -d $base_path -p0 -i $diff_file"
 
 	echo ' -- Testing if patch will apply cleanly...'
-	patch --dry-run $patch_options > /dev/null
+	outcome=`patch --dry-run $patch_options`
 
-	if [ $? == 0 ]; then
-		echo ' -- Everything smooth. Applying patch...'
-		patch $patch_options > /dev/null
-	else
+	if [ `find_in "$outcome" 'FAILED'` ]; then
 		# report_patch_error
 		return 1
+	else
+		echo ' -- Everything smooth. Applying patch...'
+		patch $patch_options 2> /dev/null
 	fi
+
+	return 0
 
 }
 
+# this could be useful sometime in the future
 report_patch_error(){
 	$getter $somewhere -F patch[errors]=@$rejects_file
 }
@@ -98,11 +95,11 @@ copy_new_files(){
 	echo ' -- Updating new binary files in Prey...'
 
 	if [ -d "$updater_path/platform/$os" ]; then
-		cp $updater_path/platform/$os/* -R $base_path/platform/$os/ # first, copy the platform specific stuff
+		cp -R $updater_path/platform/$os/* $base_path/platform/$os/ # first, copy the platform specific stuff
 	fi
 
 	rm -Rf $updater_path/platform 2> /dev/null
-	cp $updater_path/* -R $base_path/
+	cp -R $updater_path/* $base_path/ 2> /dev/null
 
 }
 
@@ -136,7 +133,7 @@ update_prey() {
 
 	if [ -f "$diff_file" ]; then
 		test_and_apply_diff
-		if [ $? == 1 ]; then
+		if [ $? == 0 ]; then
 			delete_files_according_to_diff
 		else
 			echo ' -- Something went wrong! Skipping patch...'
@@ -145,7 +142,7 @@ update_prey() {
 		fi
 	fi
 
-	rm $diff_file
+	rm "$diff_file"
 	copy_new_files
 	remove_temp_stuff
 
@@ -158,25 +155,27 @@ update_prey() {
 ####################################################################
 
 get_module(){
-	rm $base_path/modules/$1.zip 2> /dev/null
-	wget --user=$api_key --password=x "$modules_url/modules/get/$1" -O $base_path/modules/$1.zip 2> /dev/null
+	rm $module_file 2> /dev/null
+	wget --user=$api_key --password=x "$modules_url/modules/get/$1" -O "$module_file" 2> /dev/null
 }
 
 install_or_update_module(){
 
+	module_file="$tmpdir/module-$1.zip"
+
 	get_module $1
 
-	if [ `package_size "$base_path/modules/$1.zip"` -gt 0 ]; then
+	if [ `file_size "$module_file"` -gt 0 ]; then
 		echo " -- Got new $1 module from repository! Unpackaging..."
 
 		if [ -d "$base_path/modules/$1" ]; then # module already installed
 			rm -Rf $base_path/modules/$1
 		fi
 
-		unzip $base_path/modules/$1.zip -d $base_path/modules &> /dev/null
-		delete_unneeded_stuff_in $base_path/modules/$1/platform
+		unzip "$module_file" -d $base_path/modules &> /dev/null
+		# delete_unneeded_stuff_in $base_path/modules/$1/platform
 
-		rm $base_path/modules/$1.zip
+		rm $module_file 2> /dev/null
 
 		echo " ** New $1 module placed and ready to go!"
 		return 0
@@ -188,6 +187,6 @@ install_or_update_module(){
 
 delete_unneeded_stuff_in(){
 	if [ -d "$1" ]; then
-		rm -Rf `find $1 -not -iname "$os" -not -name "." -type d`
+		rm -Rf `find $1 -not -iname "$os" -not -name "."`
 	fi
 }

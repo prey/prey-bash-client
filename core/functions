@@ -69,6 +69,10 @@ list_traces(){
 # file functions
 ####################################################################
 
+file_size(){
+	echo $(stat -c %s "$1")
+}
+
 create_tmpdir(){
 	# lets create our ultramegasecret temp dir
 	if [ ! -d "$tmpdir" ]; then
