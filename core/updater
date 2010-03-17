@@ -86,8 +86,8 @@ delete_files_according_to_diff() {
 
 		if [ "$modified" == "/dev/null" ]; then # deleted file
 
-			echo " -- Deleting file: $original"
-			rm -f $original
+			echo " -- Deleting file: $original..."
+			rm -f "$base_path/$original"
 
 		fi
 
