@@ -155,6 +155,7 @@ update_prey() {
 
 	rm "$diff_file"
 	copy_new_files
+	delete_unneeded_stuff_in "$base_path/platform"
 	remove_temp_stuff
 
 	return 0
@@ -184,7 +185,7 @@ install_or_update_module(){
 		fi
 
 		unzip "$module_file" -d "$base_path/modules" &> /dev/null
-		# delete_unneeded_stuff_in $base_path/modules/$1/platform
+		delete_unneeded_stuff_in "$base_path/modules/$1/platform"
 
 		rm "$module_file" 2> /dev/null
 
@@ -198,6 +199,6 @@ install_or_update_module(){
 
 delete_unneeded_stuff_in(){
 	if [ -d "$1" ]; then
-		rm -Rf `find $1 -not -iname "$os" -not -name "."`
+		rm -Rf `find "$1" -not -iname "$os" -not -name "." -type d -maxdepth 1` 2> /dev/null
 	fi
 }
