@@ -89,6 +89,6 @@ send_report
 run_delayed_jobs
 
 echo -e "\n$STRING_DONE"
-rm -Rf $tmpdir
+rm -Rf "$tmpdir"
 
 exit 0
