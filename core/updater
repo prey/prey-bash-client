@@ -26,8 +26,8 @@ get_checksum_for() {
 }
 
 validate_package(){
-	valid_md5=`get_checksum_for $update_package`
-	package_md5=`md5sum $updater_file | cut -d ' ' -f1`
+	local valid_md5=`get_checksum_for $update_package`
+	local package_md5=`md5sum $updater_file | cut -d ' ' -f1`
 	package_md5=`lowercase "$package_md5"`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
@@ -78,8 +78,8 @@ delete_files_according_to_diff() {
 
 	while read file; do
 
-		original=`echo "$file" | cut -d" " -f3`
-		modified=`echo "$file" | cut -d" " -f5`
+		local original=`echo "$file" | cut -d" " -f3`
+		local modified=`echo "$file" | cut -d" " -f5`
 
 		if [ "$modified" == "/dev/null" ]; then # deleted file
 
@@ -128,7 +128,7 @@ update_prey() {
 	update_package="$updates_url/prey-updater-for-$version.zip"
 
 	diff_file="$updater_path/changes.diff"
-	rejects_file="$updater_path/rejected_changes.diff"
+	# rejects_file="$updater_path/rejected_changes.diff"
 
 	fetch_update
 	if [ $? == 1 ]; then return 1; fi

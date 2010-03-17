@@ -48,6 +48,6 @@ get_current_delay() {
 update_execution_delay() {
 	delay_in_secs=$((delay*60))
 	sudo launchctl stop com.prey.agent
-	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay_in_secs<\/integer>/" /Library/LaunchDaemons/com.prey.agent
+	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay_in_secs<\/integer>/" /Library/LaunchDaemons/com.prey.agent.plist
 	sudo launchctl start com.prey.agent
 }
