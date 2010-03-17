@@ -1,6 +1,6 @@
 #!/bin/bash
 ###################################################################
-# PREY Windows Base Functions - by Tomas Pollak (bootlog.org)
+# Prey Windows Specific Functions - by Tomas Pollak (bootlog.org)
 # URL: http://preyproject.com
 # License: GPLv3
 ####################################################################

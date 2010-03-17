@@ -1,6 +1,6 @@
 #!/bin/bash
 ####################################################################
-# Prey Core Functions - by Tomas Pollak (bootlog.org)
+# Prey Core Base File - by Tomas Pollak (bootlog.org)
 # URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
@@ -9,7 +9,7 @@
 . $base_path/core/setup
 . $base_path/core/pull
 . $base_path/core/updater
-. $base_path/core/config
+. $base_path/core/response
 . $base_path/core/modules
 . $base_path/core/push
 . $base_path/core/jobs

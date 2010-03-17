@@ -1,6 +1,6 @@
 #!/bin/bash
 ####################################################################
-# PREY Linux Base Functions - by Tomas Pollak (bootlog.org)
+# Prey Linux Specific Functions - by Tomas Pollak (bootlog.org)
 # URL : http://preyproject.com
 # License: GPLv3
 ####################################################################

@@ -35,6 +35,7 @@ else
 	readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 fi
 
+readonly platform_path="$base_path/platform/$os"
 readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
 readonly updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null
 readonly modules_url=$control_panel_url 2> /dev/null
