@@ -19,11 +19,11 @@ package_size(){
 
 fetch_update() {
 	echo ' -- Fetching new Prey release...'
-	wget "$update_package" -O $base_path/updater.zip 2> /dev/null
+	wget "$update_package" -O $updater_file 2> /dev/null
 
-	if [ `package_size "$base_path/updater.zip"` == 0 ]; then
+	if [ `package_size "$updater_file"` == 0 ]; then
 		echo " !! Couldn't get updater file! Skipping..."
-		rm $base_path/updater.zip
+		rm $updater_file
 		return 1
 	fi
 }
@@ -34,7 +34,7 @@ get_checksum_for() {
 
 validate_package(){
 	valid_md5=`get_checksum_for $update_package`
-	package_md5=`md5sum $base_path/updater.zip | cut -d ' ' -f1`
+	package_md5=`md5sum $updater_file | cut -d ' ' -f1`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
 		echo ' -- Invalid checksum for downloaded package. Cannot continue.'
@@ -44,7 +44,7 @@ validate_package(){
 
 unzip_package(){
 	echo ' -- Validated updater from source. Unpacking...'
-	unzip -u $base_path/updater.zip -d $base_path/$updater_path > /dev/null
+	unzip -u $updater_file -d $updater_path > /dev/null
 	return $?
 }
 
@@ -54,7 +54,7 @@ test_and_apply_diff() {
 	# -p0 apply on current dir
 	# -s silent
 	# -N Ignore patches that seem to be reversed or already applied.
-	patch_options="-N -f -s --backup-if-mismatch --remove-empty-files --global-reject-file $rejects_file -p0 -i $diff_file"
+	patch_options="-N -f -s --backup-if-mismatch --remove-empty-files --global-reject-file $rejects_file -d $base_path -p0 -i $diff_file"
 
 	echo ' -- Testing if patch will apply cleanly...'
 	patch --dry-run $patch_options > /dev/null
@@ -63,9 +63,14 @@ test_and_apply_diff() {
 		echo ' -- Everything smooth. Applying patch...'
 		patch $patch_options > /dev/null
 	else
+		# report_patch_error
 		return 1
 	fi
 
+}
+
+report_patch_error(){
+	$getter $somewhere -F patch[errors]=@$rejects_file
 }
 
 delete_files_according_to_diff() {
@@ -92,29 +97,30 @@ copy_new_files(){
 
 	echo ' -- Updating new binary files in Prey...'
 
-	if [ -d "$base_path/updater/platform/$os" ]; then
-		cp $base_path/updater/platform/$os/* -R $base_path/platform/$os/ # first, copy the platform specific stuff
+	if [ -d "$updater_path/platform/$os" ]; then
+		cp $updater_path/platform/$os/* -R $base_path/platform/$os/ # first, copy the platform specific stuff
 	fi
 
-	rm -Rf $base_path/updater/platform 2> /dev/null
-	cp $base_path/updater/* -R $base_path/
+	rm -Rf $updater_path/platform 2> /dev/null
+	cp $updater_path/* -R $base_path/
 
 }
 
 remove_temp_stuff(){
-	rm -Rf $base_path/updater 2> /dev/null
-	rm "$base_path/updater.zip" 2> /dev/null
+	rm -Rf "$updater_path" 2> /dev/null
+	rm -f "$updater_file" 2> /dev/null
 }
 
 update_prey() {
 
 	remove_temp_stuff
 
-	updater_path="$base_path/updater"
+	updater_path="$tmpdir/updater"
+	updater_file="$tmpdir/updater.zip"
 	update_package="$updates_url/prey-updater-for-$version.zip"
 
 	diff_file="$updater_path/changes.diff"
-	rejects_file="rejected_changes.diff"
+	rejects_file="$updater_path/rejected_changes.diff"
 
 	fetch_update
 	if [ $? == 1 ]; then return 1; fi
