@@ -25,6 +25,15 @@ is_net_framework_installed() {
 	return 0
 }
 
+# a simple way to check if the current running user can edit files from within prey
+user_has_access(){
+	touch "$base_path/file"
+	if [ $? == 0 ];
+		rm "$base_path/file"
+		echo 1
+	fi
+}
+
 get_gateway_ip() {
 	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }

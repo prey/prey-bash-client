@@ -11,8 +11,6 @@
 
 fetch_update() {
 
-	create_tmpdir # in case it doesnt exit
-
 	echo ' -- Fetching new Prey release...'
 	wget "$update_package" -O "$updater_file" 2> /dev/null
 
@@ -102,11 +100,11 @@ copy_new_files(){
 	echo ' -- Updating new binary files in Prey...'
 
 	if [ -d "$updater_path/platform/$os" ]; then
-		cp -R $updater_path/platform/$os/* $base_path/platform/$os/ # first, copy the platform specific stuff
+		cp -R $updater_path/platform/$os/* "$base_path/platform/$os" # first, copy the platform specific stuff
 	fi
 
 	rm -Rf $updater_path/platform 2> /dev/null
-	cp -R $updater_path/* $base_path/ 2> /dev/null
+	cp -R $updater_path/* "$base_path" 2> /dev/null
 
 }
 
@@ -117,7 +115,15 @@ remove_temp_stuff(){
 
 update_prey() {
 
+	if [ "$os" == "windows" ]; then
+		if [ -z `user_has_access` ]; then
+			echo ' -- Unfortunately the current user whos running Prey cannot perform the upgrade.'
+			return 1
+		fi
+	fi
+
 	remove_temp_stuff
+	create_tmpdir # in case it doesnt exit
 
 	updater_path="$tmpdir/updater"
 	updater_file="$tmpdir/updater.zip"
