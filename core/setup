@@ -12,7 +12,7 @@ if [ "$1" == "-t" ]; then
 fi
 
 readonly start_time=`date +"%F %T"`
-os=`lowercase uname`
+os=`lowercase \`uname\``
 getter="curl -s"
 
 if [ "$os" == "windowsnt" ]; then
