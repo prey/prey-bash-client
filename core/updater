@@ -58,7 +58,7 @@ test_and_apply_diff() {
 		return 1
 	else
 		echo ' -- Everything smooth. Applying patch...'
-		patch $patch_options 2> /dev/null
+		patch $patch_options > /dev/null
 	fi
 
 	return 0
