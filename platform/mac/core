@@ -8,6 +8,10 @@
 readonly logged_pid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
 readonly airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 
+file_size(){
+	ls -l "$1" | cut -f8 -d " "
+}
+
 get_gateway_ip() {
 	gateway_ip=`netstat -rn | grep default | cut -c20-35`
 }

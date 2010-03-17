@@ -51,9 +51,6 @@ test_and_apply_diff() {
 	# -F2 Fuzzyness. Default is 2 lines before and after.
 
 	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
-	if [ "$os" != "windows" ]; then
-		patch_options="--global-reject-file $rejects_file $patch_options"
-	fi
 
 	echo ' -- Testing if patch will apply cleanly...'
 	outcome=`patch --dry-run $patch_options`
