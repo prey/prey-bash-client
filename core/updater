@@ -115,6 +115,8 @@ remove_temp_stuff(){
 
 update_prey() {
 
+	echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
+
 	if [ "$os" == "windows" ]; then
 		if [ -z `user_has_access` ]; then
 			echo ' -- Unfortunately the current user whos running Prey cannot perform the upgrade.'
