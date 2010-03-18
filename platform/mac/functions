@@ -5,9 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-readonly logged_pid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
-readonly airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
-
 file_size(){
 	ls -l "$1" | cut -f8 -d " "
 }
@@ -40,7 +37,7 @@ try_to_connect() {
 }
 
 get_current_delay() {
-	delay_in_secs=`grep "integer" /Library/LaunchDaemons/com.prey.agent.plist | sed 's/[^0-9]//g'`
+	delay_in_secs=`grep "integer" "$prey_agent_plist" | sed 's/[^0-9]//g'`
 	delay_in_mins=$((delay_in_secs/60))
 	echo $delay_in_mins
 }
@@ -48,6 +45,6 @@ get_current_delay() {
 update_execution_delay() {
 	delay_in_secs=$((delay*60))
 	launchctl stop com.prey.agent
-	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay_in_secs<\/integer>/" /Library/LaunchDaemons/com.prey.agent.plist
+	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay_in_secs<\/integer>/" $prey_agent_plist
 	launchctl start com.prey.agent
 }

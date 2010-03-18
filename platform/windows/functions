@@ -5,8 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-readonly required_net_version='2.0.50727'
-
 file_size(){
 	ls -l "$1" | cut -f16 -d " "
 }
@@ -48,20 +46,20 @@ get_wifi_info() {
 
 try_to_connect() {
 	if [ "`is_net_framework_installed`" == 1 ]; then
-		autowc -connect 2> /dev/null
+		autowc.exe -connect 2> /dev/null
 	else
 		echo " !! .NET framework version $required_net_version or newer not installed!"
 	fi
 }
 
 get_current_delay() {
-	local delay_in_miliseconds=`reg query "HKLM\Software\Prey" //v "Delay" | grep Delay | sed "s/[^0-9]*//"`
+	local delay_in_miliseconds=`reg query "$prey_reg_key" //v "Delay" | grep Delay | sed "s/[^0-9]*//"`
 	echo $(($delay_in_miliseconds/60000))
 }
 
 update_execution_delay() {
 	local delay_in_miliseconds=$(($1*60*1000))
-	reg add "HKLM\Software\Prey" //v "Delay" //d "$delay_in_miliseconds" //f > /dev/null
+	reg add "$prey_reg_key" //v "Delay" //d "$delay_in_miliseconds" //f > /dev/null
 }
 
 # module functions

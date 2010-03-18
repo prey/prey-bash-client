@@ -1,0 +1,20 @@
+#!/bin/bash
+###################################################################
+# Prey Windows Specific Settings - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+readonly required_net_version='2.0.50727'
+readonly prey_reg_key "HKLM\Software\Prey"
+
+logged_user=`whoami`
+line_breaker="\r\n"
+tmpdir="$base_path\platform\windows\etc\p${RANDOM}" # "random" name to make it harder to detect
+
+arch=`echo $PROCESSOR_ARCHITEW6432`
+if [ `find_in "$arch" '64'` ]; then
+	echo -e " ** 64 bit architecture detected!"
+	readonly x64=1 # so we can check later
+	getter="curl64 -s"
+fi

@@ -1,0 +1,10 @@
+#!/bin/bash
+###################################################################
+# Prey Mac Specific Settings - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+readonly logged_pid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
+readonly airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
+readonly prey_agent_plist="/Library/LaunchDaemons/com.prey.agent.plist"
