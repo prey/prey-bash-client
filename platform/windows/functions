@@ -32,6 +32,14 @@ user_has_access(){
 	fi
 }
 
+grant_permissions(){
+	exists=`which Icacls`
+	if [ -n "$exists" ]; then
+		echo ' -- Granting read permission for modified files...'
+		Icacls.exe "$base_path\*" //grant Everyone:R //T //C
+	fi
+}
+
 get_gateway_ip() {
 	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
 }

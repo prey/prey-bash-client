@@ -156,6 +156,11 @@ update_prey() {
 	rm "$diff_file"
 	copy_new_files
 	delete_unneeded_stuff_in "$base_path/platform"
+
+	if [ "$os" == "windows" ]; then
+		grant_permissions
+	fi
+
 	remove_temp_stuff
 
 	return 0
