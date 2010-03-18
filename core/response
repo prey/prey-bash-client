@@ -89,7 +89,7 @@ process_xml(){
 
 # module, param, value
 update_config_for(){
-	sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" $base_path/modules/$1/config 2> /dev/null
+	sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" "$base_path/modules/$1/config" 2> /dev/null
 }
 
 process_modules(){
