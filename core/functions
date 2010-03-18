@@ -49,10 +49,10 @@ list_traces(){
 	# echo " -- ${#traces[*]} traces gathered!"
 	for t in "${traces[@]}"
 	do
-		current_node=`echo $t | sed 's/^\([^_].*\)__.*/\1/'`
+		current_node=`echo $t | sed 's/__.*//'`
 		if [ "$post_method" == 'http' ]; then
 			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
-			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
+			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=/\1[\2]=/' # form field list
 			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
 		else
 			if [ "$current_node" != "$previous_node" ]; then
@@ -139,7 +139,7 @@ is_bigger_than() {
 }
 
 urlencode(){
-	echo "$1" | tr $line_breaker "^" | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\^$//;s/\^/%0A/g"
+	echo "$1" | tr $line_breaker "^" | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/=/%3D/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\^$//;s/\^/%0A/g"
 }
 
 # TODO: should switch to more advanced forms of encryption!

@@ -12,7 +12,7 @@ send_report(){
 			trace_file="$tmpdir/prey_traces.tmp"
 			echo -e "$trace_list" > $trace_file
 			eval 'send_via_'"${post_method}"''
-			rm $trace_file
+			rm "$trace_file"
 		remove_traces
 		remove_files
 	else
@@ -24,7 +24,7 @@ send_via_email(){
 
 	local decoded_pass=`decrypt "$smtp_password"`
 	local complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
-	echo -e "$EMAIL_NOTICE $EMAIL_HEADER" | cat - "$trace_file" | sed "s/%0A/\n/g" > "$trace_file.msg" && echo -e "$EMAIL_FOOTER" >> "$trace_file.msg"
+	echo -e "$EMAIL_NOTICE $EMAIL_HEADER" | cat - "$trace_file" | sed "s/%0A/\n/g;s/%22/\"/g" > "$trace_file.msg" && echo -e "$EMAIL_FOOTER" >> "$trace_file.msg"
 
 	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file.msg tls=auto username=$smtp_username password=$decoded_pass`
 
