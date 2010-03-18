@@ -5,15 +5,11 @@
 # License: GPLv3
 ####################################################################
 
-readonly start_time=`date +"%F %T"`
-
-check_for_test() {
-	if [ "$1" == "-t" || "$1" == "--test" ]; then
-		echo -e "\n\033[1m -- TEST MODE ENABLED.\033[0m"
-		. $base_path/test/include 2> /dev/null
-		test_mode=1
-	fi
-}
+if [ "$1" == "-t" || "$1" == "--test" ]; then
+	echo -e "\n\033[1m -- TEST MODE ENABLED.\033[0m"
+	. $base_path/test/include 2> /dev/null
+	test_mode=1
+fi
 
 get_os(){
 	os=`lowercase \`uname\``
@@ -36,6 +32,8 @@ set_vars(){
 }
 
 set_constants(){
+	readonly start_time=`date +"%F %T"`
+
 	readonly os
 	readonly tmpdir
 	readonly logged_user
