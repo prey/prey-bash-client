@@ -25,6 +25,7 @@ get_os(){
 
 	readonly os
 	readonly platform_path="$base_path/platform/$os"
+	PATH=$PATH:$platform_path/bin
 }
 
 set_vars(){

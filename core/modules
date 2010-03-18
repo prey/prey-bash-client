@@ -18,9 +18,10 @@ active_modules(){
 	if [ "$post_method" == "http" ]; then
 		echo -e "$module_configuration" | grep "<module " | sed 's/.*name="\([a-z_]*\)".*/\1/'
 	else
-		for module in `find "$base_path/modules" -maxdepth 1 -mindepth 1 -type d -printf "\n%f"`; do
-			if [ `is_module_active "$module"` ]; then
-				echo $module
+		for module in `find "$base_path/modules" -maxdepth 1 -mindepth 1 -type d`; do
+			local module_name=`echo $module | sed 's/.*\/\(.*\)$/\1/'`
+			if [ `is_module_active "$module_name"` ]; then
+				echo $module_name
 			fi
 		done
 	fi
