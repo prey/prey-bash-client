@@ -1,1 +1,0 @@
-@patsh.exe %*

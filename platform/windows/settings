@@ -8,6 +8,7 @@
 readonly required_net_version='2.0.50727'
 readonly prey_reg_key "HKLM\Software\Prey"
 
+patcher='patsh' # Windows 7 geniously blocks anything named "patch" from being run
 logged_user=`whoami`
 line_breaker="\r\n"
 tmpdir="$base_path\platform\windows\etc\p${RANDOM}" # "random" name to make it harder to detect

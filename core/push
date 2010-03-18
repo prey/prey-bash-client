@@ -22,11 +22,6 @@ send_report(){
 
 send_via_email(){
 
-	local mailsender="sendEmail"
-	if [ "$os" == "windows" ]; then
-		mailsender=$mailsender.exe
-	fi
-
 	local decoded_pass=`decrypt "$smtp_password"`
 	local complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
 	echo -e "$EMAIL_NOTICE $EMAIL_HEADER" | cat - "$trace_file" | sed "s/%0A/\n/g" > "$trace_file.msg" && echo -e "$EMAIL_FOOTER" >> "$trace_file.msg"

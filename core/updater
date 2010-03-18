@@ -53,14 +53,14 @@ test_and_apply_diff() {
 	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
 
 	echo ' -- Testing if patch will apply cleanly...'
-	outcome=`patch --dry-run $patch_options`
+	outcome=`$patcher --dry-run $patch_options`
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
 		# report_patch_error
 		return 1
 	else
 		echo ' -- Everything smooth. Applying patch...'
-		patch $patch_options > /dev/null
+		outcome=`$patcher $patch_options > /dev/null`
 	fi
 
 	return 0

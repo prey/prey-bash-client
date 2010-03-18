@@ -39,6 +39,7 @@ set_constants(){
 	readonly logged_user
 
 	readonly getter
+	readonly mailsender="sendEmail"
 	readonly user_agent="-A Prey/$version ($os)"
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
