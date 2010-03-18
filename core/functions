@@ -49,19 +49,19 @@ list_traces(){
 	# echo " -- ${#traces[*]} traces gathered!"
 	for t in "${traces[@]}"
 	do
-		current_node=`echo $t | sed 's/__.*//'`
 		if [ "$post_method" == 'http' ]; then
 			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
 			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
 			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
 		else
+			current_node=`echo $t | sed 's/__.*//'`
 			if [ "$current_node" != "$previous_node" ]; then
 				echo -e "$separator\n# $current_node\n$separator\n"
 			fi
 			# removes module name and replaces _'s with whitespaces
 			echo -e "$t\n" | sed -e 's/^\([^_].*\)__/ :: /' -e 's/%20/ /g' -e 's/_/ /'
+			previous_node=$current_node
 		fi
-		previous_node=$current_node
 	done
 }
 
