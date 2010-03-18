@@ -20,6 +20,7 @@ get_os(){
 		if [ "$os" == "darwin" ]; then
 			os=mac
 		fi
+		logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 	fi
 
 	readonly os
@@ -28,7 +29,6 @@ get_os(){
 
 set_vars(){
 	getter="curl -s"
-	logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 	tmpdir="/tmp/p${RANDOM}"
 	patcher='patch'
 	line_breaker="\n"
