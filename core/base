@@ -5,11 +5,11 @@
 # License: GPLv3
 ####################################################################
 
-. $base_path/core/functions
-. $base_path/core/setup
-. $base_path/core/pull
-. $base_path/core/updater
-. $base_path/core/response
-. $base_path/core/modules
-. $base_path/core/push
-. $base_path/core/jobs
+. "$base_path/core/functions"
+. "$base_path/core/setup"
+. "$base_path/core/pull"
+. "$base_path/core/updater"
+. "$base_path/core/response"
+. "$base_path/core/modules"
+. "$base_path/core/push"
+. "$base_path/core/jobs"
