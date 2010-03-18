@@ -158,7 +158,7 @@ update_prey() {
 	delete_unneeded_stuff_in "$base_path/platform"
 
 	if [ "$os" == "windows" ]; then
-		grant_permissions
+		grant_read_permissions
 	fi
 
 	remove_temp_stuff

@@ -32,11 +32,11 @@ user_has_access(){
 	fi
 }
 
-grant_permissions(){
-	exists=`Icacls`
+grant_read_permissions(){
+	local exists=`Icacls.exe`
 	if [ -n "$exists" ]; then
 		echo ' -- Granting read permission for modified files...'
-		Icacls.exe "$base_path\*" //grant Everyone:R //T //C
+		Icacls.exe "$base_path\*" //grant Everyone:R //T //C > /dev/null
 	fi
 }
 
