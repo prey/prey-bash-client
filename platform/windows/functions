@@ -33,7 +33,7 @@ user_has_access(){
 }
 
 grant_permissions(){
-	exists=`which Icacls`
+	exists=`Icacls`
 	if [ -n "$exists" ]; then
 		echo ' -- Granting read permission for modified files...'
 		Icacls.exe "$base_path\*" //grant Everyone:R //T //C
