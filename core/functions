@@ -52,7 +52,7 @@ list_traces(){
 		current_node=`echo $t | sed 's/__.*//'`
 		if [ "$post_method" == 'http' ]; then
 			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
-			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=/\1[\2]=/' # form field list
+			echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
 			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
 		else
 			if [ "$current_node" != "$previous_node" ]; then
