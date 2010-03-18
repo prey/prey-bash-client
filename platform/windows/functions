@@ -36,7 +36,9 @@ grant_read_permissions(){
 	local exists=`Icacls.exe`
 	if [ -n "$exists" ]; then
 		echo ' -- Granting read permission for modified files...'
-		Icacls.exe "$base_path\*" //grant Everyone:R //T //C > /dev/null
+		# perhaps we should iterate over the diff file and only apply this on the
+		# modified files, but seems like overkill to me -- Tomas
+		Icacls.exe "$base_path\*" //grant Everyone:R //T //C &> /dev/null
 	fi
 }
 
