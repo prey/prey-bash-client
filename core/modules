@@ -45,7 +45,7 @@ run_active_modules() {
 
 		# if there's a config file, lets run it as well
 		if [ -f "$module_path/config" ]; then
-			. "$module_path/config"
+			. "$module_path/config" 2> /dev/null
 		fi
 
 		# lets load the base functions for the module
