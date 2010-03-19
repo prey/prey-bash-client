@@ -39,12 +39,15 @@ if [ $connected == 0 ]; then
 		try_to_connect
 	fi
 
-	# ok, lets check again
+	# ok, lets check again, after waiting five seconds
+	sleep 5
 	check_net_status
 	if [ $connected == 0 ]; then
 		echo "$STRING_NO_CONNECT_TO_WIFI"
 		exit
 	fi
+else
+	echo ' -- Got network connection!'
 fi
 
 ####################################################################

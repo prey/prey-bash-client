@@ -10,6 +10,8 @@
 check_net_status(){
 	# get_gateway_ip
 	# net_check_target=$gateway_ip
+	echo ' -- Looking for connection...'
+
 	local net_check_target="www.google.com"
 	if [ "$os" == "windows" ]; then
 		local ping_params='-n'
@@ -17,6 +19,13 @@ check_net_status(){
 		local ping_params='-q -c'
 	fi
 	connected=`ping $ping_params 1 $net_check_target &> /dev/null && echo 1 || echo 0`
+
+	# if there's no connection with ping, lets try to see if curl gets through
+	# since some routers/networks block ICMP requests
+	if [[ $connected == 0 ]]; then
+		echo ' -- Trying alternate method...'
+		connected=`$getter $net_check_target &> /dev/null && echo 1 || echo 0`
+	fi
 }
 
 # we could eventually use a different method for status checking
