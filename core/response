@@ -95,49 +95,44 @@ set_config_for(){
 
 process_modules(){
 
-	echo -e "$module_configuration" | while read line; do
+	STDOUT=$(echo -e "$module_configuration")
 
-	if [ `find_in "$line" 'name='` ]; then # we have a module node
-		local module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
-		echo " ** Got instructions for $module module."
-		if [ ! -d $base_path/modules/$module ]; then # not installed
-			echo " -- Installing new $module module!"
-			install_or_update_module $module
-			if [ "$?" == 1 ]; then # we got an error installing the new module
-				module=''
-				continue
-			fi
-		else # module is already installed
-			if [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
+	while read line; do
+
+		if [ `find_in "$line" 'name='` ]; then # we have a module node
+			local module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
+			echo " ** Got instructions for $module module."
+			if [ ! -d $base_path/modules/$module ]; then # not installed
+				echo " -- Installing new $module module!"
+				install_or_update_module $module
+				if [ "$?" == 1 ]; then # we got an error installing the new module
+					module=''
+					continue
+				fi
+			elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
+
 				local upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
 				local current_version=`cat $base_path/modules/$module/version 2> /dev/null`
 				if [ "$upstream_version" != "$current_version" ]; then
 				echo " -- Updating $module module!"
 					install_or_update_module $module
-					if [ $? == 1 ]; then # we got an error installing the new module
+					if [ $? != 0 ]; then # we got an error installing the new module
 						module='' # so we don't try to edit the config on the next loop
 						continue
 					fi
 				fi
 			fi
 
-			# if there's a config file, lets set it as the base config
-			if [ -f "$base_path/modules/$module/config" ]; then
-				. "$base_path/modules/$module/config"
+		else # config line for module $module
+			if [[ -n "$module" ]]; then
+				local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
+				local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/'`
+				# echo " -- Updating setting $param -> $value for $module module."
+				set_config_for "$module" "$param" "$value"
 			fi
-
 		fi
 
-	else # config line for module $module
-		if [[ -n "$module" ]]; then
-			local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
-			local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
-			# echo " -- Updating setting $param -> $value for $module module."
-			set_config_for "$module" "$param" "$value"
-		fi
-	fi
-
-	done
+	done <<< "$STDOUT"
 
 }
 
