@@ -62,7 +62,8 @@ if [ -n "$check_url" ]; then
 	parse_headers
 	process_response
 
-	echo -e "\n -- Got status code $status!"
+	echo -e "\n\033[1m >> Verifying status...\n\033[0m"
+	echo -e " -- Got status code $status!"
 
 	if [ "$status" == "$missing_status_code" ]; then
 
@@ -80,7 +81,7 @@ if [ -n "$check_url" ]; then
 		# lets send whatever we've gathered and run any pending jobs
 		####################################################################
 
-		echo -e "\n -- Sending report..."
+		echo -e "\n\033[1m >> Sending report!\n\033[0m"
 		send_report
 		run_delayed_jobs
 
