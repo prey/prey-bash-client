@@ -88,8 +88,9 @@ process_xml(){
 }
 
 # module, param, value
-update_config_for(){
-	sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" "$base_path/modules/$1/config" 2> /dev/null
+set_config_for(){
+	eval "${1}__${2}=$3"
+	# sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" "$base_path/modules/$1/config" 2> /dev/null
 }
 
 process_modules(){
@@ -106,24 +107,33 @@ process_modules(){
 				module=''
 				continue
 			fi
-		elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
-			local upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
-			local current_version=`cat $base_path/modules/$module/version 2> /dev/null`
-			if [ "$upstream_version" != "$current_version" ]; then
-			echo " -- Updating $module module!"
-				install_or_update_module $module
-				if [ $? == 1 ]; then # we got an error installing the new module
-					module='' # so we don't try to edit the config on the next loop
-					continue
+		else # module is already installed
+			if [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
+				local upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
+				local current_version=`cat $base_path/modules/$module/version 2> /dev/null`
+				if [ "$upstream_version" != "$current_version" ]; then
+				echo " -- Updating $module module!"
+					install_or_update_module $module
+					if [ $? == 1 ]; then # we got an error installing the new module
+						module='' # so we don't try to edit the config on the next loop
+						continue
+					fi
 				fi
 			fi
+
+			# if there's a config file, lets set it as the base config
+			if [ -f "$base_path/modules/$module/config" ]; then
+				. "$base_path/modules/$module/config"
+			fi
+
 		fi
+
 	else # config line for module $module
-		if [[ -n "$module" && -f $base_path/modules/$module/config ]]; then
+		if [[ -n "$module" ]]; then
 			local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
 			local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/' -e 's/\//-SLASH-/g'`
 			# echo " -- Updating setting $param -> $value for $module module."
-			update_config_for "$module" "$param" "$value"
+			set_config_for "$module" "$param" "$value"
 		fi
 	fi
 
