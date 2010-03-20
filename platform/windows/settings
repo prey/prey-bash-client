@@ -15,6 +15,7 @@ readonly programs_path="C:\Program\ Files"
 if [ -d "C:\Users" ]; then # vista and up
 	readonly users_path="C:\Users"
 else # xp and 2000
+	readonly winxp=1
 	readonly users_path="C:\Documents\ and\ Settings"
 fi
 

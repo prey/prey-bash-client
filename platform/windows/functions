@@ -33,12 +33,17 @@ user_has_access(){
 }
 
 grant_read_permissions(){
-	local exists=`Icacls.exe 2> /dev/null`
-	if [ -n "$exists" ]; then
-		echo ' -- Granting read permission for modified files...'
+	if [ $winxp == 1 ]; then
+		local command='cacls.exe'
+	else
+		local command='Icacls.exe'
+	fi
+	local exists=`$command 2> /dev/null`
+	if [ $? == 0 ]; then
+		echo ' -- Granting read permission for other users...'
 		# perhaps we should iterate over the diff file and only apply this on the
 		# modified files, but seems like overkill to me -- Tomas
-		Icacls.exe "$base_path\*" //grant Everyone:R //T //C &> /dev/null
+		$command "$base_path\*" //grant Everyone:R //T //C &> /dev/null
 	fi
 }
 
