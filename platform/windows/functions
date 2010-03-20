@@ -33,7 +33,7 @@ user_has_access(){
 }
 
 grant_read_permissions(){
-	local exists=`Icacls.exe`
+	local exists=`Icacls.exe 2> /dev/null`
 	if [ -n "$exists" ]; then
 		echo ' -- Granting read permission for modified files...'
 		# perhaps we should iterate over the diff file and only apply this on the
