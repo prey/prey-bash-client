@@ -34,7 +34,7 @@ user_has_access(){
 
 grant_read_permissions(){
 	if [ $winxp == 1 ]; then
-		local command='echo y| cacls.exe'
+		local command='echo y| cacls.exe //E'
 	else
 		local command='Icacls.exe'
 	fi
