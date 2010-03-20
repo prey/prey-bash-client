@@ -4,3 +4,7 @@
 # URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
+
+readonly system_path="/etc"
+readonly users_path="/home"
+readonly programs_path="/usr"

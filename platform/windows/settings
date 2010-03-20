@@ -5,13 +5,26 @@
 # License: GPLv3
 ####################################################################
 
+logged_user=`whoami`
+tmpdir="$base_path\platform\windows\etc\p${RANDOM}" # "random" name to make it harder to detect
+
+readonly root_path='C:\'
+readonly system_path="$WINDIR"
+readonly programs_path="C:\Program\ Files"
+
+if [ -d "C:\Users" ]; then # vista and up
+	readonly users_path="C:\Users"
+else # xp and 2000
+	readonly users_path="C:\Documents\ and\ Settings"
+fi
+
+readonly home_path="$users_path\\${logged_user}"
+
 readonly required_net_version='2.0.50727'
 readonly prey_reg_key="HKLM\Software\Prey"
 
 patcher='patsh' # Windows 7 geniously blocks anything named "patch" from being run
-logged_user=`whoami`
 line_breaker="\r\n"
-tmpdir="$base_path\platform\windows\etc\p${RANDOM}" # "random" name to make it harder to detect
 
 arch=`echo $PROCESSOR_ARCHITEW6432`
 if [ `find_in "$arch" '64'` ]; then

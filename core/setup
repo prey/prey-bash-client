@@ -21,11 +21,14 @@ get_os(){
 			os=mac
 		fi
 		logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
+		readonly root_path='/'
+		readonly home_path=`eval echo ~`
 	fi
 
 	readonly os
 	readonly platform_path="$base_path/platform/$os"
 	PATH=$PATH:$platform_path/bin
+
 }
 
 set_vars(){
