@@ -8,15 +8,28 @@
 logged_user=`whoami`
 tmpdir="$base_path\platform\windows\etc\p${RANDOM}" # "random" name to make it harder to detect
 
+arch=`echo $PROCESSOR_ARCHITEW6432`
+if [ `find_in "$arch" '64'` ]; then
+	echo -e " ** 64 bit architecture detected!"
+	readonly x64=1 # so we can check later
+	getter="curl64 -s"
+fi
+
 readonly root_path='C:\'
 readonly system_path="$WINDIR"
-readonly programs_path="C:\Program\ Files"
 
 if [ -d "C:\Users" ]; then # vista and up
+	readonly vista7=1
 	readonly users_path="C:\Users"
+	if [ $x64 == 1 ]; then
+		readonly programs_path="C:\Program\ Files"
+	else
+		readonly programs_path="C:\Program\ Files\ \(x86\)"
+	fi
 else # xp and 2000
 	readonly winxp=1
 	readonly users_path="C:\Documents\ and\ Settings"
+	readonly programs_path="C:\Program\ Files"
 fi
 
 readonly home_path="$users_path\\${logged_user}"
@@ -26,10 +39,3 @@ readonly prey_reg_key="HKLM\Software\Prey"
 
 patcher='patsh' # Windows 7 geniously blocks anything named "patch" from being run
 line_breaker="\r\n"
-
-arch=`echo $PROCESSOR_ARCHITEW6432`
-if [ `find_in "$arch" '64'` ]; then
-	echo -e " ** 64 bit architecture detected!"
-	readonly x64=1 # so we can check later
-	getter="curl64 -s"
-fi
