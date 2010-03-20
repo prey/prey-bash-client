@@ -6,12 +6,13 @@
 ####################################################################
 
 send_report(){
+	echo ' -- Packing all gathered traces...'
 	local trace_list=`list_traces`
-	local file_list=`list_files`
+	file_list=`list_files`
 	if [[ $trace_list || $file_list ]]; then
 			trace_file="$tmpdir/prey_traces.tmp"
 			echo -e "$trace_list" > $trace_file
-			echo " -- Uploading data via $post_method..."
+			echo " -- Posting data via $post_method..."
 			eval 'send_via_'"${post_method}"''
 			rm -f "$trace_file"
 		remove_traces
@@ -27,7 +28,7 @@ send_via_email(){
 	local complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
 	echo -e "$EMAIL_NOTICE $EMAIL_HEADER" | cat - "$trace_file" | sed "s/%0A/\n/g;s/%22/\"/g" > "$trace_file.msg" && echo -e "$EMAIL_FOOTER" >> "$trace_file.msg"
 
-	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file=$trace_file.msg tls=auto username=$smtp_username password=$decoded_pass`
+	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a "$file_list" -o message-file="$trace_file.msg" tls=auto username=$smtp_username password=$decoded_pass`
 
 	if [ `find_in "$response" 'ERROR'` ]; then
 		echo -e "$STRING_ERROR_EMAIL"
@@ -40,16 +41,19 @@ send_via_email(){
 }
 
 send_via_http(){
+	if [ -z "$api_key" ]; then
+		echo ' -- API key not set! Cannot post data to server.'
+		return 1
+	else
+		local args="-u $api_key:x"
+	fi
 	if [ -z "$post_url" ]; then
 		local post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`
 	fi
-	if [ -n "$api_key" ]; then
-		local post_data="$file_list -u $api_key:x"
-	fi
 	if [ `find_in "$post_url" 'https'` ]; then
-		local args='-k -3'
+		args="$args -k -3"
 	fi
-	response=`$getter $args "$user_agent" -K "$trace_file" $post_data "$post_url" \
+	response=`$getter $args "$user_agent" -K "$trace_file" "$file_list" "$post_url" \
 	--write "\n -- %{size_upload} bytes uploaded in %{time_connect} seconds, at %{speed_upload} bytes/sec."`
 
 	echo " -- $response"
