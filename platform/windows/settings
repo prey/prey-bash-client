@@ -6,7 +6,7 @@
 ####################################################################
 
 logged_user=`whoami`
-tmpdir="$base_path\platform\windows\etc\p${RANDOM}" # "random" name to make it harder to detect
+tmpdir="$platform_path\tmp\p${RANDOM}" # "random" name to make it harder to detect
 
 arch=`echo $PROCESSOR_ARCHITEW6432`
 if [ `find_in "$arch" '64'` ]; then
