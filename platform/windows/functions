@@ -36,13 +36,13 @@ grant_read_permissions(){
 	if [ $winxp == 1 ]; then
 		local command="eval echo y| cacls.exe"
 		local readonly="//t //c //p Everyone:r //g Administrators:f"
-		local fullaccess"//t //c //p Everyone:f"
+		local fullaccess="//t //c //p Everyone:f"
 	else
 		local command='Icacls.exe'
 		local readonly="//T //C //grant Everyone:R"
 		local fullaccess="//T //C //grant Everyone:F"
 	fi
-	echo ' -- Granting read permission for other users...'
+	echo ' -- Resetting permissions...'
 	# perhaps we should iterate over the diff file and only apply this on the
 	# modified files, but seems like overkill to me -- Tomas
 	$command \"$base_path/*\" "$readonly" &> /dev/null
