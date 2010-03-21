@@ -33,7 +33,7 @@ user_has_access(){
 }
 
 grant_read_permissions(){
-	if [ $winxp == 1 ]; then
+	if [ -n "$winxp" ]; then
 		local command="eval echo y| cacls.exe"
 		local readonly="//t //c //p Everyone:r //g Administrators:f"
 		local fullaccess="//t //c //p Everyone:f"

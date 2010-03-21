@@ -21,7 +21,7 @@ readonly system_path="$WINDIR"
 if [ -d "C:\Users" ]; then # vista and up
 	readonly vista7=1
 	readonly users_path="C:\Users"
-	if [ $x64 == 1 ]; then
+	if [ -n "$x64" ]; then
 		readonly programs_path="C:\Program\ Files"
 	else
 		readonly programs_path="C:\Program\ Files\ \(x86\)"
