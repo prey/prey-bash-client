@@ -35,15 +35,15 @@ user_has_access(){
 grant_read_permissions(){
 	if [ $winxp == 1 ]; then
 		local command="eval echo y| cacls.exe"
-		local args="//g Everyone:r //t //c"
+		local args="//t //c //p Everyone:r //g Administrators:f"
 	else
 		local command='Icacls.exe'
-		local args="//grant Everyone:R //T //C"
+		local args="//T //C //grant Everyone:R"
 	fi
 	echo ' -- Granting read permission for other users...'
 	# perhaps we should iterate over the diff file and only apply this on the
 	# modified files, but seems like overkill to me -- Tomas
-	$command "/*" "$args"
+	$command \"$base_path/*\" "$args" &> /dev/null
 }
 
 get_gateway_ip() {
