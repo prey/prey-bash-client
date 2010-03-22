@@ -10,7 +10,8 @@ file_size(){
 }
 
 get_gateway_ip() {
-	gateway_ip=`netstat -rn | grep default | cut -c20-35`
+	netstat=`which netstat`
+	gateway_ip=`$netstat -rn | grep default | cut -c20-35`
 }
 
 get_wifi_info() {
