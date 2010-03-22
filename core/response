@@ -112,9 +112,9 @@ process_modules(){
 					module=''
 					continue
 				fi
-			elif [ "$auto_update" == "y" ]; then  # module is already installed and auto_update is enabled
+			elif [ "$auto_update" == "true" ]; then  # module is already installed and auto_update is enabled
 
-				local upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)".*/\1/'`
+				local upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)" .*/\1/'`
 				local current_version=`cat $base_path/modules/$module/version 2> /dev/null`
 				if [ "$upstream_version" != "$current_version" ]; then
 				echo " -- Updating $module module!"
