@@ -69,16 +69,15 @@ test_and_apply_diff() {
 # this could be useful sometime in the future
 report_upgrade_error(){
 	echo ' -- Notifying error back to your Control Panel account...'
-	$getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=1" 2> /dev/null
+	$getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=1" &> /dev/null
 }
 
 # this could be useful sometime in the future
 report_new_version_installed(){
 	echo ' -- Notifying installed new version to your Control Panel account...'
 	local integer_version=`echo "$version" | sed -e 's/[^0-9]//g' -e 's/^0//'`
-	$getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[client_version]=${integer_version}&device[update_failed]=0" 2> /dev/null
+	$getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[client_version]=${integer_version}&device[update_failed]=0" &> /dev/null
 }
-
 
 delete_files_according_to_diff() {
 
