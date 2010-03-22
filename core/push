@@ -53,7 +53,7 @@ send_via_http(){
 	if [ `find_in "$post_url" 'https'` ]; then
 		args="$args -k -3"
 	fi
-	response=`$getter $args "$user_agent" -K "$trace_file" "$file_list" "$post_url" \
+	response=`$getter $args "$user_agent" -K "$trace_file" $file_list "$post_url" \
 	--write "\n -- %{size_upload} bytes uploaded in %{time_connect} seconds, at %{speed_upload} bytes/sec."`
 
 	echo " -- $response"
