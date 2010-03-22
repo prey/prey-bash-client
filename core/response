@@ -38,7 +38,10 @@ process_config(){
 			if [ $? == 0 ]; then
 				. $base_path/version
 				echo " ** Update OK! New version is $version."
+				report_new_version_installed
 			else
+				echo " !! There was a problem upgrading to the new version."
+				report_upgrade_error
 				break
 			fi
 
