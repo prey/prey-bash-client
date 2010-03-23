@@ -35,7 +35,7 @@ check_status(){
 			local check_url="$check_url/devices/$device_key.xml"
 		else
 			echo -e " !! You need to enter your Device Key for HTTP Check!\n"
-			exit
+			exit 1
 		fi
 	fi
 	response=`$getter "$user_agent" -i $check_url`

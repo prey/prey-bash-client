@@ -24,7 +24,7 @@ fi
 . $base_path/core/base
 . $base_path/platform/$os/functions
 
-echo -e "\E[36m$STRING_START ### `date`\E[0m\n"
+echo -e "\E[36m$STRING_START ### Protecting one more $os system at:\n ### `date`\E[0m\n"
 
 ####################################################################
 # lets check if we're actually connected
