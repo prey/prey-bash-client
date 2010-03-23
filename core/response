@@ -114,8 +114,9 @@ process_modules(){
 			elif [ "$auto_update" == "true" ]; then  # module is already installed and auto_update is enabled
 
 				local upstream_version=`echo $line | sed 's/^.*version="\([0-9.]*\)".*/\1/'`
-				local current_version=`cat $base_path/modules/$module/version 2> /dev/null`
-				if [ `is_bigger_than $upstream_version $current_version` == 1 ]; then
+				local installed_version=`cat $base_path/modules/$module/version 2> /dev/null`
+
+				if [ `is_bigger_than $upstream_version $installed_version` == 1 ]; then
 				echo " -- Updating $module module!"
 					install_or_update_module $module
 					if [ $? != 0 ]; then # we got an error installing the new module
