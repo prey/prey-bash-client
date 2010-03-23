@@ -24,7 +24,7 @@ fi
 . $base_path/core/base
 . $base_path/platform/$os/functions
 
-echo -e "\E[36m$STRING_START ### Protecting one more $os system at:\n ### `date`\E[0m\n"
+echo -e "\E[36m$STRING_START ### `uname -a`\E[0m\n"
 
 ####################################################################
 # lets check if we're actually connected
@@ -51,6 +51,18 @@ else
 fi
 
 ####################################################################
+# check valid keys if requested
+####################################################################
+
+if [ -n "$check_mode" ]; then
+
+	echo -e "\n\033[1m >> Verifying API and Device keys...\n\033[0m"
+	check_valid_keys
+	exit $?
+
+fi
+
+####################################################################
 # if there's a URL in the config, lets see if it actually exists
 # if it doesn't, the program will shut down gracefully
 ####################################################################
@@ -61,7 +73,7 @@ create_tmpdir
 if [ -n "$check_url" ]; then
 	echo "$STRING_CHECK_URL"
 
-	check_status
+	check_device_status
 	parse_headers
 	process_response
 

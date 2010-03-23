@@ -29,7 +29,7 @@ check_net_status(){
 }
 
 # we could eventually use a different method for status checking
-check_status(){
+check_device_status(){
 	if [ "$post_method" == 'http' ]; then
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
@@ -39,7 +39,30 @@ check_status(){
 		fi
 	fi
 	response=`$getter "$user_agent" -i $check_url`
-	status=`echo -e "$response" | grep "HTTP" | cut -d" " -f2`
+	get_status_code
+}
+
+get_status_code(){
+	status=`echo -e "$response" | grep 'HTTP/' | cut -d" " -f2`
+}
+
+check_valid_keys(){
+	response=`$getter "$user_agent" -u $api_key:x -i $check_url/devices.xml`
+	get_status_code
+
+	if [ "$status" == "401" ]; then
+		echo -e " !! API key not valid! Got $status status code.\n"
+			return 1
+	else
+		echo  ' ** API key is valid.'
+		if [[ "$status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
+			echo -e ' ** Device key is valid.\n'
+		else
+			echo -e ' !! Device key not valid!\n'
+			return 1
+		fi
+	fi
+	return 0
 }
 
 # we may eventually use a specific header for Prey

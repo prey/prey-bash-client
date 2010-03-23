@@ -5,11 +5,19 @@
 # License: GPLv3
 ####################################################################
 
-if [[ "$1" == "-t" || "$1" == "--test" ]]; then
-	echo -e "\n\033[1m -- TEST MODE ENABLED.\033[0m"
-	. $base_path/test/include "$2" 2> /dev/null
-	test_mode=1
-fi
+# step throught the params and check
+
+until [ -z "$1" ]; do
+	if [[ "$1" == "-t" || "$1" == "--test" ]]; then
+		echo -e "\n\033[1m -- TEST MODE ENABLED.\033[0m"
+		. $base_path/test/include "$2" 2> /dev/null
+		test_mode=1
+	elif [[ "$1" == '-c' || "$1" == '--check' ]]; then
+		echo -e "\n\033[1m -- CHECK MODE ENABLED.\033[0m"
+		check_mode=1
+	fi
+  shift
+done
 
 get_os(){
 	os=`lowercase \`uname\``
