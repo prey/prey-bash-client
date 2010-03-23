@@ -117,7 +117,7 @@ process_modules(){
 				local installed_version=`cat $base_path/modules/$module/version 2> /dev/null`
 
 				if [ `is_bigger_than $upstream_version $installed_version` == 1 ]; then
-				echo " -- Updating $module module!"
+				echo " -- Updating $module module to version $upstream_version!"
 					install_or_update_module $module
 					if [ $? != 0 ]; then # we got an error installing the new module
 						module='' # so we don't try to edit the config on the next loop

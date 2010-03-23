@@ -7,7 +7,7 @@
 
 if [[ "$1" == "-t" || "$1" == "--test" ]]; then
 	echo -e "\n\033[1m -- TEST MODE ENABLED.\033[0m"
-	. $base_path/test/include 2> /dev/null
+	. $base_path/test/include "$2" 2> /dev/null
 	test_mode=1
 fi
 
@@ -46,8 +46,8 @@ set_constants(){
 	readonly logged_user
 
 	readonly getter
-	readonly mailsender="sendEmail"
 	readonly user_agent="-A Prey/$version ($os)"
+	readonly mailsender="sendEmail"
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
 	readonly updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null

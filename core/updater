@@ -12,7 +12,7 @@
 fetch_update() {
 
 	echo ' -- Fetching new Prey release...'
-	wget "$update_package" -O "$updater_file" 2> /dev/null
+	$getter "$user_agent" "$update_package" -o "$updater_file" 2> /dev/null
 
 	if [ `file_size "$updater_file"` == 0 ]; then
 		echo " !! Couldn't get updater file! Skipping..."
@@ -22,7 +22,7 @@ fetch_update() {
 }
 
 get_checksum_for() {
-	$getter "$1.md5sum" | cut -d ' ' -f1
+	$getter "$user_agent" "$1.md5sum" | cut -d ' ' -f1
 }
 
 validate_package(){
@@ -69,14 +69,14 @@ test_and_apply_diff() {
 # this could be useful sometime in the future
 report_upgrade_error(){
 	echo ' -- Notifying error back to your Control Panel account...'
-	$getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=1" &> /dev/null
+	$getter "$user_agent" -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=1" &> /dev/null
 }
 
 # this could be useful sometime in the future
 report_new_version_installed(){
 	echo ' -- Notifying installed new version to your Control Panel account...'
 	# local integer_version=`echo "$version" | sed -e 's/[^0-9]//g' -e 's/^0//'`
-	$getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[client_version]=${version}&device[update_failed]=0"
+	$getter "$user_agent" -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[client_version]=${version}&device[update_failed]=0"
 }
 
 delete_files_according_to_diff() {
@@ -180,7 +180,7 @@ update_prey() {
 
 get_module(){
 	rm "$module_file" 2> /dev/null
-	$getter -u $api_key:x "$modules_url/modules/$1.zip" -o "$module_file" 2> /dev/null
+	$getter "$user_agent" -u $api_key:x "$modules_url/modules/$1.zip" -o "$module_file" 2> /dev/null
 }
 
 install_or_update_module(){
@@ -189,7 +189,7 @@ install_or_update_module(){
 
 	get_module $1
 
-	if [ `file_size "$module_file"` -gt 0 ]; then
+	if [[ -f "$module_file" && `file_size "$module_file"` -gt 0 ]]; then
 		echo " -- Got new $1 module from repository! Unpackaging..."
 
 		if [ -d "$base_path/modules/$1" ]; then # module already installed
