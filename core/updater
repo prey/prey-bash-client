@@ -14,9 +14,9 @@ fetch_update() {
 	echo ' -- Fetching new Prey release...'
 	$getter "$user_agent" "$update_package" -o "$updater_file" 2> /dev/null
 
-	if [ `file_size "$updater_file"` == 0 ]; then
+	if [[ ! -f "$updater_file" || `file_size "$updater_file"` == 0 ]]; then
 		echo " !! Couldn't get updater file! Skipping..."
-		rm $updater_file
+		rm $updater_file 2> /dev/null
 		return 1
 	fi
 }
