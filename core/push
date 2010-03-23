@@ -11,7 +11,7 @@ send_report(){
 	file_list=`list_files`
 	if [[ $trace_list || $file_list ]]; then
 			trace_file="$tmpdir/prey_traces.tmp"
-			echo -e "$trace_list" > $trace_file
+			echo -e "$trace_list" > "$trace_file"
 			echo " -- Posting data via $post_method..."
 			eval 'send_via_'"${post_method}"''
 			rm -f "$trace_file"
@@ -54,7 +54,7 @@ send_via_http(){
 		args="$args -k -3"
 	fi
 	response=`$getter $args "$user_agent" -K "$trace_file" $file_list "$post_url" \
-	--write "\n -- %{size_upload} bytes uploaded in %{time_connect} seconds, at %{speed_upload} bytes/sec."`
+	--write "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec."`
 
 	echo " -- $response"
 }

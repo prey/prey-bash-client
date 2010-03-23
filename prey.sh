@@ -9,20 +9,20 @@
 # set -e
 
 PATH=/bin:$PATH # for windows
-readonly base_path=`dirname $0`
+readonly base_path=`dirname "$0"`
 
 ####################################################################
 # base files inclusion
 ####################################################################
 
-. $base_path/version
-. $base_path/config
+. "$base_path/version"
+. "$base_path/config"
 if [ ! -f "lang/$lang" ]; then # fallback to english in case the lang is missing
 	lang='en'
 fi
-. $base_path/lang/$lang
-. $base_path/core/base
-. $base_path/platform/$os/functions
+. "$base_path/lang/$lang"
+. "$base_path/core/base"
+. "$base_path/platform/$os/functions"
 
 echo -e "\E[36m$STRING_START ### `uname -a`\E[0m\n"
 

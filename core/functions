@@ -72,10 +72,10 @@ list_traces(){
 create_tmpdir(){
 	# lets create our ultramegasecret temp dir
 	if [ ! -d "$tmpdir" ]; then
-		mkdir -p $tmpdir 2> /dev/null
+		mkdir -p "$tmpdir" 2> /dev/null
 		# we need to give access to the logged in user in order to save files
 		if [ `whoami` == 'root' ]; then
-				chmod 777 $tmpdir 2> /dev/null
+				chmod 777 "$tmpdir" 2> /dev/null
 		fi
 	fi
 }
