@@ -93,7 +93,6 @@ process_xml(){
 # module, param, value
 set_config_for(){
 	eval "readonly ${1}__${2}='$3'"
-	# sed -i -e "s/$2=.*$/$2='$3'/" -e "s/-SLASH-/\//g" "$base_path/modules/$1/config" 2> /dev/null
 }
 
 process_modules(){
@@ -114,9 +113,9 @@ process_modules(){
 				fi
 			elif [ "$auto_update" == "true" ]; then  # module is already installed and auto_update is enabled
 
-				local upstream_version=`echo $line | sed 's/^.*version="\([^"].*\)" .*/\1/'`
+				local upstream_version=`echo $line | sed 's/^.*version="\([0-9.]*\)".*/\1/'`
 				local current_version=`cat $base_path/modules/$module/version 2> /dev/null`
-				if [ "$upstream_version" != "$current_version" ]; then
+				if [ `is_bigger_than $upstream_version $current_version` == 1 ]; then
 				echo " -- Updating $module module!"
 					install_or_update_module $module
 					if [ $? != 0 ]; then # we got an error installing the new module
