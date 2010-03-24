@@ -175,7 +175,7 @@ apply_changes(){
 
 perform_update() {
 
-	echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
+	echo -e "\n\033[1m >> Applying changes!\n\033[0m"
 	sleep 1
 	apply_changes
 
@@ -252,3 +252,4 @@ delete_unneeded_stuff_in(){
 		rm -Rf `find "$1" -mindepth 1 -maxdepth 1 -type d -not -iname "$os"`
 	fi
 }
+# testing stuff
