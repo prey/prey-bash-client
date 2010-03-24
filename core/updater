@@ -42,7 +42,7 @@ unzip_package(){
 	return $?
 }
 
-test_and_apply_diff() {
+test_diff() {
 
 	# -f forces, dont ask any questions
 	# -p0 leave paths as they are
@@ -58,12 +58,17 @@ test_and_apply_diff() {
 	if [ `find_in "$outcome" 'FAILED'` ]; then
 		return 1
 	else
-		echo ' -- Everything smooth. Applying patch...'
-		outcome=`$patcher $patch_options > /dev/null`
+		echo ' -- Everything smooth.'
 	fi
 
 	return 0
 
+}
+
+apply_diff(){
+	echo ' -- Applying patch...'
+	outcome=`$patcher $patch_options > /dev/null`
+	return $?
 }
 
 # this could be useful sometime in the future
@@ -117,8 +122,7 @@ remove_temp_stuff(){
 	rm -f "$updater_file" 2> /dev/null
 }
 
-perform_upgrade(){
-
+download_and_test_update(){
 	echo ' -- Removing leftovers...'
 	remove_temp_stuff
 
@@ -139,15 +143,22 @@ perform_upgrade(){
 		return 1
 	fi
 
+	if [ -f "$diff_file" ]; then
+		test_diff
+		return $?
+	fi
+}
+
+apply_changes(){
+
 	echo ' -- Updating files!'
 
 	if [ -f "$diff_file" ]; then
-		test_and_apply_diff
+		apply_diff
 		if [ $? == 0 ]; then
 			delete_files_according_to_diff
 		else
 			echo ' -- Something went wrong! Skipping patch...'
-			# let the user know
 			return 1 # not ok
 		fi
 		rm "$diff_file" 2> /dev/null
@@ -162,11 +173,10 @@ perform_upgrade(){
 	return 0
 }
 
-update_prey() {
+perform_update() {
 
-	echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
-
-	perform_upgrade
+	sleep 1
+	apply_changes
 
 	if [ $? == 0 ]; then
 
