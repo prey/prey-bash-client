@@ -92,7 +92,7 @@ reset_permissions(){
 	# perhaps we should iterate over the diff file and only apply this on the
 	# modified files, but seems like overkill to me -- Tomas
 	eval $command \"$base_path/*\" "$readonly" &> /dev/null
-	eval $command \"$base_path\prey.log\" "$fullaccess" &> /dev/null
+	eval $command \"$base_path/prey.log\" "$fullaccess" &> /dev/null
 	# eval $command \"$platform_path\tmp\" "$fullaccess" &> /dev/null
 }
 
@@ -110,5 +110,5 @@ pre_update(){
 # lets reset the cron.exe so it refreshes with the new status
 post_update(){
 	reset_permissions
-	"$platform_path\cron.exe"
+	"$platform_path\cron.exe" &
 }
