@@ -59,10 +59,30 @@ try_to_connect() {
 
 }
 
+############################################
+# module functions
+############################################
+
 get_current_delay(){
 	crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
 }
 
 update_execution_delay(){
 	(crontab -l | grep -v prey; echo "*/$1 * * * * $base_path/prey.sh > /dev/null") | crontab -
+}
+
+############################################
+# updater-specific functions
+############################################
+
+# here we'll eventually put whatever we need to do in linux before
+# performing a full update
+pre_update(){
+	echo ' -- All set!'
+	return 0
+}
+
+# post update hooks go in here
+post_update(){
+	echo ' -- Done!'
 }

@@ -117,17 +117,9 @@ remove_temp_stuff(){
 	rm -f "$updater_file" 2> /dev/null
 }
 
-update_prey() {
+perform_upgrade(){
 
-	echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
-
-	if [ "$os" == "windows" ]; then
-		if [ -z `user_has_access` ]; then
-			echo ' -- Unfortunately the current user whos running Prey cannot perform the upgrade.'
-			return 1
-		fi
-	fi
-
+	echo ' -- Removing leftovers...'
 	remove_temp_stuff
 
 	updater_path="$tmpdir/updater"
@@ -158,19 +150,37 @@ update_prey() {
 			# let the user know
 			return 1 # not ok
 		fi
+		rm "$diff_file" 2> /dev/null
 	fi
 
-	rm "$diff_file"
 	copy_new_files
 	delete_unneeded_stuff_in "$base_path/platform"
 
-	if [ "$os" == "windows" ]; then
-		grant_read_permissions
-	fi
-
+	echo ' -- Cleaning up and running post-update hooks...'
+	post_update
 	remove_temp_stuff
 
 	return 0
+}
+
+update_prey() {
+
+	echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
+
+	perform_update
+
+	if [ $? == 0 ]; then
+		. "$base_path/version"
+		echo " ** Update OK! New version is $version."
+		report_new_version_installed
+	else
+		echo " !! There was a problem upgrading to the new version."
+		report_upgrade_error
+	fi
+
+	echo " -- All done.\n"
+	# at this point prey should not be running
+	# meaning this message should be the last to run
 
 }
 
