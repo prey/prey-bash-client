@@ -104,6 +104,7 @@ pre_update(){
 		return 1
 	fi
 	TASKKILL /F /IM cron.exe /T 2> /dev/null
+	return 0
 }
 
 # lets reset the cron.exe so it refreshes with the new status
