@@ -28,7 +28,6 @@ get_checksum_for() {
 validate_package(){
 	local valid_md5=`get_checksum_for $update_package`
 	local package_md5=`$checksum $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null`
-	package_md5=`lowercase "$package_md5"`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
 		echo ' -- Invalid checksum for downloaded package. Cannot continue.'
