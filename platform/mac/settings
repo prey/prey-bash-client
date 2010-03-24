@@ -5,10 +5,12 @@
 # License: GPLv3
 ####################################################################
 
+readonly logged_pid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
+
 readonly system_path="/Library"
 readonly users_path="/Users"
 readonly programs_path="/Applications"
 
-readonly logged_pid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
+checksum='md5'
 readonly airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
 readonly prey_agent_plist="/Library/LaunchDaemons/com.prey.agent.plist"

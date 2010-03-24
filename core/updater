@@ -27,7 +27,7 @@ get_checksum_for() {
 
 validate_package(){
 	local valid_md5=`get_checksum_for $update_package`
-	local package_md5=`md5sum $updater_file | cut -d ' ' -f1`
+	local package_md5=`$checksum $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null`
 	package_md5=`lowercase "$package_md5"`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
@@ -192,14 +192,19 @@ install_or_update_module(){
 	if [[ -f "$module_file" && `file_size "$module_file"` -gt 0 ]]; then
 		echo " -- Got new $1 module from repository! Unpackaging..."
 
-		if [ -d "$base_path/modules/$1" ]; then # module already installed
-			rm -Rf "$base_path/modules/$1"
-		fi
-
 		echo ' -- Unzipping module...'
-		unzip "$module_file" -d "$base_path/modules" &> /dev/null
+		unzip "$module_file" -d "$tmpdir/$1.tmp" &> /dev/null
 
 		if [ $? == 0 ]; then
+
+			if [ -d "$base_path/modules/$1" ]; then # module already installed
+				echo ' -- Removing old module...'
+				rm -Rf "$base_path/modules/$1"
+			fi
+
+			echo ' -- Putting new module in its right position...'
+			mv "$tmpdir/$1.tmp/$1" "$base_path/modules/"
+
 			echo ' -- Cleaning up...'
 			delete_unneeded_stuff_in "$base_path/modules/$1/platform"
 			rm "$module_file" 2> /dev/null
