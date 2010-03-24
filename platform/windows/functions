@@ -78,7 +78,7 @@ is_module_active() {
 # updater-specific functions
 ############################################
 
-grant_read_permissions(){
+reset_permissions(){
 	if [ -n "$winxp" ]; then
 		local command="echo y| cacls.exe"
 		local readonly="//t //c //p Everyone:r //g Administrators:f"
@@ -93,7 +93,7 @@ grant_read_permissions(){
 	# modified files, but seems like overkill to me -- Tomas
 	eval $command \"$base_path/*\" "$readonly" &> /dev/null
 	eval $command \"$base_path\prey.log\" "$fullaccess" &> /dev/null
-	eval $command \"$platform_path\tmp\" "$fullaccess" &> /dev/null
+	# eval $command \"$platform_path\tmp\" "$fullaccess" &> /dev/null
 }
 
 # lets make sure we kill the cron process, otherwise we wont be able to
@@ -110,5 +110,5 @@ pre_update(){
 # lets reset the cron.exe so it refreshes with the new status
 post_update(){
 	reset_permissions
-	"$platform_path/cron.exe --wait"
+	"$platform_path\cron.exe"
 }
