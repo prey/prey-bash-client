@@ -166,7 +166,7 @@ update_prey() {
 
 	echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
 
-	perform_update
+	perform_upgrade
 
 	if [ $? == 0 ]; then
 
