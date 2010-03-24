@@ -175,6 +175,7 @@ apply_changes(){
 
 perform_update() {
 
+	echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
 	sleep 1
 	apply_changes
 
