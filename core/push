@@ -28,7 +28,7 @@ send_via_email(){
 	local complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
 	echo -e "$EMAIL_NOTICE $EMAIL_HEADER" | cat - "$trace_file" | sed "s/%0A/\n/g;s/%22/\"/g" > "$trace_file.msg" && echo -e "$EMAIL_FOOTER" >> "$trace_file.msg"
 
-	response=`$mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username=$smtp_username password=$decoded_pass`
+	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username=$smtp_username password=$decoded_pass`
 
 	if [ `find_in "$response" 'ERROR'` ]; then
 		echo -e "$STRING_ERROR_EMAIL"
@@ -53,7 +53,7 @@ send_via_http(){
 	if [ `find_in "$post_url" 'https'` ]; then
 		args="$args -k -3"
 	fi
-	response=`$getter $args "$user_agent" -K "$trace_file" $file_list "$post_url" \
+	response=`getter $args "$user_agent" -K "$trace_file" $file_list "$post_url" \
 	--write "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec."`
 
 	echo " -- $response"

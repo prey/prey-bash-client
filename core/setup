@@ -28,7 +28,7 @@ get_os(){
 		if [ "$os" == "darwin" ]; then
 			os=mac
 		fi
-		logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
+		readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 		readonly root_path='/'
 		readonly home_path=`eval echo ~`
 	fi
@@ -42,11 +42,14 @@ get_os(){
 # here we put the vars that are shared by two os, but a third one has
 # different values
 set_vars(){
-	getter="curl -s"
 	tmpdir="/tmp/p${RANDOM}"
-	patcher='patch'
-	checksum='md5sum'
 	line_breaker="\n"
+}
+
+set_aliases(){
+	alias getter="curl -s"
+	alias mailsender="sendEmail"
+	alias patcher='patch'
 }
 
 set_constants(){
@@ -56,9 +59,7 @@ set_constants(){
 	readonly tmpdir
 	readonly logged_user
 
-	readonly getter
 	readonly user_agent="-A Prey/$version ($os)"
-	readonly mailsender="sendEmail"
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
 	readonly updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null
@@ -66,6 +67,7 @@ set_constants(){
 }
 
 get_os
+set_aliases
 set_vars
 . "$platform_path/settings"
 set_constants

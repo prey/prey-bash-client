@@ -27,7 +27,7 @@ get_checksum_for() {
 
 validate_package(){
 	local valid_md5=`get_checksum_for $update_package`
-	local package_md5=`$checksum $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null`
+	local package_md5=`md5sum $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
 		echo ' -- Invalid checksum for downloaded package. Cannot continue.'
@@ -52,7 +52,7 @@ test_diff() {
 	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
 
 	echo ' -- Testing if patch will apply cleanly...'
-	outcome=`$patcher --dry-run $patch_options`
+	outcome=`patcher --dry-run $patch_options`
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
 		return 1
@@ -66,7 +66,7 @@ test_diff() {
 
 apply_diff(){
 	echo ' -- Applying patch...'
-	outcome=`$patcher $patch_options > /dev/null`
+	outcome=`patcher $patch_options > /dev/null`
 	return $?
 }
 

@@ -5,14 +5,21 @@
 # License: GPLv3
 ####################################################################
 
-logged_user=`whoami`
+readonly logged_user=`whoami`
+
+alias patcher='patsh' # Windows 7 geniously blocks anything named "patch" from being run
+
 tmpdir="$WINDIR\Temp\p${RANDOM}" # "random" name to make it harder to detect
+line_breaker="\r\n"
+
+readonly required_net_version='2.0.50727'
+readonly prey_reg_key="HKLM\Software\Prey"
 
 arch=`echo $PROCESSOR_ARCHITEW6432`
 if [ `find_in "$arch" '64'` ]; then
 	echo -e " ** 64 bit architecture detected!"
 	readonly x64=1 # so we can check later
-	getter="curl64 -s"
+	alias getter="curl64 -s"
 fi
 
 readonly root_path='C:\'
@@ -33,9 +40,3 @@ else # xp and 2000
 fi
 
 readonly home_path="$users_path\\${logged_user}"
-
-readonly required_net_version='2.0.50727'
-readonly prey_reg_key="HKLM\Software\Prey"
-
-patcher='patsh' # Windows 7 geniously blocks anything named "patch" from being run
-line_breaker="\r\n"
