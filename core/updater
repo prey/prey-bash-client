@@ -193,7 +193,7 @@ perform_update() {
 		report_upgrade_error
 	fi
 
-	echo -e " -- All done.\n"
+	echo -e " -- All done! Exiting...\n"
 	# at this point prey should not be running
 	# meaning this message should be the last to run
 
