@@ -24,7 +24,7 @@ process_config(){
 		echo " -- Delay in sync."
 	fi
 
-	if [ "$auto_update" == "true" && `is_bigger_than $current_release $version` == 1 ]; then
+	if [[ "$auto_update" == "true" && `is_bigger_than $current_release $version` == 1 ]]; then
 
 		echo " -- New Prey version found! Auto-update selected so let's try to upgrade."
 		echo " -- Performing pre update checks..."
