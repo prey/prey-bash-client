@@ -154,10 +154,9 @@ perform_upgrade(){
 	fi
 
 	copy_new_files
-	delete_unneeded_stuff_in "$base_path/platform"
 
-	echo ' -- Cleaning up and running post-update hooks...'
-	post_update
+	echo ' -- Cleaning up...'
+	delete_unneeded_stuff_in "$base_path/platform"
 	remove_temp_stuff
 
 	return 0
@@ -170,9 +169,15 @@ update_prey() {
 	perform_update
 
 	if [ $? == 0 ]; then
+
 		. "$base_path/version"
+
 		echo " ** Update OK! New version is $version."
 		report_new_version_installed
+
+		echo ' -- Running post-update hooks...'
+		post_update
+
 	else
 		echo " !! There was a problem upgrading to the new version."
 		report_upgrade_error
