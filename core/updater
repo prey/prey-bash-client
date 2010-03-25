@@ -200,7 +200,6 @@ perform_update() {
 	# get new version
 	. "$base_path/version"
 
-
 	if [[ $update_status == 0 && `is_bigger_than $version $previous_version` == 1 ]]; then
 
 			echo " ** Update OK! New installed version of Prey is $version."
@@ -213,7 +212,6 @@ perform_update() {
 	fi
 
 	report_update_status $update_status
-
 	delete_tmpdir
 
 	echo ' -- Running post-update hooks...'
@@ -286,11 +284,14 @@ install_or_update_module(){
 			echo " ** New $1 module placed and ready to go!"
 			return 0
 		fi
+
 	else
-		echo " -- Something went wrong while trying to fetch module from repository."
+
+		echo " -- Couldn't grab module. The repository may be temporarily down."
+
 	fi
 
-	echo " !! Couldn't get/install $1 module from repository."
+	echo " !! Couldn't install $1 module from repository."
 	return 1
 
 }
