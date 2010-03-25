@@ -115,6 +115,6 @@ pre_update_hook(){
 # lets reset the cron.exe so it refreshes with the new status
 post_update_hook(){
 	reset_permissions
-	echo ' -- All done! Reloading Prey...'
+	echo ' -- Reloading Prey...'
 	"$platform_path\cron.exe" &
 }
