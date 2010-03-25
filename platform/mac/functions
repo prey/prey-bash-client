@@ -70,5 +70,6 @@ pre_update(){
 
 # post update hooks go in here
 post_update(){
+	$base_path/prey.sh & # lets restart prey now
 	echo ' -- Done!'
 }
