@@ -92,6 +92,7 @@ process_response(){
 		echo " -- Response was an HTML file. Lets just do our job."
 		return
 	else
+		echo " !! Couldn't determine Content-Type for response. Your Check URL is probably incorrect."
 		return
 	fi
 	eval 'process_'"${response_type}"''

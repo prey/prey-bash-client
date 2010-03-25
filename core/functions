@@ -37,7 +37,7 @@ get_file(){
 add_trace(){
 	local urlencoded=`urlencode "$2"`
 	local trace="${current_module}__$1=$urlencoded"
-	echo " ++ Adding trace for $current_module: $1"
+	echo -e " ${green}++${color_end} Adding trace for $current_module: $1"
 	# we need to encode whitespaces, otherwise well get into trouble
 	traces[${#traces[*]}]="$trace"
 }
@@ -86,10 +86,10 @@ delete_tmpdir(){
 
 add_file(){
 	if [ -f "$2" ]; then
-		echo " ++ Adding file for $current_module: $1 -> $2"
+		echo -e " ${bold}${green}++${bold_end}${color_end} Adding file for $current_module: $1 -> $2"
 		files[${#files[*]}]=${current_module}__$1=$2
 	else
-		echo ' --- nope.'
+		echo " ${red}!!${color_end} Couldn't find file at $2!"
 	fi
 }
 

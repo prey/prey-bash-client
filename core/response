@@ -33,7 +33,7 @@ process_config(){
 
 		if [ $? == 0 ]; then
 
-			echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
+			echo -e "\n${bold} >> Running Prey updater!${bold_end}\n"
 
 			# we update as a different process so we can
 			# modify prey.sh in case we need to
@@ -80,12 +80,12 @@ process_xml(){
 
 	prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
 	if [ -n "$prey_configuration" ]; then
-		echo -e "\n\033[1m >> Reading configuration...\n\033[0m"
+		echo -e "\n${bold} >> Reading configuration...${bold_end}\n"
 		process_config
 	fi
 	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	if [ -n "$module_configuration" ]; then
-		echo -e "\n\033[1m >> Reading module configuration...\n\033[0m"
+		echo -e "\n${bold} >> Reading module configuration...${bold_end}\n"
 		process_modules
 	fi
 

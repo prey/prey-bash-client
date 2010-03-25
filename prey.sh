@@ -24,7 +24,7 @@ fi
 . "$base_path/core/base"
 . "$base_path/platform/$os/functions"
 
-echo -e "${cyan}$STRING_START ### `uname -a`${reset}\n"
+echo -e "${cyan}$STRING_START ### `uname -a`${color_end}\n"
 
 ####################################################################
 # lets check if we're actually connected
@@ -56,7 +56,7 @@ fi
 
 if [ -n "$check_mode" ]; then
 
-	echo -e "\n${bold} >> Verifying API and Device keys...${reset}\n"
+	echo -e "\n${bold} >> Verifying API and Device keys...${bold_end}\n"
 	check_valid_keys
 	exit $?
 
@@ -77,7 +77,7 @@ if [ -n "$check_url" ]; then
 	parse_headers
 	process_response
 
-	echo -e "\n${bold} >> Verifying status...${reset}\n"
+	echo -e "\n${bold} >> Verifying status...${bold_end}\n"
 	echo -e " -- Got status code $status!"
 
 	if [ "$status" == "$missing_status_code" ]; then
@@ -96,7 +96,7 @@ if [ -n "$check_url" ]; then
 		# lets send whatever we've gathered and run any pending jobs
 		####################################################################
 
-		echo -e "\n${bold} >> Sending report!${reset}\n"
+		echo -e "\n${bold} >> Sending report!${bold_end}\n"
 		send_report
 		run_delayed_jobs
 

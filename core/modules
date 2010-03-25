@@ -34,7 +34,7 @@ run_active_modules() {
 		module_path="$base_path/modules/$current_module"
 		module_platform_path="$module_path/platform/$os"
 
-		echo -e "\n${bold} >> Running $current_module module!${reset}\n"
+		echo -e "\n${bold} >> Running $current_module module!${bold_end}\n"
 
 		# if there's a language file, lets run it
 		if [ -f "$module_path/lang/$lang" ]; then
