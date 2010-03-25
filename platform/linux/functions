@@ -75,15 +75,19 @@ update_execution_delay(){
 # updater-specific functions
 ############################################
 
-# here we'll eventually put whatever we need to do in linux before
-# performing a full update
-pre_update(){
+pre_update_check(){
 	echo ' -- All set!'
 	return 0
 }
 
+# here we'll eventually put whatever we need to do in linux before
+# performing a full update
+pre_update_hook(){
+	return 0
+}
+
 # post update hooks go in here
-post_update(){
+post_update_hook(){
+	echo ' -- All done! Reloading Prey...'
 	$base_path/prey.sh & # lets restart prey now
-	echo ' -- Done!'
 }

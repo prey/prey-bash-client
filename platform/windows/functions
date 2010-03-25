@@ -98,19 +98,23 @@ reset_permissions(){
 
 # lets make sure we kill the cron process, otherwise we wont be able to
 # replace it with a newer one
-pre_update(){
+pre_update_check(){
 	if [ -z `user_has_access` ]; then
 		echo " -- Unfortunately the current user who's running Prey cannot perform the upgrade."
 		return 1
 	fi
-	echo ' -- Shutting down Prey runner...'
-	TASKKILL //F //IM cron.exe //T 2> /dev/null
 	return 0
 }
 
+pre_update_hook(){
+	echo ' -- Shutting down Prey daemon...'
+	TASKKILL //F //IM cron.exe //T 2> /dev/null
+	return $?
+}
+
 # lets reset the cron.exe so it refreshes with the new status
-post_update(){
+post_update_hook(){
 	reset_permissions
-	echo ' -- Reloading Prey runner...'
+	echo ' -- All done! Reloading Prey...'
 	"$platform_path\cron.exe" &
 }

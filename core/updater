@@ -182,6 +182,8 @@ apply_changes(){
 
 perform_update() {
 
+	pre_update_hook
+
 	echo -e "\n${bold} >> Applying changes!${bold_end}\n"
 	sleep 1
 	apply_changes
@@ -200,7 +202,7 @@ perform_update() {
 			report_new_version_installed
 
 			echo ' -- Running post-update hooks...'
-			post_update
+			post_update_hook
 
 			echo -e " -- All done! Exiting...\n"
 			exit 0

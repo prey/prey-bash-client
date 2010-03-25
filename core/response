@@ -29,7 +29,7 @@ process_config(){
 		echo " -- New Prey version found! Auto-update selected so let's try to upgrade."
 		echo " -- Performing pre update checks..."
 
-		pre_update
+		pre_update_check
 
 		if [ $? == 0 ]; then
 
