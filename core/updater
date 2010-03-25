@@ -12,9 +12,9 @@
 fetch_update() {
 
 	echo ' -- Fetching new Prey release...'
-	$getter "$user_agent" "$update_package" -o "$updater_file" 2> /dev/null
+	getter "$update_package" -o "$updater_file" 2> /dev/null
 
-	if [[ ! -f "$updater_file" || `file_size "$updater_file"` == 0 ]]; then
+	if [[ $? != 0 || ! -f "$updater_file" ]]; then
 		echo " !! Couldn't get updater file! Skipping..."
 		rm $updater_file 2> /dev/null
 		return 1
@@ -22,7 +22,7 @@ fetch_update() {
 }
 
 get_checksum_for() {
-	$getter "$user_agent" "$1.md5sum" | cut -d ' ' -f1
+	getter "$1.md5sum" | cut -d ' ' -f1
 }
 
 validate_package(){
@@ -73,14 +73,14 @@ apply_diff(){
 # this could be useful sometime in the future
 report_upgrade_error(){
 	echo ' -- Notifying error back to your Control Panel account...'
-	$getter "$user_agent" -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=1" &> /dev/null
+	getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=1" &> /dev/null
 }
 
 # this could be useful sometime in the future
 report_new_version_installed(){
 	echo ' -- Notifying installed new version to your Control Panel account...'
 	# local integer_version=`echo "$version" | sed -e 's/[^0-9]//g' -e 's/^0//'`
-	$getter "$user_agent" -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[client_version]=${version}&device[update_failed]=0" &> /dev/null
+	getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[client_version]=${version}&device[update_failed]=0" &> /dev/null
 }
 
 delete_files_according_to_diff() {
@@ -180,22 +180,30 @@ perform_update() {
 
 	if [ $? == 0 ]; then
 
+		# set current version as previous, to compare
+		local previous_version=$version
+
+		# get new version
 		. "$base_path/version"
 
-		echo " ** Update OK! New version is $version."
-		report_new_version_installed
+		if [ `is_bigger_than $version $previous_version` == 1 ]; then
 
-		echo ' -- Running post-update hooks...'
-		post_update
+			echo " ** Update OK! New version is $version."
+			report_new_version_installed
 
-	else
-		echo " !! There was a problem upgrading to the new version."
-		report_upgrade_error
+			echo ' -- Running post-update hooks...'
+			post_update
+
+			echo -e " -- All done! Exiting...\n"
+			exit 0
+
+		fi
+
 	fi
 
-	echo -e " -- All done! Exiting...\n"
-	# at this point prey should not be running
-	# meaning this message should be the last to run
+	echo " !! There was a problem upgrading to the new version."
+	report_upgrade_error
+	exit 1
 
 }
 
@@ -205,7 +213,7 @@ perform_update() {
 
 get_module(){
 	rm "$module_file" 2> /dev/null
-	$getter "$user_agent" -u $api_key:x "$modules_url/modules/$1.zip" -o "$module_file" 2> /dev/null
+	getter -u $api_key:x "$modules_url/modules/$1.zip" -o "$module_file" 2> /dev/null
 }
 
 install_or_update_module(){

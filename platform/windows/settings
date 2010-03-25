@@ -9,7 +9,7 @@ readonly logged_user=`whoami`
 
 alias patcher='patsh' # Windows 7 geniously blocks anything named "patch" from being run
 
-tmpdir="$WINDIR\Temp\p${RANDOM}" # "random" name to make it harder to detect
+# tmpdir="$WINDIR\Temp\p${RANDOM}" # "random" name to make it harder to detect
 line_breaker="\r\n"
 
 readonly required_net_version='2.0.50727'

@@ -42,12 +42,12 @@ get_os(){
 # here we put the vars that are shared by two os, but a third one has
 # different values
 set_vars(){
-	tmpdir="/tmp/p${RANDOM}"
 	line_breaker="\n"
 }
 
 set_aliases(){
-	alias getter="curl -s"
+	shopt -s expand_aliases
+	alias getter="curl -s \"-A Prey/$version ($os)\""
 	alias mailsender="sendEmail"
 	alias patcher='patch'
 }
@@ -56,14 +56,20 @@ set_constants(){
 	readonly lang
 	readonly start_time=`date +"%F %T"`
 
-	readonly tmpdir
+	readonly tmpdir="/tmp/p${RANDOM}"
 	readonly logged_user
-
-	readonly user_agent="-A Prey/$version ($os)"
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
 	readonly updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null
 	readonly modules_url=$control_panel_url 2> /dev/null
+}
+
+set_colors(){
+	cyan=$(tput setaf 6)
+	green=$(tput setaf 2)
+	red=$(tput setaf 1)
+	bold=$(tput bold)
+	reset=$(tput sgr0)
 }
 
 get_os
@@ -71,3 +77,4 @@ set_aliases
 set_vars
 . "$platform_path/settings"
 set_constants
+set_colors
