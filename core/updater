@@ -9,6 +9,17 @@
 # prey updater
 ####################################################################
 
+check_for_failed_update(){
+	if [ -f "$base_path/.update_failed" ]; then
+		update_failed_for=`cat "$base_path/.update_failed"`
+		if [ $update_failed_for == $version ]; then
+			echo ' -- Already attempted to update to next version with no luck. Skipping!'
+			return 1
+		fi
+	fi
+	return 0
+}
+
 fetch_update() {
 
 	echo ' -- Fetching new Prey release...'
@@ -78,15 +89,9 @@ apply_diff(){
 }
 
 # this could be useful sometime in the future
-report_upgrade_error(){
-	echo ' -- Notifying update error back to your Control Panel account...'
-	getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=1" &> /dev/null
-}
-
-# this could be useful sometime in the future
-report_new_version_installed(){
-	echo ' -- Notifying update was successful to your Control Panel account...'
-	getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=0" &> /dev/null
+report_update_status(){
+	echo ' -- Notifying update status to your Control Panel account...'
+	getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=$1" &> /dev/null
 }
 
 delete_files_according_to_diff() {
@@ -185,35 +190,64 @@ perform_update() {
 
 	echo -e "\n${bold} >> Applying changes!${bold_end}\n"
 	sleep 1
+
 	apply_changes
+	local update_status=$?
 
-	if [ $? == 0 ]; then
+	# set current version as previous, to compare
+	local previous_version=$version
 
-		# set current version as previous, to compare
-		local previous_version=$version
+	# get new version
+	. "$base_path/version"
 
-		# get new version
-		. "$base_path/version"
 
-		if [ `is_bigger_than $version $previous_version` == 1 ]; then
+	if [[ $update_status == 0 && `is_bigger_than $version $previous_version` == 1 ]]; then
 
-			echo " ** Update OK! New version is $version."
-			report_new_version_installed
+			echo " ** Update OK! New installed version of Prey is $version."
 
-			echo ' -- Running post-update hooks...'
-			post_update_hook
+		else
 
-			echo -e " -- All done! Exiting...\n"
-			exit 0
+			echo ' -- Something went wrong while updating!'
+			echo "$previous_version" > $base_path/.update_failed
 
 		fi
 
 	fi
 
-	echo " !! There was a problem upgrading to the new version."
-	report_upgrade_error
-	exit 1
+	report_update_status $update_status
 
+	delete_tmpdir
+
+	echo ' -- Running post-update hooks...'
+	post_update_hook $update_status
+
+	echo -e " -- All done! Exiting...\n"
+	exit $update_status
+
+}
+
+run_prey_updater(){
+
+	echo " -- Performing pre update checks..."
+
+	check_for_failed_update
+	if [ $? == 1 ]; then return 1; fi
+
+	pre_update_check
+	if [ $? == 1 ]; then return 1; fi
+
+	echo -e "\n${bold} >> Running Prey updater!${bold_end}\n"
+
+	download_and_test_update
+
+	if [ $? == 0 ]; then
+
+		# we update as a different process so we can
+		# modify prey.sh in case we need to
+		perform_update &
+		exit 0
+
+	fi
 }
 
 ####################################################################

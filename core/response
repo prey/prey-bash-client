@@ -27,26 +27,8 @@ process_config(){
 	if [[ "$auto_update" == "true" && `is_bigger_than $current_release $version` == 1 ]]; then
 
 		echo " -- New Prey version found! Auto-update selected so let's try to upgrade."
-		echo " -- Performing pre update checks..."
 
-		pre_update_check
-
-		if [ $? == 0 ]; then
-
-			echo -e "\n${bold} >> Running Prey updater!${bold_end}\n"
-
-			# we update as a different process so we can
-			# modify prey.sh in case we need to
-			download_and_test_update
-
-			if [ $? == 0 ]; then
-
-				perform_update &
-				exit 0
-
-			fi
-
-		fi
+		run_prey_updater()
 
 	fi
 

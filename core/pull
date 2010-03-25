@@ -22,7 +22,7 @@ check_net_status(){
 
 	# if there's no connection with ping, lets try to see if curl gets through
 	# since some routers/networks block ICMP requests
-	if [[ $connected == 0 ]]; then
+	if [ $connected == 0 ]; then
 		echo ' -- Trying alternate method...'
 		connected=`getter $net_check_target &> /dev/null && echo 1 || echo 0`
 	fi
@@ -92,7 +92,7 @@ process_response(){
 		echo " -- Response was an HTML file. Lets just do our job."
 		return
 	else
-		echo " !! Couldn't determine Content-Type for response. Your Check URL is probably incorrect."
+		echo " !! Couldn't determine Content-Type for response. Please check your settings."
 		return
 	fi
 	eval 'process_'"${response_type}"''
