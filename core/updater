@@ -205,12 +205,10 @@ perform_update() {
 
 			echo " ** Update OK! New installed version of Prey is $version."
 
-		else
+	else
 
-			echo ' -- Something went wrong while updating!'
-			echo "$previous_version" > $base_path/.update_failed
-
-		fi
+		echo ' -- Something went wrong while updating!'
+		echo "$previous_version" > $base_path/.update_failed
 
 	fi
 

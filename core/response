@@ -28,7 +28,7 @@ process_config(){
 
 		echo " -- New Prey version found! Auto-update selected so let's try to upgrade."
 
-		run_prey_updater()
+		run_prey_updater
 
 	fi
 
