@@ -43,6 +43,7 @@ get_os(){
 # here we put the vars that are shared by two os, but a third one has
 # different values
 set_vars(){
+	tmpdir="/tmp/p${RANDOM}"
 	line_breaker="\n"
 }
 
@@ -58,7 +59,7 @@ set_constants(){
 	readonly lang
 	readonly start_time=`date +"%F %T"`
 
-	readonly tmpdir="/tmp/p${RANDOM}"
+	readonly tmpdir
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
