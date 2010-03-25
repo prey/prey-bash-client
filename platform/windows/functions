@@ -108,7 +108,7 @@ pre_update_check(){
 
 pre_update_hook(){
 	echo ' -- Shutting down Prey daemon...'
-	TASKKILL //F //IM cron.exe //T 2> /dev/null
+	TASKKILL //F //IM cron.exe //T &> /dev/null
 	return $?
 }
 
