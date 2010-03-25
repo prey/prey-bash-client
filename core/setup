@@ -51,6 +51,7 @@ set_aliases(){
 	alias getter="curl -s \"-A Prey/$version ($os)\""
 	alias mailsender="sendEmail"
 	alias patcher='patch'
+	alias processes='ps ax'
 }
 
 set_constants(){

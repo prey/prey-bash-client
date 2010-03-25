@@ -6,7 +6,7 @@
 ####################################################################
 
 is_command_running(){
-	ps ax | grep -v grep | grep "$1" > /dev/null && echo 1 || return 0
+	processes | grep -v grep | grep "$1" > /dev/null && echo 1 || return 0
 }
 
 ####################################################################

@@ -109,6 +109,14 @@ pre_update_check(){
 pre_update_hook(){
 	echo ' -- Shutting down Prey daemon...'
 	TASKKILL //F //IM cron.exe //T &> /dev/null
+
+	# we also need to make sure the configurator is not running, so we can
+	# also update it in case its necessary
+	if [ -n `is_process_running 'prey-config.exe'` ]; then
+		echo ' -- Forcing shutdown of Prey Configurator... Sorry!'
+		TASKKILL //F //IM prey-config.exe //T &> /dev/null
+	fi
+
 	return $?
 }
 
