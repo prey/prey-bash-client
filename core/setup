@@ -19,6 +19,10 @@ until [ -z "$1" ]; do
 	shift
 done
 
+lowercase(){
+	echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
 get_os(){
 	os=`lowercase \`uname\``
 
