@@ -106,7 +106,8 @@ pre_update_check(){
 	# lets check if theres another user logged in and running cron.exe
 	local cron_running="tasklist //fi 'USERNAME ne $USERDOMAIN\\$USERNAME' | grep 'cron.exe' > /dev/null && echo 1"
 	if [ -n "$cron_running" ]; then
-		echo " It seems there's another user logged in currently. Skipping..."
+		echo " !! It seems there's another user logged in currently. Skipping..."
+		return 1
 	fi
 	return 0
 }
