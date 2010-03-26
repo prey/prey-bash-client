@@ -29,9 +29,9 @@ is_net_framework_installed() {
 
 # a simple way to check if the current running user can edit files from within prey
 user_has_access(){
-	mv "$base_path/README" "$base_path/README.tmp" 2> /dev/null
+	mv "$base_path/version" "$base_path/version.tmp" 2> /dev/null
 	if [ $? == 0 ]; then
-		mv "$base_path/README.tmp" "$base_path/README"
+		mv "$base_path/version.tmp" "$base_path/version"
 		echo 1
 	fi
 }
@@ -116,13 +116,15 @@ pre_update_hook(){
 	local running_crons=`tasklist //fi "USERNAME ne $USERDOMAIN\\$USERNAME" | grep 'cron.exe'`
 	for cron in "$running_crons"; do
 		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
-		echo " -- Shutting down cron with PID $pid..."
-		kill $pid
+		if [ -n "$pid" ]; then
+			echo " -- Shutting down cron with PID $pid..."
+			kill -f $pid
+		fi
 	done
 
-	echo ' -- Shutting down Prey daemon for current user...'
+	echo " -- Shutting down Prey daemon for current user (PID $cron_pid)..."
 	local cron_pid=`get_pid 'cron.exe'`
-	kill $cron_pid
+	kill -f $cron_pid
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
