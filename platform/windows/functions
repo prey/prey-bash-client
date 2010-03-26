@@ -113,7 +113,7 @@ pre_update_check(){
 pre_update_hook(){
 
 	# lets check if theres another user logged in and running cron.exe
-	local running_crons=`tasklist //fi "USERNAME ne $USERDOMAIN\\$USERNAME" | grep 'cron.exe'`
+	local running_crons=`tasklist | grep 'cron.exe'`
 	for cron in "$running_crons"; do
 		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
 			echo " -- Shutting down cron with PID $pid..."
