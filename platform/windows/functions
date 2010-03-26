@@ -117,14 +117,8 @@ pre_update_hook(){
 	for cron in "$running_crons"; do
 		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
 			echo " -- Shutting down cron with PID $pid..."
-			kill -f $pid 2> /dev/null
+			kill -f $pid
 	done
-
-	local cron_pid=`get_pid 'cron.exe'`
-	if [ -n "$cron_pid" ]; then
-		echo " -- Shutting down Prey daemon for current user (PID $cron_pid)..."
-		kill -f $cron_pid  2> /dev/null
-	fi
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
