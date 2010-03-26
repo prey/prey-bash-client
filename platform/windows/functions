@@ -5,6 +5,10 @@
 # License: GPLv3
 ####################################################################
 
+get_pid(){
+	processes | grep "$1" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
+}
+
 file_size(){
 	ls -l "$1" | cut -f16 -d " "
 }
@@ -103,18 +107,22 @@ pre_update_check(){
 		echo " -- Unfortunately the current user who's running Prey cannot perform the upgrade."
 		return 1
 	fi
-	# lets check if theres another user logged in and running cron.exe
-	local cron_running=`tasklist //fi 'USERNAME ne $USERDOMAIN\\$USERNAME' | grep 'cron.exe' > /dev/null && echo 1`
-	if [ -n "$cron_running" ]; then
-		echo " !! It seems there's another user logged in currently. Skipping..."
-		return 1
-	fi
 	return 0
 }
 
 pre_update_hook(){
-	echo ' -- Shutting down Prey daemon...'
-	"$platform_path/cron.exe" --stop
+
+	# lets check if theres another user logged in and running cron.exe
+	local running_crons=`tasklist //fi "USERNAME ne $USERDOMAIN\\$USERNAME" | grep 'cron.exe'`
+	for cron in "$running_crons"; do
+		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
+		echo " -- Shutting down cron with PID $pid..."
+		kill $pid
+	done
+
+	echo ' -- Shutting down Prey daemon for current user...'
+	local cron_pid=`get_pid 'cron.exe'`
+	kill $cron_pid
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
