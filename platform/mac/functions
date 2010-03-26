@@ -11,7 +11,9 @@ file_size(){
 
 get_gateway_ip() {
 	netstat=`which netstat`
-	gateway_ip=`$netstat -rn | grep default | cut -c20-35 2> /dev/null`
+	if [ -n "$netstat" ]; then
+		gateway_ip=`$netstat -rn | grep default | cut -c20-35`
+	fi
 }
 
 get_wifi_info() {
@@ -37,15 +39,23 @@ try_to_connect() {
 	fi
 }
 
-get_current_delay() {
-	delay_in_secs=`grep "integer" "$prey_agent_plist" | sed 's/[^0-9]//g'`
-	delay_in_mins=$((delay_in_secs/60))
-	echo $delay_in_mins
+############################################
+# updater-specific functions
+############################################
+
+# check permissions, whatever goes here
+pre_update_check(){
+	echo ' -- All set!'
+	return 0
 }
 
-update_execution_delay() {
-	delay_in_secs=$((delay*60))
-	launchctl stop com.prey.agent
-	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay_in_secs<\/integer>/" $prey_agent_plist
-	launchctl start com.prey.agent
+# check plist, shutdown task
+pre_update_hook(){
+	return 0
+}
+
+# post update hooks go in here
+post_update_hook(){
+	echo ' -- Reloading Prey...'
+	$base_path/prey.sh & # lets restart prey now
 }

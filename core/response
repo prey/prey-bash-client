@@ -24,28 +24,11 @@ process_config(){
 		echo " -- Delay in sync."
 	fi
 
-	if [ "$auto_update" == "true" ]; then
+	if [[ "$auto_update" == "true" && `is_bigger_than $current_release $version` == 1 ]]; then
 
-		a=0
-		# in case something goes wrong, lets avoid getting into an endless loop
-		# including an incremental var
-		while [[ $a -lt 3 && `is_bigger_than $current_release $version` == 1 ]]; do
+		echo " -- New Prey version found! Auto-update selected so let's try to upgrade."
 
-			a=$((a+1))
-			echo " -- New Prey version found! Auto-update selected so let's try to update automagically."
-			update_prey
-
-			if [ $? == 0 ]; then
-				. $base_path/version
-				echo " ** Update OK! New version is $version."
-				report_new_version_installed
-			else
-				echo " !! There was a problem upgrading to the new version."
-				report_upgrade_error
-				break
-			fi
-
-		done
+		run_prey_updater
 
 	fi
 
@@ -79,12 +62,12 @@ process_xml(){
 
 	prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
 	if [ -n "$prey_configuration" ]; then
-		echo -e "\n\033[1m >> Reading configuration...\n\033[0m"
+		echo -e "\n${bold} >> Reading configuration...${bold_end}\n"
 		process_config
 	fi
 	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	if [ -n "$module_configuration" ]; then
-		echo -e "\n\033[1m >> Reading module configuration...\n\033[0m"
+		echo -e "\n${bold} >> Reading module configuration...${bold_end}\n"
 		process_modules
 	fi
 

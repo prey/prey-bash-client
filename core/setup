@@ -9,14 +9,14 @@
 
 until [ -z "$1" ]; do
 	if [[ "$1" == "-t" || "$1" == "--test" ]]; then
-		echo -e "\n\033[1m -- TEST MODE ENABLED.\033[0m"
+		echo -e "\n -- TEST MODE ENABLED."
 		. $base_path/test/include "$2" 2> /dev/null
 		test_mode=1
 	elif [[ "$1" == '-c' || "$1" == '--check' ]]; then
-		echo -e "\n\033[1m -- CHECK MODE ENABLED.\033[0m"
+		echo -e "\n -- CHECK MODE ENABLED."
 		check_mode=1
 	fi
-  shift
+	shift
 done
 
 get_os(){
@@ -28,9 +28,10 @@ get_os(){
 		if [ "$os" == "darwin" ]; then
 			os=mac
 		fi
-		logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
+		readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
 		readonly root_path='/'
 		readonly home_path=`eval echo ~`
+		set_colors
 	fi
 
 	readonly os
@@ -42,11 +43,16 @@ get_os(){
 # here we put the vars that are shared by two os, but a third one has
 # different values
 set_vars(){
-	getter="curl -s"
 	tmpdir="/tmp/p${RANDOM}"
-	patcher='patch'
-	checksum='md5sum'
 	line_breaker="\n"
+}
+
+set_aliases(){
+	shopt -s expand_aliases
+	alias getter="curl -s \"-A Prey/$version ($os)\""
+	alias mailsender="sendEmail"
+	alias patcher='patch'
+	alias processes='ps ax'
 }
 
 set_constants(){
@@ -56,16 +62,22 @@ set_constants(){
 	readonly tmpdir
 	readonly logged_user
 
-	readonly getter
-	readonly user_agent="-A Prey/$version ($os)"
-	readonly mailsender="sendEmail"
-
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
 	readonly updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null
 	readonly modules_url=$control_panel_url 2> /dev/null
 }
 
+set_colors(){
+	cyan='\E[36m'
+	green='\E[32m'
+	red='\E[31m'
+	color_end='\E[0m'
+	bold='\033[1m'
+	bold_end='\033[0m'
+}
+
 get_os
+set_aliases
 set_vars
 . "$platform_path/settings"
 set_constants

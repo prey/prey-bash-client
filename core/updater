@@ -9,12 +9,23 @@
 # prey updater
 ####################################################################
 
+check_for_failed_update(){
+	if [ -f "$base_path/.update_failed" ]; then
+		update_failed_for=`cat "$base_path/.update_failed"`
+		if [ $update_failed_for == $version ]; then
+			echo ' -- Already attempted to update to next version with no luck. Skipping!'
+			return 1
+		fi
+	fi
+	return 0
+}
+
 fetch_update() {
 
 	echo ' -- Fetching new Prey release...'
-	$getter "$user_agent" "$update_package" -o "$updater_file" 2> /dev/null
+	getter "$update_package" -o "$updater_file" 2> /dev/null
 
-	if [[ ! -f "$updater_file" || `file_size "$updater_file"` == 0 ]]; then
+	if [[ $? != 0 || ! -f "$updater_file" ]]; then
 		echo " !! Couldn't get updater file! Skipping..."
 		rm $updater_file 2> /dev/null
 		return 1
@@ -22,13 +33,18 @@ fetch_update() {
 }
 
 get_checksum_for() {
-	$getter "$user_agent" "$1.md5sum" | cut -d ' ' -f1
+	getter "$1.md5sum" | sed 's/<.*>//' | cut -d ' ' -f1
 }
 
 validate_package(){
 	local valid_md5=`get_checksum_for $update_package`
-	local package_md5=`$checksum $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null`
-	package_md5=`lowercase "$package_md5"`
+
+	if [ -z "$valid_md5" ]; then
+		echo " !! Couldn't grab checksum from server. Skipping update..."
+		return 1
+	fi
+
+	local package_md5=`md5sum $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
 		echo ' -- Invalid checksum for downloaded package. Cannot continue.'
@@ -42,7 +58,7 @@ unzip_package(){
 	return $?
 }
 
-test_and_apply_diff() {
+test_diff() {
 
 	# -f forces, dont ask any questions
 	# -p0 leave paths as they are
@@ -53,30 +69,29 @@ test_and_apply_diff() {
 	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
 
 	echo ' -- Testing if patch will apply cleanly...'
-	outcome=`$patcher --dry-run $patch_options`
+	outcome=`patcher --dry-run $patch_options`
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
+		echo -e " !! There seems to be discordances between your installed version and the official $version code. Skipping patch!"
 		return 1
 	else
-		echo ' -- Everything smooth. Applying patch...'
-		outcome=`$patcher $patch_options > /dev/null`
+		echo ' -- Everything smooth.'
 	fi
 
 	return 0
 
 }
 
-# this could be useful sometime in the future
-report_upgrade_error(){
-	echo ' -- Notifying error back to your Control Panel account...'
-	$getter "$user_agent" -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=1" &> /dev/null
+apply_diff(){
+	echo ' -- Applying patch...'
+	outcome=`patcher $patch_options > /dev/null`
+	return $?
 }
 
 # this could be useful sometime in the future
-report_new_version_installed(){
-	echo ' -- Notifying installed new version to your Control Panel account...'
-	# local integer_version=`echo "$version" | sed -e 's/[^0-9]//g' -e 's/^0//'`
-	$getter "$user_agent" -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[client_version]=${version}&device[update_failed]=0"
+report_update_status(){
+	echo ' -- Notifying update status to your Control Panel account...'
+	getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=$1" &> /dev/null
 }
 
 delete_files_according_to_diff() {
@@ -117,17 +132,9 @@ remove_temp_stuff(){
 	rm -f "$updater_file" 2> /dev/null
 }
 
-update_prey() {
+download_and_test_update(){
 
-	echo -e "\n\033[1m >> Running Prey updater!\n\033[0m"
-
-	if [ "$os" == "windows" ]; then
-		if [ -z `user_has_access` ]; then
-			echo ' -- Unfortunately the current user whos running Prey cannot perform the upgrade.'
-			return 1
-		fi
-	fi
-
+	echo ' -- Removing leftovers...'
 	remove_temp_stuff
 
 	updater_path="$tmpdir/updater"
@@ -147,31 +154,96 @@ update_prey() {
 		return 1
 	fi
 
+	if [ -f "$diff_file" ]; then
+		test_diff
+		return $?
+	fi
+}
+
+apply_changes(){
+
 	echo ' -- Updating files!'
 
 	if [ -f "$diff_file" ]; then
-		test_and_apply_diff
+		apply_diff
 		if [ $? == 0 ]; then
 			delete_files_according_to_diff
 		else
 			echo ' -- Something went wrong! Skipping patch...'
-			# let the user know
 			return 1 # not ok
 		fi
+		rm "$diff_file" 2> /dev/null
 	fi
 
-	rm "$diff_file"
 	copy_new_files
+
+	echo ' -- Cleaning up...'
 	delete_unneeded_stuff_in "$base_path/platform"
-
-	if [ "$os" == "windows" ]; then
-		grant_read_permissions
-	fi
-
 	remove_temp_stuff
 
 	return 0
+}
 
+perform_update() {
+
+	pre_update_hook
+
+	echo -e "\n${bold} >> Applying changes!${bold_end}\n"
+	sleep 1
+
+	apply_changes
+	local update_status=$?
+
+	# set current version as previous, to compare
+	local previous_version=$version
+
+	# get new version
+	. "$base_path/version"
+
+	if [[ $update_status == 0 && `is_bigger_than $version $previous_version` == 1 ]]; then
+
+			echo " ** Update OK! New installed version of Prey is $version."
+
+	else
+
+		echo ' -- Something went wrong while updating!'
+		echo "$previous_version" > $base_path/.update_failed
+
+	fi
+
+	report_update_status $update_status
+	delete_tmpdir
+
+	echo ' -- Running post-update hooks...'
+	post_update_hook $update_status
+
+	echo -e " -- All done! Exiting...\n"
+	exit $update_status
+
+}
+
+run_prey_updater(){
+
+	echo " -- Performing pre update checks..."
+
+	check_for_failed_update
+	if [ $? == 1 ]; then return 1; fi
+
+	pre_update_check
+	if [ $? == 1 ]; then return 1; fi
+
+	echo -e "\n${bold} >> Running Prey updater!${bold_end}\n"
+
+	download_and_test_update
+
+	if [ $? == 0 ]; then
+
+		# we update as a different process so we can
+		# modify prey.sh in case we need to
+		perform_update &
+		exit 0
+
+	fi
 }
 
 ####################################################################
@@ -180,7 +252,7 @@ update_prey() {
 
 get_module(){
 	rm "$module_file" 2> /dev/null
-	$getter "$user_agent" -u $api_key:x "$modules_url/modules/$1.zip" -o "$module_file" 2> /dev/null
+	getter -u $api_key:x "$modules_url/modules/$1.zip" -o "$module_file" 2> /dev/null
 }
 
 install_or_update_module(){
@@ -212,11 +284,14 @@ install_or_update_module(){
 			echo " ** New $1 module placed and ready to go!"
 			return 0
 		fi
+
 	else
-		echo " -- Something went wrong while trying to fetch module from repository."
+
+		echo " -- Couldn't grab module. The repository may be temporarily down."
+
 	fi
 
-	echo " !! Couldn't get/install $1 module from repository."
+	echo " !! Couldn't install $1 module from repository."
 	return 1
 
 }
