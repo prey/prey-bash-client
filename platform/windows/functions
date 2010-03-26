@@ -121,7 +121,7 @@ pre_update_hook(){
 	done
 
 	local cron_pid=`get_pid 'cron.exe'`
-	if [ "$cron_pid" ]; then
+	if [ -n "$cron_pid" ]; then
 		echo " -- Shutting down Prey daemon for current user (PID $cron_pid)..."
 		kill -f $cron_pid  2> /dev/null
 	fi
