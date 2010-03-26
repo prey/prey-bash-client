@@ -60,18 +60,6 @@ try_to_connect() {
 }
 
 ############################################
-# module functions
-############################################
-
-get_current_delay(){
-	crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
-}
-
-update_execution_delay(){
-	(crontab -l | grep -v prey; echo "*/$1 * * * * $base_path/prey.sh > /dev/null") | crontab -
-}
-
-############################################
 # updater-specific functions
 ############################################
 

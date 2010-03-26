@@ -150,3 +150,16 @@ encrypt(){
 decrypt(){
 	echo "$1" | openssl enc -base64 -d
 }
+
+
+####################################################################
+# delay functions, mac and linux
+####################################################################
+
+get_current_delay(){
+	crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
+}
+
+update_execution_delay(){
+	(crontab -l | grep -v prey; echo "*/$1 * * * * $base_path/prey.sh &> /dev/null") | crontab -
+}

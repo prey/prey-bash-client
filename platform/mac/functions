@@ -40,23 +40,6 @@ try_to_connect() {
 }
 
 ############################################
-# module functions
-############################################
-
-get_current_delay() {
-	delay_in_secs=`grep "integer" "$prey_agent_plist" | sed 's/[^0-9]//g'`
-	delay_in_mins=$((delay_in_secs/60))
-	echo $delay_in_mins
-}
-
-update_execution_delay() {
-	delay_in_secs=$((delay*60))
-	launchctl stop com.prey.agent
-	sed -i -e "s/<integer>.*<\/integer>/<integer>$delay_in_secs<\/integer>/" $prey_agent_plist
-	launchctl start com.prey.agent
-}
-
-############################################
 # updater-specific functions
 ############################################
 

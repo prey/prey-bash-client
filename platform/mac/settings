@@ -14,4 +14,4 @@ readonly users_path="/Users"
 readonly programs_path="/Applications"
 
 readonly airport='/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport'
-readonly prey_agent_plist="/Library/LaunchDaemons/com.prey.agent.plist"
+# readonly prey_agent_plist="/Library/LaunchDaemons/com.prey.agent.plist"
