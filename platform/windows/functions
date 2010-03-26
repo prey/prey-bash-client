@@ -103,12 +103,17 @@ pre_update_check(){
 		echo " -- Unfortunately the current user who's running Prey cannot perform the upgrade."
 		return 1
 	fi
+	# lets check if theres another user logged in and running cron.exe
+	local cron_running="tasklist //fi 'USERNAME ne $USERDOMAIN\\$USERNAME' | grep 'cron.exe' > /dev/null && echo 1"
+	if [ -n "$cron_running" ]; then
+		echo " It seems there's another user logged in currently. Skipping..."
+	fi
 	return 0
 }
 
 pre_update_hook(){
 	echo ' -- Shutting down Prey daemon...'
-	TASKKILL //F //IM cron.exe //T &> /dev/null
+	"$platform_path/cron.exe" --stop
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
