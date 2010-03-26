@@ -104,7 +104,7 @@ pre_update_check(){
 		return 1
 	fi
 	# lets check if theres another user logged in and running cron.exe
-	local cron_running="tasklist //fi 'USERNAME ne $USERDOMAIN\\$USERNAME' | grep 'cron.exe' > /dev/null && echo 1"
+	local cron_running=`tasklist //fi 'USERNAME ne $USERDOMAIN\\$USERNAME' | grep 'cron.exe' > /dev/null && echo 1`
 	if [ -n "$cron_running" ]; then
 		echo " !! It seems there's another user logged in currently. Skipping..."
 		return 1
@@ -118,7 +118,8 @@ pre_update_hook(){
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
-	if [ -n `is_process_running 'prey-config.exe'` ]; then
+	local configurator_running=`is_process_running 'prey-config.exe'`
+	if [ -n "$configurator_running" ]; then
 		echo ' -- Forcing shutdown of Prey Configurator... Sorry!'
 		TASKKILL //F //IM prey-config.exe //T &> /dev/null
 	fi
