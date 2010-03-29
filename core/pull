@@ -46,21 +46,26 @@ get_status_code(){
 	status=`echo -e "$response" | grep 'HTTP/' | cut -d" " -f2`
 }
 
-check_valid_keys(){
-	response=`getter "$user_agent" -u $api_key:x -i $check_url/devices.xml`
+verify_keys(){
+	response=`getter -u $api_key:x -i $check_url/devices.xml`
 	get_status_code
 
-	if [ "$status" == "401" ]; then
-		echo -e " !! API key not valid! Got $status status code.\n"
+	if [ -n "$status" ]; then
+		if [ "$status" == "401" ]; then
+			echo -e " !! API key not valid! Got $status status code.\n"
 			return 1
-	else
-		echo  ' ** API key is valid.'
-		if [[ "$status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
-			echo -e ' ** Device key is valid.\n'
 		else
-			echo -e ' !! Device key not valid!\n'
-			return 1
+			echo  ' ** API key is valid.'
+			if [[ "$status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
+				echo -e ' ** Device key is valid.\n'
+			else
+				echo -e ' !! Device key not valid!\n'
+				return 1
+			fi
 		fi
+	else
+		echo -e " !! Couldn't get a response. Please check your firewall settings so that Curl can connect to $check_url over port 80 (HTTP).\n"
+		return 1
 	fi
 	return 0
 }
@@ -92,7 +97,7 @@ process_response(){
 		echo " -- Response was an HTML file. Lets just do our job."
 		return
 	else
-		echo " !! Couldn't determine Content-Type for response. Please check your settings."
+		echo " -- Couldn't determine Content-Type for response. If you're using the Control Panel, please check your settings."
 		return
 	fi
 	eval 'process_'"${response_type}"''

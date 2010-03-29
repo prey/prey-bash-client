@@ -51,13 +51,16 @@ else
 fi
 
 ####################################################################
-# check valid keys if requested
+# verify if installation and keys are correct, if requested
 ####################################################################
 
 if [ -n "$check_mode" ]; then
 
+	echo -e "\n${bold} >> Verifying Prey installation...${bold_end}\n"
+	verify_installation
+
 	echo -e "\n${bold} >> Verifying API and Device keys...${bold_end}\n"
-	check_valid_keys
+	verify_keys
 	exit $?
 
 fi

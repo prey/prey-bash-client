@@ -49,11 +49,12 @@ get_os(){
 set_vars(){
 	tmpdir="/tmp/p${RANDOM}"
 	line_breaker="\n"
+	user_agent="-A Prey/$version ($os)"
 }
 
 set_aliases(){
 	shopt -s expand_aliases
-	alias getter="curl -s \"-A Prey/$version ($os)\""
+	alias getter="curl -s \"$user_agent\""
 	alias mailsender="sendEmail"
 	alias patcher='patch'
 	alias processes='ps ax'
@@ -81,7 +82,7 @@ set_colors(){
 }
 
 get_os
-set_aliases
 set_vars
+set_aliases
 . "$platform_path/settings"
 set_constants

@@ -13,6 +13,23 @@ file_size(){
 	ls -l "$1" | cut -f16 -d " "
 }
 
+verify_installation(){
+	echo " -- Checking if cron.exe is running..."
+	local cron_running=`is_process_running "cron.exe"`
+	if [ -n "$cron_running" ]; then
+		echo " -- Found!"
+	else
+		echo " !! Not found! If you have an antivirus installed, please make sure $platform_path\\cron.exe is whitelisted for running."
+	fi
+	echo " -- Checking for start up registry entry..."
+	local cron_reg_entry=`reg query "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" | grep 'cron.exe' | wc -l`
+	if [ $cron_reg_entry == 1 ]; then
+		echo " -- Registry entry found. Prey is being run each time ${logged_user} logs in."
+	else
+		echo " -- Registry entry not found! Probably your antivirus/antispyware erroneously removed it. Please check and if necessary, reinstall."
+	fi
+}
+
 # returns 1 if it is
 is_net_framework_installed() {
 	local version=`echo $required_net_version | sed 's/\..\./\./'`

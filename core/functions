@@ -166,3 +166,25 @@ is_process_running(){
 get_pid(){
 	ps ax | grep "$1" | head -1 | cut -d ' ' -f1
 }
+
+
+####################################################################
+# check mode functions
+####################################################################
+
+verify_installation(){
+	echo " -- Checking if cron daemon is running..."
+	local cron_running=`is_process_running 'cron'`
+	if [ $cron_running == 1 ]; then
+		echo " -- Cron daemon found."
+	else
+		echo " !! Cron daemon not found!"
+	fi
+	echo " -- Checking for crontab entry..."
+	local result=`crontab -l | grep 'prey.sh' | wc -l`
+	if [ "$result" == 1 ]; then
+		echo " -- Found!"
+	else
+		echo " !! Not found! It seems Prey's crontab entry was removed after installation."
+	fi
+}
