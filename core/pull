@@ -57,7 +57,8 @@ verify_keys(){
 		else
 			echo  ' ** API key is valid.'
 			if [[ "$status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
-				echo -e ' ** Device key is valid.\n'
+				local device_state=`echo "$response" | grep $device_key -A1 | tail -1 | sed 's/<[^>]*>//g;s/ //g'`
+				echo -e " ** Device key is valid. Current state is ${bold}${device_state}${bold_end}.\n"
 			else
 				echo -e ' !! Device key not valid!\n'
 				return 1
