@@ -20,6 +20,7 @@ add_job(){
 }
 
 run_delayed_jobs(){
+	echo -e "\n${bold} -- Running delayed jobs...${bold_end}\n"
 	for j in "${jobs[@]}"
 	do
 		echo " -- Running job: $j"
