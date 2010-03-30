@@ -52,15 +52,15 @@ verify_keys(){
 
 	if [ -n "$status" ]; then
 		if [ "$status" == "401" ]; then
-			echo -e " !! API key not valid! Got $status status code.\n"
+			echo -e " !! API key not valid! Got $status status code.\n -> Remember to check your inbox to verify your account. If you already have you should reconfigure your settings, or reinstall if necessary.\n"
 			return 1
 		else
-			echo  ' ** API key is valid.'
+			echo  ' ** API key is valid. Your user account is correctly set up.'
 			if [[ "$status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
 				local device_state=`echo "$response" | grep $device_key -A1 | tail -1 | sed 's/<[^>]*>//g;s/ //g'`
-				echo -e " ** Device key is valid. Current state is ${bold}${device_state}${bold_end}.\n"
+				echo -e " ** Device key is valid. Good. Current status is ${bold}${device_state}${bold_end}.\n"
 			else
-				echo -e ' !! Device key not valid!\n'
+				echo -e " !! Device key not valid!\n -> We couldn't find this device on your Control Panel account. Please reconfigure your settings, or reinstall if necessary.\n"
 				return 1
 			fi
 		fi

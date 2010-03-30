@@ -178,13 +178,13 @@ verify_installation(){
 	if [ $cron_running == 1 ]; then
 		echo " -- Cron daemon found."
 	else
-		echo " !! Cron daemon not found!"
+		echo " !! Cron daemon not found! Try running it with 'sudo /etc/init.d/cron start'."
 	fi
 	echo " -- Checking for crontab entry..."
-	local result=`crontab -l | grep 'prey.sh' | wc -l`
+	local result=`crontab -l | grep 'prey.sh' | wc -l 2> /dev/null`
 	if [ "$result" == 1 ]; then
 		echo " -- Found!"
 	else
-		echo " !! Not found! It seems Prey's crontab entry was removed after installation."
+		echo -e " !! Not found!\n -> It seems Prey's crontab entry was removed after installation. Please set again the running interval."
 	fi
 }
