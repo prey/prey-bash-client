@@ -35,7 +35,7 @@ verify_installation(){
 	# check net framework
 	echo ' -- Checking for installed .NET Framework...'
 	if [ "`is_net_framework_installed`" == 1 ]; then
-		echo " -- Required .NET version $required_net_version is installed. Geo module should work."
+		echo " -- Required .NET version $required_net_version or newer is installed. Geo module should work."
 	else
 		echo " !! .NET framework version $required_net_version or newer not installed!"
 	fi
