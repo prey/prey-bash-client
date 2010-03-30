@@ -33,7 +33,7 @@ verify_installation(){
 # returns 1 if it is
 is_net_framework_installed() {
 	local version=`echo $required_net_version | sed 's/\..\./\./'`
-	local results=`reg query "HKLM\Software\Microsoft\NET Framework Setup\NDP" | sed -e 's/.*NDP\\\v//g' -e 's/\..\./\./' -e 's/[A-Z!].*//g' | grep -v "^$"`
+	local results=`reg query "HKLM\Software\Microsoft\NET Framework Setup\NDP" | sed -e '1,2d' -e 's/[^0-9.]//g' | grep -v "^$"`
 
 	for result in `echo -e "$results"`; do
 		if [[ "$result" == "$version" || `is_bigger_than $result $version` == 1 ]]; then
