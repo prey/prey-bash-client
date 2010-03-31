@@ -152,7 +152,7 @@ get_current_delay(){
 }
 
 update_execution_delay(){
-	(crontab -l | grep -v prey; echo "*/$1 * * * * $base_path/prey.sh &> /dev/null") | crontab -
+	(crontab -l | grep -v prey; echo "*/$1 * * * * $base_path/prey.sh > /var/log/prey.log") | crontab -
 }
 
 ####################################################################
@@ -160,7 +160,7 @@ update_execution_delay(){
 ####################################################################
 
 is_process_running(){
-	processes | grep -v grep | grep "$1" &> /dev/null && echo 1 || return 0
+	processes | grep -v grep | grep "$1" > /var/log/prey.log && echo 1 || return 0
 }
 
 get_pid(){
