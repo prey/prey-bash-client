@@ -30,7 +30,7 @@ check_net_status(){
 
 # we could eventually use a different method for status checking
 check_device_status(){
-	if [ "$post_method" == 'http' ]; then
+	if [[ "$post_method" == 'http' && "$check_url" == "$control_panel_url" ]]; then
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
 		else
@@ -38,16 +38,23 @@ check_device_status(){
 			exit 1
 		fi
 	fi
-	response=`getter -i $check_url`
+	if [ "$send_extra_headers" == 'y' ]; then
+		echo ' -- Requesting with extra sauce!'
+		get_internal_ip
+		get_gateway_ip
+		curl_headers="-H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
+	fi
+	response=`getter $curl_headers -L -i $check_url`
 	get_status_code
 }
 
 get_status_code(){
-	status=`echo -e "$response" | grep 'HTTP/' | cut -d" " -f2`
+	# if we get a redirect response, we should capture the last http status code
+	status=`echo -e "$response" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
 }
 
 verify_keys(){
-	response=`getter -u $api_key:x -i $check_url/devices.xml`
+	response=`getter -u $api_key:x -i $control_panel_url/devices.xml`
 	get_status_code
 
 	if [ -n "$status" ]; then
@@ -65,7 +72,7 @@ verify_keys(){
 			fi
 		fi
 	else
-		echo -e " !! Couldn't get a response. Please check your firewall settings so that Curl can connect to $check_url over port 80 (HTTP).\n"
+		echo -e " !! Couldn't get a response. Please check your firewall settings so that Curl can connect to $control_panel_url over port 80 (HTTP).\n"
 		return 1
 	fi
 	return 0
@@ -73,7 +80,7 @@ verify_keys(){
 
 # we may eventually use a specific header for Prey
 parse_headers(){
-	content_type=`echo "$response" | grep "Content-Type" | sed 's/.*: \([a-z\/-]*\).*/\1/'`
+	content_type=`echo "$response" | grep "Content-Type" | tail -1 | sed 's/.*: \([a-z\/-]*\).*/\1/'`
 }
 
 # this is where the magic will happen. :)

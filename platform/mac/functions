@@ -10,9 +10,11 @@ file_size(){
 }
 
 get_gateway_ip() {
-	netstat=`which netstat`
-	if [ -n "$netstat" ]; then
-		gateway_ip=`$netstat -rn | grep default | cut -c20-35`
+	if [ -z "$gateway_ip" ]; then
+		netstat=`which netstat`
+		if [ -n "$netstat" ]; then
+			gateway_ip=`$netstat -rn | grep default | cut -c20-35`
+		fi
 	fi
 }
 

@@ -10,7 +10,9 @@ file_size(){
 }
 
 get_gateway_ip() {
-	gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
+	if [ -z "$gateway_ip" ]; then
+		gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
+	fi
 }
 
 get_wifi_device() {

@@ -13,6 +13,10 @@ file_size(){
 	ls -l "$1" | cut -f16 -d " "
 }
 
+############################################
+# verification stuff
+############################################
+
 verify_installation(){
 	# check running cron
 	echo " -- Checking if cron.exe is running..."
@@ -64,8 +68,20 @@ user_has_access(){
 	fi
 }
 
+############################################
+# core network functions
+############################################
+
 get_gateway_ip() {
-	gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
+	if [ -z "$gateway_ip" ]; then
+		gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
+	fi
+}
+
+get_internal_ip() {
+	if [ -z "$internal_ip" ]; then
+		internal_ip=`ipconfig | grep "IP Address" | sed 's/^.*: //g' | grep -v '^$' | head -1`
+	fi
 }
 
 get_wifi_info() {

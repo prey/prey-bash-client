@@ -30,9 +30,14 @@ post_method='http'
 # http posting configuration
 ####################################################################
 
-# you can get both of these from Prey's web service
+# you can get both of these from Prey's web service at http://preyproject.com
 api_key=''
 device_key=''
+
+# whether to send your device's LAN and gateway IP address as headers when
+# checking its status. currently only for testing purposes, maybe in the
+# future it may prove useful. who knows! :)
+send_extra_headers='n'
 
 ####################################################################
 # SMTP settings, for email posting
