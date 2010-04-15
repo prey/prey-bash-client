@@ -1,0 +1,4 @@
+debian/files
+debian/*.substvars
+debian/*.log
+debian/prey

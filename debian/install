@@ -1,0 +1,5 @@
+debian/prey-config.desktop /usr/share/applications
+platform/linux/prey-config.py /usr/bin
+core/*	/usr/share/prey/core
+lang/* /usr/share/prey/lang
+pixmaps/* /usr/share/prey/pixmaps	

@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Remove crontab line
+(crontab -l | grep -v prey) | crontab -
+
+#DEBHELPER#
+
+exit 0

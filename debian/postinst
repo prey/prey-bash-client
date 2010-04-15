@@ -1,0 +1,30 @@
+#!/bin/bash
+####################################################################
+# Prey Debian Postinst Script - by Tomas Pollak (bootlog.org)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+TIMING=20
+INSTALLPATH=/usr/share/prey
+PREY_FILE=prey.sh
+
+# make sure the config file is only readable by root
+# chmod 700 $INSTALLPATH/config
+
+# create crontab entry
+(crontab -l | grep -v prey; echo "*/$TIMING * * * * $INSTALLPATH/$PREY_FILE > /dev/null") | crontab -
+
+message="Smooth! Now you should run the configurator in System Tools to finish setting up Prey."
+
+if [ `which notify-send` ]; then
+	`which notify-send` "Prey install complete" "$message"
+elif [ `which zenity` ]; then
+	`which zenity` --info --text "$message"
+elif [ `which kdialog` ]; then
+	`which kdialog` --msgbox "$message"
+fi
+
+#DEBHELPER#
+
+exit 0

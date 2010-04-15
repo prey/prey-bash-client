@@ -1,0 +1,7 @@
+prey (0.3.73-1) unstable; urgency=low
+
+  [ Jelmer Vernooij ]
+  * Import original packaging from Tomas.
+  * Initial release. (Closes: #577932)
+
+ -- Jelmer Vernooij <jelmer@debian.org>  Thu, 15 Apr 2010 13:52:51 +0200

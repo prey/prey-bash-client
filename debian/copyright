@@ -1,0 +1,21 @@
+This packages was debianized on Thu Apr 15 13:44:13 CEST 2010 by 
+Tomas Pollak and Jelmer Vernooij.
+
+The tarball was exported from the git repository at 
+git://github.com/tomas/prey
+
+Upstream authors:
+  Tomas Pollak
+  Diego Torres
+  Juan Carlos Mardones
+  Newstart/MKHCB
+  Rodrigo Linfati
+  Michael Smith
+  Pablo Poo
+
+Copyright: (C) 2010 Fork Ltd.
+
+License: GPLv3
+  Prey is distributed under the terms of the GNU General Public License,
+  version 3 or later. The text of the license is available on Debian systems
+  in the /usr/share/common-licenses/GPL-3 file.

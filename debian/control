@@ -1,0 +1,24 @@
+Source: prey
+Section: admin
+Priority: extra
+Maintainer: Tomas Pollak <tomas@preyproject.com>
+Uploaders: Jelmer Vernooij <jelmer@debian.org>
+Build-Depends: debhelper (>> 7.0.0), python-central, python
+Homepage: http://www.preyproject.com/
+Standards-Version: 3.8.4
+XS-Python-Version: all
+
+Package: prey
+Architecture: all
+Priority: optional
+Depends: openssl, scrot, curl, streamer, libio-socket-ssl-perl, libnet-ssleay-perl, ${misc:Depends}
+Recommends: python-gtk, ${python:Depends}
+Section: utils
+Description: utility for tracking stolen computers
+ Prey is a lightweight program that will help you track and find your laptop if
+ it ever gets stolen. 
+ .
+ Prey comprises a shell script which calls out on a regular basis to
+ either a server run by prey project, or a url nominated by the system
+ administrator. A graphical configuration tool is also provided which is
+ used to maintain the simple config file.
