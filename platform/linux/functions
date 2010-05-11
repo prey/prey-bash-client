@@ -17,7 +17,7 @@ get_gateway_ip() {
 
 get_wifi_device() {
 	if [ ! -n "$wifi_device" ]; then
-		wifi_device=`cat /proc/net/wireless | tail -1 | grep -v "nwid" | sed -e 's/^\([^:].*\):.*/\1/' -e 's/\s//g'`
+		wifi_device=`cat /proc/net/wireless | tail -1 | grep -v "nwid" | sed -e 's/^\([^:].*\):.*/\1/' -e 's/ //g'`
 	fi
 }
 
