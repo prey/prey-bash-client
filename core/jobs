@@ -41,7 +41,7 @@ run_pending_jobs(){
 			module=`echo $j | sed 's/__.*//g'`
 			function=`echo $j | sed 's/.*__//g'`
 			echo " -- Running job $function from $module module."
-			function_exists "$function"
+			function_exists $function
 			if [ $? == 1 ]; then
 				initialize_module "$module"
 			fi

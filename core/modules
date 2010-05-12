@@ -28,7 +28,7 @@ active_modules(){
 }
 
 initialize_module() {
-
+	
 	module_path="$base_path/modules/$1"
 	module_platform_path="$module_path/platform/$os"
 
