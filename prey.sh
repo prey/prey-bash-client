@@ -50,6 +50,10 @@ else
 	echo ' -- Got network connection!'
 fi
 
+
+self_setup
+
+
 ####################################################################
 # verify if installation and keys are correct, if requested
 ####################################################################
@@ -64,6 +68,7 @@ if [ -n "$check_mode" ]; then
 	exit $?
 
 fi
+
 
 ####################################################################
 # if there's a URL in the config, lets see if it actually exists

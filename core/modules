@@ -27,41 +27,50 @@ active_modules(){
 	fi
 }
 
+initialize_module() {
+
+	module_path="$base_path/modules/$1"
+	module_platform_path="$module_path/platform/$os"
+
+	if [ ! -d "$module_path" ]; then
+		echo " !! Module $1 not found! Skipping..."
+		return 1
+	fi
+
+	# if there's a language file, lets run it
+	if [ -f "$module_path/lang/$lang" ]; then
+	. "$module_path/lang/$lang"
+	elif [ -f "$module_path/lang/$lang" ]; then
+	. "$module_path/lang/en"
+	fi
+
+	# if there's a config file, lets run it as well
+	if [ -f "$module_path/config" ]; then
+		. "$module_path/config" 2> /dev/null # dont echo readonly conflicts
+	fi
+
+	# lets load the base functions for the module
+	if [ -f "$module_path/core/functions" ]; then
+		. "$module_path/core/functions"
+	fi
+
+	# and the OS-specific if there are
+	if [ -f "$module_platform_path/functions" ]; then
+		. "$module_platform_path/functions"
+	fi
+
+}
+
 run_active_modules() {
 
 	for current_module in `active_modules`; do
 
-		module_path="$base_path/modules/$current_module"
-		module_platform_path="$module_path/platform/$os"
-
-		if [ ! -d "$module_path" ]; then
-			echo " !! Module $current_module not found! Skipping..."
+		initialize_module $current_module
+		if [ $? == 1 ]; then
 			continue
 		fi
 
 		echo -e "\n${bold} >> Running $current_module module!${bold_end}\n"
-
-		# if there's a language file, lets run it
-		if [ -f "$module_path/lang/$lang" ]; then
-		. "$module_path/lang/$lang"
-		elif [ -f "$module_path/lang/$lang" ]; then
-		. "$module_path/lang/en"
-		fi
-
-		# if there's a config file, lets run it as well
-		if [ -f "$module_path/config" ]; then
-			. "$module_path/config" 2> /dev/null # dont echo readonly conflicts
-		fi
-
-		# lets load the base functions for the module
-		if [ -f "$module_path/core/functions" ]; then
-			. "$module_path/core/functions"
-		fi
-
-		# and the OS-specific if there are
-		if [ -f "$module_platform_path/functions" ]; then
-			. "$module_platform_path/functions"
-		fi
 
 		# now, go!
 		. "$module_path/core/run"
