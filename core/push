@@ -73,3 +73,19 @@ send_via_scp(){
 		echo ' !! You need to set up a server in order to send the report via SCP!'
 	fi
 }
+
+# SFTP posting by http://github.com/birdtori
+send_via_sftp(){
+	if [[ -n "$sftp_server" && -n "$sftp_path" ]]; then
+		local new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
+		echo -e " -- Uploading the stuff to $sftp_path/$new_folder in $sftp_server..."
+		local batch="$tmpdir/sftp.script"
+		echo "mkdir $sftp_path/$new_folder"                           >  "$batch"
+		echo "put $trace_file $sftp_path/$new_folder/"                >> "$batch"
+		for f in $file_list; do echo "put $f $sftp_path/$new_folder/" >> "$batch"; done
+		echo "bye"                                                    >> "$batch"
+		response=`sftp $sftp_options -b $batch $sftp_user@$sftp_server`
+	else
+		echo ' !! You need to set up a server in order to send the report via SFTP!'
+	fi
+}
