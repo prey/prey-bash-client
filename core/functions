@@ -193,3 +193,33 @@ verify_installation(){
 		echo -e " !! Not found!\n -> It seems Prey's crontab entry was removed after installation. Please set again the running interval."
 	fi
 }
+
+####################################################################
+# self setup functions
+####################################################################
+self_setup(){
+	if [ -z $device_key ]; then
+		
+		local post_url="$check_url/devices.xml"
+		local parms="device[title]=Mi Ubuntu&device[device_type]=Portable&device[os]=Linux&device[os_version]=Guadalinex"
+		if [ -d "$base_path/modules/system" ]; then
+		
+			initialize_module 'system'
+			add_job 'scan_hardware' 'system'
+		
+		fi
+		#echo -e "$parms"
+		response=`getter -u $api_key:x -i $post_url -d "$parms"`
+		#echo -e "$response"
+		status_code=`echo "$response" | grep "Status" | sed 's/.*:[[:space:]]\([[:digit:]]*\).*/\1/'`
+		if [ $status_code == "302" ]; then
+			echo " -- No more devices allowed for this account!"
+		else	
+			device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
+			sed -i -e "s/device_key='.*'/device_key='$device_key'/" $base_path/config
+		fi
+		
+		# exit 0
+	fi				
+}
+
