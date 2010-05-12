@@ -131,8 +131,17 @@ find_in(){
 	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
 }
 
+# returns 1 if int/float is first param is bigger than second
 is_bigger_than() {
 	echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
+}
+
+lowercase(){
+	echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
+capitalize(){
+	echo "$1" | sed -r 's/\b(.)/\U\1/g'
 }
 
 urlencode(){
@@ -210,28 +219,30 @@ verify_installation(){
 ####################################################################
 # self setup functions
 ####################################################################
+
 self_setup(){
-	if [[ -n "$api_key" && -z "$device_key" ]]; then
-		
-		local parms="device[title]=Mi Ubuntu&device[device_type]=Portable&device[os]=Linux&device[os_version]=Guadalinex"
-		#echo -e "$parms"
-		response=`getter -u $api_key:x -i $check_url/devices.xml -d "$parms"`
-		#echo -e "$response"
-		status_code=`echo "$response" | grep "Status" | sed 's/.*:[[:space:]]\([[:digit:]]*\).*/\1/'`
-		if [ $status_code == "201" ]; then
 
-			device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
-			sed -i -e "s/device_key='.*'/device_key='$device_key'/" $base_path/config
-			echo " -- Device successfully added."
+	echo ' -- Sending request to Control Panel...'
+	local params="device[title]=`hostname`&device[device_type]=Portable&device[os]=`capitalize $os`"
+	local response=`getter -u $api_key:x -i $check_url/devices.xml -d "$params"`
 
-		else	
+	get_status_code
+	if [ $status == "201" ]; then
 
-			echo -e " -- Couldn't add this device to your account. You probably don't have any slots left.\n"
-			exit 1
+		echo ' -- Device succesfully added! Applying configuration...'
+		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
+		sed -i -e "s/device_key='.*'/device_key='$device_key'/" "$base_path/config" 2> /dev/null
 
+		if [ $? == 1 ]; then
+			echo " -- There was a problem saving the configuration. You probably don't have permissions to modify $base_path/config."
 		fi
-		
-		# exit 0
-	fi				
-}
+		echo ' -- All set.'
 
+	else
+
+		echo -e " -- Couldn't add this device to your account. Make sure you have any slots left.\n"
+		exit 1
+
+	fi
+
+}

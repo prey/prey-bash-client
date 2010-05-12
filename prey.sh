@@ -51,8 +51,16 @@ else
 fi
 
 
-self_setup
+####################################################################
+# if we have an API key and no Device key, let's try to auto setup
+####################################################################
 
+if [[ -n "$api_key" && -z "$device_key" ]]; then
+
+	echo -e "\n${bold} >> Running self setup!${bold_end}\n"
+	self_setup
+
+fi
 
 ####################################################################
 # verify if installation and keys are correct, if requested
@@ -68,7 +76,6 @@ if [ -n "$check_mode" ]; then
 	exit $?
 
 fi
-
 
 ####################################################################
 # if there's a URL in the config, lets see if it actually exists

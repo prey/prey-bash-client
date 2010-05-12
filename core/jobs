@@ -35,17 +35,24 @@ add_job(){
 
 run_pending_jobs(){
 	if [ "${#jobs[*]}" -gt 0 ]; then
+
 		echo -e "\n${bold} -- Running pending jobs...${bold_end}\n"
-		for j in "${jobs[@]}"
-		do
-			module=`echo $j | sed 's/__.*//g'`
-			function=`echo $j | sed 's/.*__//g'`
+		for j in "${jobs[@]}"; do
+
+			local module=`echo $j | sed 's/__.*//g'`
+			local function=`echo $j | sed 's/.*__//g'`
 			echo " -- Running job $function from $module module."
-			function_exists $function
-			if [ $? == 1 ]; then
+			# lets start by checking if we can actually execute the function
+			function_exists "$function"
+			if [ $? == 1 ]; then # the module isn't loaded yet
 				initialize_module "$module"
+				if [ $? == 1 ]; then # it means the module doesnt exist
+					continue
+				fi
 			fi
 			eval "$function"
+
 		done
+
 	fi
 }

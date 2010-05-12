@@ -23,7 +23,7 @@ check_url='http://control.preyproject.com'
 missing_status_code='404'
 
 # you can use send the report via email or to the web service
-# valid values: http, email or scp
+# valid values: http, email, scp or sftp
 post_method='http'
 
 ####################################################################
@@ -58,7 +58,7 @@ mail_from='Prey <no-reply@gmail.com>'
 mail_subject='[Prey] Status Report'
 
 ####################################################################
-# scp posting configuration -- EXPERIMENTAL!
+# scp/sftp posting configuration -- EXPERIMENTAL!
 # we dont use user/pass but RSA keys
 # for more info check http://tinyurl.com/sshtip
 ####################################################################
@@ -67,3 +67,7 @@ mail_subject='[Prey] Status Report'
 scp_user='username'
 scp_server='my.server.com'
 scp_path='~'
+
+sftp_user='username'
+sftp_server='my.server.com'
+sftp_path='.'
