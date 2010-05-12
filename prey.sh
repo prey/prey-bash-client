@@ -101,7 +101,6 @@ if [ -n "$check_url" ]; then
 
 		echo -e "\n${bold} >> Sending report!${bold_end}\n"
 		send_report
-		run_delayed_jobs &
 
 		echo -e "\n$STRING_DONE"
 
@@ -110,5 +109,6 @@ if [ -n "$check_url" ]; then
 	fi
 fi
 
+run_pending_jobs &
 delete_tmpdir
 exit 0

@@ -36,8 +36,8 @@ device_key=''
 
 # whether to send your device's LAN and gateway IP address as headers when
 # checking its status. currently only for testing purposes, maybe in the
-# future it may prove useful. who knows! :)
-send_extra_headers='n'
+# future it may prove useful. :)
+extended_headers='n'
 
 ####################################################################
 # SMTP settings, for email posting

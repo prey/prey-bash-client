@@ -70,6 +70,11 @@ process_xml(){
 		echo -e "\n${bold} >> Reading module configuration...${bold_end}\n"
 		process_modules
 	fi
+	requested_jobs=`echo -e "$response" | awk -F"[<>]" ' /<jobs>/,/<\/jobs>/' | grep -v "jobs>"`
+	if [ -n "$requested_jobs" ]; then
+		echo -e "\n${bold} >> Queuing jobs for execution...${bold_end}\n"
+		enqueue_jobs
+	fi
 
 }
 

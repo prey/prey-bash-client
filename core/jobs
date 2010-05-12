@@ -5,6 +5,17 @@
 # License: GPLv3
 ####################################################################
 
+enqueue_jobs(){
+	STDOUT=$(echo -e "$requested_jobs")
+	while read line; do
+
+		local module=`echo "$line" | sed 's/.*module="\([a-z_]*\)".*/\1/'`
+		local function=`echo "$line" | sed 's/.*function="\([a-z_]*\)".*/\1/'`
+		add_job "$function" "$module"
+
+	done <<< "$STDOUT"
+}
+
 callback(){
 	until read -st 1; do
 		echo -n ""
@@ -15,17 +26,25 @@ callback(){
 }
 
 add_job(){
+	if [ -z "$current_module" ]; then
+		current_module=$2
+	fi
 	echo " ++ Adding job for $current_module: $1"
-	jobs[${#jobs[*]}]="$1"
+	jobs[${#jobs[*]}]="${current_module}__${1}"
 }
 
-run_delayed_jobs(){
+run_pending_jobs(){
 	if [ "${#jobs[*]}" -gt 0 ]; then
-		echo -e "\n${bold} -- Running delayed jobs...${bold_end}\n"
+		echo -e "\n${bold} -- Running pending jobs...${bold_end}\n"
 		for j in "${jobs[@]}"
 		do
-			echo " -- Running job: $j"
-			eval "$j"
+			module=`echo $j | sed 's/__.*//g'`
+			function=`echo $j | sed 's/.*__//g'`
+			echo " -- Running job $function from $module module."
+			function_exists "$function"
+			if [ $? == 1 ]; then
+				initialize_module "$module"
+			eval "$function"
 		done
 	fi
 }

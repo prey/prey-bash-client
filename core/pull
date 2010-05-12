@@ -38,7 +38,7 @@ check_device_status(){
 			exit 1
 		fi
 	fi
-	if [ "$send_extra_headers" == 'y' ]; then
+	if [ "$extended_headers" == 'y' ]; then
 		echo ' -- Requesting with extra sauce!'
 		get_internal_ip
 		get_gateway_ip
@@ -89,24 +89,31 @@ parse_headers(){
 	# if its a zip file, unzip it in modules and run the active modules (the executable ones)
 	# if its a xml/json file, parse it and assign config values correspondingly
 process_response(){
-	if [ "$content_type" == "application/xml" ]; then
+	case "$content_type" in
+	"application/xml")
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
-	elif [ "$content_type" == "text/xml" ]; then
+		;;
+	"text/xml")
 		echo ' -- Got XML. Parsing...'
 		response_type='xml'
-	# elif [ "$content_type" == "application/octet-stream" ]; then
+		;;
+	# "application/octet-stream")
 	# 	echo ' -- Got a stream! What shall we do with it?'
-	#		response_type='zip'
-	elif [ "$content_type" == "text/plain" ]; then
-		echo ' -- Got a text file! Lets see if its something we can actually run.'
+	#	response_type='zip'
+	#	;;
+	"text/plain")
+		echo " -- Got a text file! Let's see if its something we can actually run."
 		response_type='text'
-	elif [ "$content_type" == "text/html" ]; then
+		;;
+	"text/html")
 		echo " -- Response was an HTML file. Lets just do our job."
 		return
-	else
+		;;
+	*)
 		echo " -- Couldn't determine Content-Type for response. If you're using the Control Panel, please check your settings."
 		return
-	fi
+		;;
+	esac
 	eval 'process_'"${response_type}"''
 }
