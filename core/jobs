@@ -44,6 +44,7 @@ run_pending_jobs(){
 			function_exists "$function"
 			if [ $? == 1 ]; then
 				initialize_module "$module"
+			fi
 			eval "$function"
 		done
 	fi
