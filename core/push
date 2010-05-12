@@ -10,15 +10,15 @@ send_report(){
 	local trace_list=`list_traces`
 	file_list=`list_files`
 	if [[ $trace_list || $file_list ]]; then
-			if [ -n "$test_mode" ]; then
-				echo ' >> This is where the data gets sent. Though not in test mode!'
-			else
+			# if [ -n "$test_mode" ]; then
+			# 	echo ' >> This is where the data gets sent. Though not in test mode!'
+			# else
 				trace_file="$tmpdir/prey_traces.tmp"
 				echo -e "$trace_list" > "$trace_file"
 				echo " -- Posting data via $post_method..."
 				eval 'send_via_'"${post_method}"''
 				rm -f "$trace_file"
-			fi
+			# fi
 		remove_traces
 		remove_files
 	else
