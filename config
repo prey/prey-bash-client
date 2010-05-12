@@ -63,6 +63,8 @@ mail_subject='[Prey] Status Report'
 # for more info check http://tinyurl.com/sshtip
 ####################################################################
 
+ssh_options='-oStrictHostKeyChecking=no'
+
 # remember you should have write access to the folder
 scp_user='username'
 scp_server='my.server.com'
