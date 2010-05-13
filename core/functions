@@ -136,10 +136,6 @@ is_bigger_than() {
 	echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
 }
 
-lowercase(){
-	echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
-}
-
 capitalize(){
 	echo "$1" | sed -r 's/\b(.)/\U\1/g'
 }
@@ -223,9 +219,11 @@ verify_installation(){
 self_setup(){
 
 	echo ' -- Sending request to Control Panel...'
+
 	get_pc_info
 	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=`capitalize $os`"
 	local response=`getter -u $api_key:x -i $check_url/devices.xml -d "$params"`
+
 	get_status_code
 	if [ $status == "201" ]; then
 

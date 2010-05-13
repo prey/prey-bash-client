@@ -81,3 +81,31 @@ post_update_hook(){
 	echo ' -- Reloading Prey...'
 	$base_path/prey.sh & # lets restart prey now
 }
+
+############################################
+# device creation stuff
+############################################
+
+get_pc_info(){
+	pc_name=`hostname`
+
+	`which laptop-detect`
+	if [ $? == 1 ]; then
+		pc_type="Desktop"
+	else
+		pc_type="Portable"
+	fi
+
+	distro=`cat /proc/version 2>&1`
+
+	if [[ "$distro" =~ "Ubuntu" ]]; then
+		pc_os_version='ubuntu'
+	elif [[ "$distro" =~ "Fedora|Redhat|CentOS" ]]; then
+		pc_os_version='fedora'
+	elif [[ "$distro" =~ "SUSE" ]]; then
+		pc_os_version='suse'
+	else
+		pc_os_version='other'
+	fi
+
+}
