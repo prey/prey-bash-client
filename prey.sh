@@ -108,7 +108,7 @@ if [ -n "$check_url" ]; then
 		run_active_modules
 
 		####################################################################
-		# lets send whatever we've gathered and run any pending jobs
+		# lets send whatever we've gathered
 		####################################################################
 
 		echo -e "\n${bold} >> Sending report!${bold_end}\n"
@@ -121,6 +121,11 @@ if [ -n "$check_url" ]; then
 	fi
 fi
 
+####################################################################
+# if we have any pending jobs, run them
+####################################################################
+
 run_pending_jobs &
 delete_tmpdir
+
 exit 0
