@@ -61,3 +61,26 @@ post_update_hook(){
 	echo ' -- Reloading Prey...'
 	$base_path/prey.sh & # lets restart prey now
 }
+
+############################################
+# Device creation parameters
+############################################
+get_pc_info(){
+	pc_name=`system_profiler SPSoftwareDataType | grep 'Computer Name' | sed 's/.*: //g'`
+	pc_os_number=`sw_vers -productVersion | cut -c1-4`
+	
+	if [ $pc_os_number == "10.6" ]; then
+		pc_os_version="snow-leopard"
+	elif [ $pc_os_number == "10.5" ]; then
+		pc_os_version="leopard"
+	else
+		pc_os_version="tiger"
+	fi
+
+	if [ -z `system_profiler SPHardwareDataType | grep -i 'macbook'` ]; then
+		pc_type="Desktop"
+	else
+		pc_type="Portable"
+	fi
+	
+}
