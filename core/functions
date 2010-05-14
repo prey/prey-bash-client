@@ -229,7 +229,10 @@ self_setup(){
 
 		echo ' -- Device succesfully added! Applying configuration...'
 		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
-		sed -i -e "s/device_key='.*'/device_key='$device_key'/" "$base_path/config" 2> /dev/null
+		
+		#sed for windows needs this hack to replace infile. Sorry!
+		sed -i.backup "s/device_key=.*/device_key='$device_key'/" "$base_path/config"
+		rm "$base_path/config.backup"
 
 		if [ $? == 1 ]; then
 			echo " -- There was a problem saving the configuration. You probably don't have permissions to modify $base_path/config."
