@@ -76,8 +76,8 @@ get_pc_info(){
 	else
 		pc_os_version="tiger"
 	fi
-
-	if [ -z `system_profiler SPHardwareDataType | grep -i 'macbook'` ]; then
+	local is_macbook=`system_profiler SPHardwareDataType | grep -i 'macbook'`
+	if [ -z "$is_macbook" ]; then
 		pc_type="Desktop"
 	else
 		pc_type="Portable"
