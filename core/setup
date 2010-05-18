@@ -10,8 +10,8 @@
 until [ -z "$1" ]; do
 	if [[ "$1" == "-t" || "$1" == "--test" ]]; then
 		echo -e "\n -- TEST MODE ENABLED."
-		. $base_path/test/include "$2" 2> /dev/null
 		test_mode=1
+		. $base_path/test/include "$2" 2> /dev/null
 	elif [[ "$1" == '-c' || "$1" == '--check' ]]; then
 		echo -e "\n -- CHECK MODE ENABLED."
 		check_mode=1
@@ -54,7 +54,7 @@ set_vars(){
 
 set_aliases(){
 	shopt -s expand_aliases
-	alias getter="curl -s \"$user_agent\""
+	alias getter="curl $curl_options -s \"$user_agent\""
 	alias mailsender="sendEmail"
 	alias patcher='patch'
 	alias processes='ps ax'
