@@ -92,10 +92,10 @@ process_modules(){
 		if [ `find_in "$line" 'name='` ]; then # we have a module node
 			local module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
 			echo " ** Got instructions for $module module."
-			if [ ! -d $base_path/modules/$module ]; then # not installed
+			if [ ! -d "$base_path/modules/$module" ]; then # not installed
 				echo " -- Installing new $module module!"
 				install_or_update_module $module
-				if [ "$?" == 1 ]; then # we got an error installing the new module
+				if [ $? == 1 ]; then # we got an error installing the new module
 					module=''
 					continue
 				fi

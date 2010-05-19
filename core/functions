@@ -227,6 +227,7 @@ self_setup(){
 	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=`capitalize $os`"
 	local response=`getter -u $api_key:x -i $check_url/devices.xml -d "$params"`
 	get_status_code
+
 	if [ $status == "201" ]; then
 
 		echo ' -- Device succesfully added! Applying configuration...'
@@ -243,7 +244,7 @@ self_setup(){
 
 	else
 
-		echo -e " -- Couldn't add this device to your account. Make sure you have any slots left.\n"
+		echo -e " -- Couldn't add this device to your account. Make sure you have available slots.\n"
 		exit 1
 
 	fi
