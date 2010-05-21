@@ -276,7 +276,7 @@ install_or_update_module(){
 			fi
 
 			echo ' -- Putting new module in its right position...'
-			mv "$tmpdir/$1.tmp/$1" "$base_path/modules/"
+			mv "$tmpdir/$1.tmp/$1" "$base_path/modules/$1"
 
 			echo ' -- Cleaning up...'
 			delete_unneeded_stuff_in "$base_path/modules/$1/platform"

@@ -125,7 +125,7 @@ fi
 # if we have any pending jobs, run them
 ####################################################################
 
-run_pending_jobs &
+run_pending_jobs
 delete_tmpdir
 
 exit 0
