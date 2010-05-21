@@ -89,6 +89,10 @@ delete_tmpdir(){
 	rm -Rf "$tmpdir" 2> /dev/null
 }
 
+file_size(){
+	cat "$1" | wc -c
+}
+
 add_file(){
 	if [ -f "$2" ]; then
 		echo -e " ++ Adding file for $current_module: $1 -> $2"

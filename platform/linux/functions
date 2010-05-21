@@ -5,10 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-file_size(){
-	ls -l "$1" | cut -f5 -d " "
-}
-
 get_gateway_ip() {
 	if [ -z "$gateway_ip" ]; then
 		gateway_ip=`ip r | grep default | cut -d ' ' -f 3`

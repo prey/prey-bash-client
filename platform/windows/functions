@@ -9,10 +9,6 @@ get_pid(){
 	processes | grep "$1" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
 }
 
-file_size(){
-	ls -l "$1" | cut -f16 -d " "
-}
-
 ############################################
 # verification stuff
 ############################################
@@ -80,7 +76,7 @@ get_gateway_ip() {
 
 get_internal_ip() {
 	if [ -z "$internal_ip" ]; then
-		internal_ip=`ipconfig | grep "IP Address" | sed 's/^.*: //g' | grep -v '^$' | head -1`
+		internal_ip=`ipconfig | grep "Address" | grep -v "local" | sed 's/^.*: //g' | grep -v '^$' | head -1`
 	fi
 }
 
@@ -186,9 +182,9 @@ post_update_hook(){
 ############################################
 get_pc_info(){
 	pc_name=`hostname`
-	
+
 	pc_os_number=`wmic os get caption | grep -i 'microsoft'`
-	
+
 	if [[ -z `echo "$pc_os_number" | grep '7'` ]]; then
 		pc_os_version="7"
 	elif [ -z `echo "$pc_os_number" | grep -i 'xp'` ]; then

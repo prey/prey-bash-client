@@ -21,7 +21,6 @@ check_for_failed_update(){
 }
 
 fetch_update() {
-
 	echo ' -- Fetching new Prey release...'
 	getter "$update_package" -o "$updater_file" 2> /dev/null
 
@@ -262,7 +261,7 @@ install_or_update_module(){
 	echo " -- Trying to fetch module $1 from repository..."
 	get_module $1
 
-	if [[ -f "$module_file" && `file_size "$module_file"` -gt 0 ]]; then
+	if [[ -f "$module_file" && `file_size "$module_file"` -gt 1 ]]; then
 		echo " -- Got new $1 module from repository! Unpackaging..."
 
 		echo ' -- Unzipping module...'

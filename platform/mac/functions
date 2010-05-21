@@ -5,10 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-file_size(){
-	ls -l "$1" | cut -f8 -d " "
-}
-
 get_gateway_ip() {
 	if [ -z "$gateway_ip" ]; then
 		netstat=`which netstat`
@@ -68,7 +64,7 @@ post_update_hook(){
 get_pc_info(){
 	pc_name=`system_profiler SPSoftwareDataType | grep 'Computer Name' | sed 's/.*: //g'`
 	pc_os_number=`sw_vers -productVersion | cut -c1-4`
-	
+
 	if [ $pc_os_number == "10.6" ]; then
 		pc_os_version="snow-leopard"
 	elif [ $pc_os_number == "10.5" ]; then
@@ -82,5 +78,5 @@ get_pc_info(){
 	else
 		pc_type="Portable"
 	fi
-	
+
 }
