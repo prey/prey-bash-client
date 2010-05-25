@@ -139,7 +139,7 @@ is_bigger_than() {
 capitalize(){
 	#echo "$1" | sed -r 's/\b(.)/\U\1/g'
 	echo "$1" | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1'
-	
+
 }
 
 urlencode(){
@@ -164,7 +164,8 @@ get_current_delay(){
 }
 
 update_execution_delay(){
-	(crontab -l | grep -v prey; echo "*/$1 * * * * $base_path/prey.sh > /var/log/prey.log") | crontab -
+	local real_path=$(readlink -f "$base_path")
+	(crontab -l | grep -v prey; echo "*/$1 * * * * $real_path/prey.sh > /var/log/prey.log") | crontab -
 }
 
 ####################################################################
@@ -226,11 +227,12 @@ self_setup(){
 	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=`capitalize $os`"
 	local response=`getter -u $api_key:x -i $check_url/devices.xml -d "$params"`
 	get_status_code
+
 	if [ $status == "201" ]; then
 
 		echo ' -- Device succesfully added! Applying configuration...'
 		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
-		
+
 		#sed for windows needs this hack to replace infile. Sorry!
 		sed -i.backup "s/device_key=.*/device_key='$device_key'/" "$base_path/config"
 		rm "$base_path/config.backup"
@@ -242,7 +244,7 @@ self_setup(){
 
 	else
 
-		echo -e " -- Couldn't add this device to your account. Make sure you have any slots left.\n"
+		echo -e " -- Couldn't add this device to your account. Make sure you have available slots.\n"
 		exit 1
 
 	fi

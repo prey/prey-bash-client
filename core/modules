@@ -28,13 +28,16 @@ active_modules(){
 }
 
 initialize_module() {
-	
+
 	module_path="$base_path/modules/$1"
 	module_platform_path="$module_path/platform/$os"
 
 	if [ ! -d "$module_path" ]; then
-		echo " !! Module $1 not found! Skipping..."
-		return 1
+		echo " !! Module $1 not found!"
+		install_or_update_module $module
+		if [ $? == 1 ]; then # it didnt work
+			return 1
+		fi
 	fi
 
 	# if there's a language file, lets run it

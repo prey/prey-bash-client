@@ -7,7 +7,10 @@
 Prey is a lightweight application for tracking your stolen laptop.
 
 It runs in Windows and *NIX systems as well (Mac, Linux). It is licensed
-by the GPLv3 which means you can do just about anything with it.
+by the GPLv3 which means you can do just about anything with it, as long as
+you respect the licence's terms.
+
+For up to date information check the project's website at preyproject.com.
 
 ##############################################
 1. How it works
@@ -15,7 +18,7 @@ by the GPLv3 which means you can do just about anything with it.
 
 The script runs at a specified interval in your machine, and checks
 for a specified URL on the web. If the URL does not exist it means the
-computer/laptop has been stolen, and thus goes through the information
+PC has been stolen, and thus goes through the information
 gathering routine and sends all that info through to a previously defined
 email address. You can also not define a URL and in that case the program
 will send the data every time it runs, although it is *not* recommended.
@@ -24,8 +27,7 @@ Since 0.3.3, you can use a web control panel (control.preyproject.com)
 to manage your computer's state, as well as toggling different modules for
 triggering certain behaviours remotely. In this case you don't have to
 worry about the URL thing since it takes care of that for you. You only
-need to register and insert the API and Device keys in the Prey
-configuration.
+need to set up your user account when installing Prey.
 
 ##############################################
 2. Installation
@@ -35,32 +37,29 @@ configuration.
 
 Download the package/installer and run it.
 
-Once all files are in place you’ll need to configure Prey, where you’ll
+Once all files are in place you'll need to configure Prey, where you'll
 be able to choose between both operation modes. In case you want to use
-Prey along with the control panel (recommended), you’ll have to register
+Prey along with the control panel (recommended), you'll have to register
 and add your device to obtain your API and Device keys. Prey needs them
 both so make sure you add them correctly.
 
-If you want to use Prey in an independent way, you’ll have to set up your
-mail server (SMTP) settings. Sometimes email sending doesn’t work at once,
+If you want to use Prey in an independent way, you'll have to set up your
+mail server (SMTP) settings. Sometimes email sending doesn't work at once,
 so please try using a different target mailbox just in case — in fact
-that’s how the problem generally gets fixed.
+that's how the problem generally gets fixed.
 
  -- Linux users (not Debian/Ubuntu)
 
-Once you’ve downloaded the package, unzip it and move all the contents to a
+Once you've downloaded the package, unzip it and move all the contents to a
 folder of your choice (we use /usr/share/prey). Then you need to open up the
 config file and change your settings according to your configuration. If
-you’re using the Control Panel, then you only need to insert your API and
+you're using the Control Panel, then you only need to insert your API and
 Device keys; otherwise you need to set up your SMTP server settings.
 
 Finally, you need to add a crontab entry for root. You can do this by typing
 the following in a terminal:
 
 $ (sudo crontab -l | grep -v prey; echo "*/20 * * * * /usr/share/prey.sh > /dev/null") | sudo crontab -
-
-Note: You should use the full URL in Prey's setup, such as
-http://preyproject.com (not just preyproject.com).
 
 ##############################################
 3. Requisites for Linux
@@ -80,7 +79,7 @@ automatically!)
 ##############################################
 
 The idea is that when your laptop gets stolen -- hopefully never, that is --
-you should immediately activate Prey, by declaring the device as missing
+you should immediately activate Prey, by marking the device as missing
 in the Control Panel, or by deleting the URL you specified in Prey's
 configuration. This depends on the operation mode (post method) you set up
 when installing Prey.
@@ -113,6 +112,6 @@ iSightCapture: http://www.intergalactic.de/pages/iSight.html
 6. Legal
 ##############################################
 
-Copyright © 2010, Fork Ltd. 
-Released under the GPLv3 license. 
+Copyright © 2010, Fork Ltd.
+Released under the GPLv3 license.
 For full details see the LICENSE file included in this distribution.

@@ -46,7 +46,7 @@ run_pending_jobs(){
 			function_exists "$function"
 			if [ $? == 1 ]; then # the module isn't loaded yet
 				initialize_module "$module"
-				if [ $? == 1 ]; then # it means the module doesnt exist
+				if [ $? == 1 ]; then # it means the module isn't there
 					continue
 				fi
 			fi
@@ -54,5 +54,6 @@ run_pending_jobs(){
 
 		done
 
+		echo -e " -- No pending jobs left. All done!\n"
 	fi
 }

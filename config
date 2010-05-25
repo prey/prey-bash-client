@@ -14,7 +14,7 @@ auto_connect='n'
 
 # verification URL, if left empty Prey will always activate and run,
 # which is certainly *not* recommended.
-check_url='http://control.share.cl'
+check_url='http://control.preyproject.com'
 
 # IMPORTANT: on what HTTP response code will Prey be activated (200 or 404)
 # control panel users don't touch this! standalone users may want to
@@ -33,6 +33,10 @@ post_method='http'
 # you can get both of these from Prey's web service at http://preyproject.com
 api_key=''
 device_key=''
+
+# if you're having trouble getting requests across your firewall or proxy,
+# you can try setting this to '-0' so curl will perform HTTP 1.0 requests
+curl_options=''
 
 # whether to send your device's LAN and gateway IP address as headers when
 # checking its status. currently only for testing purposes, maybe in the
