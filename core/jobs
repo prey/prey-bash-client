@@ -45,10 +45,11 @@ run_pending_jobs(){
 			# lets start by checking if we can actually execute the function
 			function_exists "$function"
 			if [ $? == 1 ]; then # the module isn't loaded yet
-				initialize_module "$module"
-				if [ $? == 1 ]; then # it means the module isn't there
+				setup_module "$module" # lets make sure we have it
+				if [ $? == 1 ]; then # we couldnt get it
 					continue
 				fi
+				initialize_module "$module"
 			fi
 			eval "$function"
 

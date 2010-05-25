@@ -16,7 +16,8 @@ is_module_active(){
 
 active_modules(){
 	if [ "$post_method" == "http" ]; then
-		echo -e "$module_configuration" | grep "<module " | sed 's/.*name="\([a-z_]*\)".*/\1/'
+		echo "$active_modules"
+		# echo -e "$module_configuration" | grep "<module " | sed 's/.*name="\([a-z_]*\)".*/\1/'
 	else
 		for module in `find "$base_path/modules" -maxdepth 1 -mindepth 1 -type d`; do
 			local module_name=`echo $module | sed 's/.*[\\|\/]\([a-z_-]*\)$/\1/'`
@@ -27,18 +28,33 @@ active_modules(){
 	fi
 }
 
+# gets the module name ($1) and optionally the upstream version ($2)
+setup_module() {
+
+	module_path="$base_path/modules/$1"
+	upstream_version=$2
+
+	if [ ! -d "$module_path" ]; then
+		echo " !! Module $1 not found!"
+		install_or_update_module $1
+		return $?
+	elif [ -n "$upstream_version" ]; then # module is already there, lets see if the versions match
+
+		local installed_version=`cat "$module_path/version" 2> /dev/null`
+
+		if [ `is_bigger_than $upstream_version $installed_version` == 1 ]; then
+		echo " -- Updating $module module to version $upstream_version!"
+			install_or_update_module $1
+			return $?
+		fi
+
+	fi
+}
+
 initialize_module() {
 
 	module_path="$base_path/modules/$1"
 	module_platform_path="$module_path/platform/$os"
-
-	if [ ! -d "$module_path" ]; then
-		echo " !! Module $1 not found!"
-		install_or_update_module $module
-		if [ $? == 1 ]; then # it didnt work
-			return 1
-		fi
-	fi
 
 	# if there's a language file, lets run it
 	if [ -f "$module_path/lang/$lang" ]; then

@@ -92,35 +92,25 @@ process_modules(){
 		if [ `find_in "$line" 'name='` ]; then # we have a module node
 			local module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
 			echo " ** Got instructions for $module module."
-			if [ ! -d "$base_path/modules/$module" ]; then # not installed
-				echo " -- Installing new $module module!"
-				install_or_update_module $module
-				if [ $? == 1 ]; then # we got an error installing the new module
-					module=''
-					continue
-				fi
-			elif [ "$auto_update" == "true" ]; then  # module is already installed and auto_update is enabled
 
+			if [ "$auto_update" == "true" ]; then  # module is already installed and auto_update is enabled
 				local upstream_version=`echo $line | sed 's/^.*version="\([0-9.]*\)".*/\1/'`
-				local installed_version=`cat $base_path/modules/$module/version 2> /dev/null`
-
-				if [ `is_bigger_than $upstream_version $installed_version` == 1 ]; then
-				echo " -- Updating $module module to version $upstream_version!"
-					install_or_update_module $module
-					if [ $? != 0 ]; then # we got an error installing the new module
-						module='' # so we don't try to edit the config on the next loop
-						continue
-					fi
-				fi
 			fi
 
-		else # config line for module $module
-			if [[ -n "$module" ]]; then
-				local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
-				local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/'`
-				# echo " -- Updating setting $param -> $value for $module module."
-				set_config_for "$module" "$param" "$value"
+			setup_module $module $upstream_version
+			if [ $? == 1 ]; then # we got an error installing the new module
+				echo " !! Couldn't install $module module from repository."
+				module=''
+				continue
+			else
+				active_modules="$active_modules $module"
 			fi
+
+		elif [ -n "$module" ]; then # config line for module $module
+			local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
+			local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/'`
+			# echo " -- Updating setting $param -> $value for $module module."
+			set_config_for "$module" "$param" "$value"
 		fi
 
 	done <<< "$STDOUT"

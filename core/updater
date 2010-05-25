@@ -258,7 +258,7 @@ install_or_update_module(){
 
 	module_file="$tmpdir/module-$1.zip"
 
-	echo " -- Trying to fetch module $1 from repository..."
+	echo " -- Trying to fetch $1 module from repository..."
 	get_module $1
 
 	if [[ -f "$module_file" && `file_size "$module_file"` -gt 1 ]]; then
@@ -291,7 +291,6 @@ install_or_update_module(){
 
 	fi
 
-	echo " !! Couldn't install $1 module from repository."
 	return 1
 
 }
