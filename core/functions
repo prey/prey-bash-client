@@ -51,8 +51,8 @@ list_traces(){
 			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
 			local start=`echo ${t%%=*}`
 			local index=`echo $(( ${#start} + 1 ))`
-			local trace_field=`echo "-F $start" | sed 's/^\(.*\)__\(.*\)/\1[\2]=/'`
-			echo "${trace_field}${t:index}"
+			local trace_field=`echo "-F $start" | sed 's/^\([^_].*\)__\(.*\)/\1[\2]/'`
+			echo "${trace_field}=${t:index}"
 		else
 			current_node=`echo $t | sed 's/__.*//'`
 			if [ "$current_node" != "$previous_node" ]; then
