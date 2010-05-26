@@ -14,28 +14,24 @@ get_pid(){
 ############################################
 
 verify_installation(){
-	# check running cron
-	echo " -- Checking if cron.exe is running..."
-	local cron_running=`is_process_running "cron.exe"`
-	if [ -n "$cron_running" ]; then
-		echo " -- Found!"
+	# check prey service on
+	echo " -- Checking if Prey system service is running..."
+	local prey_service=`sc query "PreyService" | grep STATE`
+	if [ -n "$prey_service" ]; then
+		echo ' -- Prey service installed.'
+		if [ -n "`echo $prey_service | grep RUNNING`" ]; then
+			echo ' -- Prey service running!'
+		else
+			echo ' !! Prey service not running!'
+		fi
 	else
-		echo " !! Not found! If you have an antivirus installed, please make sure $platform_path\\cron.exe is whitelisted for running."
-	fi
-
-	# check registry entry
-	echo " -- Checking for start up registry entry..."
-	local cron_reg_entry=`reg query "HKLM\Software\Microsoft\Windows\CurrentVersion\Run" | grep 'cron.exe' | wc -l`
-	if [ $cron_reg_entry == 1 ]; then
-		echo " -- Registry entry found. Prey is being run on each user log in."
-	else
-		echo " -- Registry entry not found! Probably your antivirus/antispyware erroneously removed it. Please check and if necessary, reinstall."
+		echo ' !! Prey service not installed!'
 	fi
 
 	# check net framework
 	echo ' -- Checking for installed .NET Framework...'
 	if [ "`is_net_framework_installed`" == 1 ]; then
-		echo " -- Required .NET version $required_net_version or newer is installed. Geo module should work."
+		echo " -- Required .NET version $required_net_version or newer is installed. All good."
 	else
 		echo " !! .NET framework version $required_net_version or newer not installed!"
 	fi
@@ -115,7 +111,7 @@ update_execution_delay() {
 ############################################
 
 is_module_active() {
-	cat $base_path/modules/$1/active 2> /dev/null
+	cat "$base_path/modules/$1/active" 2> /dev/null
 }
 
 ############################################
@@ -140,8 +136,8 @@ reset_permissions(){
 	# eval $command \"$platform_path\tmp\" "$fullaccess" &> /dev/null
 }
 
-# lets make sure we kill the cron process, otherwise we wont be able to
-# replace it with a newer one
+# lets make sure the running user has write access to the files,
+# otherwise we wont be able to patch or replace them
 pre_update_check(){
 	if [ -z `user_has_access` ]; then
 		echo " -- Unfortunately the current user who's running Prey cannot perform the upgrade."
@@ -151,13 +147,6 @@ pre_update_check(){
 }
 
 pre_update_hook(){
-
-	# lets check if theres another user logged in and running cron.exe
-	for cron in `tasklist | grep 'cron.exe'`; do
-		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
-		echo " -- Shutting down cron with PID $pid..."
-		"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
-	done
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
@@ -170,22 +159,23 @@ pre_update_hook(){
 	return $?
 }
 
-# lets reset the cron.exe so it refreshes with the new status
+# lets restart prey so it refreshes with the new status
 post_update_hook(){
 	reset_permissions
 	echo ' -- Reloading Prey...'
-	"$platform_path\cron.exe" &
+	net stop PreyService
+	net start PreyService
 }
 
 ############################################
 # Device creation parameters
 ############################################
 get_pc_info(){
-	pc_name=`hostname`
 
+	pc_name=`hostname`
 	pc_os_number=`wmic os get caption | grep -i 'microsoft'`
 
-	if [[ -z `echo "$pc_os_number" | grep '7'` ]]; then
+	if [ -z `echo "$pc_os_number" | grep '7'` ]; then
 		pc_os_version="7"
 	elif [ -z `echo "$pc_os_number" | grep -i 'xp'` ]; then
 		pc_os_version="XP"
