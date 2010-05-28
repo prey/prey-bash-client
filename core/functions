@@ -192,6 +192,13 @@ get_pid(){
 	ps ax | grep "$1" | head -1 | cut -d ' ' -f1
 }
 
+kill_process(){
+	if [ -n `is_process_running $1` ]; then
+		local pid=`get_pid $1`
+		kill $pid
+	fi
+}
+
 ####################################################################
 # network core functions
 ####################################################################
