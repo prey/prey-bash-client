@@ -154,6 +154,10 @@ urlencode(){
 	echo "$1" | tr $line_breaker "^" | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/=/%3D/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\^$//;s/\^/%0A/g"
 }
 
+md5_hash_for(){
+	echo -n "$1" | md5sum | sed 's/.*\([a-f0-9]\{32\}\).*/\1/'
+}
+
 # TODO: should switch to more advanced forms of encryption!
 encrypt(){
 	echo -n "$1" | openssl enc -base64
@@ -188,6 +192,10 @@ is_process_running(){
 	processes | grep -v grep | grep "$1" > /dev/null && echo 1 || return 0
 }
 
+number_of_instances_of(){
+	processes | grep -v grep | grep -v $$ | grep "$1" | wc -l
+}
+
 get_pid(){
 	ps ax | grep "$1" | head -1 | cut -d ' ' -f1
 }
@@ -198,6 +206,7 @@ kill_process(){
 		kill $pid
 	fi
 }
+
 
 ####################################################################
 # network core functions

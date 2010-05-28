@@ -24,6 +24,11 @@ fi
 . "$base_path/core/base"
 . "$base_path/platform/$os/functions"
 
+# if [ `number_of_instances_of prey.sh` -gt 1 ]; then
+# 	echo ' -- Prey is already running!'
+# 	exit 1
+# fi
+
 echo -e "${cyan}$STRING_START ### `uname -a`${color_end}\n"
 
 ####################################################################
