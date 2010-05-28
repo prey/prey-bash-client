@@ -141,7 +141,7 @@ fi
 ####################################################################
 
 # before we need to make sure the actions are actually set up
-if [ -z "$module_configuration" ]; then
+if [ -z "$status" ]; then
 	process_module_config
 fi
 
