@@ -39,12 +39,19 @@ if [ $connected == 0 ]; then
 		try_to_connect
 	fi
 
-	# ok, lets check again, after waiting five seconds
-	sleep 5
+	# ok, lets check again, after waiting three seconds
+	sleep 3
 	check_net_status
 	if [ $connected == 0 ]; then
 		echo "$STRING_NO_CONNECT_TO_WIFI"
-		exit
+
+		if [ -f "$last_response" ]; then # offline actions were enabled
+			echo ' -- Offline actions enabled!'
+			get_last_response
+		else
+			exit 1
+		fi
+
 	fi
 else
 	echo ' -- Got network connection!'
@@ -55,7 +62,7 @@ fi
 # if we have an API key and no Device key, let's try to auto setup
 ####################################################################
 
-if [[ -n "$api_key" && -z "$device_key" ]]; then
+if [[ $connected == 1 && -n "$api_key" && -z "$device_key" ]]; then
 
 	echo -e "\n${bold} >> Running self setup!${bold_end}\n"
 	self_setup
@@ -85,12 +92,13 @@ fi
 # create tmpdir for downloading stuff, storing files, etc
 create_tmpdir
 
-if [ -n "$check_url" ]; then
+if [[ $connected == 1 && -n "$check_url" ]]; then
 	echo "$STRING_CHECK_URL"
 
 	check_device_status
 	parse_headers
-	process_response
+	# process_response
+	process_config
 
 	echo -e "\n${bold} >> Verifying status...${bold_end}\n"
 	echo -e " -- Got status code $status!"
@@ -100,11 +108,13 @@ if [ -n "$check_url" ]; then
 		echo -e "$STRING_PROBLEM"
 
 		####################################################################
-		# fire off active modules
+		# initialize and fire off active modules
 		####################################################################
 
+		process_module_config
+
 		set +e # error mode off, just continue if a module fails
-		echo -e " -- Running active modules..."
+		echo -e " -- Running active report modules..."
 		run_active_modules
 
 		####################################################################
@@ -122,10 +132,15 @@ if [ -n "$check_url" ]; then
 fi
 
 ####################################################################
-# if we have any pending jobs, run them
+# if we have any pending actions, run them
 ####################################################################
 
-run_pending_jobs
+# before we need to make sure the actions are actually set up
+if [ -z "$module_configuration" ]; then
+	process_module_config
+fi
+
+run_pending_actions
 delete_tmpdir
 
 exit 0

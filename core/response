@@ -1,11 +1,28 @@
 #!/bin/bash
 ####################################################################
-# Prey Core Response Functions - by Tomas Pollak (bootlog.org)
+# Prey Core Response Functions - (c) 2010 - Fork Ltd.
 # URL: http://preyproject.com
 # License: GPLv3
 ####################################################################
 
+# fetches last response if online actions were enabled for the device
+get_last_response(){
+	response=`cat "$last_response"`
+}
+
+# module, param, value
+set_config_for(){
+	eval "readonly ${1}__${2}='$3'"
+}
+
 process_config(){
+
+	local prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
+	if [ -z "$prey_configuration" ]; then
+		return 1
+	fi
+
+	echo -e "\n${bold} >> Reading configuration...${bold_end}\n"
 
 	# inmense thanks to this post, it saved my day
 	# http://edwardawebb.com/linux/scope-issue-bash-loops
@@ -17,6 +34,8 @@ process_config(){
 
 	done <<< "$STDOUT"
 
+	# check the current delay against the instruction from the server
+
 	if [ "`get_current_delay`" != "$delay" ]; then
 		echo " -- Setting delay to $delay minutes!"
 		update_execution_delay $delay
@@ -24,26 +43,33 @@ process_config(){
 		echo " -- Delay in sync."
 	fi
 
+	# lets see if offline actions are enabled
+
+	if [ "$offline_actions" == 'true' ]; then # we save the response in case we need it later
+		echo -e "$response"	> "$last_response"
+	elif [ -f "$last_response" ]; then # otherwise, lets make sure there's nothing there
+		rm -f "$last_response" 2> /dev/null
+	fi
+
+	# check the current version against the one gotten from the server
+
 	if [[ "$auto_update" == "true" && `is_bigger_than $current_release $version` == 1 ]]; then
 
 		echo " -- New Prey version found! Auto-update selected so let's try to upgrade."
-
 		run_prey_updater
 
 	fi
 
 }
 
-# expects a <modules> section in the xml and activates de modules as requested
-# format should be as follows:
+# Prey expects a <configuration> and <modules> section in the xml
+# and activates de modules as requested. format should be as follows:
 
 # <device>
-# 	<device-type>phone</device-type>
 #		<missing>true</missing>
 # </device>
 # <configuration>
 #		<delay>10</delay>
-#		<loop>0</loop>
 # </configuration>
 #	<modules>
 #		<module name="alert" active="true">
@@ -55,70 +81,58 @@ process_config(){
 #	</modules>
 
 # it should also work with one-line module entries (with no configuration), such as
-#
 # <module name="location" active="true" />
 
-process_xml(){
+process_module_config(){
 
-	prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
-	if [ -n "$prey_configuration" ]; then
-		echo -e "\n${bold} >> Reading configuration...${bold_end}\n"
-		process_config
-	fi
-	module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
-	if [ -n "$module_configuration" ]; then
-		echo -e "\n${bold} >> Reading module configuration...${bold_end}\n"
-		process_modules
-	fi
-	requested_jobs=`echo -e "$response" | awk -F"[<>]" ' /<jobs>/,/<\/jobs>/' | grep -v "jobs>"`
-	if [ -n "$requested_jobs" ]; then
-		echo -e "\n${bold} >> Queuing jobs for execution...${bold_end}\n"
-		enqueue_jobs
+	local module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
+	if [ -z "$module_configuration" ]; then
+		return 1
 	fi
 
-}
-
-# module, param, value
-set_config_for(){
-	eval "readonly ${1}__${2}='$3'"
-}
-
-process_modules(){
+	echo -e "\n${bold} >> Reading module configuration...${bold_end}\n"
 
 	STDOUT=$(echo -e "$module_configuration")
 
 	while read line; do
 
 		if [ `find_in "$line" 'name='` ]; then # we have a module node
-			local module=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
-			echo " ** Got instructions for $module module."
+			local module_name=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
+			echo " ** Got instructions for $module_name module."
 
 			if [ "$auto_update" == "true" ]; then  # module is already installed and auto_update is enabled
 				local upstream_version=`echo $line | sed 's/^.*version="\([0-9.]*\)".*/\1/'`
 			fi
 
-			setup_module $module $upstream_version
+			setup_module $module_name $upstream_version
 			if [ $? == 1 ]; then # we got an error installing the new module
-				echo " !! Couldn't install $module module from repository."
-				module=''
+
+				echo " !! Couldn't install $module_name module from repository."
+				unset module_name
 				continue
-			else
-				active_modules="$active_modules $module"
+
+			else # lets see if its a report module or an action module
+
+				local module_type=`echo $line | sed 's/.*type="\([a-z_]*\)".*/\1/'`
+				if [ "$module_type" == 'action' ]; then
+					if [ `find_in "$line" 'function='` ]; then # a specific function was requested
+						local function_name=`echo $line | sed 's/.*function="\([a-z_]*\)".*/\1/'`
+					fi
+					add_action $module_name $function_name
+					unset function_name
+				else # then its a report module
+					active_modules="$active_modules $module_name"
+				fi
+
 			fi
 
-		elif [ -n "$module" ]; then # config line for module $module
+		elif [ -n "$module_name" ]; then # config line for module $module
 			local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
 			local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/'`
 			# echo " -- Updating setting $param -> $value for $module module."
-			set_config_for "$module" "$param" "$value"
+			set_config_for "$module_name" "$param" "$value"
 		fi
 
 	done <<< "$STDOUT"
 
-}
-
-# this is REALLY untested stuff
-# we should put this in a module with the new hash-by-module trace structure
-process_text(){
-	echo " -- What should we do with the text file?"
 }

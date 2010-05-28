@@ -1,0 +1,62 @@
+#!/bin/bash
+####################################################################
+# Prey Core Action Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+# modules can queue specific actions by calling
+# add_action 'module_name' 'function_name'
+add_action(){
+	echo " ++ Queueing action for $1 module!"
+	actions[${#actions[*]}]="${1}__${2}"
+}
+
+action_callback(){
+	until read -st 1; do
+		echo -n ""
+	done
+
+	echo "Action done. Running callback!"
+	eval '$1 $REPLY'
+}
+
+update_device_info_with(){
+	response=`getter -i -X PUT -u $api_key:x $check_url/devices/$device_key.xml -d "$1"`
+
+	get_status_code
+	if [ $status == "200" ]; then
+		echo " -- Device updated."
+	else
+		echo " -- Couldn't update your device. Maybe the Control Panel is taking a bath."
+	fi
+}
+
+run_pending_actions(){
+
+	if [ "${#actions[*]}" -gt 0 ]; then
+
+		echo -e "\n${bold} -- Running pending actions...${bold_end}\n"
+		for action in "${actions[@]}"; do
+
+			local current_module=`echo $action | sed 's/__.*//g'`
+			local function=`echo $action | sed 's/.*__//g'`
+
+			initialize_module $current_module
+			if [ $? == 1 ]; then
+				continue
+			fi
+
+			if [ -n "$function" ]; then # specific function requested
+				echo " -- Running action $function from $current_module module."
+				eval "$function" &
+			else # no specific action requested, we'll assume there's a run file
+				echo -e "\n${bold} >> Running $current_module module!${bold_end}\n"
+				. "$module_path/core/run" &
+			fi
+
+		done
+
+		echo -e " -- No pending actions left. All done!\n"
+	fi
+}

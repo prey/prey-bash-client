@@ -80,6 +80,12 @@ initialize_module() {
 
 }
 
+#unset_module_vars(){
+#	unset current_module
+#	unset module_path
+#	unset module_platform_path
+#}
+
 run_active_modules() {
 
 	for current_module in `active_modules`; do

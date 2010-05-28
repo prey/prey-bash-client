@@ -24,7 +24,7 @@ check_net_status(){
 	# since some routers/networks block ICMP requests
 	if [ $connected == 0 ]; then
 		echo ' -- Trying alternate method...'
-		connected=`getter $net_check_target &> /dev/null && echo 1 || echo 0`
+		connected=`getter --connect-timeout 3 $net_check_target &> /dev/null && echo 1 || echo 0`
 	fi
 }
 
@@ -92,11 +92,11 @@ process_response(){
 	case "$content_type" in
 	"application/xml")
 		echo ' -- Got XML. Parsing...'
-		response_type='xml'
+		local response_type='xml'
 		;;
 	"text/xml")
 		echo ' -- Got XML. Parsing...'
-		response_type='xml'
+		local response_type='xml'
 		;;
 	# "application/octet-stream")
 	# 	echo ' -- Got a stream! What shall we do with it?'
@@ -104,7 +104,7 @@ process_response(){
 	#	;;
 	"text/plain")
 		echo " -- Got a text file! Let's see if its something we can actually run."
-		response_type='text'
+		local response_type='text'
 		;;
 	"text/html")
 		echo " -- Response was an HTML file. Lets just do our job."
@@ -115,5 +115,5 @@ process_response(){
 		return
 		;;
 	esac
-	eval 'process_'"${response_type}"''
+	# eval 'process_'"${response_type}"''
 }
