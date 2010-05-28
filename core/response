@@ -115,11 +115,13 @@ process_module_config(){
 
 				local module_type=`echo $line | sed 's/.*type="\([a-z_]*\)".*/\1/'`
 				if [ "$module_type" == 'action' ]; then
+
 					if [ `find_in "$line" 'function='` ]; then # a specific function was requested
 						local function_name=`echo $line | sed 's/.*function="\([a-z_]*\)".*/\1/'`
 					fi
 					add_action $module_name $function_name
 					unset function_name
+
 				else # then its a report module
 					active_modules="$active_modules $module_name"
 				fi
@@ -127,8 +129,10 @@ process_module_config(){
 			fi
 
 		elif [ -n "$module_name" ]; then # config line for module $module
-			local param=`echo $line | sed -e 's/^<\(.*\)>.*<.*>$/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
-			local value=`echo $line | sed -e 's/^<.*>\([^<].*\)<.*>$/\1/'`
+
+			local param=`echo "$line" | sed -e 's/<\(.*\)>.*<.*/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
+			local value=`echo "$line" | sed -e 's/<.*>\([^<].*\)<.*/\1/'`
+
 			# echo " -- Updating setting $param -> $value for $module module."
 			set_config_for "$module_name" "$param" "$value"
 		fi

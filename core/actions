@@ -49,10 +49,10 @@ run_pending_actions(){
 
 			if [ -n "$function" ]; then # specific function requested
 				echo " -- Running action $function from $current_module module."
-				eval "$function" &
+				eval "$function"
 			else # no specific action requested, we'll assume there's a run file
 				echo -e "\n${bold} >> Running $current_module module!${bold_end}\n"
-				. "$module_path/core/run" &
+				. "$module_path/core/run"
 			fi
 
 		done
