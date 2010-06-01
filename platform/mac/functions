@@ -5,6 +5,14 @@
 # License: GPLv3
 ####################################################################
 
+run_as_current_user(){
+	if [ "`whoami`" == "root" ]; then
+		launchctl bsexec $logged_pid "$1"
+	else
+		$1
+	fi
+}
+
 get_gateway_ip() {
 	if [ -z "$gateway_ip" ]; then
 		netstat=`which netstat`

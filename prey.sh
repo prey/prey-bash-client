@@ -29,6 +29,8 @@ fi
 # 	exit 1
 # fi
 
+# trap "echo -- Kill signal detected.; wait" SIGTERM SIGKILL SIGQUIT
+
 echo -e "${cyan}$STRING_START ### `uname -a`${color_end}\n"
 
 ####################################################################
@@ -145,6 +147,7 @@ if [ -z "$status" ]; then
 	process_module_config
 fi
 
+check_running_actions
 run_pending_actions
 delete_tmpdir
 

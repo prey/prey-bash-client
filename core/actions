@@ -5,11 +5,34 @@
 # License: GPLv3
 ####################################################################
 
+log_action(){
+	echo "$1" >> $tmpbase/prey-actions.log
+}
+
 # modules can queue specific actions by calling
 # add_action 'module_name' 'function_name'
 add_action(){
 	echo " ++ Queueing action for $1 module!"
-	actions[${#actions[*]}]="${1}__${2}"
+	if [ -z "$2" ]; then
+		function=1
+	else
+		function=$2
+	fi
+	actions[${#actions[*]}]="${1}=${function}"
+}
+
+# sets the running pid to the action/module name
+add_running_action(){
+	running_actions[${#running_actions[*]}]="${1}=${2}"
+}
+
+get_action(){
+	get_var actions $1
+}
+
+# gets the pid of the running process
+get_running_action(){
+	get_var running_actions $1
 }
 
 action_callback(){
@@ -22,7 +45,9 @@ action_callback(){
 }
 
 update_device_info_with(){
-	response=`getter -i -X PUT -u $api_key:x $check_url/devices/$device_key.xml -d "$1"`
+
+	echo ' -- Updating device info...'
+	local response=`getter -i -X PUT -u $api_key:x $check_url/devices/$device_key.xml -d "$1"`
 
 	get_status_code
 	if [ $status == "200" ]; then
@@ -30,33 +55,113 @@ update_device_info_with(){
 	else
 		echo " -- Couldn't update your device. Maybe the Control Panel is taking a bath."
 	fi
+
+}
+
+# receives the pid name, assigns it to the module name
+create_pidfile_for(){
+	echo " -- Creating pidfile for $current_module's $1..."
+	echo $1 > "$tmpbase/prey-$current_module.pid"
+}
+
+unload_action(){
+	echo " -- Unloading $1 from memory..."
+	local pidfile="$tmpbase/prey-$1.pid"
+	kill -- -`cat $pidfile` &> /dev/null
+}
+
+remove_pidfile(){
+	local pidfile="$tmpbase/prey-$1.pid"
+	if [ -f "$pidfile" ]; then
+		echo ' -- Removing pidfile...'
+		rm -f "$pidfile" 2> /dev/null
+	else
+		echo ' -- Pidfile doesnt exist!'
+	fi
+}
+
+check_running_actions(){
+	for pidfile in "$tmpbase/prey-*.pid"; do
+
+		if [ ! -f $pidfile ]; then
+			continue # this is to skip the actual prey-* we may get as a response
+		fi
+
+		local action_name=`basename $pidfile | sed -e 's/prey-//' -e 's/\.pid//'`
+		echo " -- Found running action: $action_name"
+
+		if [ -z `get_action $action_name` ]; then # action was removed from options
+			# echo " -- Removing $action_name which was untoggled by user..."
+			unload_action $action_name
+			sleep 1
+		else
+			add_running_action $action_name `cat $pidfile`
+		fi
+
+	done
+}
+
+#daemonize_and_wait(){
+#	eval $1 &
+#	echo " -- $1 running at $!."
+#	trap "echo '-- Removing $1...'; kill -- -$!" SIGKILL SIGTERM
+#	wait
+#}
+
+action_finished(){
+	if [[ -n "$2" && `get_running_action $2` == $1 ]]; then
+		wait $1
+		return_status=$?
+		if [[ ! "$returned_actions" =~ "$1" ]]; then
+			echo " -- Action $2 exited with status $return_status."
+			remove_pidfile $2
+			completed_actions="$completed_actions $1"
+		fi
+	fi
 }
 
 run_pending_actions(){
 
 	if [ "${#actions[*]}" -gt 0 ]; then
 
+		# -b -> Cause the status of terminated background jobs to be reported immediately,
+		# rather than before printing the next primary prompt.
+		# -m job control enabled
+		set -bm
+
 		echo -e "\n${bold} -- Running pending actions...${bold_end}\n"
 		for action in "${actions[@]}"; do
 
-			local current_module=`echo $action | sed 's/__.*//g'`
-			local function=`echo $action | sed 's/.*__//g'`
+			local current_module=`echo $action | sed 's/=.*//'`
+			local function=`echo $action | sed 's/.*=//'`
+
+			if [ ! -z `get_running_action $current_module` ]; then
+				echo " -- $current_module is already running! Skipping..."
+				continue
+			fi
 
 			initialize_module $current_module
 			if [ $? == 1 ]; then
 				continue
 			fi
 
-			if [ -n "$function" ]; then # specific function requested
+			if [ "$function" != "1" ]; then # specific function requested
 				echo " -- Running action $function from $current_module module."
-				eval "$function"
+				eval "$function" &
 			else # no specific action requested, we'll assume there's a run file
 				echo -e "\n${bold} >> Running $current_module module!${bold_end}\n"
-				. "$module_path/core/run"
+				. "$module_path/core/run" &
 			fi
+
+			pid=$!
+			create_pidfile_for $pid
+			add_running_action $current_module $pid
+			trap 'action_finished $pid $current_module' SIGCHLD
 
 		done
 
+		wait
 		echo -e " -- No pending actions left. All done!\n"
 	fi
+
 }

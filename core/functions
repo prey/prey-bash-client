@@ -23,11 +23,11 @@ get_var(){
 
 # if you need to fetch a specific trace or file
 get_trace(){
-	get_var traces ${current_module}__$1
+	get_var traces ${1}__$2
 }
 
 get_file(){
-	get_var files ${current_module}__$1
+	get_var files ${1}__$2
 }
 
 ####################################################################
@@ -206,7 +206,6 @@ kill_process(){
 		kill $pid
 	fi
 }
-
 
 ####################################################################
 # network core functions

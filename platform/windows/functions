@@ -5,6 +5,11 @@
 # License: GPLv3
 ####################################################################
 
+# in windows, prey always runs as the local user
+run_as_current_user(){
+	$1
+}
+
 get_pid(){
 	processes | grep "$1" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
 }
@@ -173,17 +178,17 @@ post_update_hook(){
 get_pc_info(){
 
 	pc_name=`hostname`
-	pc_os_number=`wmic os get caption | grep -i 'microsoft'`
+	local pc_os_number=`wmic os get caption | grep -i 'microsoft'`
 
-	if [ -z `echo "$pc_os_number" | grep '7'` ]; then
+	if [ -n `echo "$pc_os_number" | grep '7'` ]; then
 		pc_os_version="7"
-	elif [ -z `echo "$pc_os_number" | grep -i 'xp'` ]; then
+	elif [ -n `echo "$pc_os_number" | grep -i 'xp'` ]; then
 		pc_os_version="XP"
 	else
 		pc_os_version="Vista"
 	fi
 
-  chassis_type=`wmic systemenclosure get ChassisTypes | grep '{' | sed 's/[^0-9]//g'`
+  local chassis_type=`wmic systemenclosure get ChassisTypes | grep '{' | sed 's/[^0-9]//g'`
 	if [[ $chassis_type == "8" || $chassis_type == "9" || $chassis_type == "10" || $chassis_type == "11" || $chassis_type == "14" ]]; then
 		pc_type="Portable"
 	else
