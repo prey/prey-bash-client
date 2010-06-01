@@ -101,22 +101,12 @@ check_running_actions(){
 	done
 }
 
-#daemonize_and_wait(){
-#	eval $1 &
-#	echo " -- $1 running at $!."
-#	trap "echo '-- Removing $1...'; kill -- -$!" SIGKILL SIGTERM
-#	wait
-#}
-
 action_finished(){
 	if [[ -n "$2" && `get_running_action $2` == $1 ]]; then
 		wait $1
 		return_status=$?
-		if [[ ! "$returned_actions" =~ "$1" ]]; then
-			echo " -- Action $2 exited with status $return_status."
-			remove_pidfile $2
-			completed_actions="$completed_actions $1"
-		fi
+		echo " -- Action $2 exited with status $return_status."
+		remove_pidfile $2
 	fi
 }
 
