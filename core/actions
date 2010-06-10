@@ -44,20 +44,6 @@ action_callback(){
 	eval '$1 $REPLY'
 }
 
-update_device_info_with(){
-
-	echo ' -- Updating device info...'
-	local response=`getter -i -X PUT -u $api_key:x $check_url/devices/$device_key.xml -d "$1"`
-
-	get_status_code
-	if [ $status == "200" ]; then
-		echo " -- Device updated."
-	else
-		echo " -- Couldn't update your device. Maybe the Control Panel is taking a bath."
-	fi
-
-}
-
 # receives the pid name, assigns it to the module name
 create_pidfile_for(){
 	echo " -- Creating pidfile for $current_module's $1..."
