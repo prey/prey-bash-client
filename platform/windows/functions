@@ -19,18 +19,14 @@ get_pid(){
 ############################################
 
 verify_installation(){
+
 	# check prey service on
 	log " -- Checking if Prey system service is running..."
-	local prey_service=`sc query "PreyService" | grep STATE`
-	if [ -n "$prey_service" ]; then
-		log ' -- Prey service installed.'
-		if [ -n "`echo $prey_service | grep RUNNING`" ]; then
-			log ' -- Prey service running!'
-		else
-			log ' !! Prey service not running!'
-		fi
+	local cron_running=`is_process_running "cronsvc"`
+	if [ -n "$cron_running" ]; then
+		echo " -- Cron system service up and running. Good."
 	else
-		log ' !! Prey service not installed!'
+		echo " !! Cron system service not found! Please make sure no antivirus is blocking Cron Service (cronsvc) from running. Optionally reinstall. :)"
 	fi
 
 	# check net framework
