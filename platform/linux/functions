@@ -70,7 +70,7 @@ try_to_connect() {
 ############################################
 
 pre_update_check(){
-	echo ' -- All set!'
+	log ' -- All set!'
 	return 0
 }
 
@@ -82,7 +82,7 @@ pre_update_hook(){
 
 # post update hooks go in here
 post_update_hook(){
-	echo ' -- Reloading Prey...'
+	log ' -- Reloading Prey...'
 	$base_path/prey.sh & # lets restart prey now
 }
 

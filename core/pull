@@ -10,7 +10,7 @@
 check_net_status(){
 	# get_gateway_ip
 	# net_check_target=$gateway_ip
-	echo ' -- Looking for connection...'
+	log ' -- Looking for connection...'
 
 	local net_check_target="www.google.com"
 	if [ "$os" == "windows" ]; then
@@ -23,7 +23,7 @@ check_net_status(){
 	# if there's no connection with ping, lets try to see if curl gets through
 	# since some routers/networks block ICMP requests
 	if [ $connected == 0 ]; then
-		echo ' -- Trying alternate method...'
+		log ' -- Trying alternate method...'
 		connected=`getter --connect-timeout 3 $net_check_target &> /dev/null && echo 1 || echo 0`
 	fi
 }
@@ -34,12 +34,12 @@ check_device_status(){
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
 		else
-			echo -e " !! You need to enter your Device Key for HTTP Check!\n"
+			log " !! You need to enter your Device Key for HTTP Check!\n"
 			exit 1
 		fi
 	fi
 	if [ "$extended_headers" == 'y' ]; then
-		echo ' -- Requesting with extra sauce!'
+		log ' -- Requesting with extra sauce!'
 		get_internal_ip
 		get_gateway_ip
 		curl_headers="-H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
@@ -59,20 +59,20 @@ verify_keys(){
 
 	if [ -n "$status" ]; then
 		if [ "$status" == "401" ]; then
-			echo -e " !! API key not valid! Got $status status code.\n -> Remember to check your inbox to verify your account. If you already have you should reconfigure your settings, or reinstall if necessary.\n"
+			log " !! API key not valid! Got $status status code.\n -> Remember to check your inbox to verify your account. If you already have you should reconfigure your settings, or reinstall if necessary.\n"
 			return 1
 		else
-			echo  ' ** API key is valid. Your user account is correctly set up.'
+			log  ' ** API key is valid. Your user account is correctly set up.'
 			if [[ "$status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
 				local device_state=`echo "$response" | grep $device_key -A1 | tail -1 | sed 's/<[^>]*>//g;s/ //g'`
-				echo -e " ** Device key is valid. Good. Current status is ${bold}${device_state}${bold_end}.\n"
+				log " ** Device key is valid. Good. Current status is ${bold}${device_state}${bold_end}.\n"
 			else
-				echo -e " !! Device key not valid!\n -> We couldn't find this device on your Control Panel account. Please reconfigure your settings, or reinstall if necessary.\n"
+				log " !! Device key not valid!\n -> We couldn't find this device on your Control Panel account. Please reconfigure your settings, or reinstall if necessary.\n"
 				return 1
 			fi
 		fi
 	else
-		echo -e " !! Couldn't get a response. Please check your firewall settings so that Curl can connect to $control_panel_url over port 80 (HTTP).\n"
+		log " !! Couldn't get a response. Please check your firewall settings so that Curl can connect to $control_panel_url over port 80 (HTTP).\n"
 		return 1
 	fi
 	return 0
@@ -91,27 +91,27 @@ parse_headers(){
 process_response(){
 	case "$content_type" in
 	"application/xml")
-		echo ' -- Got XML. Parsing...'
+		log ' -- Got XML. Parsing...'
 		local response_type='xml'
 		;;
 	"text/xml")
-		echo ' -- Got XML. Parsing...'
+		log ' -- Got XML. Parsing...'
 		local response_type='xml'
 		;;
 	# "application/octet-stream")
-	# 	echo ' -- Got a stream! What shall we do with it?'
+	# 	log ' -- Got a stream! What shall we do with it?'
 	#	response_type='zip'
 	#	;;
 	"text/plain")
-		echo " -- Got a text file! Let's see if its something we can actually run."
+		log " -- Got a text file! Let's see if its something we can actually run."
 		local response_type='text'
 		;;
 	"text/html")
-		echo " -- Response was an HTML file. Lets just do our job."
+		log " -- Response was an HTML file. Lets just do our job."
 		return
 		;;
 	*)
-		echo " -- Couldn't determine Content-Type for response. If you're using the Control Panel, please check your settings."
+		log " -- Couldn't determine Content-Type for response. If you're using the Control Panel, please check your settings."
 		return
 		;;
 	esac

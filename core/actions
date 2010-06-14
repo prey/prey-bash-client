@@ -12,7 +12,7 @@ log_action(){
 # modules can queue specific actions by calling
 # add_action 'module_name' 'function_name'
 add_action(){
-	echo " ++ Queueing action for $1 module!"
+	log " ++ Queueing action for $1 module!"
 	if [ -z "$2" ]; then
 		function=1
 	else
@@ -40,18 +40,18 @@ action_callback(){
 		echo -n ""
 	done
 
-	echo "Action done. Running callback!"
+	log "Action done. Running callback!"
 	eval '$1 $REPLY'
 }
 
 # receives the pid name, assigns it to the module name
 create_pidfile_for(){
-	echo " -- Creating pidfile for $current_module's $1..."
+	log " -- Creating pidfile for $current_module's $1..."
 	echo $1 > "$tmpbase/prey-$current_module.pid"
 }
 
 unload_action(){
-	echo " -- Unloading $1 from memory..."
+	log " -- Unloading $1 from memory..."
 	local pidfile="$tmpbase/prey-$1.pid"
 	kill -- -`cat $pidfile` &> /dev/null
 }
@@ -59,25 +59,25 @@ unload_action(){
 remove_pidfile(){
 	local pidfile="$tmpbase/prey-$1.pid"
 	if [ -f "$pidfile" ]; then
-		echo ' -- Removing pidfile...'
+		log ' -- Removing pidfile...'
 		rm -f "$pidfile" 2> /dev/null
 	else
-		echo ' -- Pidfile doesnt exist!'
+		log ' -- Pidfile doesnt exist!'
 	fi
 }
 
 check_running_actions(){
-	for pidfile in "$tmpbase/prey-*.pid"; do
+	for pidfile in `ls "$tmpbase/prey-*.pid" 2>/dev/null`; do
 
 		if [ ! -f $pidfile ]; then
 			continue # this is to skip the actual prey-* we may get as a response
 		fi
 
 		local action_name=`basename $pidfile | sed -e 's/prey-//' -e 's/\.pid//'`
-		echo " -- Found running action: $action_name"
+		log " -- Found running action: $action_name"
 
 		if [ -z `get_action $action_name` ]; then # action was removed from options
-			# echo " -- Removing $action_name which was untoggled by user..."
+			# log " -- Removing $action_name which was untoggled by user..."
 			unload_action $action_name
 			sleep 1
 		else
@@ -91,7 +91,7 @@ action_finished(){
 	if [[ -n "$2" && `get_running_action $2` == $1 ]]; then
 		wait $1
 		return_status=$?
-		echo " -- Action $2 exited with status $return_status."
+		log " -- Action $2 exited with status $return_status."
 		remove_pidfile $2
 	fi
 }
@@ -105,14 +105,14 @@ run_pending_actions(){
 		# -m job control enabled
 		set -bm
 
-		echo -e "\n${bold} -- Running pending actions...${bold_end}\n"
+		log -e "\n${bold} -- Running pending actions...${bold_end}\n"
 		for action in "${actions[@]}"; do
 
 			local current_module=`echo $action | sed 's/=.*//'`
-			local function=`echo $action | sed 's/.*=//'`
-
+			local function=`echo $action | sed 's/.*=\(.*\)/\1/'`
+			
 			if [ ! -z `get_running_action $current_module` ]; then
-				echo " -- $current_module is already running! Skipping..."
+				log " -- $current_module is already running! Skipping..."
 				continue
 			fi
 
@@ -122,10 +122,10 @@ run_pending_actions(){
 			fi
 
 			if [ "$function" != "1" ]; then # specific function requested
-				echo " -- Running action $function from $current_module module."
+				log " -- Running action $function from $current_module module."
 				eval "$function" &
 			else # no specific action requested, we'll assume there's a run file
-				echo -e "\n${bold} >> Running $current_module module!${bold_end}\n"
+				log "\n${bold} >> Running $current_module module!${bold_end}\n"
 				. "$module_path/core/run" &
 			fi
 
@@ -137,7 +137,7 @@ run_pending_actions(){
 		done
 
 		wait
-		echo -e " -- No pending actions left. All done!\n"
+		log " -- No pending actions left. All done!\n"
 	fi
 
 }

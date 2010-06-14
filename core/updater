@@ -21,7 +21,7 @@ check_for_failed_update(){
 }
 
 fetch_update() {
-	echo ' -- Fetching new Prey release...'
+	log ' -- Fetching new Prey release...'
 	getter "$update_package" -o "$updater_file" 2> /dev/null
 
 	if [[ $? != 0 || ! -f "$updater_file" ]]; then
@@ -39,20 +39,20 @@ validate_package(){
 	local valid_md5=`get_checksum_for $update_package`
 
 	if [ -z "$valid_md5" ]; then
-		echo " !! Couldn't grab checksum from server. Skipping update..."
+		log " !! Couldn't grab checksum from server. Skipping update..."
 		return 1
 	fi
 
 	local package_md5=`md5sum $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null`
 
 	if [ "$package_md5" != "$valid_md5" ]; then
-		echo ' -- Invalid checksum for downloaded package. Cannot continue.'
+		log ' -- Invalid checksum for downloaded package. Cannot continue.'
 		return 1
 	fi
 }
 
 unzip_package(){
-	echo ' -- Validated updater from source. Unpacking...'
+	log ' -- Validated updater from source. Unpacking...'
 	unzip -u $updater_file -d $updater_path > /dev/null
 	return $?
 }
@@ -67,14 +67,14 @@ test_diff() {
 
 	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
 
-	echo ' -- Testing if patch will apply cleanly...'
+	log ' -- Testing if patch will apply cleanly...'
 	outcome=`patcher --dry-run $patch_options`
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
-		echo -e " !! There seems to be discordances between your installed version and the official $version code. Skipping patch!"
+		log " !! There seems to be discordances between your installed version and the official $version code. Skipping patch!"
 		return 1
 	else
-		echo ' -- Everything smooth.'
+		log ' -- Everything smooth.'
 	fi
 
 	return 0
@@ -82,14 +82,14 @@ test_diff() {
 }
 
 apply_diff(){
-	echo ' -- Applying patch...'
+	log ' -- Applying patch...'
 	outcome=`patcher $patch_options > /dev/null`
 	return $?
 }
 
 # this could be useful sometime in the future
 report_update_status(){
-	echo ' -- Notifying update status to your Control Panel account...'
+	log ' -- Notifying update status to your Control Panel account...'
 	update_device_info_with "device[update_failed]=$1"
 }
 
@@ -104,7 +104,7 @@ delete_files_according_to_diff() {
 
 		if [ "$modified" == "/dev/null" ]; then # deleted file
 
-			echo " -- Deleting file: $original..."
+			log " -- Deleting file: $original..."
 			rm -f "$base_path/$original"
 
 		fi
@@ -115,7 +115,7 @@ delete_files_according_to_diff() {
 
 copy_new_files(){
 
-	echo ' -- Updating new binary files in Prey...'
+	log ' -- Updating new binary files in Prey...'
 
 	if [ -d "$updater_path/platform/$os" ]; then
 		cp -R $updater_path/platform/$os/* "$base_path/platform/$os" # first, copy the platform specific stuff
@@ -133,7 +133,7 @@ remove_temp_stuff(){
 
 download_and_test_update(){
 
-	echo ' -- Removing leftovers...'
+	log ' -- Removing leftovers...'
 	remove_temp_stuff
 
 	updater_path="$tmpdir/updater"
@@ -149,7 +149,7 @@ download_and_test_update(){
 	if [ $? == 1 ]; then return 1; fi
 	unzip_package
 	if [ $? != 0 ]; then
-		echo ' !! Something went wrong while unzipping files. Skipping update.'
+		log ' !! Something went wrong while unzipping files. Skipping update.'
 		return 1
 	fi
 
@@ -161,14 +161,14 @@ download_and_test_update(){
 
 apply_changes(){
 
-	echo ' -- Updating files!'
+	log ' -- Updating files!'
 
 	if [ -f "$diff_file" ]; then
 		apply_diff
 		if [ $? == 0 ]; then
 			delete_files_according_to_diff
 		else
-			echo ' -- Something went wrong! Skipping patch...'
+			log ' -- Something went wrong! Skipping patch...'
 			return 1 # not ok
 		fi
 		rm "$diff_file" 2> /dev/null
@@ -176,7 +176,7 @@ apply_changes(){
 
 	copy_new_files
 
-	echo ' -- Cleaning up...'
+	log ' -- Cleaning up...'
 	delete_unneeded_stuff_in "$base_path/platform"
 	remove_temp_stuff
 
@@ -187,7 +187,7 @@ perform_update() {
 
 	pre_update_hook
 
-	echo -e "\n${bold} >> Applying changes!${bold_end}\n"
+	log "\n${bold} >> Applying changes!${bold_end}\n"
 	sleep 1
 
 	apply_changes
@@ -201,11 +201,11 @@ perform_update() {
 
 	if [[ $update_status == 0 && `is_bigger_than $version $previous_version` == 1 ]]; then
 
-			echo " ** Update OK! New installed version of Prey is $version."
+			log " ** Update OK! New installed version of Prey is $version."
 
 	else
 
-		echo ' -- Something went wrong while updating!'
+		log ' -- Something went wrong while updating!'
 		echo "$previous_version" > $base_path/.update_failed
 
 	fi
@@ -213,17 +213,17 @@ perform_update() {
 	report_update_status $update_status
 	delete_tmpdir
 
-	echo ' -- Running post-update hooks...'
+	log ' -- Running post-update hooks...'
 	post_update_hook $update_status
 
-	echo -e " -- All done! Exiting...\n"
+	log " -- All done! Exiting...\n"
 	exit $update_status
 
 }
 
 run_prey_updater(){
 
-	echo " -- Performing pre update checks..."
+	log " -- Performing pre update checks..."
 
 	check_for_failed_update
 	if [ $? == 1 ]; then return 1; fi
@@ -231,7 +231,7 @@ run_prey_updater(){
 	pre_update_check
 	if [ $? == 1 ]; then return 1; fi
 
-	echo -e "\n${bold} >> Running Prey updater!${bold_end}\n"
+	log "\n${bold} >> Running Prey updater!${bold_end}\n"
 
 	download_and_test_update
 
@@ -258,36 +258,36 @@ install_or_update_module(){
 
 	module_file="$tmpdir/module-$1.zip"
 
-	echo " -- Trying to fetch $1 module from repository..."
+	log " -- Trying to fetch $1 module from repository..."
 	get_module $1
 
 	if [[ -f "$module_file" && `file_size "$module_file"` -gt 1 ]]; then
-		echo " -- Got new $1 module from repository! Unpackaging..."
+		log " -- Got new $1 module from repository! Unpackaging..."
 
-		echo ' -- Unzipping module...'
+		log ' -- Unzipping module...'
 		unzip "$module_file" -d "$tmpdir/$1.tmp" &> /dev/null
 
 		if [ $? == 0 ]; then
 
 			if [ -d "$base_path/modules/$1" ]; then # module already installed
-				echo ' -- Removing old module...'
+				log ' -- Removing old module...'
 				rm -Rf "$base_path/modules/$1"
 			fi
 
-			echo ' -- Putting new module in its right position...'
+			log ' -- Putting new module in its right position...'
 			mv "$tmpdir/$1.tmp/$1" "$base_path/modules/$1"
 
-			echo ' -- Cleaning up...'
+			log ' -- Cleaning up...'
 			delete_unneeded_stuff_in "$base_path/modules/$1/platform"
 			rm "$module_file" 2> /dev/null
 
-			echo " ** New $1 module placed and ready to go!"
+			log " ** New $1 module placed and ready to go!"
 			return 0
 		fi
 
 	else
 
-		echo " -- Couldn't grab module. The repository may be temporarily down."
+		log " -- Couldn't grab module. The repository may be temporarily down."
 
 	fi
 

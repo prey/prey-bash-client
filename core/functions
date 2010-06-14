@@ -37,7 +37,7 @@ get_file(){
 add_trace(){
 	local urlencoded=`urlencode "$2"`
 	local trace="${current_module}__$1=$urlencoded"
-	echo -e " ++ Adding trace for $current_module: $1"
+	log " ++ Adding trace for $current_module: $1"
 	# we need to encode whitespaces, otherwise well get into trouble
 	traces[${#traces[*]}]="$trace"
 }
@@ -71,7 +71,7 @@ list_traces(){
 
 remove_traces(){
 	unset -v traces
-	echo ' -- Dropping all traces!'
+	log " -- Dropping all traces!"
 }
 
 ####################################################################
@@ -99,15 +99,15 @@ file_size(){
 
 add_file(){
 	if [ -f "$2" ]; then
-		echo -e " ++ Adding file for $current_module: $1 -> $2"
+		log " ++ Adding file for $current_module: $1 -> $2"
 		files[${#files[*]}]=${current_module}__$1=$2
 	else
-		echo " ${red}!!${color_end} Couldn't find file at $2!"
+		log " ${red}!!${color_end} Couldn't find file at $2!"
 	fi
 }
 
 list_files(){
-	# echo " -- ${#files[*]} files gathered!"
+	# log " -- ${#files[*]} files gathered!"
 	for f in "${files[@]}"
 	do
 		if [ "$post_method" == 'http' ]; then
@@ -124,7 +124,7 @@ remove_files(){
 	do
 		file=`echo $f | sed 's/^.*=\(.*\)/\1/'`
 		rm -f $file
-		echo " -- Removed $file"
+		log " -- Removed $file"
 	done
 	unset -v files
 }
@@ -222,19 +222,19 @@ get_internal_ip() {
 ####################################################################
 
 verify_installation(){
-	echo " -- Checking if cron daemon is running..."
+	log " -- Checking if cron daemon is running..."
 	local cron_running=`is_process_running 'cron'`
 	if [ $cron_running == 1 ]; then
-		echo " -- Cron daemon found."
+		log " -- Cron daemon found."
 	else
-		echo " !! Cron daemon not found! Try running it with 'sudo /etc/init.d/cron start'."
+		log " !! Cron daemon not found! Try running it with 'sudo /etc/init.d/cron start'."
 	fi
-	echo " -- Checking for crontab entry..."
+	log " -- Checking for crontab entry..."
 	local result=`crontab -l | grep 'prey.sh' | wc -l 2> /dev/null`
 	if [ "$result" -gt 0 ]; then
-		echo " -- Found!"
+		log " -- Found!"
 	else
-		echo -e " !! Not found!\n -> It seems Prey's crontab entry was removed after installation. Please set again the running interval."
+		log " !! Not found!\n -> It seems Prey's crontab entry was removed after installation. Please set again the running interval."
 	fi
 }
 
@@ -244,7 +244,7 @@ verify_installation(){
 
 self_setup(){
 
-	echo ' -- Sending request to Control Panel...'
+	log ' -- Sending request to Control Panel...'
 
 	get_pc_info
 	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=`capitalize $os`"
@@ -253,7 +253,7 @@ self_setup(){
 
 	if [ $status == "201" ]; then
 
-		echo ' -- Device succesfully added! Applying configuration...'
+		log ' -- Device succesfully added! Applying configuration...'
 		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
 
 		#sed for windows needs this hack to replace infile. Sorry!
@@ -261,13 +261,13 @@ self_setup(){
 		rm "$base_path/config.backup"
 
 		if [ $? == 1 ]; then
-			echo " -- There was a problem saving the configuration. You probably don't have permissions to modify $base_path/config."
+			log " -- There was a problem saving the configuration. You probably don't have permissions to modify $base_path/config."
 		fi
-		echo ' -- All set.'
+		log ' -- All set.'
 
 	else
 
-		echo -e " -- Couldn't add this device to your account. Make sure you have available slots.\n"
+		log " -- Couldn't add this device to your account. Make sure you have available slots.\n"
 		exit 1
 
 	fi

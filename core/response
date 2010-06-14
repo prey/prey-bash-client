@@ -22,7 +22,7 @@ process_config(){
 		return 1
 	fi
 
-	echo -e "\n${bold} >> Reading configuration...${bold_end}\n"
+	log "\n${bold} >> Reading configuration...${bold_end}\n"
 
 	# inmense thanks to this post, it saved my day
 	# http://edwardawebb.com/linux/scope-issue-bash-loops
@@ -37,10 +37,10 @@ process_config(){
 	# check the current delay against the instruction from the server
 
 	if [ "`get_current_delay`" != "$delay" ]; then
-		echo " -- Setting delay to $delay minutes!"
+		log " -- Setting delay to $delay minutes!"
 		update_execution_delay $delay
 	else
-		echo " -- Delay in sync."
+		log " -- Delay in sync."
 	fi
 
 	# lets see if offline actions are enabled
@@ -55,7 +55,7 @@ process_config(){
 
 	if [[ "$auto_update" == "true" && `is_bigger_than $current_release $version` == 1 ]]; then
 
-		echo " -- New Prey version found! Auto-update selected so let's try to upgrade."
+		log " -- New Prey version found! Auto-update selected so let's try to upgrade."
 		run_prey_updater
 
 	fi
@@ -90,7 +90,7 @@ process_module_config(){
 		return 1
 	fi
 
-	echo -e "\n${bold} >> Reading module configuration...${bold_end}\n"
+	log "\n${bold} >> Reading module configuration...${bold_end}\n"
 
 	STDOUT=$(echo -e "$module_configuration")
 
@@ -98,7 +98,7 @@ process_module_config(){
 
 		if [ `find_in "$line" 'name='` ]; then # we have a module node
 			local module_name=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
-			echo " ** Got instructions for $module_name module."
+			log " -- Got instructions for $module_name module."
 
 			if [ "$auto_update" == "true" ]; then  # module is already installed and auto_update is enabled
 				local upstream_version=`echo $line | sed 's/^.*version="\([0-9.]*\)".*/\1/'`
@@ -107,7 +107,7 @@ process_module_config(){
 			setup_module $module_name $upstream_version
 			if [ $? == 1 ]; then # we got an error installing the new module
 
-				echo " !! Couldn't install $module_name module from repository."
+				log " !! Couldn't install $module_name module from repository."
 				unset module_name
 				continue
 
@@ -133,7 +133,7 @@ process_module_config(){
 			local param=`echo "$line" | sed -e 's/<\(.*\)>.*<.*/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
 			local value=`echo "$line" | sed -e 's/<.*>\([^<].*\)<.*/\1/'`
 
-			# echo " -- Updating setting $param -> $value for $module module."
+			# log " -- Updating setting $param -> $value for $module module."
 			set_config_for "$module_name" "$param" "$value"
 		fi
 

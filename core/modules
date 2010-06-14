@@ -17,7 +17,7 @@ is_module_active(){
 active_modules(){
 	if [ "$post_method" == "http" ]; then
 		echo "$active_modules"
-		# echo -e "$module_configuration" | grep "<module " | sed 's/.*name="\([a-z_]*\)".*/\1/'
+		# log -e "$module_configuration" | grep "<module " | sed 's/.*name="\([a-z_]*\)".*/\1/'
 	else
 		for module in `find "$base_path/modules" -maxdepth 1 -mindepth 1 -type d`; do
 			local module_name=`echo $module | sed 's/.*[\\|\/]\([a-z_-]*\)$/\1/'`
@@ -35,7 +35,7 @@ setup_module() {
 	upstream_version=$2
 
 	if [ ! -d "$module_path" ]; then
-		echo " !! Module $1 not found!"
+		log " !! Module $1 not found!"
 		install_or_update_module $1
 		return $?
 	elif [ -n "$upstream_version" ]; then # module is already there, lets see if the versions match
@@ -43,7 +43,7 @@ setup_module() {
 		local installed_version=`cat "$module_path/version" 2> /dev/null`
 
 		if [ `is_bigger_than $upstream_version $installed_version` == 1 ]; then
-		echo " -- Updating $module module to version $upstream_version!"
+		log " -- Updating $module module to version $upstream_version!"
 			install_or_update_module $1
 			return $?
 		fi
@@ -95,7 +95,7 @@ run_active_modules() {
 			continue
 		fi
 
-		echo -e "\n${bold} >> Running $current_module module!${bold_end}\n"
+		log -e "\n${bold} >> Running $current_module module!${bold_end}\n"
 
 		# now, go!
 		. "$module_path/core/run"
