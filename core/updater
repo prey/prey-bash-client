@@ -201,7 +201,7 @@ perform_update() {
 
 	if [[ $update_status == 0 && `is_bigger_than $version $previous_version` == 1 ]]; then
 
-			log " ** Update OK! New installed version of Prey is $version."
+			log " ++ Update OK! New installed version of Prey is $version."
 
 	else
 
@@ -281,7 +281,7 @@ install_or_update_module(){
 			delete_unneeded_stuff_in "$base_path/modules/$1/platform"
 			rm "$module_file" 2> /dev/null
 
-			log " ** New $1 module placed and ready to go!"
+			log " ++ New $1 module placed and ready to go!"
 			return 0
 		fi
 
