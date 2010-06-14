@@ -16,7 +16,7 @@ until [ -z "$1" ]; do
 		echo -e "\n -- CHECK MODE ENABLED."
 		check_mode=1
 	elif [[ "$1" == "-l" || "$1" == "--log" ]]; then
-		logfile="$base_path/prey-$RANDOM.log"
+		logfile="$base_path/prey.log"
 		echo "" > "$logfile" # empty the logfile first
 		log_output=">> $logfile"
 	elif [[ "$1" == "-s" || "$1" == "--silent" ]]; then
