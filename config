@@ -36,7 +36,7 @@ device_key=''
 
 # if you're having trouble getting requests across your firewall or proxy,
 # you can try adding '-0' to make curl perform HTTP 1.0 requests
-curl_options='-H "Accept-Encoding: gzip,deflate"'
+curl_options='--compress'
 
 # whether to send your device's LAN and gateway IP address as headers when
 # checking its status. currently only for testing purposes, but maybe in the

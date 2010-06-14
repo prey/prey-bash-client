@@ -5,10 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-log_action(){
-	echo "$1" >> $tmpbase/prey-actions.log
-}
-
 # modules can queue specific actions by calling
 # add_action 'module_name' 'function_name'
 add_action(){
@@ -40,7 +36,7 @@ action_callback(){
 		echo -n ""
 	done
 
-	log "Action done. Running callback!"
+	log " -- Action finished. Running callback!"
 	eval '$1 $REPLY'
 }
 
@@ -62,7 +58,7 @@ remove_pidfile(){
 		log ' -- Removing pidfile...'
 		rm -f "$pidfile" 2> /dev/null
 	else
-		log ' -- Pidfile doesnt exist!'
+		log " -- Pidfile doesn't exist!"
 	fi
 }
 
@@ -70,7 +66,7 @@ check_running_actions(){
 	for pidfile in `ls "$tmpbase/prey-*.pid" 2>/dev/null`; do
 
 		if [ ! -f $pidfile ]; then
-			continue # this is to skip the actual prey-* we may get as a response
+			continue # just to make sure
 		fi
 
 		local action_name=`basename $pidfile | sed -e 's/prey-//' -e 's/\.pid//'`
@@ -110,7 +106,7 @@ run_pending_actions(){
 
 			local current_module=`echo $action | sed 's/=.*//'`
 			local function=`echo $action | sed 's/.*=\(.*\)/\1/'`
-			
+
 			if [ ! -z `get_running_action $current_module` ]; then
 				log " -- $current_module is already running! Skipping..."
 				continue
