@@ -25,13 +25,13 @@ fi
 . "$base_path/platform/$os/functions"
 
 # if [ `number_of_instances_of prey.sh` -gt 1 ]; then
-# 	echo ' -- Prey is already running!'
+# 	log ' -- Prey is already running!'
 # 	exit 1
 # fi
 
 # trap "echo -- Kill signal detected.; wait" SIGTERM SIGKILL SIGQUIT
 
-echo -e "${cyan}$STRING_START ### `uname -a`${color_end}\n"
+log "${cyan}$STRING_START ### `uname -a`${color_end}\n"
 
 ####################################################################
 # lets check if we're actually connected
@@ -42,7 +42,7 @@ check_net_status
 if [ $connected == 0 ]; then
 
 	if [ "$auto_connect" == "y" ]; then
-		echo "$STRING_TRY_TO_CONNECT"
+		log "$STRING_TRY_TO_CONNECT"
 		try_to_connect
 	fi
 
@@ -50,10 +50,10 @@ if [ $connected == 0 ]; then
 	sleep 3
 	check_net_status
 	if [ $connected == 0 ]; then
-		echo "$STRING_NO_CONNECT_TO_WIFI"
+		log "$STRING_NO_CONNECT_TO_WIFI"
 
 		if [ -f "$last_response" ]; then # offline actions were enabled
-			echo ' -- Offline actions enabled!'
+			log ' -- Offline actions enabled!'
 			get_last_response
 		else
 			exit 1
@@ -61,7 +61,7 @@ if [ $connected == 0 ]; then
 
 	fi
 else
-	echo ' -- Got network connection!'
+	log ' -- Got network connection!'
 fi
 
 
@@ -71,7 +71,7 @@ fi
 
 if [[ $connected == 1 && -n "$api_key" && -z "$device_key" ]]; then
 
-	echo -e "\n${bold} >> Running self setup!${bold_end}\n"
+	log "\n${bold} >> Running self setup!${bold_end}\n"
 	self_setup
 
 fi
@@ -82,10 +82,10 @@ fi
 
 if [ -n "$check_mode" ]; then
 
-	echo -e "\n${bold} >> Verifying Prey installation...${bold_end}\n"
+	log "\n${bold} >> Verifying Prey installation...${bold_end}\n"
 	verify_installation
 
-	echo -e "\n${bold} >> Verifying API and Device keys...${bold_end}\n"
+	log "\n${bold} >> Verifying API and Device keys...${bold_end}\n"
 	verify_keys
 	exit $?
 
@@ -100,41 +100,40 @@ fi
 create_tmpdir
 
 if [[ $connected == 1 && -n "$check_url" ]]; then
-	echo "$STRING_CHECK_URL"
+	log "$STRING_CHECK_URL"
 
 	check_device_status
 	parse_headers
 	# process_response
 	process_config
+	process_module_config
 
-	echo -e "\n${bold} >> Verifying status...${bold_end}\n"
-	echo -e " -- Got status code $status!"
+	log "\n${bold} >> Verifying status...${bold_end}\n"
+	log " -- Got status code $status!"
 
 	if [ "$status" == "$missing_status_code" ]; then
 
-		echo -e "$STRING_PROBLEM"
+		log "$STRING_PROBLEM"
 
 		####################################################################
 		# initialize and fire off active modules
 		####################################################################
 
-		process_module_config
-
 		set +e # error mode off, just continue if a module fails
-		echo -e " -- Running active report modules..."
+		log " -- Running active report modules..."
 		run_active_modules
 
 		####################################################################
 		# lets send whatever we've gathered
 		####################################################################
 
-		echo -e "\n${bold} >> Sending report!${bold_end}\n"
+		log "\n${bold} >> Sending report!${bold_end}\n"
 		send_report
 
-		echo -e "\n$STRING_DONE"
+		log "\n$STRING_DONE"
 
 	else
-		echo -e "$STRING_NO_PROBLEM"
+		log "$STRING_NO_PROBLEM"
 	fi
 fi
 
