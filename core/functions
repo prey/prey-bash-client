@@ -78,6 +78,14 @@ remove_traces(){
 # file functions
 ####################################################################
 
+# receives a path, returns the absolute path
+full_path(){
+	if [ "$1" != '.' ]; then
+		cd ${1%/*}
+	fi
+	echo $PWD
+}
+
 create_tmpdir(){
 	# lets create our ultramegasecret temp dir
 	if [ ! -d "$tmpdir" ]; then
@@ -176,8 +184,8 @@ get_current_delay(){
 }
 
 update_execution_delay(){
-	local real_path=$(readlink -f "$base_path")
-	(crontab -l | grep -v prey; echo "*/$1 * * * * $real_path/prey.sh > /var/log/prey.log") | crontab -
+	local full_path=`full_path "$base_path"`
+	(crontab -l | grep -v prey; echo "*/$1 * * * * $full_path/prey.sh > /var/log/prey.log") | crontab -
 }
 
 ####################################################################
