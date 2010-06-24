@@ -15,6 +15,7 @@ until [ -z "$1" ]; do
 	elif [[ "$1" == '-c' || "$1" == '--check' ]]; then
 		echo -e "\n -- CHECK MODE ENABLED."
 		check_mode=1
+		
 	elif [[ "$1" == "-l" || "$1" == "--log" ]]; then
 		logfile="$base_path/prey.log"
 		echo "" > "$logfile" # empty the logfile first
