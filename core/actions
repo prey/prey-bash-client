@@ -63,7 +63,8 @@ remove_pidfile(){
 }
 
 check_running_actions(){
-	for pidfile in `ls "$tmpbase/prey-*.pid" 2>/dev/null`; do
+
+	for pidfile in `ls $tmpbase/prey-*.pid 2> /dev/null`; do
 
 		if [ ! -f $pidfile ]; then
 			continue # just to make sure
