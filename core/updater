@@ -274,7 +274,7 @@ install_or_update_module(){
 				rm -Rf "$base_path/modules/$1"
 			fi
 
-			log ' -- Putting new module in its right position...'
+			log ' -- Putting new module where it belongs...'
 			mv "$tmpdir/$1.tmp/$1" "$base_path/modules/$1"
 
 			log ' -- Cleaning up...'
