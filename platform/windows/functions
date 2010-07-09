@@ -78,10 +78,14 @@ get_internal_ip() {
 }
 
 get_wifi_info() {
-	if [ "`is_net_framework_installed`" == 1 ]; then
-		wifi_info=`autowc.exe -list`
+	if [ -n "$winxp" ]; then
+		wifi_info=`autowcxp.exe -list`
 	else
-		log " !! .NET framework version $required_net_version or newer not installed!"
+		if [ "`is_net_framework_installed`" == 1 ]; then
+			wifi_info=`autowc.exe -list`
+		else
+			log " !! .NET framework version $required_net_version or newer not installed!"
+		fi
 	fi
 }
 
