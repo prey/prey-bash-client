@@ -71,7 +71,7 @@ post_update_hook(){
 ############################################
 get_pc_info(){
 	pc_name=`system_profiler SPSoftwareDataType | grep 'Computer Name' | sed 's/.*: //g'`
-	pc_os_number=`sw_vers -productVersion | cut -c1-4`
+	local pc_os_number=`sw_vers -productVersion | cut -c1-4`
 
 	if [ $pc_os_number == "10.6" ]; then
 		pc_os_version="snow-leopard"

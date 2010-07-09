@@ -48,16 +48,17 @@ try_to_connect() {
 		if [ -n "$wifi_device" ]; then
 
 			# access_points=`iwlist $wifi_device | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr`
-			open_essid=`iwlist $wifi_device scan | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr | grep "off" | head -1 | cut -d ' ' -f1 | sed 's/"//g'`
+			local open_essid=`iwlist $wifi_device scan | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr | grep "off" | head -1 | cut -d ' ' -f1 | sed 's/"//g'`
 
 			# lets see if we have a valid device and essid
 			if [ -n $open_essid ]; then
-				iwconfig $wifi_device essid $open_essid
+				/sbin/iwconfig $wifi_device essid $open_essid
+				/sbin/dhclient3 $wifi_device
 			fi
 
 		else
 
-			echo -e ' !! No wifi device found!'
+			log ' !! No wifi device found!'
 
 		fi
 
@@ -83,7 +84,7 @@ pre_update_hook(){
 # post update hooks go in here
 post_update_hook(){
 	log ' -- Reloading Prey...'
-	$base_path/prey.sh & # lets restart prey now
+	"$base_path/prey.sh" & # lets restart prey now
 }
 
 ############################################
@@ -100,9 +101,9 @@ get_pc_info(){
 		pc_type="Portable"
 	fi
 
-	distro=`cat /proc/version 2>&1`
+	local distro=`cat /proc/version 2>&1`
 
-	if [[ "$distro" =~ "Ubuntu" ]]; then
+	if [[ "$distro" =~ "Ubuntu|Debian" ]]; then
 		pc_os_version='ubuntu'
 	elif [[ "$distro" =~ "Fedora|Redhat|CentOS" ]]; then
 		pc_os_version='fedora'

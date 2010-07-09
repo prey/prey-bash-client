@@ -174,17 +174,20 @@ post_update_hook(){
 get_pc_info(){
 
 	pc_name=`hostname`
-	local pc_os_number=`wmic os get caption | grep -i 'microsoft'`
-
-	if [[ -n `echo "$pc_os_number" | grep '7'` ]]; then
-		pc_os_version="7"
-	elif [[ -n `echo "$pc_os_number" | grep -i 'xp'` ]]; then
-		pc_os_version="XP"
+	if [ -n "$winxp" ]; then
+		pc_os_version="xp"
 	else
-		pc_os_version="Vista"
+		local pc_os_number=`echo os get caption | wmic 2> /dev/null | grep -i 'microsoft'`
+
+		if [[ -n `echo "$pc_os_number" | grep -i 'vista'` ]]; then
+			pc_os_version="vista"
+		else
+			pc_os_version="7"
+		fi
+
 	fi
 
-  local chassis_type=`wmic systemenclosure get ChassisTypes | grep '{' | sed 's/[^0-9]//g'`
+  local chassis_type=`echo systemenclosure get ChassisTypes | wmic 2> /dev/null | grep '{' | sed 's/[^0-9]//g'`
 	if [[ $chassis_type == "8" || $chassis_type == "9" || $chassis_type == "10" || $chassis_type == "11" || $chassis_type == "14" ]]; then
 		pc_type="Portable"
 	else
