@@ -43,14 +43,6 @@ process_config(){
 		log " -- Delay in sync."
 	fi
 
-	# lets see if offline actions are enabled
-
-	if [ "$offline_actions" == 'true' ]; then # we save the response in case we need it later
-		echo -e "$response"	> "$last_response"
-	elif [ -f "$last_response" ]; then # otherwise, lets make sure there's nothing there
-		rm -f "$last_response" 2> /dev/null
-	fi
-
 	# check the current version against the one gotten from the server
 
 	if [[ "$auto_update" == "true" && `is_bigger_than $current_release $version` == 1 ]]; then

@@ -124,6 +124,7 @@ is_module_active() {
 ############################################
 
 reset_permissions(){
+	log ' -- Resetting permissions...'
 	if [ -n "$winxp" ]; then
 		local command="echo y| cacls.exe"
 		local readonly="//t //c //p Everyone:r //g Administrators:f"
@@ -133,7 +134,6 @@ reset_permissions(){
 		local readonly="//T //C //grant Everyone:R"
 		local fullaccess="//T //C //grant Everyone:F"
 	fi
-	log ' -- Resetting permissions...'
 	# perhaps we should iterate over the diff file and only apply this on the
 	# modified files, but seems like overkill to me -- Tomas
 	eval $command \"$base_path/*\" "$readonly" &> /dev/null
@@ -153,6 +153,9 @@ pre_update_check(){
 
 pre_update_hook(){
 
+	# stop the cron windows service
+	TASKKILL //F //IM cronsvc.exe //T &> /dev/null
+
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
 	local configurator_running=`is_process_running 'prey-config.exe'`
@@ -168,8 +171,7 @@ pre_update_hook(){
 post_update_hook(){
 	reset_permissions
 	log ' -- Reloading Prey...'
-	net stop PreyService
-	net start PreyService
+	net start "Cron Service for Prey"
 }
 
 ############################################
@@ -181,7 +183,7 @@ get_pc_info(){
 	if [ -n "$winxp" ]; then
 		pc_os_version="xp"
 	else
-		local pc_os_number=`echo os get caption | wmic 2> /dev/null | grep -i 'microsoft'`
+		local pc_os_number=`echo 'os get caption' | wmic 2> /dev/null | grep -i 'microsoft'`
 
 		if [[ -n `echo "$pc_os_number" | grep -i 'vista'` ]]; then
 			pc_os_version="vista"
@@ -191,7 +193,7 @@ get_pc_info(){
 
 	fi
 
-  local chassis_type=`echo systemenclosure get ChassisTypes | wmic 2> /dev/null | grep '{' | sed 's/[^0-9]//g'`
+  local chassis_type=`echo 'systemenclosure get ChassisTypes' | wmic 2> /dev/null | grep '{' | sed 's/[^0-9]//g'`
 	if [[ $chassis_type == "8" || $chassis_type == "9" || $chassis_type == "10" || $chassis_type == "11" || $chassis_type == "14" ]]; then
 		pc_type="Portable"
 	else

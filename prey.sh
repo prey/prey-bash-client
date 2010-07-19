@@ -51,14 +51,6 @@ if [ $connected == 0 ]; then
 	check_net_status
 	if [ $connected == 0 ]; then
 		log "$STRING_NO_CONNECT_TO_WIFI"
-
-		if [ -f "$last_response" ]; then # offline actions were enabled
-			log ' -- Offline actions enabled!'
-			get_last_response
-		else
-			exit 1
-		fi
-
 	fi
 else
 	log ' -- Got network connection!'

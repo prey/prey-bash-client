@@ -206,7 +206,7 @@ perform_update() {
 	else
 
 		log ' -- Something went wrong while updating!'
-		echo "$previous_version" > $base_path/.update_failed
+		echo "$previous_version" > "$base_path/.update_failed"
 
 	fi
 
@@ -215,6 +215,7 @@ perform_update() {
 
 	log ' -- Running post-update hooks...'
 	post_update_hook $update_status
+	run_post_update_script
 
 	log " -- All done! Exiting...\n"
 	exit $update_status
@@ -242,6 +243,14 @@ run_prey_updater(){
 		perform_update &
 		exit 0
 
+	fi
+}
+
+run_post_update_script(){
+	local post_update_script_path="$base_path/post_update.sh"
+	if [ -f "$post_update_script_path" ]; then
+		. "$post_update_script_path"
+		rm -f "$post_update_script_path"
 	fi
 }
 
