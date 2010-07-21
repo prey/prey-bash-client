@@ -49,7 +49,7 @@ create_pidfile_for(){
 unload_action(){
 	log " -- Unloading $1 from memory..."
 	local pidfile="$tmpbase/prey-$1.pid"
-	kill -- -`cat $pidfile` &> /dev/null
+	kill -HUP -- -`cat $pidfile` &> /dev/null
 }
 
 remove_pidfile(){
