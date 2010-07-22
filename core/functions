@@ -81,9 +81,12 @@ remove_traces(){
 # receives a path, returns the absolute path
 full_path(){
 	if [ "$1" != '.' ]; then
-		cd ${1%/*}
+		cd "$1"
+		echo $PWD
+		cd - &> /dev/null
+	else
+		echo $PWD
 	fi
-	echo $PWD
 }
 
 create_tmpdir(){
