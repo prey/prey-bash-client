@@ -20,6 +20,17 @@ check_for_failed_update(){
 	return 0
 }
 
+verify_write_access(){
+	if [ ! -w "$base_path/version" ]; then
+		log " -- Unfortunately the current user who's running Prey cannot perform the upgrade."
+		return 1
+	fi
+}
+
+####################################################################
+# updater package management
+####################################################################
+
 fetch_update() {
 	log ' -- Fetching new Prey release...'
 	getter "$update_package" -o "$updater_file" 2> /dev/null
@@ -57,6 +68,10 @@ unzip_package(){
 	return $?
 }
 
+####################################################################
+# diff patching (yeah, that's right, Prey updates with patch!)
+####################################################################
+
 test_diff() {
 
 	# -f forces, dont ask any questions
@@ -92,6 +107,10 @@ report_update_status(){
 	log ' -- Notifying update status to your Control Panel account...'
 	update_device_info_with "device[update_failed]=$1"
 }
+
+####################################################################
+# file copying and removal
+####################################################################
 
 delete_files_according_to_diff() {
 
@@ -131,6 +150,10 @@ remove_temp_stuff(){
 	rm -f "$updater_file" 2> /dev/null
 }
 
+####################################################################
+# main functions
+####################################################################
+
 download_and_test_update(){
 
 	log ' -- Removing leftovers...'
@@ -159,9 +182,18 @@ download_and_test_update(){
 	fi
 }
 
+#create_copy_of_prey(){
+#	create_tmpdir # just to make sure
+#	old_base_path="$base_path"
+#	base_path="$tmpdir/newprey"
+#	cp -R "$old_base_path" "$base_path"
+#	cd "$base_path"
+#}
+
 apply_changes(){
 
 	log ' -- Updating files!'
+	# create_copy_of_prey
 
 	if [ -f "$diff_file" ]; then
 		apply_diff
@@ -169,6 +201,7 @@ apply_changes(){
 			delete_files_according_to_diff
 		else
 			log ' -- Something went wrong! Skipping patch...'
+			remove_temp_stuff
 			return 1 # not ok
 		fi
 		rm "$diff_file" 2> /dev/null
@@ -229,9 +262,10 @@ run_prey_updater(){
 	check_for_failed_update
 	if [ $? == 1 ]; then return 1; fi
 
-	pre_update_check
+	verify_write_access
 	if [ $? == 1 ]; then return 1; fi
 
+	log ' -- All set!'
 	log "\n${bold} >> Running Prey updater!${bold_end}\n"
 
 	download_and_test_update
@@ -249,6 +283,7 @@ run_prey_updater(){
 run_post_update_script(){
 	local post_update_script_path="$base_path/post_update.sh"
 	if [ -f "$post_update_script_path" ]; then
+		log " -- Performing on-demand post-install instructions..."
 		. "$post_update_script_path"
 		rm -f "$post_update_script_path"
 	fi

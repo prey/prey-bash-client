@@ -52,15 +52,6 @@ is_net_framework_installed() {
 	return 0
 }
 
-# a simple way to check if the current running user can edit files from within prey
-user_has_access(){
-	mv "$base_path/version" "$base_path/version.tmp" 2> /dev/null
-	if [ $? == 0 ]; then
-		mv "$base_path/version.tmp" "$base_path/version"
-		echo 1
-	fi
-}
-
 ############################################
 # core network functions
 ############################################
@@ -159,16 +150,6 @@ reset_permissions(){
 	eval $command \"$base_path/*\" "$readonly" &> /dev/null
 	eval $command \"$base_path/prey.log\" "$fullaccess" &> /dev/null
 	# eval $command \"$platform_path\tmp\" "$fullaccess" &> /dev/null
-}
-
-# lets make sure the running user has write access to the files,
-# otherwise we wont be able to patch or replace them
-pre_update_check(){
-	if [ -z `user_has_access` ]; then
-		log " -- Unfortunately the current user who's running Prey cannot perform the upgrade."
-		return 1
-	fi
-	return 0
 }
 
 pre_update_hook(){

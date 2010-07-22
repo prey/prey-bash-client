@@ -70,11 +70,6 @@ try_to_connect() {
 # updater-specific functions
 ############################################
 
-pre_update_check(){
-	log ' -- All set!'
-	return 0
-}
-
 # here we'll eventually put whatever we need to do in linux before
 # performing a full update
 pre_update_hook(){

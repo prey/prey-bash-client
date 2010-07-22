@@ -49,12 +49,6 @@ try_to_connect() {
 # updater-specific functions
 ############################################
 
-# check permissions, whatever goes here
-pre_update_check(){
-	log ' -- All set!'
-	return 0
-}
-
 # check plist, shutdown task
 pre_update_hook(){
 	return 0
