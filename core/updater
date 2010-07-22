@@ -20,6 +20,17 @@ check_for_failed_update(){
 	return 0
 }
 
+verify_write_access(){
+	if [ ! -w "$base_path" ]; then
+		echo ' -- Path not writable!'
+		return 1
+	fi
+}
+
+####################################################################
+# updater package management
+####################################################################
+
 fetch_update() {
 	echo ' -- Fetching new Prey release...'
 	getter "$update_package" -o "$updater_file" 2> /dev/null
@@ -57,6 +68,10 @@ unzip_package(){
 	return $?
 }
 
+####################################################################
+# diff patching (yeah, that's right, Prey updates with patch!)
+####################################################################
+
 test_diff() {
 
 	# -f forces, dont ask any questions
@@ -92,6 +107,10 @@ report_update_status(){
 	echo ' -- Notifying update status to your Control Panel account...'
 	getter -X PUT -u $api_key:x $control_panel_url/devices/$device_key.xml -d "device[update_failed]=$1" &> /dev/null
 }
+
+####################################################################
+# file copying and removal
+####################################################################
 
 delete_files_according_to_diff() {
 
@@ -130,6 +149,10 @@ remove_temp_stuff(){
 	rm -Rf "$updater_path" 2> /dev/null
 	rm -f "$updater_file" 2> /dev/null
 }
+
+####################################################################
+# main functions
+####################################################################
 
 download_and_test_update(){
 
@@ -239,8 +262,10 @@ run_prey_updater(){
 	check_for_failed_update
 	if [ $? == 1 ]; then return 1; fi
 
-	pre_update_check
+	verify_write_access
 	if [ $? == 1 ]; then return 1; fi
+
+	echo ' -- All set!'
 
 	echo -e "\n${bold} >> Running Prey updater!${bold_end}\n"
 
