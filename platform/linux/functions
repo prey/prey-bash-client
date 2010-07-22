@@ -1,8 +1,7 @@
 #!/bin/bash
 ####################################################################
-# Prey Linux Specific Functions - by Tomas Pollak (bootlog.org)
-# URL : http://preyproject.com
-# License: GPLv3
+# Prey Linux Specific Functions - by Tomas Pollak
+# (c) 2010 Fork Ltd. (usefork.com) - Licensed under the GPLv3.
 ####################################################################
 
 run_as_current_user(){
@@ -20,13 +19,13 @@ get_gateway_ip() {
 }
 
 get_wifi_device() {
-	if [ ! -n "$wifi_device" ]; then
+	if [ -z "$wifi_device" ]; then
 		wifi_device=`cat /proc/net/wireless | tail -1 | grep -v "nwid" | sed -e 's/^\([^:].*\):.*/\1/' -e 's/ //g'`
 	fi
 }
 
 get_wifi_info() {
-	if [ ! -n "$wifi_info" ]; then
+	if [ -z "$wifi_info" ]; then
 		wifi_info=`iwconfig 2>&1 | grep -v "no wireless"`
 	fi
 }
