@@ -101,21 +101,41 @@ try_to_connect() {
 # module functions
 ############################################
 
-get_current_delay() {
-	local delay_in_miliseconds=`reg query "$prey_reg_key" //v "Delay" | grep Delay | sed "s/[^0-9]*//"`
-	echo $(($delay_in_miliseconds/60000))
+get_delay_for(){
+	local delay_var=$(($1*1))
+	if [ "$delay_var" == "$1" ]; then # integer, minute
+		echo $(($1*60*1000))
+	else
+		case "$1" in
+		"hourly")
+			echo 3600000 # 60 * 60 * 1000
+			;;
+		"daily")
+			echo 86400000 # 24 * 60 * 60 * 1000
+			;;
+		"weekly")
+			echo 604800000 # 7 * 24 * 60 * 60 * 1000
+			;;
+		# "monthly")
+		# 	echo 18144000000 # 30 * 7 * 24 * 60 * 60 * 1000
+		# 	;;
+		esac
+	fi
 }
 
-update_execution_delay() {
-	local delay_in_miliseconds=$(($1*60*1000))
-	reg add "$prey_reg_key" //v "Delay" //d "$delay_in_miliseconds" //f > /dev/null
+get_current_delay(){
+	reg query "$prey_reg_key" //v "Delay" | grep Delay | sed "s/[^0-9]*//"
+}
+
+update_execution_delay(){
+	reg add "$prey_reg_key" //v "Delay" //d "$new_delay" //f > /dev/null
 }
 
 ############################################
 # module functions
 ############################################
 
-is_module_active() {
+is_module_active(){
 	cat "$base_path/modules/$1/active" 2> /dev/null
 }
 

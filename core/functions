@@ -155,7 +155,6 @@ is_bigger_than() {
 capitalize(){
 	#echo "$1" | sed -r 's/\b(.)/\U\1/g'
 	echo "$1" | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1'
-
 }
 
 urlencode(){
@@ -180,16 +179,39 @@ decrypt(){
 ####################################################################
 
 get_current_delay(){
-	crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
+	# crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
+	crontab -l | grep prey | head -1 | sed 's/ \/.*//'
+}
+
+get_delay_for(){
+	local delay_var=$(($1*1))
+	if [ "$delay_var" == "$1" ]; then # integer, minute
+		echo '*/'$1' * * * *'
+	else
+		case "$1" in
+		"hourly")
+			echo '1 * * * *' # first minute of every hour
+			;;
+		"daily")
+			echo '1 10 * * *' # at 10:01 o'clock every day
+			;;
+		"weekly")
+			echo '1 10 * * 1' # at 10:01 o'clock every monday
+			;;
+		# "monthly")
+		# 	echo '1 10 1 * *' # at 10:01 o'clock every 1st of month
+		# 	;;
+		esac
+	fi
 }
 
 update_execution_delay(){
 	local full_path=`full_path "$base_path"`
-	(crontab -l | grep -v prey; echo "*/$1 * * * * $full_path/prey.sh > /var/log/prey.log") | crontab -
+	(crontab -l | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log") | crontab -
 }
 
 ####################################################################
-# utility functions for managing process
+# utility functions for managing processes
 ####################################################################
 
 function_exists() {

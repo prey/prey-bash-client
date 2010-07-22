@@ -36,11 +36,13 @@ process_config(){
 
 	# check the current delay against the instruction from the server
 
-	if [ "`get_current_delay`" != "$delay" ]; then
-		log " -- Setting delay to $delay minutes!"
-		update_execution_delay $delay
+	new_delay=`get_delay_for $delay`
+
+	if [ "`get_current_delay`" != "$new_delay" ]; then
+		log " -- Setting frequency to $delay!"
+		update_execution_delay "$new_delay"
 	else
-		log " -- Delay in sync."
+		log " -- Frequency in sync."
 	fi
 
 	# check the current version against the one gotten from the server
