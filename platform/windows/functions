@@ -22,16 +22,16 @@ verify_installation(){
 
 	# check prey service on
 	log " -- Checking if Prey system service is running..."
-	local cron_running=`is_process_running "cronsvc"`
+	local cron_running=`is_process_running "cron"`
 	if [ -n "$cron_running" ]; then
-		echo " -- Cron system service up and running. Good."
+		echo " -- Cron service up and running. Good."
 	else
-		echo " !! Cron system service not found! Please make sure no antivirus is blocking Cron Service (cronsvc) from running. Optionally reinstall. :)"
+		echo " !! Cron service not found! Please make sure no antivirus is blocking cron.exe from running. Optionally reinstall. :)"
 	fi
 
 	# check net framework
 	log ' -- Checking for installed .NET Framework...'
-	if [ "`is_net_framework_installed`" == 1 ]; then
+	if [ -n "`is_net_framework_installed`" ]; then
 		log " -- Required .NET version $required_net_version or newer is installed. All good."
 	else
 		log " !! .NET framework version $required_net_version or newer not installed!"
@@ -49,7 +49,6 @@ is_net_framework_installed() {
 			break
 		fi
 	done
-	return 0
 }
 
 ############################################
@@ -154,8 +153,15 @@ reset_permissions(){
 
 pre_update_hook(){
 
+	# lets check if theres another user logged in and running cron.exe
+	for cron in `tasklist | grep 'cron.exe'`; do
+		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
+		echo " -- Shutting down cron with PID $pid..."
+		"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
+	done
+
 	# stop the cron windows service
-	TASKKILL //F //IM cronsvc.exe //T &> /dev/null
+	# TASKKILL //F //IM cronsvc.exe //T &> /dev/null
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
@@ -172,7 +178,7 @@ pre_update_hook(){
 post_update_hook(){
 	reset_permissions
 	log ' -- Reloading Prey...'
-	net start "Cron Service for Prey"
+	"$platform_path\cron.exe --log" &
 }
 
 ############################################
