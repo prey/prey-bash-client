@@ -159,9 +159,18 @@ download_and_test_update(){
 	fi
 }
 
+#create_copy_of_prey(){
+#	create_tmpdir # just to make sure
+#	old_base_path="$base_path"
+#	base_path="$tmpdir/newprey"
+#	cp -R "$old_base_path" "$base_path"
+#	cd "$base_path"
+#}
+
 apply_changes(){
 
 	echo ' -- Updating files!'
+	# create_copy_of_prey
 
 	if [ -f "$diff_file" ]; then
 		apply_diff
@@ -169,6 +178,7 @@ apply_changes(){
 			delete_files_according_to_diff
 		else
 			echo ' -- Something went wrong! Skipping patch...'
+			remove_temp_stuff
 			return 1 # not ok
 		fi
 		rm "$diff_file" 2> /dev/null
@@ -206,7 +216,7 @@ perform_update() {
 	else
 
 		echo ' -- Something went wrong while updating!'
-		echo "$previous_version" > $base_path/.update_failed
+		echo "$previous_version" > "$base_path/.update_failed"
 
 	fi
 
@@ -215,6 +225,7 @@ perform_update() {
 
 	echo ' -- Running post-update hooks...'
 	post_update_hook $update_status
+	run_post_update_script
 
 	echo -e " -- All done! Exiting...\n"
 	exit $update_status
@@ -242,6 +253,15 @@ run_prey_updater(){
 		perform_update &
 		exit 0
 
+	fi
+}
+
+run_post_update_script(){
+	local post_update_script_path="$base_path/post_update.sh"
+	if [ -f "$post_update_script_path" ]; then
+		echo " -- Performing on-demand post-install instructions..."
+		. "$post_update_script_path"
+		rm -f "$post_update_script_path"
 	fi
 }
 
