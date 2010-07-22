@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-alias md5sum='md5 -r'
+alias md5sum='/sbin/md5 -r'
 
 readonly logged_pid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
 
