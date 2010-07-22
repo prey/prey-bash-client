@@ -230,13 +230,13 @@ number_of_instances_of(){
 }
 
 get_pid(){
-	ps ax | grep -i "$1" | head -1 | cut -d ' ' -f1
+	ps ax | grep -i "$1" | grep -v grep | head -1 | cut -d ' ' -f1
 }
 
 kill_process(){
-	if [ -n `is_process_running $1` ]; then
-		local pid=`get_pid $1`
-		kill -9 $pid
+	local pid=`get_pid $1`
+	if [ -n "$pid" ]; then
+		kill -9 $pid 2> /dev/null
 	fi
 }
 
