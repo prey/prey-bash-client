@@ -71,14 +71,20 @@ check_running_actions(){
 		fi
 
 		local action_name=`basename $pidfile | sed -e 's/prey-//' -e 's/\.pid//'`
-		log " -- Found running action: $action_name"
+		log " -- Found pid for running action: $action_name"
+
+		local pid=`cat $pidfile`
+		local actually_running=`ps ax | grep $pid | grep -v grep > /dev/null && echo 1`
 
 		if [ -z `get_action $action_name` ]; then # action was removed from options
 			# log " -- Removing $action_name which was untoggled by user..."
 			unload_action $action_name
 			sleep 1
+		elif [ -z "$actually_running" ]; then
+			log " -- Not really running! Pidfile was just lying around."
+			rm -f "$pidfile"
 		else
-			add_running_action $action_name `cat $pidfile`
+			add_running_action $action_name $pid
 		fi
 
 	done

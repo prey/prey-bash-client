@@ -230,7 +230,7 @@ number_of_instances_of(){
 }
 
 get_pid(){
-	ps ax | grep -i "$1" | grep -v grep | head -1 | cut -d ' ' -f1
+	ps ax | grep -i "$1" | grep -v grep | head -1 |  sed 's/ \?\([0-9]*\).*/\1/'
 }
 
 kill_process(){
