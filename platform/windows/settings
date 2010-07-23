@@ -40,3 +40,5 @@ else # xp and 2000
 fi
 
 readonly home_path="$users_path\\${logged_user}"
+
+# readonly config_program="$platform_path/prey-config.exe"

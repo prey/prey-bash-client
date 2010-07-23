@@ -8,3 +8,5 @@
 readonly system_path="/etc"
 readonly users_path="/home"
 readonly programs_path="/usr"
+
+# readonly config_program="$platform_path/prey-config.py"

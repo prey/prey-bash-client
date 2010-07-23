@@ -140,6 +140,17 @@ remove_files(){
 	unset -v files
 }
 
+# checks if file was modified in the last n minutes
+# usage: was_file_modified /path/to/file.txt 2
+# returns 1 if true
+was_file_modified(){
+	local dir=`dirname $1`
+	local file=`basename $1`
+	cd "$dir"
+	find . -maxdepth 1 -mmin -$2 -name "$file" | grep "$file" > /dev/null && echo 1
+	cd - > /dev/null
+}
+
 ####################################################################
 # string and integer functions
 ####################################################################
@@ -222,7 +233,7 @@ function_exists() {
 }
 
 is_process_running(){
-	processes | grep -v grep | grep "$1" > /dev/null && echo 1 || return 0
+	processes | grep -v grep | grep "$1" > /dev/null && echo 1
 }
 
 number_of_instances_of(){
@@ -256,8 +267,7 @@ get_internal_ip() {
 
 verify_installation(){
 	log " -- Checking if cron daemon is running..."
-	local cron_running=`is_process_running 'cron'`
-	if [ $cron_running == 1 ]; then
+	if [ -n `is_process_running 'cron'` ]; then
 		log " -- Cron daemon found."
 	else
 		log " !! Cron daemon not found! Try running it with 'sudo /etc/init.d/cron start'."
@@ -300,7 +310,7 @@ self_setup(){
 
 	else
 
-		log " -- Couldn't add this device to your account. Make sure you have available slots.\n"
+		log " -- Couldn't add this device to your account. Make sure you have available slots!\n"
 		exit 1
 
 	fi

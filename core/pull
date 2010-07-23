@@ -28,14 +28,21 @@ check_net_status(){
 	fi
 }
 
+randomize_subdomain(){
+	check_url=`echo $check_url | sed "s/\/\//\/\/$RANDOM./"`
+}
+
 # we could eventually use a different method for status checking
 check_device_status(){
 	if [[ "$post_method" == 'http' ]]; then
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
 		else
-			log " !! You need to enter your Device Key for HTTP Check!\n"
+			log " !! You need to enter your Device Key for querying the Control Panel!\n"
 			exit 1
+		fi
+		if [ "$randomize_check_url" == 'y' ]; then
+			randomize_subdomain
 		fi
 	fi
 	if [ "$extended_headers" == 'y' ]; then

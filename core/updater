@@ -13,7 +13,7 @@ check_for_failed_update(){
 	if [ -f "$base_path/.update_failed" ]; then
 		update_failed_for=`cat "$base_path/.update_failed"`
 		if [ $update_failed_for == $version ]; then
-			echo ' -- Already attempted to update to next version with no luck. Skipping!'
+			log ' -- Already attempted to update to next version with no luck. Skipping!'
 			return 1
 		fi
 	fi
@@ -36,7 +36,7 @@ fetch_update() {
 	getter "$update_package" -o "$updater_file" 2> /dev/null
 
 	if [[ $? != 0 || ! -f "$updater_file" ]]; then
-		echo " !! Couldn't get updater file! Skipping..."
+		log " !! Couldn't get updater file! Skipping..."
 		rm $updater_file 2> /dev/null
 		return 1
 	fi
@@ -80,7 +80,7 @@ test_diff() {
 	# -N Ignore patches that seem to be reversed or already applied.
 	# -F2 Fuzzyness. Default is 2 lines before and after.
 
-	patch_options="-N -f -F2 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
+	patch_options="-N -f -F1 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
 
 	log ' -- Testing if patch will apply cleanly...'
 	outcome=`patcher --dry-run $patch_options`

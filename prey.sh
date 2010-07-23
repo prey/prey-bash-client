@@ -52,19 +52,30 @@ if [ $connected == 0 ]; then
 	if [ $connected == 0 ]; then
 		log "$STRING_NO_CONNECT_TO_WIFI"
 	fi
-else
-	log ' -- Got network connection!'
 fi
 
-
 ####################################################################
-# if we have an API key and no Device key, let's try to auto setup
+# check API key and perform stuff accordingly
 ####################################################################
 
-if [[ $connected == 1 && -n "$api_key" && -z "$device_key" ]]; then
+if [ $connected == 1 ]; then
 
-	log "\n${bold} >> Running self setup!${bold_end}\n"
-	self_setup
+	log ' -- Got network connection!'
+
+	# if we dont have an API key and the configurator is there, run it unless the 25 minutes have passed since installing Prey
+	if [[ -z "$api_key" && -f "$config_program" && -z `is_process_running prey-config` && -n `was_file_modified "$base_path/prey.sh" 25` ]]; then
+
+		log "\n${bold} >> Running configurator!${bold_end}\n"
+		"$config_program" &
+		exit 2 #
+
+	# we do have an API key but no device key, so let's try to add this device under the account
+	elif [[ -n "$api_key" && -z "$device_key" ]]; then
+
+		log "\n${bold} >> Registering device under account!${bold_end}\n"
+		self_setup
+
+	fi
 
 fi
 
@@ -96,7 +107,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 
 	check_device_status
 	parse_headers
-	# process_response
+
 	process_config
 	process_module_config
 
