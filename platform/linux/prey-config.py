@@ -396,6 +396,7 @@ class PreyConfigurator(object):
 		})
 		self.window = builder.get_object("window")
 		self.window.set_title(self.window.get_title() + " (v" + VERSION + ")")
+		# self.window.get_settings().set_string_property('gtk-font-name', 'sans normal 11','');
 		self.tabs = builder.get_object("reporting_mode_tabs")
 		self.root = builder
 
