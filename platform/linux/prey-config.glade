@@ -1,0 +1,1047 @@
+<?xml version="1.0"?>
+<interface>
+  <requires lib="gtk+" version="2.16"/>
+  <!-- interface-naming-policy project-wide -->
+  <!-- interface-local-resource-path /home/tomas/prey -->
+  <object class="GtkWindow" id="window">
+    <property name="visible">True</property>
+    <property name="border_width">5</property>
+    <property name="title" translatable="yes">Prey Configurator</property>
+    <property name="resizable">False</property>
+    <property name="icon">../../pixmaps/prey.ico</property>
+    <signal name="destroy" handler="on_window_destroy"/>
+    <child>
+      <object class="GtkVBox" id="vbox1">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkImage" id="image1">
+            <property name="visible">True</property>
+            <property name="xpad">10</property>
+            <property name="ypad">10</property>
+            <property name="pixbuf">../../pixmaps/prey-text.png</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox1">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkNotebook" id="main_tabs">
+                <property name="height_request">290</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="tab_border">3</property>
+                <property name="tab_hborder">8</property>
+                <property name="tab_vborder">4</property>
+                <signal name="switch_page" handler="toggle_buttons"/>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolledwindow1">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="hscrollbar_policy">automatic</property>
+                    <property name="vscrollbar_policy">automatic</property>
+                    <child>
+                      <object class="GtkLayout" id="main_settings">
+                        <property name="visible">True</property>
+                        <property name="height">340</property>
+                        <child>
+                          <object class="GtkImage" id="image6">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/delay.png</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label9">
+                            <property name="width_request">420</property>
+                            <property name="height_request">50</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0.49000000953674316</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">Number of minutes to wait before waking up Prey. Control Panel users can change this setting later on the web.</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="size" value="12000"/>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">85</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label19">
+                            <property name="width_request">470</property>
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">For advanced settings please check the config file. Modules are set up on the Control Panel.</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label22">
+                            <property name="width_request">420</property>
+                            <property name="height_request">50</property>
+                            <property name="visible">True</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">Whether we should allow guest logins on the system. On password-protected computers, this greatly increases the chances of gathering information.</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="size" value="12000"/>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">150</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkImage" id="image7">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/user.png</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">135</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="guest_account">
+                            <property name="label" translatable="yes">Enable guest account</property>
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">125</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label3">
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Frequency of reports and actions</property>
+                          </object>
+                          <packing>
+                            <property name="x">120</property>
+                            <property name="y">60</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="delay">
+                            <property name="width_request">50</property>
+                            <property name="height_request">25</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="editable">False</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <property name="caps_lock_warning">False</property>
+                            <property name="adjustment">delay_adjustment</property>
+                            <property name="snap_to_ticks">True</property>
+                            <property name="numeric">True</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">61</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkImage" id="image8">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/wifi.png</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">205</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="auto_connect">
+                            <property name="label" translatable="yes">Wifi autoconnect</property>
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">195</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label23">
+                            <property name="width_request">420</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">Allow your computer to connect automatically to the nearest available wifi access point, if no connection is found.</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="size" value="12000"/>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">220</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkImage" id="image9">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/system.png</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">275</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkCheckButton" id="extended_headers">
+                            <property name="label" translatable="yes">Extended headers</property>
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">265</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label24">
+                            <property name="width_request">320</property>
+                            <property name="height_request">50</property>
+                            <property name="visible">True</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">Whether to query the server sending additional information regarding your network. Experimental feature.</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="size" value="12000"/>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">290</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="main_settings_tab">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Main settings</property>
+                  </object>
+                  <packing>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkNotebook" id="reporting_mode_tabs">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="show_tabs">False</property>
+                    <property name="show_border">False</property>
+                    <property name="tab_border">0</property>
+                    <property name="tab_hborder">0</property>
+                    <child>
+                      <object class="GtkFixed" id="reports_options">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkImage" id="image2">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/controlpanel.png</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label2">
+                            <property name="width_request">420</property>
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">The easy &amp; powerful way. You manage and monitor this PC on preyproject.com, where you can watch new reports arrive and trigger different actions.
+</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="size" value="12000"/>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">85</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label10">
+                            <property name="width_request">490</property>
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Please choose the reporting method for Prey. If you're not sure what you're doing, please visit preyproject.com.</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="reporting_mode_option">
+                            <property name="label" translatable="yes">Prey + Control Panel (Recommended)</property>
+                            <property name="width_request">250</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">60</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="reporting_mode_email">
+                            <property name="label" translatable="yes">Prey Standalone (Advanced)</property>
+                            <property name="width_request">250</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="relief">none</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">reporting_mode_option</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">125</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label1">
+                            <property name="width_request">390</property>
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">Reports fly directly to your inbox, but you need to activate Prey by generating/deleting a URL and set up your mail server settings as well.</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="size" value="12000"/>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">150</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkImage" id="image3">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/email.png</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">135</property>
+                          </packing>
+                        </child>
+                      </object>
+                    </child>
+                    <child type="tab">
+                      <object class="GtkLabel" id="label11">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">page 1</property>
+                      </object>
+                      <packing>
+                        <property name="tab_fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFixed" id="control_panel_options">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkImage" id="image4">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/newuser.png</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label14">
+                            <property name="width_request">420</property>
+                            <property name="height_request">50</property>
+                            <property name="visible">True</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">Select this if this is the first time you installed Prey, or if you still haven't created an account in the Control Panel.</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="size" value="12000"/>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">85</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label15">
+                            <property name="width_request">490</property>
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Good choice! Have you already registered for a Control Panel account at preyproject.com?</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="new_user_option">
+                            <property name="label" translatable="yes">New user</property>
+                            <property name="width_request">250</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">60</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="existing_user_option">
+                            <property name="label" translatable="yes">Existing user</property>
+                            <property name="width_request">250</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="relief">none</property>
+                            <property name="draw_indicator">True</property>
+                            <property name="group">new_user_option</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">125</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label16">
+                            <property name="width_request">390</property>
+                            <property name="height_request">50</property>
+                            <property name="visible">True</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes">You already signed up at preyproject.com and wish to associate this device to your Control Panel account.</property>
+                            <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="size" value="12000"/>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">150</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkImage" id="image5">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
+                            <property name="visible">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/olduser.png</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">135</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                    <child type="tab">
+                      <object class="GtkLabel" id="label12">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">page 2</property>
+                      </object>
+                      <packing>
+                        <property name="position">1</property>
+                        <property name="tab_fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFixed" id="new_user">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkLabel" id="label8">
+                            <property name="width_request">490</property>
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Please provide the following information so we can create your account. Once it's created we'll send you an email to confirm the address you entered is correct.</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="user_name">
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">150</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label6">
+                            <property name="width_request">100</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="label" translatable="yes">Confirm password</property>
+                          </object>
+                          <packing>
+                            <property name="x">40</property>
+                            <property name="y">200</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label5">
+                            <property name="width_request">100</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">Password</property>
+                          </object>
+                          <packing>
+                            <property name="x">40</property>
+                            <property name="y">155</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label4">
+                            <property name="width_request">100</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">Email</property>
+                          </object>
+                          <packing>
+                            <property name="x">40</property>
+                            <property name="y">110</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label7">
+                            <property name="width_request">100</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">Your name</property>
+                          </object>
+                          <packing>
+                            <property name="x">40</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="email">
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">150</property>
+                            <property name="y">110</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="password">
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="visibility">False</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">150</property>
+                            <property name="y">155</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="password_two">
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="visibility">False</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">150</property>
+                            <property name="y">200</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child type="tab">
+                      <object class="GtkLabel" id="label13">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">page 3</property>
+                      </object>
+                      <packing>
+                        <property name="position">2</property>
+                        <property name="tab_fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFixed" id="existing_user">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkLabel" id="label18">
+                            <property name="width_request">490</property>
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Please type in your login credentials. This information is never stored, and only used for adding your device to your Control Panel account.</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label20">
+                            <property name="width_request">100</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">Password</property>
+                          </object>
+                          <packing>
+                            <property name="x">40</property>
+                            <property name="y">110</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label21">
+                            <property name="width_request">100</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">Your email</property>
+                          </object>
+                          <packing>
+                            <property name="x">40</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="existing_email">
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">150</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="existing_password">
+                            <property name="width_request">200</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="visibility">False</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <property name="activates_default">True</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">150</property>
+                            <property name="y">110</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">3</property>
+                      </packing>
+                    </child>
+                    <child type="tab">
+                      <object class="GtkLabel" id="label17">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">page 4</property>
+                      </object>
+                      <packing>
+                        <property name="position">3</property>
+                        <property name="tab_fill">False</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkFixed" id="standalone_options">
+                        <property name="visible">True</property>
+                        <child>
+                          <object class="GtkLabel" id="label26">
+                            <property name="width_request">490</property>
+                            <property name="height_request">40</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes">Please configure your SMTP settings. You also need to generate the URL that when deleted will trigger Prey, otherwise you'll start receiving reports immediately.</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="check_url">
+                            <property name="width_request">350</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">100</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label27">
+                            <property name="width_request">80</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">SMTP Pass</property>
+                          </object>
+                          <packing>
+                            <property name="x">229</property>
+                            <property name="y">155</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label28">
+                            <property name="width_request">80</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">SMTP Server</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">155</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label29">
+                            <property name="width_request">80</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">Email</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">110</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label30">
+                            <property name="width_request">80</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">Check URL</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="mail_to">
+                            <property name="width_request">130</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">100</property>
+                            <property name="y">110</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smtp_server">
+                            <property name="width_request">130</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">100</property>
+                            <property name="y">155</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smtp_password">
+                            <property name="width_request">130</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="visibility">False</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">320</property>
+                            <property name="y">155</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label31">
+                            <property name="width_request">80</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes">SMTP User</property>
+                          </object>
+                          <packing>
+                            <property name="x">230</property>
+                            <property name="y">110</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smtp_username">
+                            <property name="width_request">130</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <signal name="activate" handler="apply_settings"/>
+                          </object>
+                          <packing>
+                            <property name="x">320</property>
+                            <property name="y">110</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                    <child type="tab">
+                      <object class="GtkLabel" id="label25">
+                        <property name="visible">True</property>
+                        <property name="label" translatable="yes">page 5</property>
+                      </object>
+                      <packing>
+                        <property name="position">4</property>
+                        <property name="tab_fill">False</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child type="tab">
+                  <object class="GtkLabel" id="reporting_mode_tab">
+                    <property name="visible">True</property>
+                    <property name="label" translatable="yes">Reporting mode</property>
+                  </object>
+                  <packing>
+                    <property name="position">1</property>
+                    <property name="tab_fill">False</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="padding">4</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="padding">2</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkHBox" id="hbox2">
+            <property name="visible">True</property>
+            <child>
+              <object class="GtkHButtonBox" id="action_buttons">
+                <property name="visible">True</property>
+                <property name="spacing">4</property>
+                <property name="layout_style">end</property>
+                <child>
+                  <object class="GtkButton" id="button_cancel">
+                    <property name="label">gtk-cancel</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="released" handler="on_window_destroy"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="button_prev">
+                    <property name="label">gtk-go-back</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="released" handler="prev_page"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="button_next">
+                    <property name="label">gtk-go-forward</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="released" handler="next_page"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="button_apply">
+                    <property name="label">gtk-apply</property>
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="use_stock">True</property>
+                    <signal name="released" handler="apply_settings"/>
+                    <signal name="activate" handler="apply_settings"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">False</property>
+                    <property name="position">3</property>
+                  </packing>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="padding">3</property>
+                <property name="pack_type">end</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">False</property>
+            <property name="padding">5</property>
+            <property name="pack_type">end</property>
+            <property name="position">2</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkAdjustment" id="delay_adjustment">
+    <property name="value">20</property>
+    <property name="lower">5</property>
+    <property name="upper">55</property>
+    <property name="step_increment">5</property>
+  </object>
+</interface>
