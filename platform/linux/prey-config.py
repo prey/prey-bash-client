@@ -313,8 +313,12 @@ class PreyConfigurator(object):
 		if self.current_post_method != 'http':
 			self.save('post_method', 'http')
 
+		# we could eventually use the email as a checking method to remove prey
+		# i.e. "under which email was this account set up?"
+		# self.save('mail_to', self.email)
 		self.save('api_key', self.api_key)
 		self.save('device_key', '')
+
 		self.exit_configurator()
 
 	def apply_standalone_settings(self):
@@ -358,11 +362,11 @@ class PreyConfigurator(object):
 
 	def create_user(self):
 		user_name = self.text('user_name')
-		email = self.text('email')
+		self.email = self.text('email')
 		password = self.text('password')
 		password_two = self.text('password_two')
 
-		result = os.popen('curl -i -s '+ CONTROL_PANEL_URL + '/users.xml -d \"user[name]='+user_name+'&user[email]='+email+'&user[password]='+password+'&user[password_confirmation]='+password_two+'\"').read().strip()
+		result = os.popen('curl -i -s '+ CONTROL_PANEL_URL + '/users.xml -d \"user[name]='+user_name+'&user[email]='+self.email+'&user[password]='+password+'&user[password_confirmation]='+password_two+'\"').read().strip()
 
 		if result.find("201 Created") != -1:
 			self.get_api_key(result)
@@ -372,9 +376,9 @@ class PreyConfigurator(object):
 			self.show_alert(_("Couldn't create user!"), _("There was a problem creating your account. Please make sure the email address you entered is valid, as well as your password."))
 
 	def get_existing_user(self):
-		email = self.text('existing_email')
+		self.email = self.text('existing_email')
 		password = self.text('existing_password')
-		result = os.popen('curl -i -s '+ CONTROL_PANEL_URL + '/profile.xml -u '+email+':'+password).read().strip()
+		result = os.popen('curl -i -s '+ CONTROL_PANEL_URL + '/profile.xml -u '+self.email+':'+password).read().strip()
 
 		if result.find('401 Unauthorized') != -1:
 			self.show_alert(_("User does not exist"), _("Couldn't log you in. Remember you need to activate your account opening the link we emailed you. If you forgot your password please visit preyproject.com."))
