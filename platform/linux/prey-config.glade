@@ -1045,4 +1045,37 @@
     <property name="upper">55</property>
     <property name="step_increment">5</property>
   </object>
+  <object class="GtkAboutDialog" id="about_prey_config">
+    <property name="border_width">5</property>
+    <property name="type_hint">normal</property>
+    <property name="has_separator">False</property>
+    <property name="program_name">Prey Configurator</property>
+    <property name="copyright" translatable="yes">(c) 2010 - Fork Ltd.</property>
+    <property name="comments" translatable="yes">GUI for setting up Prey, an open source anti theft solution.</property>
+    <property name="website">http://preyproject.com</property>
+    <property name="license" translatable="yes">GPLv3</property>
+    <property name="authors">Tom&#xE1;s Pollak</property>
+    <property name="logo">../../pixmaps/prey-agent-48.png</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="about_internal">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <placeholder/>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
 </interface>

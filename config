@@ -40,7 +40,7 @@ curl_options='--compress'
 
 # this option prepends a random number as a subdomain to the check URL on http mode
 # makes it harder for other programs to block Prey so its a good idea to be on
-randomize_check_url='y'
+randomize_check_host='y'
 
 # whether to send your device's LAN and gateway IP address as headers when
 # checking its status. currently only for testing purposes, but maybe in the

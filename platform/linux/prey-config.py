@@ -259,7 +259,7 @@ class PreyConfigurator(object):
 			self.get('reporting_mode_email').set_active(True)
 
 	def check_if_configured(self):
-		if self.current_api_key == '':
+		if self.current_post_method == 'http' and self.current_api_key == '':
 			self.show_alert(_('Welcome!'), _("It seems this is the first time you run this setup. Please set up your reporting method now, otherwise Prey won't work!"))
 
 	################################################
@@ -299,9 +299,13 @@ class PreyConfigurator(object):
 
 		# check and change the crontab interval
 		new_delay = self.get('delay').get_value_as_int()
-		if new_delay != self.current_delay:
+		if new_delay != int(self.current_delay):
 			# print 'Updating delay in crontab...'
 			os.system('(crontab -l | grep -v prey; echo "*/'+str(new_delay)+' * * * * /usr/share/prey/prey.sh > /var/log/prey.log") | crontab -')
+
+		if self.check_if_configured == False:
+			self.show_alert(_("All good."), _("Configuration saved. Remember you still need to set up your posting method, otherwise Prey won't work!"), True)
+		else:
 			self.show_alert(_("All good."), _("Configuration saved!"), True)
 
 	def apply_control_panel_settings(self):

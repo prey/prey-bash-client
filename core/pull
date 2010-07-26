@@ -41,7 +41,7 @@ check_device_status(){
 			log " !! You need to enter your Device Key for querying the Control Panel!\n"
 			exit 1
 		fi
-		if [ "$randomize_check_url" == 'y' ]; then
+		if [ "$randomize_check_host" == 'y' ]; then
 			randomize_subdomain
 		fi
 	fi
