@@ -5,9 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-# set -u
-# set -e
-
 PATH=/bin:$PATH # for windows
 readonly base_path=`dirname "$0"`
 

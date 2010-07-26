@@ -62,7 +62,6 @@ set_aliases(){
 	shopt -s expand_aliases
 	alias getter="curl $curl_options -s \"$user_agent\""
 	alias mailsender="sendEmail"
-	alias patcher='patch'
 	alias processes='ps ax'
 }
 

@@ -6,8 +6,6 @@
 ####################################################################
 
 readonly logged_user=`whoami`
-
-alias patcher='patsh' # Windows 7 geniously blocks anything named "patch" from being run
 alias processes='TASKLIST'
 
 tmpbase="$WINDIR\Temp"
@@ -17,10 +15,7 @@ readonly required_net_version='2.0.50727'
 readonly prey_reg_key="HKLM\Software\Prey"
 
 x64=`echo $PROCESSOR_ARCHITEW6432 | grep "64" 1> /dev/null && echo 1`
-if [ -n "$x64" ]; then
-	log " ** 64 bit architecture detected!"
-	curl='curl64'
-fi
+[ -n "$x64" ] log " ** 64 bit architecture detected!"
 
 readonly root_path='C:\'
 readonly system_path="$WINDIR"

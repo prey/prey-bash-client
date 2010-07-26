@@ -83,7 +83,7 @@ test_diff() {
 	patch_options="-N -f -F1 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
 
 	log ' -- Testing if patch will apply cleanly...'
-	outcome=`patcher --dry-run $patch_options`
+	outcome=`patch --dry-run $patch_options`
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
 		log " !! There seems to be discordances between your installed version and the official $version code. Skipping patch!"
@@ -98,7 +98,7 @@ test_diff() {
 
 apply_diff(){
 	log ' -- Applying patch...'
-	outcome=`patcher $patch_options > /dev/null`
+	outcome=`patch $patch_options > /dev/null`
 	return $?
 }
 
