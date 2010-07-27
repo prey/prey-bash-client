@@ -59,7 +59,7 @@ initialize_module() {
 	# if there's a language file, lets run it
 	if [ -f "$module_path/lang/$lang" ]; then
 	. "$module_path/lang/$lang"
-	elif [ -f "$module_path/lang/$lang" ]; then
+	elif [ -f "$module_path/lang/en" ]; then
 	. "$module_path/lang/en"
 	fi
 

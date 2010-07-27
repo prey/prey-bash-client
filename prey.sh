@@ -147,7 +147,7 @@ if [ -z "$status" ]; then
 fi
 
 check_running_actions
-run_pending_actions
+run_pending_actions &
 delete_tmpdir
 
 exit 0

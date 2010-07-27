@@ -108,7 +108,7 @@ run_pending_actions(){
 		# -m job control enabled
 		set -bm
 
-		log -e "\n${bold} -- Running pending actions...${bold_end}\n"
+		log "${bold} >> Running pending actions...${bold_end}\n"
 		for action in "${actions[@]}"; do
 
 			local current_module=`echo $action | sed 's/=.*//'`
