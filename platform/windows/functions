@@ -180,7 +180,7 @@ post_update_hook(){
 	log ' -- Reloading Prey...'
 	# as we cannot restart the service as a normal user, we'll just keep using
 	# cron.exe until the end of the session. cronsvc should be back on next reboot
-	"$platform_path/cron.exe" --log &
+	"$platform_path/cron.exe" &
 }
 
 ############################################
