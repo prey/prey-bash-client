@@ -21,7 +21,7 @@ get_pid(){
 verify_installation(){
 
 	# check prey service on
-	log " -- Checking if Prey system service is running..."
+	log " -- Checking if Prey's cron service is running..."
 	local cron_running=`is_process_running "cron"`
 	if [ -n "$cron_running" ]; then
 		echo " -- Cron service up and running. Good."
@@ -154,7 +154,7 @@ reset_permissions(){
 pre_update_hook(){
 
 	# kill any instances of cron that may be running
-	for cron in `tasklist | grep 'cron.exe'`; do
+	for cron in "`tasklist | grep 'cron.exe'`"; do
 		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
 		echo " -- Shutting down cron with PID $pid..."
 		"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
@@ -178,7 +178,9 @@ pre_update_hook(){
 post_update_hook(){
 	reset_permissions
 	log ' -- Reloading Prey...'
-	"$platform_path/bin/bash.exe" "$base_path/prey.sh" --log &
+	# as we cannot restart the service as a normal user, we'll just keep using
+	# cron.exe until the end of the session. cronsvc should be back on next reboot
+	"$platform_path/cron.exe" --log &
 }
 
 ############################################

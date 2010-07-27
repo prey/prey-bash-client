@@ -5,11 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-# fetches last response if online actions were enabled for the device
-get_last_response(){
-	response=`cat "$last_response"`
-}
-
 # module, param, value
 set_config_for(){
 	eval "readonly ${1}__${2}='$3'"
