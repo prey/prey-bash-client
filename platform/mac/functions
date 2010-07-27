@@ -32,16 +32,14 @@ try_to_connect() {
 	networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
 
 	# power on the airport
-	networksetup -setairportpower off 2>/dev/null
-	networksetup -setairportpower on 2>/dev/null
+	networksetup -setairportpower Airport off 2>/dev/null
+	networksetup -setairportpower Airport on 2>/dev/null
 
 	# list available access points and parse to get first SSID with security "NONE"
-	essid=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
+	local essid=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
 
 	if [ -n "$essid" ]; then
-
-		networksetup -setairportnetwork $essid 2>/dev/null
-
+		networksetup -setairportnetwork Airport $essid 2>/dev/null
 	fi
 }
 
