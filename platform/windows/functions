@@ -153,15 +153,8 @@ reset_permissions(){
 
 pre_update_hook(){
 
-	# lets check if theres another user logged in and running cron.exe
-	for cron in `processes | grep 'cron.exe'`; do
-		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
-		echo " -- Shutting down cron with PID $pid..."
-		"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
-	done
-
 	# stop the cron windows service
-	# TASKKILL //F //IM cronsvc.exe //T &> /dev/null
+	TASKKILL //F //IM cron.exe //T &> /dev/null
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
@@ -178,7 +171,7 @@ pre_update_hook(){
 post_update_hook(){
 	reset_permissions
 	log ' -- Reloading Prey...'
-	"$platform_path\cron.exe --log" &
+	"$platform_path/bin/bash.exe" "$base_path/prey.sh" --log &
 }
 
 ############################################
