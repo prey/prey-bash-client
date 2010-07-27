@@ -153,8 +153,15 @@ reset_permissions(){
 
 pre_update_hook(){
 
-	# stop the cron windows service
-	TASKKILL //F //IM cron.exe //T &> /dev/null
+	# kill any instances of cron that may be running
+	for cron in `tasklist | grep 'cron.exe'`; do
+		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
+		echo " -- Shutting down cron with PID $pid..."
+		"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
+	done
+
+	# stop the cron service
+	TASKKILL //F //IM cronsvc.exe //T &> /dev/null
 
 	# we also need to make sure the configurator is not running, so we can
 	# also update it in case its necessary
