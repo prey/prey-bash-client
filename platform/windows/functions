@@ -209,4 +209,6 @@ get_pc_info(){
 		pc_type="Desktop"
 	fi
 
+	rm -f "$base_path/TempWmicBatchFile.bat" 2> /dev/null
+
 }
