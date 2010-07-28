@@ -42,7 +42,7 @@ _ = gettext.gettext
 
 PREY_PATH = '/usr/share/prey'
 CONFIG_FILE = PREY_PATH + '/config'
-CONTROL_PANEL_URL = 'http://control.preyproject.com'
+CONTROL_PANEL_URL_SSL = 'https://control.preyproject.com'
 GUEST_ACCOUNT_NAME = 'guest_account'
 VERSION = os.popen("cat " + PREY_PATH + "/version").read().strip().replace('version=', '').replace("'",'')
 
@@ -152,6 +152,8 @@ class PreyConfigurator(object):
 			self.get('button_next').hide()
 			self.get('button_apply').show()
 
+		self.show_ssl()
+
 	def prev_page(self, button):
 		page_name = self.get_page_name()
 		decrement = 1
@@ -171,6 +173,8 @@ class PreyConfigurator(object):
 			self.get('button_apply').hide()
 			self.get('button_next').show()
 
+		self.hide_ssl()
+
 	def toggle_buttons(self, button, pointer, page_number):
 		button_prev = self.get('button_prev')
 		button_next = self.get('button_next')
@@ -179,12 +183,22 @@ class PreyConfigurator(object):
 			button_prev.hide()
 			button_next.hide()
 			button_apply.show()
+			self.show_ssl()
 		else:
 			button_next.show()
 			button_apply.hide()
+			self.hide_ssl()
 			if self.tabs.get_current_page() > 0:
 				button_prev.show()
 
+	def hide_ssl(self):
+		self.get('ssl_icon').hide()
+		self.get('ssl_text').hide()
+
+	def show_ssl(self):
+		if self.get_page_name() == 'new_user' or self.get_page_name() == 'existing_user':
+			self.get('ssl_icon').show()
+			self.get('ssl_text').show()
 
 	################################################
 	# setting getting
@@ -366,7 +380,7 @@ class PreyConfigurator(object):
 		password = self.text('password')
 		password_two = self.text('password_two')
 
-		result = os.popen('curl -i -s '+ CONTROL_PANEL_URL + '/users.xml -d \"user[name]='+user_name+'&user[email]='+self.email+'&user[password]='+password+'&user[password_confirmation]='+password_two+'\"').read().strip()
+		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/users.xml -d \"user[name]='+user_name+'&user[email]='+self.email+'&user[password]='+password+'&user[password_confirmation]='+password_two+'\"').read().strip()
 
 		if result.find("201 Created") != -1:
 			self.get_api_key(result)
@@ -378,7 +392,7 @@ class PreyConfigurator(object):
 	def get_existing_user(self):
 		self.email = self.text('existing_email')
 		password = self.text('existing_password')
-		result = os.popen('curl -i -s '+ CONTROL_PANEL_URL + '/profile.xml -u '+self.email+':'+password).read().strip()
+		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/profile.xml -u '+self.email+':'+password).read().strip()
 
 		if result.find('401 Unauthorized') != -1:
 			self.show_alert(_("User does not exist"), _("Couldn't log you in. Remember you need to activate your account opening the link we emailed you. If you forgot your password please visit preyproject.com."))

@@ -291,7 +291,7 @@ self_setup(){
 
 	get_pc_info
 	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=`capitalize $os`"
-	local response=`getter -u $api_key:x -i $check_url/devices.xml -d "$params"`
+	local response=`getter --connect-timeout 10 -u $api_key:x -i $check_url/devices.xml -d "$params"`
 	get_status_code
 
 	if [ $status == "201" ]; then
