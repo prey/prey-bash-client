@@ -31,15 +31,19 @@ try_to_connect() {
 	networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
 	networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
 
+	if [ $osx_version == "snow-leopard" ]; then
+		local airportstring="Airport"
+	fi
+
 	# power on the airport
-	networksetup -setairportpower Airport off 2>/dev/null
-	networksetup -setairportpower Airport on 2>/dev/null
+	networksetup -setairportpower $airportstring off 2>/dev/null
+	networksetup -setairportpower $airportstring on 2>/dev/null
 
 	# list available access points and parse to get first SSID with security "NONE"
 	local essid=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
 
 	if [ -n "$essid" ]; then
-		networksetup -setairportnetwork Airport $essid 2>/dev/null
+		networksetup -setairportnetwork $airportstring $essid 2>/dev/null
 	fi
 }
 
@@ -63,15 +67,8 @@ post_update_hook(){
 ############################################
 get_pc_info(){
 	pc_name=`system_profiler SPSoftwareDataType | grep 'Computer Name' | sed 's/.*: //g'`
-	local pc_os_number=`sw_vers -productVersion | cut -c1-4`
+	pc_os_version=$osx_version
 
-	if [ $pc_os_number == "10.6" ]; then
-		pc_os_version="snow-leopard"
-	elif [ $pc_os_number == "10.5" ]; then
-		pc_os_version="leopard"
-	else
-		pc_os_version="tiger"
-	fi
 	local is_macbook=`system_profiler SPHardwareDataType | grep -i 'macbook'`
 	if [ -z "$is_macbook" ]; then
 		pc_type="Desktop"
