@@ -74,6 +74,16 @@ process_config(){
 
 process_module_config(){
 
+	if [ "$post_method" == "http" ]; then
+		process_modules_from_response
+	else
+		get_active_modules_for_standalone
+	fi
+
+}
+
+process_modules_from_response(){
+
 	local module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	if [ -z "$module_configuration" ]; then
 		return 1

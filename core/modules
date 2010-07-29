@@ -14,22 +14,18 @@ is_module_active(){
 	fi
 }
 
-active_modules(){
-	if [ "$post_method" == "http" ]; then
-		echo "$active_modules"
-		# log -e "$module_configuration" | grep "<module " | sed 's/.*name="\([a-z_]*\)".*/\1/'
-	else
-		for module in `find "$base_path/modules" -maxdepth 1 -mindepth 1 -type d`; do
-			local module_name=`echo $module | sed 's/.*[\\|\/]\([a-z_-]*\)$/\1/'`
-			if [ `is_module_active "$module_name"` ]; then
-				echo $module_name
-			fi
-		done
-	fi
+get_active_modules_for_standalone(){
+	for module in `find "$base_path/modules" -maxdepth 1 -mindepth 1 -type d`; do
+		local module_name=`echo $module | sed 's/.*[\\|\/]\([a-z_-]*\)$/\1/'`
+		if [ `is_module_active "$module_name"` ]; then
+			initialize_module $module_name
+			active_modules="$active_modules $module_name"
+		fi
+	done
 }
 
 # gets the module name ($1) and optionally the upstream version ($2)
-setup_module() {
+setup_module(){
 
 	module_path="$base_path/modules/$1"
 	upstream_version=$2
@@ -51,9 +47,8 @@ setup_module() {
 	fi
 }
 
-initialize_module() {
+initialize_module(){
 
-	log " -- Initializing $1 module..."
 	set_module_paths_for $1
 
 	# if there's a language file, lets run it
@@ -93,10 +88,10 @@ set_module_paths_for(){
 
 run_active_modules() {
 
-	for current_module in `active_modules`; do
+	for current_module in $active_modules; do
 
 		set_module_paths_for $current_module
-		log -e "\n${bold} >> Running $current_module module!${bold_end}\n"
+		log "\n${bold} >> Running $current_module module!${bold_end}\n"
 
 		# now, go!
 		. "$module_path/core/run"

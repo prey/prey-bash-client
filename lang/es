@@ -6,84 +6,18 @@
 # License: GPLv3
 ####################################################################
 
-if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
+STRING_START="\n ### PREY $version despliega sus alas!\n"
+STRING_TRY_TO_CONNECT=" -- Intentando conectarnos a la primera red abierta disponible..."
+STRING_NO_CONNECT_TO_WIFI=" -- No encontramos la forma de conectarnos a una red Wifi abierta!"
+STRING_CHECK_URL=" -- Revisando URL..."
+STRING_NO_PROBLEM=" -- Nada de que preocuparse. :)\n"
+STRING_PROBLEM=" -- OUCH!!"
+STRING_WRITE_EMAIL=" -- Redactando el reporte..."
+STRING_SENDING_EMAIL=" -- Enviando el reporte..."
+STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
+	Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion.\033[0m\n"
+STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
+STRING_DONE=" -- Todo listo! Suerte con la caceria! :)\n"
 
-	# installer messages
-	# TODO: translate this to spanish
-
-	HELLO_IN_LANGUAGE=" -- Prey hablara espanol entonces!"
-	WHERE_TO_INSTALL_PREY=" -> Donde quieres que instalemos Prey? [$DEFAULT_INSTALLPATH] "
-	USING_DEFAULT_INSTALL_PATH=" -- Usando la ruta de instalacion por defecto..."
-	INVALID_INSTALL_PATH=" !! Ruta invalida de instalacion. La carpeta superior no existe!\n"
-	SETTING_INSTALL_PATH=" -- Ok, instalaremos Prey en $INSTALLPATH."
-
-	IT_SEEMS_PATH="Parece que ya tenias instalado Prey en"
-	DIFFERENT_PATH="\nLa nueva version usa una ruta diferente para la instalacion,"
-	REMOVE_OLD_FILES="asi que deberemos eliminar los viejos archivos ya que no se usaran más.."
-	ASK_RM_OLD_FILES="Lo hacemos automaticamente por ti?"
-	DELETING_OLD_FILES=" -- Eliminando archivos antiguos de Prey...\n"
-	CONFIG_FILE_EXISTS=" -> Archivo de configuracion existe! Quieres que nos saltemos las preguntas de configuracion? (No recomendado) [n] "
-
-	SKIP_INSTALL_QUESTIONS=" -- Muy bien, solo actualizaremos los archivos necesarios!\n"
-
-	DEFINE_REPORT_METHOD=" -> Que metodo de reporte te gustaria usar? (http, email) [http] "
-	IS_REGISTERED_ON_WEB=" -- Estas registrado en el sitio?"
-	DEFAULT_REPORT_METHOD=" -- Usando el panel de control (http) como metodo de reporte. Todo bien!"
-	ADD_API_KEY=" -> Por favor entra el Codigo API de 12 digitos que te entrego el servicio web: "
-	INVALID_API_KEY=" !! Codigo API Invalido! Recuerda que debes registrarte en preyproject.com para obtener uno.\n"
-	ADD_DEVICE_KEY=" -> Por favor entra el Codigo de Dispositivo de 6 digitos que te entrego el servicio web:"
-	INVALID_DEVICE_KEY=" !! Codigo de Dispositivo Invalido! Recuerda registrar tu dispositivo en preyproject.com para obtener uno."
-
-	DESIRED_USER_WEB=" -- OK, entonces dejanos hacerlo por ti. Por favor entra tu usuario deseado: "
-	ASK_EMAIL_WEB=" -- Por favor entra tu correo: "
-	DESIRED_PASS_WEB=" -- Por favor entra tu contrasena deseada: (Solo la usaremos para registrarte!) "
-	PROBLEM_SIGNUP_WEB="Hubo un problema registrandote en el servicio web. Por favor intentalo de nuevo o hazlo directamente en"
-	PROBLEM_RESPONSE_WEB="La respuesta que llego fue:"
-
-	USING_DEFAULT_APP_URL=" -- Usando rutas para la aplicacion web. Nada que escribir aqui!"
-
-	ENTER_EMAIL_ADDRESS=" -> A que casilla de email quieres que Prey envie el correo? (i.e. casilla@dominio.com) [] "
-	INVALID_EMAIL_ADDRESS=" !! Necesitas escribir una casilla de correo valida! Saliendo...\n"
-
-	ENTER_SMTP_SERVER=" -> Que servidor SMTP quieres que usemos? (con su puerto) [smtp.gmail.com:587] "
-	DEFAULT_SMTP_SERVER=" -- Usando Gmail como servidor STMP. "
-	ENTER_SMTP_USER=" -> Escribe tu nombre de usuario del servidor SMTP: (i.e. casilla@gmail.com)"
-	DEFAULT_SMTP_USER=" -- Nuestro usuario STMP sera entonces"
-	ENTER_SMTP_PASS=" -> Escribe tu contrasena para el servidor SMTP: (No va a mostrar nada) [] "
-	INVALID_SMTP_PASS=" !! Debes escribir una contrasena SMTP valida. Saliendo...\n"
-	YES_NO="s/n"
-	YES="s"
-	CHECK_URL_OR_NOT=" -- Quieres que Prey use una URL de verificacion? (No significa que el reporte se enviara cada vez que Prey se ejecute) [n] "
-	ENTER_URL=" -- Ok, que URL quieres usar entonces? [i.e. http://miservidor.com/laptop_desaparecido] "
-	INVALID_URL=" !! Tienes que definir una URL. Saliendo...\n"
-	SET_TIMING=" -- Ok, la ultima. Con que frecuencia (en minutos) quieres que Prey se ejecute? [$TIMING] "
-
-	INSTALLING_SOFTWARE=" -- Ok, instalando el software necesario...\n"
-	COPYING_ISIGHTCAPTURE=" -- Copiando iSightCapture a $INSTALLPATH..."
-	COPYING_FILES="\n -- Copiando archivos necesarios a $INSTALLPATH y definiendo permisos..."
-	ADDING_CRONTAB=" -- Agregando entrada en el crontab..."
-	INSTALL_OK="\033[1m\n -- Todo bien! Prey esta instalado y listo para volar. Ahora puedes eliminar esta carpeta.
- -- Si alguna vez quieres desinstalar Prey, basta con que elimines la carpeta $INSTALLPATH
-    y remuevas la linea de Prey del crontab de root:\n
-\t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
- -- Para actualizaciones recuerda visitar http://prey.bootlog.org!\033[0m\n\n"
-
-else # prey status messages
-
-	STRING_START="\n ### PREY $version despliega sus alas!\n"
-	STRING_TRY_TO_CONNECT=" -- Intentando conectarnos a la primera red abierta disponible..."
-	STRING_NO_CONNECT_TO_WIFI=" -- No encontramos la forma de conectarnos a una red Wifi abierta!"
-	STRING_CHECK_URL=" -- Revisando URL..."
-	STRING_NO_PROBLEM=" -- Nada de que preocuparse. :)\n"
-	STRING_PROBLEM=" -- OUCH!!"
-	STRING_WRITE_EMAIL=" -- Redactando el reporte..."
-	STRING_SENDING_EMAIL=" -- Enviando el reporte..."
-	STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico. ¿Estas seguro de que fue configurado correctamente?
-		Si estas usando Gmail, intenta removiendo el '@gmail.com' del campo smtp_username en el archivo de configuracion.\033[0m\n"
-	STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
-	STRING_DONE=" -- Todo listo! Suerte con la caceria! :)\n"
-
-	EMAIL_HEADER="Buenas noticias amigo mio, al parecer lo encontramos!\n\nAqui va el reporte de tu computador:\n\n"
-	EMAIL_FOOTER="\n\nAhora a atrapar al maldito!\n\n--\nTu fiel servidor, Prey\nhttp://preyproject.com"
-
-fi
+EMAIL_HEADER="Buenas noticias amigo mio, al parecer lo encontramos!\n\nAqui va el reporte de tu computador:\n\n"
+EMAIL_FOOTER="\n\nSuerte con la caceria!\n\n--\nTu fiel servidor, Prey\nhttp://preyproject.com"

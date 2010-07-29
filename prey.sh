@@ -121,7 +121,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 
 		set +e # error mode off, just continue if a module fails
 		log " -- Running active report modules..."
-		run_active_modules
+		run_active_modules # on http mode this will only be report modules
 
 		####################################################################
 		# lets send whatever we've gathered
@@ -140,11 +140,6 @@ fi
 ####################################################################
 # if we have any pending actions, run them
 ####################################################################
-
-# before we need to make sure the actions are actually set up
-if [ -z "$status" ]; then
-	process_module_config
-fi
 
 check_running_actions
 run_pending_actions &

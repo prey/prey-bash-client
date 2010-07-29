@@ -103,11 +103,11 @@ get_pc_info(){
 	elif [ -n `find_in $distro 'Debian'` ]; then
 		pc_os_version='ubuntu' # Ian please dont kill me
 	elif [ -n `find_in $distro 'Fedora'` ]; then
-		pc_os_version='fedora' # Ian please dont kill me
+		pc_os_version='fedora'
 	elif [ -n `find_in $distro 'Redhat'` ]; then
-		pc_os_version='fedora' # Ian please dont kill me
+		pc_os_version='fedora'
 	elif [ -n `find_in $distro 'CentOS'` ]; then
-		pc_os_version='fedora' # Ian please dont kill me
+		pc_os_version='fedora'
 	elif [ -n `find_in $distro 'SuSE'` ]; then
 		pc_os_version='suse'
 	else

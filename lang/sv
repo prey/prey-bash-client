@@ -8,8 +8,6 @@
 
 if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
 
-	# installer messages
-
 #	HELLO_IN_LANGUAGE=" -- Prey kommer att köras på svenska!"
 	WHERE_TO_INSTALL_PREY=" -> Var vill du installera Prey? [$DEFAULT_INSTALLPATH] "
 	USING_DEFAULT_INSTALL_PATH=" -- Bra, använder standardsökvägen..."
