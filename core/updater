@@ -87,6 +87,8 @@ test_diff() {
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
 		log " !! There seems to be discordances between your installed version and the official $version code. Skipping patch!"
+		echo "$outcome" > "$base_path/patch.log"
+		echo " -- Results were logged to patch.log."
 		return 1
 	else
 		log ' -- Everything smooth.'
@@ -201,6 +203,8 @@ apply_changes(){
 			delete_files_according_to_diff
 		else
 			log ' -- Something went wrong! Skipping patch...'
+			echo "$outcome" > "$base_path/patch.log"
+			echo " -- Results were logged to patch.log."
 			remove_temp_stuff
 			return 1 # not ok
 		fi
