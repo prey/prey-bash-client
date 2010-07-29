@@ -119,10 +119,7 @@ run_pending_actions(){
 				continue
 			fi
 
-			initialize_module $current_module
-			if [ $? == 1 ]; then
-				continue
-			fi
+			set_module_paths_for $current_module
 
 			if [ "$function" != "1" ]; then # specific function requested
 				log " -- Running action $function from $current_module module."

@@ -7,7 +7,7 @@
 
 # module, param, value
 set_config_for(){
-	eval "readonly ${1}__${2}='$3'"
+	eval "${1}__${2}='$3'"
 }
 
 process_config(){
@@ -89,7 +89,7 @@ process_module_config(){
 			local module_name=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
 			log " -- Got instructions for $module_name module."
 
-			if [ "$auto_update" == "true" ]; then  # module is already installed and auto_update is enabled
+			if [ "$auto_update" == "true" ]; then  # auto_update is enabled
 				local upstream_version=`echo $line | sed 's/^.*version="\([0-9.]*\)".*/\1/'`
 			fi
 
@@ -101,6 +101,8 @@ process_module_config(){
 				continue
 
 			else # lets see if its a report module or an action module
+
+				initialize_module $module_name
 
 				local module_type=`echo $line | sed 's/.*type="\([a-z_]*\)".*/\1/'`
 				if [ "$module_type" == 'action' ]; then

@@ -43,7 +43,7 @@ setup_module() {
 		local installed_version=`cat "$module_path/version" 2> /dev/null`
 
 		if [ `is_bigger_than $upstream_version $installed_version` == 1 ]; then
-		log " -- Updating $module module to version $upstream_version!"
+			log " -- Updating $module module to version $upstream_version!"
 			install_or_update_module $1
 			return $?
 		fi
@@ -53,8 +53,8 @@ setup_module() {
 
 initialize_module() {
 
-	module_path="$base_path/modules/$1"
-	module_platform_path="$module_path/platform/$os"
+	log " -- Initializing $1 module..."
+	set_module_paths_for $1
 
 	# if there's a language file, lets run it
 	if [ -f "$module_path/lang/$lang" ]; then
@@ -65,7 +65,7 @@ initialize_module() {
 
 	# if there's a config file, lets run it as well
 	if [ -f "$module_path/config" ]; then
-		. "$module_path/config" 2> /dev/null # dont echo readonly conflicts
+		. "$module_path/config"
 	fi
 
 	# lets load the base functions for the module
@@ -86,15 +86,16 @@ initialize_module() {
 #	unset module_platform_path
 #}
 
+set_module_paths_for(){
+	module_path="$base_path/modules/$1"
+	module_platform_path="$module_path/platform/$os"
+}
+
 run_active_modules() {
 
 	for current_module in `active_modules`; do
 
-		initialize_module $current_module
-		if [ $? == 1 ]; then
-			continue
-		fi
-
+		set_module_paths_for $current_module
 		log -e "\n${bold} >> Running $current_module module!${bold_end}\n"
 
 		# now, go!

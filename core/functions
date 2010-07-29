@@ -301,12 +301,13 @@ self_setup(){
 
 		#sed for windows needs this hack to replace infile. Sorry!
 		sed -i.backup "s/device_key=.*/device_key='$device_key'/" "$base_path/config"
-		rm "$base_path/config.backup"
 
 		if [ $? == 1 ]; then
 			log " -- There was a problem saving the configuration. You probably don't have permissions to modify $base_path/config."
+		else
+			rm -f "$base_path/config.backup"
+			log ' -- All set.'
 		fi
-		log ' -- All set.'
 
 	else
 
