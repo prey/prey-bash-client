@@ -14,7 +14,7 @@ is_module_active(){
 	fi
 }
 
-get_active_modules_for_standalone(){
+get_active_modules_from_filesystem(){
 	for module in `find "$base_path/modules" -maxdepth 1 -mindepth 1 -type d`; do
 		local module_name=`echo $module | sed 's/.*[\\|\/]\([a-z_-]*\)$/\1/'`
 		if [ `is_module_active "$module_name"` ]; then
@@ -87,6 +87,10 @@ set_module_paths_for(){
 }
 
 run_active_modules() {
+
+	if [[ -z $active_modules && "$post_method" != 'http' ]]; then
+		get_active_modules_from_filesystem
+	fi
 
 	for current_module in $active_modules; do
 

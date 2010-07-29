@@ -5,11 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-# module, param, value
-set_config_for(){
-	eval "${1}__${2}='$3'"
-}
-
 process_config(){
 
 	local prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
@@ -51,6 +46,11 @@ process_config(){
 
 }
 
+# module, param, value
+set_config_for(){
+	eval "${1}__${2}='$3'"
+}
+
 # Prey expects a <configuration> and <modules> section in the xml
 # and activates de modules as requested. format should be as follows:
 
@@ -73,16 +73,6 @@ process_config(){
 # <module name="location" active="true" />
 
 process_module_config(){
-
-	if [ "$post_method" == "http" ]; then
-		process_modules_from_response
-	else
-		get_active_modules_for_standalone
-	fi
-
-}
-
-process_modules_from_response(){
 
 	local module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	if [ -z "$module_configuration" ]; then
