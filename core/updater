@@ -88,7 +88,7 @@ test_diff() {
 	if [ `find_in "$outcome" 'FAILED'` ]; then
 		log " !! There seems to be discordances between your installed version and the official $version code. Skipping patch!"
 		echo "$outcome" > "$base_path/patch.log"
-		echo " -- Results were logged to patch.log."
+		log " -- Results were logged to patch.log."
 		return 1
 	else
 		log ' -- Everything smooth.'
@@ -100,14 +100,17 @@ test_diff() {
 
 apply_diff(){
 	log ' -- Applying patch...'
-	outcome=`patch $patch_options > /dev/null`
+	outcome=`patch $patch_options 2>&1`
 	return $?
 }
 
 # this could be useful sometime in the future
 report_update_status(){
 	log ' -- Notifying update status to your Control Panel account...'
-	update_device_info_with "device[update_failed]=$1"
+	if [[ "$1" == 1 && "$provide_error_feedback" == 'y' ]]; then
+		additional_feedback="&device[update_log]=$outcome"
+	fi
+	update_device_info_with "device[update_failed]=${1}${additional_feedback}"
 }
 
 ####################################################################
@@ -198,16 +201,17 @@ apply_changes(){
 	# create_copy_of_prey
 
 	if [ -f "$diff_file" ]; then
+
 		apply_diff
-		if [ $? == 0 ]; then
-			delete_files_according_to_diff
-		else
-			log ' -- Something went wrong! Skipping patch...'
+		local return_status=$?
+		delete_files_according_to_diff
+
+		if [ $return_status != 0 ]; then
+			log ' -- Something went wrong while patching!'
 			echo "$outcome" > "$base_path/patch.log"
-			echo " -- Results were logged to patch.log."
-			remove_temp_stuff
-			return 1 # not ok
+			log " -- Results were logged to patch.log."
 		fi
+
 		rm "$diff_file" 2> /dev/null
 	fi
 
@@ -217,7 +221,7 @@ apply_changes(){
 	delete_unneeded_stuff_in "$base_path/platform"
 	remove_temp_stuff
 
-	return 0
+	return $return_status
 }
 
 perform_update() {
