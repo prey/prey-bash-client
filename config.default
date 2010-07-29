@@ -1,0 +1,93 @@
+#!/bin/bash
+####################################################################
+# PREY Configuration File - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+# language, en (english) or es (espanol)
+lang='en'
+
+# autoconnect feature, disabled by default until we are 200% sure it
+# works flawlessly in all platforms. feel free to try it out though.
+auto_connect='n'
+
+# verification URL, if left empty Prey will always activate and run,
+# which is certainly *not* recommended.
+check_url='http://control.preyproject.com'
+
+# IMPORTANT: on what HTTP response code will Prey be activated (200 or 404)
+# control panel users don't touch this! standalone users may want to
+# change it back to 200 (previous setting), if you wish to wake Prey up by
+# creating the URL (as before) instead of removing an existing one
+missing_status_code='404'
+
+# you can use send the report via email or to the web service
+# valid values: http, email, scp or sftp
+post_method='http'
+
+####################################################################
+# http posting configuration
+####################################################################
+
+# you can get both of these from Prey's web service
+api_key=''
+device_key=''
+
+####################################################################
+# SMTP settings, for email posting
+####################################################################
+
+# mailbox to send the report
+mail_to='mailbox@domain.com'
+
+# the password is now stored base64 encrypted
+# if you wish to generate it by hand, run
+# $ echo -n "password" | openssl enc -base64
+smtp_server='smtp.gmail.com:587'
+smtp_username='username@gmail.com'
+smtp_password='password'
+
+# you dont need to change this
+mail_from='Prey <no-reply@gmail.com>'
+mail_subject='[Prey] Status Report'
+
+####################################################################
+# additional http options
+####################################################################
+
+# if you're having trouble getting requests across your firewall or proxy,
+# you can try adding '-0' to make curl perform HTTP 1.0 requests
+curl_options='--compress'
+
+# this option prepends a random number as a subdomain to the check URL on http mode
+# makes it harder for other programs to block Prey so its a good idea to be on
+randomize_check_host='n'
+
+# whether to send your device's LAN and gateway IP address as headers when
+# checking its status. currently only for testing purposes, but maybe in the
+# future it may prove useful. :)
+extended_headers='n'
+
+####################################################################
+# scp/sftp posting configuration -- EXPERIMENTAL!
+# we dont use user/pass but RSA keys
+# for more info check http://tinyurl.com/sshtip
+####################################################################
+
+# this applies both to scp and sftp posting methods
+ssh_options='-oStrictHostKeyChecking=no'
+
+# remember you should have write access to the folder
+scp_user='username'
+scp_server='my.server.com'
+scp_path='~'
+
+# same as above, make sure you have write access
+sftp_user='username'
+sftp_server='my.server.com'
+sftp_path='.'
+
+####################################################################
+# if you have any questions please visit preyproject.com
+####################################################################

@@ -69,6 +69,7 @@ set_constants(){
 	readonly lang
 	readonly start_time=`date +"%F %T"`
 
+	readonly config_file="$base_path/config"
 	readonly tmpdir="$tmpbase/p${RANDOM}"
 	readonly last_response="$tmpbase/last_response.tmp"
 	readonly logged_user

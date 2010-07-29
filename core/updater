@@ -219,6 +219,7 @@ apply_changes(){
 perform_update() {
 
 	pre_update_hook
+	backup_config
 
 	log "\n${bold} >> Applying changes!${bold_end}\n"
 	sleep 1
@@ -245,6 +246,8 @@ perform_update() {
 
 	report_update_status $update_status
 	delete_tmpdir
+
+	# update_config
 
 	log ' -- Running post-update hooks...'
 	post_update_hook $update_status
@@ -286,6 +289,36 @@ run_post_update_script(){
 		log " -- Performing on-demand post-install instructions..."
 		. "$post_update_script_path"
 		rm -f "$post_update_script_path"
+	fi
+}
+
+backup_config(){
+	log ' -- Backing up current settings...'
+	backup_config_file="$base_path/config.backup"
+	cp "$config_file" "$backup_config_file"
+}
+
+set_config_value(){
+	sed -i -e "s/^$1=.*$/$1='$2'/" $config_file 2> /dev/null
+}
+
+update_config(){
+	default_config_file="$base_path/config.default"
+	if [ ! -f "$default_config_file" ]; then
+		cp "$backup_config_file" "$config_file"
+		return 1
+	else
+		cp "$default_config_file" "$config_file"
+		log ' -- Applying current config settings to new config file...'
+		# parse file and remove all comments and empty lines
+		config_options=`cat "$backup_config_file" | grep -v '^#' | grep -v "^$" | sed 's/ /-SPACE-/'`
+		for option in $config_options; do
+			local option_name=`echo "$option" | sed 's/=.*//'`
+			local option_value=`echo "$option" | sed -e 's/[^=]*=//' -e "s/^'//" -e "s/'$//" -e "s/\//-SLASH-/g"`
+			set_config_value "$option_name" "$option_value"
+		done
+		sed -i -e "s/-SLASH-/\//g" -e "s/-SPACE-/ /g" $config_file # resolve the slash and space hacks
+		log ' -- Done!'
 	fi
 }
 
