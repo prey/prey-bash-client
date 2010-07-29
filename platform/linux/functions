@@ -97,11 +97,18 @@ get_pc_info(){
 
 	local distro=`cat /proc/version 2>&1`
 
-	if [[ "$distro" =~ "Ubuntu|Debian" ]]; then
+	# todo: make this in a more efficient way
+	if [ -n `find_in $distro 'Ubuntu'` ]; then
 		pc_os_version='ubuntu'
-	elif [[ "$distro" =~ "Fedora|Redhat|CentOS" ]]; then
-		pc_os_version='fedora'
-	elif [[ "$distro" =~ "SUSE" ]]; then
+	elif [ -n `find_in $distro 'Debian'` ]; then
+		pc_os_version='ubuntu' # Ian please dont kill me
+	elif [ -n `find_in $distro 'Fedora'` ]; then
+		pc_os_version='fedora' # Ian please dont kill me
+	elif [ -n `find_in $distro 'Redhat'` ]; then
+		pc_os_version='fedora' # Ian please dont kill me
+	elif [ -n `find_in $distro 'CentOS'` ]; then
+		pc_os_version='fedora' # Ian please dont kill me
+	elif [ -n `find_in $distro 'SuSE'` ]; then
 		pc_os_version='suse'
 	else
 		pc_os_version='other'
