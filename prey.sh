@@ -26,8 +26,6 @@ fi
 # 	exit 1
 # fi
 
-# trap "echo -- Kill signal detected.; wait" SIGTERM SIGKILL SIGQUIT
-
 log "${cyan}$STRING_START ### `uname -a`${color_end}\n"
 
 ####################################################################
@@ -136,6 +134,5 @@ fi
 
 check_running_actions
 run_pending_actions &
-delete_tmpdir
 
 exit 0

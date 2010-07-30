@@ -5,11 +5,20 @@
 # License: GPLv3
 ####################################################################
 
+trap "" INT TERM
+trap cleanup EXIT
+
+cleanup(){
+	log " -- Cleaning up..."
+	delete_tmpdir
+}
+
 # step throught the params and check
 
 until [ -z "$1" ]; do
 	if [[ "$1" == "-t" || "$1" == "--test" ]]; then
 		echo -e "\n -- TEST MODE ENABLED."
+		trap - INT # set off trap
 		test_mode=1
 		. $base_path/test/include "$2" 2> /dev/null
 	elif [[ "$1" == '-c' || "$1" == '--check' ]]; then
