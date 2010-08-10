@@ -61,13 +61,15 @@ is_net_framework_installed() {
 
 get_gateway_ip() {
 	if [ -z "$gateway_ip" ]; then
-		gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
+		local network_info=`"$platform_path/ifconfig.exe" //all`
+		gateway_ip=`echo "$network_info" | awk -F ":" '/Gateway/	{print $2}'`
 	fi
 }
 
 get_internal_ip() {
 	if [ -z "$internal_ip" ]; then
-		internal_ip=`ipconfig | grep "Address" | grep -v "local" | sed 's/^.*: //g' | grep -v '^$' | head -1`
+		local network_info=`"$platform_path/ifconfig.exe" //all`
+		internal_ip=`echo "$network_info" | awk -F ":" '/IP/ {sub(/ .*/,"",$2);print $2}'`
 	fi
 }
 
