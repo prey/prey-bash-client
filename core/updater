@@ -307,7 +307,12 @@ backup_config(){
 }
 
 set_config_value(){
-	sed -i -e "s/^$1=.*$/$1='$2'/" $config_file 2> /dev/null
+	sed -i.backup -e "s/^$1=.*/$1='$2'/" $config_file 2> /dev/null
+	if [ $? == 1 ]; then
+		return 1
+	else
+		mv "$base_path/config.backup" "$base_path/config"
+	fi
 }
 
 update_config(){

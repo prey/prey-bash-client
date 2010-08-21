@@ -18,8 +18,15 @@ process_config(){
 	# http://edwardawebb.com/linux/scope-issue-bash-loops
 	STDOUT=$(echo -e "$prey_configuration")
 	while read line; do
-
-		local var_set=`echo "$line" | sed -e 's/<//' -e "s/>/=\'/" -e "s/<.*/'/"`
+		is_permanent=`find_in "$line" 'save="true"'`
+		if [ "$is_permanent" = "1" ] ; then
+			local key=`echo "$line" | sed 's/<\(.*\) .*/\1/'`
+			local value=`echo "$line" | sed 's/.*>\(.*\)<.*/\1/'`
+			set_config_value "$key" "$value" #write config value to file
+			local var_set="$key='$value'"
+		else
+			local var_set=`echo "$line" | sed -e 's/<//' -e "s/>/=\'/" -e "s/<.*/'/"`
+		fi
 		eval $var_set
 
 	done <<< "$STDOUT"
