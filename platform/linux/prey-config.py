@@ -44,7 +44,7 @@ PREY_PATH = '/usr/share/prey'
 CONFIG_FILE = PREY_PATH + '/config'
 CONTROL_PANEL_URL_SSL = 'https://control.preyproject.com'
 GUEST_ACCOUNT_NAME = 'guest_account'
-VERSION = os.popen("cat " + PREY_PATH + "/version").read().strip().replace('version=', '').replace("'",'')
+VERSION = os.popen("cat " + PREY_PATH + "/version 2> /dev/null").read().strip().replace('version=', '').replace("'",'')
 
 PAGES = ['report_options', 'control_panel_options', 'new_user', 'existing_user', 'standalone_options']
 
@@ -204,11 +204,19 @@ class PreyConfigurator(object):
 	# setting getting
 	################################################
 
-	def check_access(self):
+	def prey_exists(self):
+		if not os.path.exists(PREY_PATH + '/core'):
+			self.show_alert(_("Prey not installed"), _("Couldn't find a Prey installation on this system. Sorry."), True)
+		else:
+			return True
+
+	def is_config_writable(self):
 		command = 'if [ ! -w "'+PREY_PATH+'/config" ]; then echo 1; fi'
 		no_access = os.popen(command).read().strip()
 		if no_access == '1':
 			self.show_alert(_("Unauthorized"), _("You don't have access to manage Prey's configuration. Sorry."), True)
+		else:
+			return True
 
 	def get_setting(self, var):
 		command = 'grep \''+var+'=\' '+CONFIG_FILE+' | sed "s/'+var+'=\'\(.*\)\'/\\1/"'
@@ -333,6 +341,8 @@ class PreyConfigurator(object):
 		self.save('api_key', self.api_key)
 		self.save('device_key', '')
 
+		self.show_alert(_("Account created!"), _("Your account has been succesfully created in Prey's Control Panel. Please check your inbox now, you should have received a verification email."))
+
 		self.exit_configurator()
 
 	def apply_standalone_settings(self):
@@ -375,14 +385,15 @@ class PreyConfigurator(object):
 			self.apply_control_panel_settings()
 
 	def create_user(self):
-		user_name = self.text('user_name')
 		self.email = self.text('email')
-		password = self.text('password')
-		password_two = self.text('password_two')
 
-		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/users.xml -d \"user[name]='+user_name+'&user[email]='+self.email+'&user[password]='+password+'&user[password_confirmation]='+password_two+'\"').read().strip()
+		import urllib
+		params = urllib.urlencode({'user[name]': self.text('user_name'), 'user[email]': self.email, 'user[password]': self.text('password'), 'user[password_confirmation]' : self.text('password_two')})
+		# params = 'user[name]='+self.text('user_name')+'&user[email]='+self.email+'&user[password]='+self.text('password')+'&user[password_confirmation]='+self.text('password_two')
 
-		if result.find("201 Created") != -1:
+		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/users.xml -d \"'+params+'\"').read().strip()
+
+		if result.find("<key>") != -1:
 			self.get_api_key(result)
 		elif result.find("Email has already been taken") != -1:
 			self.show_alert(_("Email has already been taken"), _("That email address already exists! If you signed up previously, please go back and select the Existing User option."))
@@ -403,7 +414,10 @@ class PreyConfigurator(object):
 
 	def __init__(self):
 
-		self.check_access()
+		if not self.prey_exists() or not self.is_config_writable():
+			gtk.main()
+			exit(1)
+
 		self.get_current_settings()
 
 		builder = gtk.Builder()

@@ -300,7 +300,7 @@ self_setup(){
 		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
 
 		#sed for windows needs this hack to replace infile. Sorry!
-		set_config_value device_key "$device_key"
+		save_config_value device_key "$device_key"
 
 		if [ $? == 1 ]; then
 			log " -- There was a problem saving the configuration. You probably don't have permissions to modify $base_path/config."
