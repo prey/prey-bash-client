@@ -408,7 +408,7 @@ class PreyConfigurator(object):
 		if result.find('401 Unauthorized') != -1:
 			self.show_alert(_("User does not exist"), _("Couldn't log you in. Remember you need to activate your account opening the link we emailed you. If you forgot your password please visit preyproject.com."))
 		elif self.user_has_available_slots(result) == False:
-			self.show_alert(_("Not allowed"),  _("It seems you've reached your limit for devices on the Control Panel. Try removing this device from your account if you had already added it."))
+			self.show_alert(_("Not allowed"),  _("It seems you've reached your limit for devices! If you had previously added this PC, you should log into your Control Panel account and remove it, as a new record will be created. You can also upgrade to a Pro Account to increase your slot count and get access to additional features. For more information, please check http://preyproject.com/plans."))
 		else:
 			self.get_api_key(result)
 

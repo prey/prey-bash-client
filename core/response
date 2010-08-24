@@ -76,7 +76,7 @@ process_config(){
 
 	# check the current version against the one gotten from the server
 
-	if [[ "$auto_update" == "true" && `is_bigger_than $current_release $version` == 1 ]]; then
+	if [[ "$auto_update" == "true" && `is_greater_than $current_release $version` == 1 ]]; then
 
 		log " -- New Prey version found! Auto-update selected so let's try to upgrade."
 		run_prey_updater

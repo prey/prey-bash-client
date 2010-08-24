@@ -38,7 +38,7 @@ setup_module(){
 
 		local installed_version=`cat "$module_path/version" 2> /dev/null`
 
-		if [ `is_bigger_than $upstream_version $installed_version` == 1 ]; then
+		if [ `is_greater_than $upstream_version $installed_version` == 1 ]; then
 			log " -- Updating $module module to version $upstream_version!"
 			install_or_update_module $1
 			return $?

@@ -26,8 +26,7 @@ verify_installation(){
 
 	# check prey service on
 	log " -- Checking if Prey's cron service is running..."
-	local cron_running=`is_process_running "cron"`
-	if [ -n "$cron_running" ]; then
+	if [ -n `is_process_running "cron"` ]; then
 		echo " -- Cron service up and running. Good."
 	else
 		echo " !! Cron service not found! Please make sure no antivirus is blocking cron.exe from running. Optionally reinstall. :)"
@@ -48,7 +47,7 @@ is_net_framework_installed() {
 	local results=`reg query "HKLM\Software\Microsoft\NET Framework Setup\NDP" | sed -e '1,2d' -e 's/[^0-9.]//g' | grep -v "^$"`
 
 	for result in `echo -e "$results"`; do
-		if [[ "$result" == "$version" || `is_bigger_than $result $version` == 1 ]]; then
+		if [[ "$result" == "$version" || `is_greater_than $result $version` == 1 ]]; then
 			echo 1
 			break
 		fi

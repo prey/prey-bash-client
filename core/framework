@@ -1,0 +1,132 @@
+#!/bin/bash
+####################################################################
+# Prey Core Bash Framework Functions - by Tomas Pollak (bootlog.org)
+# URL: http://preyproject.com
+# License: GPLv3
+####################################################################
+
+####################################################################
+# string and integer functions
+####################################################################
+
+# echoes 1 if needle is found in haystack, expects haystack as $1, needle as $2
+# usage find_in 'foobar' 'foo' -> echoes 1
+find_in(){
+	echo "${1}" | grep "${2}" 1>/dev/null && echo 1 || return 0
+}
+
+# returns 1 if int/float is greater than the second one, expects int/float at $1 and $2
+is_greater_than() {
+	echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
+}
+
+# returns lowercased string, expects string as $1
+lowercase(){
+	echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
+# returns capitalized string, expects string as $1
+capitalize(){
+	#echo "$1" | sed -r 's/\b(.)/\U\1/g'
+	echo "$1" | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1'
+}
+
+# returns a urlencoded string, expects string as $1
+urlencode(){
+	echo "$1" | tr $line_breaker "^" | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/=/%3D/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\^$//;s/\^/%0A/g"
+}
+
+# returns the md5 hash for a string, expects string as $1
+md5_hash_for(){
+	echo -n "$1" | md5sum | sed 's/.*\([a-f0-9]\{32\}\).*/\1/'
+}
+
+# returns base64 encoded string, expects string as $1
+encrypt(){
+	echo -n "$1" | openssl enc -base64
+}
+
+# returns base64 decoded string, expects string as $1
+decrypt(){
+	echo "$1" | openssl enc -base64 -d
+}
+
+####################################################################
+# file functions
+####################################################################
+
+# returns file size for file, expects /path/file as $1
+file_size(){
+	cat "$1" | wc -c
+}
+
+# checks if file was modified in the last n minutes
+# usage: was_file_modified /path/to/file.txt 2
+# returns 1 if true
+was_file_modified(){
+	local dir=`dirname $1`
+	local file=`basename $1`
+	cd "$dir"
+	find . -maxdepth 1 -mmin -$2 -name "$file" | grep "$file" > /dev/null && echo 1
+	cd - > /dev/null
+}
+
+# returns the absolute path for a relative path, expects relative path as $1
+full_path(){
+	if [ "$1" != '.' ]; then
+		cd "$1"
+		echo $PWD
+		cd - &> /dev/null
+	else
+		echo $PWD
+	fi
+}
+
+# creates the temp dir for local file and trace storage
+# $tmpdir should be already set from the setup routine
+create_tmpdir(){
+	if [ ! -d "$tmpdir" ]; then
+		mkdir -p "$tmpdir" 2> /dev/null
+		# we need to give access to the logged in user in order to save files
+		if [ `whoami` == 'root' ]; then
+				chmod 777 "$tmpdir" 2> /dev/null
+		fi
+	fi
+}
+
+# deletes the temp dir at $tmpdir
+delete_tmpdir(){
+	rm -Rf "$tmpdir" 2> /dev/null
+}
+
+####################################################################
+# utility functions for managing processes
+####################################################################
+
+# checks if a function is defined. if not, return status is 1 (get with $?)
+function_exists() {
+	type $1 2> /dev/null | grep -q 'is a function'
+}
+
+# echoes 1 if process is running, expects process full name (eg. 'firefox-bin')
+is_process_running(){
+	processes | grep -v grep | grep "$1" > /dev/null && echo 1
+}
+
+# returns number of instances of a process, expects process full name
+number_of_instances_of(){
+	processes | grep -v grep | grep -v $$ | grep "$1" | wc -l
+}
+
+# returns pid for the requested process, expects the full process name
+get_pid(){
+	ps ax | grep -i "$1" | grep -v grep | head -1 | sed 's/ \?\([0-9]*\).*/\1/'
+}
+
+# kills a specified process, expects the process name
+kill_process(){
+	local pid=`get_pid $1`
+	if [ -n "$pid" ]; then
+		kill -9 $pid 2> /dev/null
+	fi
+}
