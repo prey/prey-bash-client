@@ -5,6 +5,39 @@
 # License: GPLv3
 ####################################################################
 
+get_key(){
+	echo "$1" | sed -e 's/<\(.*\)>.*<.*/\1/' -e 'y/-/_/' # we also replace -'s to _'s
+}
+
+get_value(){
+	echo "$1" | sed 's/<.*>\([^<].*\)<.*/\1/'
+}
+
+# expects attr name, returns value
+# example: get_attribute 'name' $line
+get_attribute(){
+	echo "$2" | sed "s/.*$1=\"\([a-z_]*\)\".*/\1/"
+}
+
+# key, value
+set_config(){
+	eval "${1}=\"$2\""
+}
+
+# module, key, value
+set_module_config(){
+	set_config "${1}__${2}" "$3"
+}
+
+save_config_value(){
+	sed -i.backup -e "s/^$1=.*/$1='$2'/" $config_file 2> /dev/null
+	if [ $? == 1 ]; then
+		return 1
+	else
+		mv "$base_path/config.backup" "$base_path/config"
+	fi
+}
+
 process_config(){
 
 	local prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
@@ -19,14 +52,14 @@ process_config(){
 	STDOUT=$(echo -e "$prey_configuration")
 	while read line; do
 
-		local key=`echo "$line" | sed 's/<\(.*\) .*/\1/'`
-		local value=`echo "$line" | sed 's/.*>\(.*\)<.*/\1/'`
+		local key=`get_key "$line"`
+		local value=`get_value "$line"`
 
 		if [ `find_in "$line" 'save="true"'` ]; then
-			set_config_value "$key" "$value" #write config value to file
+			save_config_value "$key" "$value" #write config value to file
 		fi
 
-		eval "$key='$value'"
+		set_config "$key" "$value"
 
 	done <<< "$STDOUT"
 
@@ -50,11 +83,6 @@ process_config(){
 
 	fi
 
-}
-
-# module, param, value
-set_config_for(){
-	eval "${1}__${2}='$3'"
 }
 
 # Prey expects a <configuration> and <modules> section in the xml
@@ -92,7 +120,7 @@ process_module_config(){
 	while read line; do
 
 		if [ `find_in "$line" 'name='` ]; then # we have a module node
-			local module_name=`echo $line | sed 's/.*name="\([a-z_]*\)".*/\1/'`
+			local module_name=`get_attribute 'name' "$line"`
 			log " -- Got instructions for $module_name module."
 
 			if [ "$auto_update" == "true" ]; then  # auto_update is enabled
@@ -110,12 +138,15 @@ process_module_config(){
 
 				initialize_module $module_name
 
-				local module_type=`echo $line | sed 's/.*type="\([a-z_]*\)".*/\1/'`
+				local module_type=`get_attribute 'type' "$line"`
 				if [ "$module_type" == 'action' ]; then
 
 					if [ `find_in "$line" 'function='` ]; then # a specific function was requested
-						local function_name=`echo $line | sed 's/.*function="\([a-z_]*\)".*/\1/'`
+						local function_name=`get_attribute 'function' "$line"`
+					else
+						local function_name=''
 					fi
+
 					add_action $module_name $function_name
 					unset function_name
 
@@ -127,11 +158,10 @@ process_module_config(){
 
 		elif [ -n "$module_name" ]; then # config line for module $module
 
-			local param=`echo "$line" | sed -e 's/<\(.*\)>.*<.*/\1/' -e 'y/-/_/'` # we also replace -'s to _'s
-			local value=`echo "$line" | sed -e 's/<.*>\([^<].*\)<.*/\1/'`
+			local key=`get_key "$line"`
+			local value=`get_value "$line"`
+			set_module_config "$module_name" "$key" "$value"
 
-			# log " -- Updating setting $param -> $value for $module module."
-			set_config_for "$module_name" "$param" "$value"
 		fi
 
 	done <<< "$STDOUT"

@@ -306,14 +306,6 @@ backup_config(){
 	cp "$config_file" "$backup_config_file"
 }
 
-set_config_value(){
-	sed -i.backup -e "s/^$1=.*/$1='$2'/" $config_file 2> /dev/null
-	if [ $? == 1 ]; then
-		return 1
-	else
-		mv "$base_path/config.backup" "$base_path/config"
-	fi
-}
 
 update_config(){
 	default_config_file="$base_path/config.default"
@@ -328,7 +320,7 @@ update_config(){
 		for option in $config_options; do
 			local option_name=`echo "$option" | sed 's/=.*//'`
 			local option_value=`echo "$option" | sed -e 's/[^=]*=//' -e "s/^'//" -e "s/'$//" -e "s/\//-SLASH-/g"`
-			set_config_value "$option_name" "$option_value"
+			save_config_value "$option_name" "$option_value"
 		done
 		sed -i -e "s/-SLASH-/\//g" -e "s/-SPACE-/ /g" $config_file # resolve the slash and space hacks
 		log ' -- Done!'

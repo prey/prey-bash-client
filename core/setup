@@ -9,7 +9,7 @@ trap "" INT TERM
 trap cleanup EXIT
 
 cleanup(){
-	log " -- Cleaning up..."
+	log " -- Cleaning up!\n"
 	delete_tmpdir
 }
 
