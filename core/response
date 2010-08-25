@@ -5,39 +5,6 @@
 # License: GPLv3
 ####################################################################
 
-get_key(){
-	echo "$1" | sed -e 's/<\(.*\)>.*<.*/\1/' -e 'y/-/_/' # we also replace -'s to _'s
-}
-
-get_value(){
-	echo "$1" | sed 's/<.*>\([^<].*\)<.*/\1/'
-}
-
-# expects attr name, returns value
-# example: get_attribute 'name' $line
-get_attribute(){
-	echo "$2" | sed "s/.*$1=\"\([a-z_]*\)\".*/\1/"
-}
-
-# key, value
-set_config(){
-	eval "${1}=\"$2\""
-}
-
-# module, key, value
-set_module_config(){
-	set_config "${1}__${2}" "$3"
-}
-
-save_config_value(){
-	sed -i.backup -e "s/^$1=.*/$1='$2'/" $config_file 2> /dev/null
-	if [ $? == 1 ]; then
-		return 1
-	else
-		mv "$base_path/config.backup" "$base_path/config"
-	fi
-}
-
 process_config(){
 
 	local prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
