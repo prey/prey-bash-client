@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-readonly logged_user=`whoami`
+readonly logged_user=`run whoami`
 alias processes='TASKLIST'
 
 tmpbase="$WINDIR\Temp"
