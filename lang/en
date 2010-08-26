@@ -17,7 +17,7 @@ STRING_SENDING_EMAIL=" -- Sending the report..."
 STRING_ERROR_EMAIL="\n\033[1m !! There was a problem sending the email. Are you sure it was setup correctly?
 If you're using Gmail, try removing the '@gmail.com' from the smtp_username field in Prey's config file.\033[0m\n"
 STRING_REMOVE_EVIDENCE=" -- Removing all traces of evidence..."
-STRING_DONE=" -- Done! Happy hunting! :)\n"
+STRING_DONE=" -- Done! Happy hunting! :)"
 
 EMAIL_NOTICE=""
 EMAIL_HEADER="Good news my friend, it seems we found it.\n\nHere's the report from your computer:\n\n"
