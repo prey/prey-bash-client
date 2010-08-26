@@ -101,7 +101,18 @@ test_diff() {
 apply_diff(){
 	log ' -- Applying patch...'
 	outcome=`patch $patch_options 2>&1`
-	return $?
+	# return $?
+
+	if [ `find_in "$outcome" 'FAILED'` ];
+		log ' -- Something went wrong while patching!'
+		echo "$outcome" > "$base_path/patch.log"
+		log " -- Results were logged to $base_path/patch.log."
+		return 1
+	else
+		log " -- Patch was successful!"
+		return 0
+	fi
+
 }
 
 # this could be useful sometime in the future
@@ -197,7 +208,7 @@ download_and_test_update(){
 
 apply_changes(){
 
-	log ' -- Updating files!'
+	local return_status=0
 	# create_copy_of_prey
 
 	if [ -f "$diff_file" ]; then
@@ -206,15 +217,10 @@ apply_changes(){
 		local return_status=$?
 		delete_files_according_to_diff
 
-		if [ $return_status != 0 ]; then
-			log ' -- Something went wrong while patching!'
-			echo "$outcome" > "$base_path/patch.log"
-			log " -- Results were logged to patch.log."
-		fi
-
 		rm "$diff_file" 2> /dev/null
 	fi
 
+	log ' -- Updating files!'
 	copy_new_files
 
 	log ' -- Cleaning up...'
@@ -305,7 +311,6 @@ backup_config(){
 	backup_config_file="$base_path/config.backup"
 	cp "$config_file" "$backup_config_file"
 }
-
 
 update_config(){
 	default_config_file="$base_path/config.default"
