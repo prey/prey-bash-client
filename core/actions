@@ -140,4 +140,6 @@ run_pending_actions(){
 		log " -- No pending actions left. All done!\n"
 	fi
 
+	cleanup
+
 }

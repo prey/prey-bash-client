@@ -259,7 +259,7 @@ perform_update() {
 	fi
 
 	report_update_status $update_status
-	delete_tmpdir
+	cleanup
 
 	# update_config
 

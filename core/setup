@@ -6,7 +6,7 @@
 ####################################################################
 
 trap "" INT TERM
-trap cleanup EXIT
+# trap cleanup EXIT
 
 cleanup(){
 	log " -- Cleaning up!\n"
