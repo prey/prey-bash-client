@@ -103,7 +103,7 @@ apply_diff(){
 	outcome=`patch $patch_options 2>&1`
 	# return $?
 
-	if [ `find_in "$outcome" 'FAILED'` ];
+	if [ `find_in "$outcome" 'FAILED'` ]; then
 		log ' -- Something went wrong while patching!'
 		echo "$outcome" > "$base_path/patch.log"
 		log " -- Results were logged to $base_path/patch.log."
