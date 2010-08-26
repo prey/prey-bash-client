@@ -157,10 +157,12 @@ reset_permissions(){
 pre_update_hook(){
 
 	# kill any instances of cron that may be running
-	for cron in "`tasklist | grep 'cron.exe'`"; do
+	for cron in "`TASKLIST | grep 'cron.exe'`"; do
 		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
-		echo " -- Shutting down cron with PID $pid..."
-		"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
+		if [ -n "$pid" ]; then
+			echo " -- Shutting down cron with PID $pid..."
+			"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
+		fi
 	done
 
 	# stop the cron service
