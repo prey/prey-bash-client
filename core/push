@@ -69,6 +69,7 @@ send_via_http(){
 		local post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`
 	fi
 	if [ `find_in "$post_url" 'https'` ]; then
+		echo " -- Using SSL encryption v3! Nice."
 		args="$args -k -3"
 	fi
 	response=`getter $args -K "$trace_file" $file_list "$post_url" \
