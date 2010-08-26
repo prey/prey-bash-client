@@ -60,7 +60,7 @@ set_vars(){
 	tmpbase="/tmp"
 	line_breaker="\n"
 	user_agent="-A Prey/$version ($os)"
-	$processes='ps ax'
+	processes='ps ax'
 }
 
 set_aliases(){
