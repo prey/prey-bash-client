@@ -134,5 +134,6 @@ fi
 
 check_running_actions
 run_pending_actions &
+cleanup
 
 exit 0
