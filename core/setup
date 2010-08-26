@@ -60,13 +60,13 @@ set_vars(){
 	tmpbase="/tmp"
 	line_breaker="\n"
 	user_agent="-A Prey/$version ($os)"
+	$processes='ps ax'
 }
 
 set_aliases(){
 	shopt -s expand_aliases
 	alias getter="curl $curl_options -s \"$user_agent\""
 	alias mailsender="sendEmail"
-	alias processes='ps ax'
 }
 
 set_constants(){

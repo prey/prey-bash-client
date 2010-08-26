@@ -110,12 +110,12 @@ function_exists() {
 
 # echoes 1 if process is running, expects process full name (eg. 'firefox-bin')
 is_process_running(){
-	processes | grep -v grep | grep "$1" > /dev/null && echo 1
+	$processes | grep -v grep | grep "$1" > /dev/null && echo 1
 }
 
 # returns number of instances of a process, expects process full name
 number_of_instances_of(){
-	processes | grep -v grep | grep -v $$ | grep "$1" | wc -l
+	$processes | grep -v grep | grep -v $$ | grep "$1" | wc -l
 }
 
 # returns pid for the requested process, expects the full process name

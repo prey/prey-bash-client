@@ -15,7 +15,7 @@ run_as_current_user(){
 }
 
 get_pid(){
-	processes | grep "$1" | head -1 | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
+	$processes | grep "$1" | head -1 | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
 }
 
 ############################################
