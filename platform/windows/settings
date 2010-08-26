@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-readonly logged_user=`echo "ComputerSystem Get Username" | wmic 2> /dev/null | grep -v 'wmic:' | grep -v "^$" | tail -1 | sed "s/.*\\\//"`
+readonly logged_user=`echo "ComputerSystem Get Username" | wmic 2> /dev/null | grep -v 'wmic:' | grep -v "^$" | tail -1 | sed 's/.*\\\//'`
 alias processes='TASKLIST'
 
 tmpbase="$WINDIR\Temp"
