@@ -341,8 +341,6 @@ class PreyConfigurator(object):
 		self.save('api_key', self.api_key)
 		self.save('device_key', '')
 
-		self.show_alert(_("Account created!"), _("Your account has been succesfully created in Prey's Control Panel. Please check your inbox now, you should have received a verification email."))
-
 		self.exit_configurator()
 
 	def apply_standalone_settings(self):
@@ -395,6 +393,7 @@ class PreyConfigurator(object):
 
 		if result.find("<key>") != -1:
 			self.get_api_key(result)
+			self.show_alert(_("Account created!"), _("Your account has been succesfully created in Prey's Control Panel. Please check your inbox now, you should have received a verification email."))
 		elif result.find("Email has already been taken") != -1:
 			self.show_alert(_("Email has already been taken"), _("That email address already exists! If you signed up previously, please go back and select the Existing User option."))
 		else:

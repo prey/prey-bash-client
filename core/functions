@@ -43,11 +43,9 @@ set_module_config(){
 
 save_config_value(){
 	sed -i.backup -e "s/^$1=.*/$1='$2'/" $config_file 2> /dev/null
-	if [ $? == 1 ]; then
-		return 1
-	else
-		mv "$base_path/config.backup" "$base_path/config"
-	fi
+	local rs=$?
+	rm -f "$base_path/config.backup" 2> /dev/null
+	return $rs
 }
 
 ####################################################################
@@ -232,7 +230,6 @@ self_setup(){
 		log ' -- Device succesfully added! Applying configuration...'
 		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
 
-		#sed for windows needs this hack to replace infile. Sorry!
 		save_config_value device_key "$device_key"
 
 		if [ $? == 1 ]; then
