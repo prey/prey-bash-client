@@ -46,7 +46,7 @@ save_config_value(){
 	if [ $? == 1 ]; then
 		return 1
 	else
-		mv "$base_path/config.backup" "$base_path/config"
+		rm -f "$base_path/config.backup"
 	fi
 }
 
@@ -232,7 +232,6 @@ self_setup(){
 		log ' -- Device succesfully added! Applying configuration...'
 		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
 
-		#sed for windows needs this hack to replace infile. Sorry!
 		save_config_value device_key "$device_key"
 
 		if [ $? == 1 ]; then
