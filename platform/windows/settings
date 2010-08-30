@@ -19,21 +19,14 @@ x64=`echo $PROCESSOR_ARCHITEW6432 | grep "64" 1> /dev/null && echo 1`
 
 readonly root_path='C:\'
 readonly system_path="$WINDIR"
-
-if [ -d "C:\Users" ]; then # vista and up
-	readonly vista7=1
-	readonly users_path="C:\Users"
-	if [ -n "$x64" ]; then
-		readonly programs_path="C:\Program\ Files"
-	else
-		readonly programs_path="C:\Program\ Files\ \(x86\)"
-	fi
-else # xp and 2000
-	readonly winxp=1
-	readonly users_path="C:\Documents\ and\ Settings"
-	readonly programs_path="C:\Program\ Files"
-fi
-
+readonly programs_path="$PROGRAMFILES"
+readonly users_path="`echo $USERPROFILE | sed "s/\\\[^\\\]*$//"`"
 readonly home_path="$users_path\\${logged_user}"
 
-# readonly config_program="$platform_path/prey-config.exe"
+# xp's users path contains a whitespace (C:\Documents and Settings),
+# while Vista and 7's don't (C:\Users), so we have a simple way to check
+if [ `find_in "$users_path" " "` ]; then
+	readonly winxp=1
+else
+	readonly vista7=1
+fi
