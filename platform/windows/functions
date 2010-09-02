@@ -10,7 +10,7 @@ run_as_current_user(){
 	if [ "`whoami`" == "SYSTEM" ]; then
 		run $1
 	else
-		$1
+		eval $1
 	fi
 }
 
