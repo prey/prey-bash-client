@@ -58,10 +58,10 @@ class PreyConfigurator(object):
 		return self.root.get_object(name)
 
 	def text(self, name):
-		return self.root.get_object(name).get_text()
+		return self.get(name).get_text()
 
 	def checkbox(self, name):
-		if self.root.get_object(name).get_active() == True:
+		if self.get(name).get_active() == True:
 			return 'y'
 		else:
 			return 'n'
@@ -154,7 +154,7 @@ class PreyConfigurator(object):
 				increment = 4
 		
 		if page_name == 'existing_user': # then we are going to select an exising device
-				self.get_existing_user(True)
+			if not self.get_existing_user(True): return
 
 		self.tabs.set_current_page(self.tabs.get_current_page()+increment)
 		self.get('button_prev').show()
@@ -408,12 +408,17 @@ class PreyConfigurator(object):
 			liststore.append([title,key])
 			if key == self.current_device_key:
 				chosen = index
+		if index < 0:
+			#self.get('create_new_device').set_active(True)
+			self.show_alert(_("No devices exist"), _("There are no devices currently defined in your Control Panel.\n\nPlease select the option to create a new device."))
+			return False
 
 		devices.set_model(liststore)
 		cell = gtk.CellRendererText()
 		devices.pack_start(cell, True)
 		devices.add_attribute(cell, 'text', 0)
 		devices.set_active(chosen)
+		return True
 
 	def create_user(self):
 		self.email = self.text('email')
@@ -447,19 +452,24 @@ class PreyConfigurator(object):
 		if result.find('401 Unauthorized') != -1:
 			self.show_alert(_("User does not exist"), _("Couldn't log you in. Remember you need to activate your account opening the link we emailed you.\n\nIf you forgot your password please visit preyproject.com."))
 			return
+
+		if result.find("<key>") != -1:
+			self.get_api_key(result)
+		else:
+			self.show_alert(_("Problem connecting"), _("We seem to be having a problem connecting to your Control Panel. This is likely a temporary issue. Please try again in a couple minutes."))
+			return False
 			
 		has_available_slots = self.user_has_available_slots(result)
 		if not has_available_slots and not show_devices:
 			self.show_alert(_("Not allowed"),  _("It seems you've reached your limit for devices!\n\nIf you had previously added this PC, you should select the \"Device already exists\" option to select the device from a list of devices you have already defined.\n\nIf this is a new device, you can also upgrade to a Pro Account to increase your slot count and get access to additional features. For more information, please check\nhttp://preyproject.com/plans."))
 
-		self.get_api_key(result)
 		if show_devices:
 			result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/devices.xml -u '+self.email+":'"+password+"'").read().strip()
-			self.get_device_keys(result,has_available_slots)
+			return self.get_device_keys(result,has_available_slots)
 		else:
 			self.device_key = ""
 			self.apply_control_panel_settings()
-			exit_configurator()
+			self.exit_configurator()
 
 	def apply_device_settings(self):
 		devices = self.get('device')
