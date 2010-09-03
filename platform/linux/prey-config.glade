@@ -816,7 +816,6 @@
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="model">liststore_devices</property>
                             <property name="button_sensitivity">on</property>
                             <signal name="activate" handler="apply_settings"/>
                           </object>
@@ -1201,19 +1200,5 @@
         </child>
       </object>
     </child>
-  </object>
-  <object class="GtkListStore" id="liststore_devices">
-    <columns>
-      <!-- column-name Title -->
-      <column type="gchararray"/>
-      <!-- column-name Key -->
-      <column type="gchararray"/>
-    </columns>
-    <data>
-      <row>
-        <col id="0" translatable="yes" context="dropdown box of existing devices" comments="the &lt; and &gt; should surround the translated text - indicating this is not an actual existing device, but that a new one should be created">&lt;New&gt;</col>
-        <col id="1" translatable="yes"></col>
-      </row>
-    </data>
   </object>
 </interface>
