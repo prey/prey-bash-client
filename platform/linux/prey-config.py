@@ -400,7 +400,6 @@ class PreyConfigurator(object):
 		chosen = index
 		liststore = gtk.ListStore(str,str)
 		devices.clear()
-		liststore.clear()
 		matches = re.findall(r"<device>\s*<key>(\w*)</key>.*?<title>([\s\w]*)</title>\s*</device>", string, re.DOTALL)
 		for match in matches:
 			index += 1
