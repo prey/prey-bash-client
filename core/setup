@@ -26,7 +26,7 @@ until [ -z "$1" ]; do
 	elif [[ "$1" == "-l" || "$1" == "--log" ]]; then
 		logfile="$base_path/prey.log"
 		echo -n "" > "$logfile" # empty the logfile first
-		log_output=">> $logfile"
+		log_output=">> \"$logfile\""
 	elif [[ "$1" == "-s" || "$1" == "--silent" ]]; then
 		log_output="&> /dev/null"
 	fi
