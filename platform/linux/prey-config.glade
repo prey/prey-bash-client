@@ -69,7 +69,6 @@
                             <property name="label" translatable="yes">Number of minutes to wait before waking up Prey. Control Panel users can change this setting later on the web.</property>
                             <property name="wrap">True</property>
                             <attributes>
-                              <attribute name="size" value="9000"/>
                               <attribute name="foreground" value="#444444444444"/>
                             </attributes>
                           </object>
@@ -102,7 +101,6 @@
                             <property name="label" translatable="yes">Whether we should allow guest logins on the system. On password-protected computers, this greatly increases the chances of gathering information.</property>
                             <property name="wrap">True</property>
                             <attributes>
-                              <attribute name="size" value="9000"/>
                               <attribute name="foreground" value="#444444444444"/>
                             </attributes>
                           </object>
@@ -206,7 +204,6 @@
                             <property name="label" translatable="yes">Allow your computer to connect automatically to the nearest available wifi access point, if no connection is found.</property>
                             <property name="wrap">True</property>
                             <attributes>
-                              <attribute name="size" value="9000"/>
                               <attribute name="foreground" value="#444444444444"/>
                             </attributes>
                           </object>
@@ -251,7 +248,6 @@
                             <property name="label" translatable="yes">Whether to query the server sending additional information regarding your network. Experimental feature.</property>
                             <property name="wrap">True</property>
                             <attributes>
-                              <attribute name="size" value="9000"/>
                               <attribute name="foreground" value="#444444444444"/>
                             </attributes>
                           </object>
@@ -306,7 +302,6 @@
 </property>
                             <property name="wrap">True</property>
                             <attributes>
-                              <attribute name="size" value="9000"/>
                               <attribute name="foreground" value="#444444444444"/>
                             </attributes>
                           </object>
@@ -371,7 +366,6 @@
                             <property name="label" translatable="yes">Reports fly directly to your inbox, but you need to activate Prey by generating/deleting a URL and set up your mail server settings as well.</property>
                             <property name="wrap">True</property>
                             <attributes>
-                              <attribute name="size" value="9000"/>
                               <attribute name="foreground" value="#444444444444"/>
                             </attributes>
                           </object>
@@ -427,7 +421,6 @@
                             <property name="label" translatable="yes">Select this if this is the first time you installed Prey, or if you still haven't created an account in the Control Panel.</property>
                             <property name="wrap">True</property>
                             <attributes>
-                              <attribute name="size" value="9000"/>
                               <attribute name="foreground" value="#444444444444"/>
                             </attributes>
                           </object>
@@ -492,7 +485,6 @@
                             <property name="label" translatable="yes">You already signed up at preyproject.com and wish to associate this device to your Control Panel account.</property>
                             <property name="wrap">True</property>
                             <attributes>
-                              <attribute name="size" value="9000"/>
                               <attribute name="foreground" value="#444444444444"/>
                             </attributes>
                           </object>
