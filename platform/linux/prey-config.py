@@ -129,12 +129,16 @@ class PreyConfigurator(object):
 		return PAGES[self.tabs.get_current_page()]
 		
 	def toggle_pg3_next_apply(self, button):
+		button_next = self.get('button_next')
+		button_apply = self.get('button_apply')
 		if self.get('use_existing_device').get_active() == False:
-			self.get('button_next').hide()
-			self.get('button_apply').show()
+			button_next.hide()
+			button_apply.show()
+			button_apply.grab_default()
 		else:
-			self.get('button_apply').hide()
-			self.get('button_next').show()
+			button_apply.hide()
+			button_next.show()
+			button_next.grab_default()
 
 	def next_page(self, button):
 		page_name = self.get_page_name()
@@ -152,7 +156,7 @@ class PreyConfigurator(object):
 					if response == gtk.RESPONSE_NO:
 						return
 			else:
-				increment = 4
+				increment = 5
 		
 		if page_name == 'existing_user': # then we are going to select an exising device
 			if not self.get_existing_user(True): return
@@ -162,7 +166,9 @@ class PreyConfigurator(object):
 
 		if self.tabs.get_current_page() > 1 and (self.tabs.get_current_page() != 3 or self.get('use_existing_device').get_active() == False):
 			self.get('button_next').hide()
-			self.get('button_apply').show()
+			button_apply = self.get('button_apply')
+			button_apply.show()
+			button_apply.grab_default()
 
 		self.show_ssl()
 
@@ -173,7 +179,7 @@ class PreyConfigurator(object):
 		if page_name == 'existing_user':
 			decrement = 2
 		elif page_name == 'standalone_options':
-			decrement = 4
+			decrement = 5
 
 		if self.tabs.get_current_page() != 0:
 			self.tabs.set_current_page(self.tabs.get_current_page()-decrement)
@@ -183,7 +189,9 @@ class PreyConfigurator(object):
 
 		if self.tabs.get_current_page() < 2 or (self.tabs.get_current_page() == 3 and self.get('use_existing_device').get_active() == True):
 			self.get('button_apply').hide()
-			self.get('button_next').show()
+			button_next = self.get('button_next')
+			button_next.show()
+			button_next.grab_default()
 
 		self.hide_ssl()
 
@@ -195,9 +203,11 @@ class PreyConfigurator(object):
 			button_prev.hide()
 			button_next.hide()
 			button_apply.show()
+			button_apply.grab_default()
 			self.show_ssl()
 		else:
 			button_next.show()
+			button_next.grab_default()
 			button_apply.hide()
 			self.hide_ssl()
 			if self.tabs.get_current_page() > 0:
@@ -211,6 +221,20 @@ class PreyConfigurator(object):
 		if self.get_page_name() == 'new_user' or self.get_page_name() == 'existing_user':
 			self.get('ssl_icon').show()
 			self.get('ssl_text').show()
+
+	def set_default_action(self,button,ctrl):
+		button_cancel = self.get('button_cancel')
+		cancel_has_default = button_cancel.flags() & gtk.HAS_DEFAULT
+		button_prev = self.get('button_prev')
+		prev_has_default = button_prev.flags() & gtk.HAS_DEFAULT
+		button_next = self.get('button_next')
+		button_apply = self.get('button_apply')
+		if not cancel_has_default and not prev_has_default:
+			if button_next.flags() & gtk.VISIBLE:
+				button_next.grab_default()
+			else:
+				button_apply.grab_default()
+		
 
 	################################################
 	# setting getting
@@ -306,7 +330,7 @@ class PreyConfigurator(object):
 		os.system(command)
 
 	def apply_settings(self, button):
-		self.get('button_apply').set_label('Saving...')
+		self.get('button_apply').set_label(_("Saving..."))
 
 		if self.get("main_tabs").get_current_page() == 0: # main settings page
 			self.apply_main_settings()
@@ -315,14 +339,14 @@ class PreyConfigurator(object):
 			if page_name == 'new_user':
 				if self.validate_fields():
 					self.create_user()
-			elif page_name == "existing_user":
+			elif page_name == "existing_user":	# this is an apply event, so we are creating a new device (no "advanced" device selection)
 				self.get_existing_user(False)
 			elif page_name == "existing_device":
 				self.apply_device_settings()
 			elif page_name == "standalone_options":
 				self.apply_standalone_settings()
 
-		self.get('button_apply').set_label('Apply')
+		self.get('button_apply').set_label('gtk-apply')
 
 	def apply_main_settings(self):
 		# save('lang', text('lang'))
@@ -399,6 +423,7 @@ class PreyConfigurator(object):
 			self.api_key = matches.groups()[0]
 
 	def get_device_keys(self, string, has_available_slots):
+		hostname = os.popen("hostname").read().strip()
 		devices = self.get('device')
 		index = -1
 		chosen = index
@@ -410,7 +435,9 @@ class PreyConfigurator(object):
 			key = match[0]
 			title = match[1]
 			liststore.append([title,key])
-			if key == self.current_device_key:
+			if key == self.current_device_key:	#set the choice because we have a matching device key
+				chosen = index
+			elif title.lower() == hostname.lower and chosen < 0:	#set the choice because we likely have a matching title (but device key takes precedence)
 				chosen = index
 		if index < 0:
 			#self.get('create_new_device').set_active(True)
@@ -500,7 +527,8 @@ class PreyConfigurator(object):
 			"next_page" : self.next_page,
 			"toggle_buttons" : self.toggle_buttons,
 			"apply_settings" : self.apply_settings,
-			"toggle_pg3_next_apply" : self.toggle_pg3_next_apply
+			"toggle_pg3_next_apply" : self.toggle_pg3_next_apply,
+			"set_default_action" : self.set_default_action
 		})
 		self.window = builder.get_object("window")
 		self.window.set_title(self.window.get_title() + " (v" + VERSION + ")")

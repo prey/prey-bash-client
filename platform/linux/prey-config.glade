@@ -159,6 +159,7 @@
                             <property name="height_request">25</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
                             <property name="editable">False</property>
                             <property name="invisible_char">&#x2022;</property>
                             <property name="caps_lock_warning">False</property>
@@ -337,6 +338,7 @@
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -456,6 +458,7 @@
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
                             <property name="receives_default">False</property>
                             <property name="active">True</property>
                             <property name="draw_indicator">True</property>
@@ -550,8 +553,8 @@
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">150</property>
@@ -617,7 +620,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">150</property>
@@ -632,7 +634,6 @@
                             <property name="can_focus">True</property>
                             <property name="visibility">False</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">150</property>
@@ -647,7 +648,6 @@
                             <property name="can_focus">True</property>
                             <property name="visibility">False</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">150</property>
@@ -719,8 +719,8 @@
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">150</property>
@@ -736,7 +736,6 @@
                             <property name="visibility">False</property>
                             <property name="invisible_char">&#x2022;</property>
                             <property name="activates_default">True</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">150</property>
@@ -816,6 +815,7 @@
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
                             <property name="button_sensitivity">on</property>
                             <signal name="activate" handler="apply_settings"/>
                           </object>
@@ -876,8 +876,8 @@
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">100</property>
@@ -930,7 +930,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">100</property>
@@ -944,7 +943,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">100</property>
@@ -958,7 +956,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">400</property>
@@ -973,7 +970,6 @@
                             <property name="can_focus">True</property>
                             <property name="visibility">False</property>
                             <property name="invisible_char">&#x2022;</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">400</property>
@@ -1091,7 +1087,10 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
+                    <property name="focus_on_click">False</property>
                     <signal name="released" handler="on_window_destroy"/>
+                    <signal name="activate" handler="on_window_destroy"/>
+                    <signal name="focus_out_event" handler="set_default_action"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1105,7 +1104,9 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
-                    <signal name="released" handler="prev_page"/>
+                    <property name="focus_on_click">False</property>
+                    <signal name="focus_out_event" handler="set_default_action" after="yes"/>
+                    <signal name="activate" handler="prev_page"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1117,9 +1118,12 @@
                   <object class="GtkButton" id="button_next">
                     <property name="label">gtk-go-forward</property>
                     <property name="can_focus">True</property>
+                    <property name="can_default">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
-                    <signal name="released" handler="next_page"/>
+                    <property name="focus_on_click">False</property>
+                    <signal name="focus_out_event" handler="set_default_action" after="yes"/>
+                    <signal name="activate" handler="next_page"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1132,9 +1136,12 @@
                     <property name="label">gtk-apply</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="can_default">True</property>
+                    <property name="has_default">True</property>
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
-                    <signal name="released" handler="apply_settings"/>
+                    <property name="focus_on_click">False</property>
+                    <signal name="focus_out_event" handler="set_default_action" after="yes"/>
                     <signal name="activate" handler="apply_settings"/>
                   </object>
                   <packing>
