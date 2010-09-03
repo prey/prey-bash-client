@@ -19,6 +19,7 @@ import gtk
 import os
 # from xml.dom.minidom import parseString
 import re
+import urllib
 
 app_name = 'prey-config'
 lang_path = 'lang'
@@ -382,6 +383,9 @@ class PreyConfigurator(object):
 	# control panel api
 	################################################
 
+	def report_connection_issue(self):
+		self.show_alert(_("Problem connecting"), _("We seem to be having a problem connecting to your Control Panel. This is likely a temporary issue. Please try again in a few moments."))
+
 	def user_has_available_slots(self, string):
 		matches = re.search(r"<available_slots>(\w*)</available_slots>", string)
 		if matches and int(matches.groups()[0]) > 0:
@@ -422,11 +426,8 @@ class PreyConfigurator(object):
 
 	def create_user(self):
 		self.email = self.text('email')
-
-		import urllib
 		params = urllib.urlencode({'user[name]': self.text('user_name'), 'user[email]': self.email, 'user[password]': self.text('password'), 'user[password_confirmation]' : self.text('password_two')})
 		# params = 'user[name]='+self.text('user_name')+'&user[email]='+self.email+'&user[password]='+self.text('password')+'&user[password_confirmation]='+self.text('password_two')
-
 		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/users.xml -d \"'+params+'\"').read().strip()
 
 		if result.find("<key>") != -1:
@@ -443,7 +444,6 @@ class PreyConfigurator(object):
 		self.run_prey()
 		self.show_alert(_("Account created!"), _("Your account has been succesfully created and configured in Prey's Control Panel.\n\nPlease check your inbox now, you should have received a verification email."), True)
 
-
 	def get_existing_user(self, show_devices):
 		self.email = self.text('existing_email')
 		password = self.text('existing_password')
@@ -453,19 +453,24 @@ class PreyConfigurator(object):
 			self.show_alert(_("User does not exist"), _("Couldn't log you in. Remember you need to activate your account opening the link we emailed you.\n\nIf you forgot your password please visit preyproject.com."))
 			return
 
-		if result.find("<key>") != -1:
+		if result.find("<user>") != -1:
 			self.get_api_key(result)
 		else:
-			self.show_alert(_("Problem connecting"), _("We seem to be having a problem connecting to your Control Panel. This is likely a temporary issue. Please try again in a couple minutes."))
+			self.report_connection_issue()
 			return False
 			
 		has_available_slots = self.user_has_available_slots(result)
 		if not has_available_slots and not show_devices:
 			self.show_alert(_("Not allowed"),  _("It seems you've reached your limit for devices!\n\nIf you had previously added this PC, you should select the \"Device already exists\" option to select the device from a list of devices you have already defined.\n\nIf this is a new device, you can also upgrade to a Pro Account to increase your slot count and get access to additional features. For more information, please check\nhttp://preyproject.com/plans."))
+			return False
 
 		if show_devices:
 			result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/devices.xml -u '+self.email+":'"+password+"'").read().strip()
-			return self.get_device_keys(result,has_available_slots)
+			if result.find("</devices>") != -1:
+				return self.get_device_keys(result,has_available_slots)
+			else:
+				self.report_connection_issue()
+				return False
 		else:
 			self.device_key = ""
 			self.apply_control_panel_settings()
