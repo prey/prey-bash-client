@@ -402,7 +402,7 @@ class PreyConfigurator(object):
 	def get_existing_user(self):
 		self.email = self.text('existing_email')
 		password = self.text('existing_password')
-		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/profile.xml -u '+self.email+':'+password).read().strip()
+		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/profile.xml -u '+self.email+":'"+password+"'").read().strip()
 
 		if result.find('401 Unauthorized') != -1:
 			self.show_alert(_("User does not exist"), _("Couldn't log you in. Remember you need to activate your account opening the link we emailed you. If you forgot your password please visit preyproject.com."))
