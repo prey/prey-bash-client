@@ -87,7 +87,7 @@ class PreyConfigurator(object):
 		if len(self.text('password')) < 6:
 			self.show_alert(_("Bad password"), _("Password should contain at least 6 chars. Please try again."))
 			return False
-		elif self.text('password') != self.text('password_two'):
+		elif self.text('password') != self.text('password_confirm'):
 			self.show_alert(_("Passwords don't match"), _("Please make sure both passwords match!"))
 			return False
 		return True
@@ -453,8 +453,8 @@ class PreyConfigurator(object):
 
 	def create_user(self):
 		self.email = self.text('email')
-		params = urllib.urlencode({'user[name]': self.text('user_name'), 'user[email]': self.email, 'user[password]': self.text('password'), 'user[password_confirmation]' : self.text('password_two')})
-		# params = 'user[name]='+self.text('user_name')+'&user[email]='+self.email+'&user[password]='+self.text('password')+'&user[password_confirmation]='+self.text('password_two')
+		params = urllib.urlencode({'user[name]': self.text('user_name'), 'user[email]': self.email, 'user[password]': self.text('password'), 'user[password_confirmation]' : self.text('password_confirm')})
+		# params = 'user[name]='+self.text('user_name')+'&user[email]='+self.email+'&user[password]='+self.text('password')+'&user[password_confirmation]='+self.text('password_confirm')
 		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/users.xml -d \"'+params+'\"').read().strip()
 
 		if result.find("<key>") != -1:
