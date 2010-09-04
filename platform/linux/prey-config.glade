@@ -1088,7 +1088,7 @@
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
                     <property name="focus_on_click">False</property>
-                    <signal name="released" handler="on_window_destroy"/>
+                    <signal name="clicked" handler="on_window_destroy"/>
                     <signal name="activate" handler="on_window_destroy"/>
                     <signal name="focus_out_event" handler="set_default_action"/>
                   </object>
@@ -1105,6 +1105,7 @@
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
                     <property name="focus_on_click">False</property>
+                    <signal name="clicked" handler="prev_page"/>
                     <signal name="focus_out_event" handler="set_default_action" after="yes"/>
                     <signal name="activate" handler="prev_page"/>
                   </object>
@@ -1122,6 +1123,7 @@
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
                     <property name="focus_on_click">False</property>
+                    <signal name="clicked" handler="next_page"/>
                     <signal name="focus_out_event" handler="set_default_action" after="yes"/>
                     <signal name="activate" handler="next_page"/>
                   </object>
@@ -1141,6 +1143,7 @@
                     <property name="receives_default">True</property>
                     <property name="use_stock">True</property>
                     <property name="focus_on_click">False</property>
+                    <signal name="clicked" handler="apply_settings"/>
                     <signal name="focus_out_event" handler="set_default_action" after="yes"/>
                     <signal name="activate" handler="apply_settings"/>
                   </object>
