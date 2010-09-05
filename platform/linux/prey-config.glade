@@ -842,7 +842,6 @@
                             <property name="can_focus">True</property>
                             <property name="has_focus">True</property>
                             <property name="button_sensitivity">on</property>
-                            <signal name="activate" handler="apply_settings"/>
                           </object>
                           <packing>
                             <property name="x">150</property>
@@ -1123,7 +1122,6 @@
                     <property name="focus_on_click">False</property>
                     <signal name="clicked" handler="on_window_destroy"/>
                     <signal name="focus_out_event" handler="set_default_action"/>
-                    <signal name="activate" handler="on_window_destroy"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1140,7 +1138,6 @@
                     <property name="focus_on_click">False</property>
                     <signal name="clicked" handler="prev_page"/>
                     <signal name="focus_out_event" handler="set_default_action" after="yes"/>
-                    <signal name="activate" handler="prev_page"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1158,7 +1155,6 @@
                     <property name="focus_on_click">False</property>
                     <signal name="clicked" handler="next_page"/>
                     <signal name="focus_out_event" handler="set_default_action" after="yes"/>
-                    <signal name="activate" handler="next_page"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
@@ -1178,7 +1174,6 @@
                     <property name="focus_on_click">False</property>
                     <signal name="clicked" handler="apply_settings"/>
                     <signal name="focus_out_event" handler="set_default_action" after="yes"/>
-                    <signal name="activate" handler="apply_settings"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
