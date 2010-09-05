@@ -214,13 +214,13 @@ class PreyConfigurator(object):
 				button_prev.show()
 
 	def hide_ssl(self):
-		self.get('ssl_icon').hide()
-		self.get('ssl_text').hide()
+		self.get('icon_ssl').hide()
+		self.get('lbl_ssl').hide()
 
 	def show_ssl(self):
 		if self.get_page_name() == 'new_user' or self.get_page_name() == 'existing_user':
-			self.get('ssl_icon').show()
-			self.get('ssl_text').show()
+			self.get('icon_ssl').show()
+			self.get('lbl_ssl').show()
 
 	def set_default_action(self,button,ctrl):
 		button_cancel = self.get('button_cancel')

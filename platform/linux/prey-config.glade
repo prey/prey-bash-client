@@ -14,7 +14,7 @@
       <object class="GtkVBox" id="vbox1">
         <property name="visible">True</property>
         <child>
-          <object class="GtkImage" id="image1">
+          <object class="GtkImage" id="icon_prey">
             <property name="visible">True</property>
             <property name="xpad">10</property>
             <property name="ypad">10</property>
@@ -52,7 +52,7 @@
                         <property name="visible">True</property>
                         <property name="height">340</property>
                         <child>
-                          <object class="GtkImage" id="image6">
+                          <object class="GtkImage" id="icon_delay">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
                             <property name="visible">True</property>
@@ -64,13 +64,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label9">
+                          <object class="GtkLabel" id="lbl_delay_description">
                             <property name="width_request">490</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 0 (Main Settings)&#10;Item: frequency description">Number of minutes to wait before waking up Prey. Control Panel users can change this setting later on the web.</property>
+                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 0 (Main Settings)&#10;Item: delay description">Number of minutes to wait before waking up Prey. Control Panel users can change this setting later on the web.</property>
                             <property name="wrap">True</property>
                             <attributes>
                               <attribute name="foreground" value="#444444444444"/>
@@ -82,7 +82,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label19">
+                          <object class="GtkLabel" id="lbl_main_settings_instructions">
                             <property name="width_request">550</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -97,7 +97,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label22">
+                          <object class="GtkLabel" id="lbl_guest_account_description">
                             <property name="width_request">490</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -114,7 +114,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkImage" id="image7">
+                          <object class="GtkImage" id="icon_guest_account">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
                             <property name="visible">True</property>
@@ -142,7 +142,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label3">
+                          <object class="GtkLabel" id="lbl_delay">
                             <property name="width_request">250</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -178,7 +178,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkImage" id="image8">
+                          <object class="GtkImage" id="icon_auto_connect">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
                             <property name="visible">True</property>
@@ -206,7 +206,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label23">
+                          <object class="GtkLabel" id="lbl_auto_connect_description">
                             <property name="width_request">490</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -223,7 +223,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkImage" id="image9">
+                          <object class="GtkImage" id="icon_extended_headers">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
                             <property name="visible">True</property>
@@ -251,7 +251,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label24">
+                          <object class="GtkLabel" id="lbl_extended_headers_description">
                             <property name="width_request">490</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -294,7 +294,7 @@
                       <object class="GtkFixed" id="reports_options">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkImage" id="image2">
+                          <object class="GtkImage" id="icon_cp_mode">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
                             <property name="visible">True</property>
@@ -306,7 +306,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label2">
+                          <object class="GtkLabel" id="lbl_cp_mode_description">
                             <property name="width_request">510</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -324,13 +324,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label10">
+                          <object class="GtkLabel" id="lbl_reporting_mode_instructions">
                             <property name="width_request">570</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 1 (Reporting mode)&#10;Item: reporting mode choice page instructions">Please choose the reporting method for Prey. If you're not sure what you're doing, please visit preyproject.com.</property>
+                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 1 (Reporting mode)&#10;Item: reporting mode page instructions">Please choose the reporting method for Prey. If you're not sure what you're doing, please visit preyproject.com.</property>
                             <property name="wrap">True</property>
                           </object>
                           <packing>
@@ -340,7 +340,7 @@
                         </child>
                         <child>
                           <object class="GtkRadioButton" id="reporting_mode_cp">
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 1 (Reporting mode)&#10;Item: control panel" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Prey + Control _Panel (Recommended)</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 1 (Reporting mode)&#10;Item: control panel mode" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Prey + Control _Panel (Recommended)</property>
                             <property name="width_request">420</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -357,7 +357,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkRadioButton" id="reporting_mode_email">
+                          <object class="GtkRadioButton" id="reporting_mode_standalone">
                             <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 1 (Reporting mode)&#10;Item: standalone" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Prey _Standalone (Advanced)</property>
                             <property name="width_request">420</property>
                             <property name="height_request">30</property>
@@ -374,7 +374,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label1">
+                          <object class="GtkLabel" id="lbl_standalone_description">
                             <property name="width_request">510</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -391,7 +391,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkImage" id="image3">
+                          <object class="GtkImage" id="icon_standalone">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
                             <property name="visible">True</property>
@@ -417,7 +417,7 @@
                       <object class="GtkFixed" id="control_panel_options">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkImage" id="image4">
+                          <object class="GtkImage" id="icon_new_user">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
                             <property name="visible">True</property>
@@ -429,7 +429,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label14">
+                          <object class="GtkLabel" id="lbl_new_user_description">
                             <property name="width_request">510</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -446,7 +446,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label15">
+                          <object class="GtkLabel" id="lbl_user_determination_instructions">
                             <property name="width_request">570</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -497,7 +497,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label16">
+                          <object class="GtkLabel" id="lbl_existing_user_description">
                             <property name="width_request">510</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -514,7 +514,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkImage" id="image5">
+                          <object class="GtkImage" id="icon_existing_user">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
                             <property name="visible">True</property>
@@ -544,7 +544,7 @@
                       <object class="GtkFixed" id="new_user">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkLabel" id="label8">
+                          <object class="GtkLabel" id="lbl_new_user_instructions">
                             <property name="width_request">570</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -573,7 +573,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_password_confirm">
+                          <object class="GtkLabel" id="lbl_password_confirm">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -588,7 +588,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_password">
+                          <object class="GtkLabel" id="lbl_password">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -603,7 +603,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_email">
+                          <object class="GtkLabel" id="lbl_email">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -618,7 +618,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_user_name">
+                          <object class="GtkLabel" id="lbl_user_name">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -692,7 +692,7 @@
                       <object class="GtkFixed" id="existing_user">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkLabel" id="label18">
+                          <object class="GtkLabel" id="lbl_existing_user_instructions">
                             <property name="width_request">570</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
@@ -707,7 +707,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_existing_password">
+                          <object class="GtkLabel" id="lbl_existing_password">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -722,7 +722,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_existing_email">
+                          <object class="GtkLabel" id="lbl_existing_email">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -820,13 +820,13 @@
                       <object class="GtkFixed" id="existing_device">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkLabel" id="label25">
+                          <object class="GtkLabel" id="lbl_device_instructions">
                             <property name="width_request">570</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 5 (Existing devices)&#10;Item: existing device page instructions">Please select the existing device configured in your Configuration Panel corresponding to this machine.</property>
+                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 5 (Existing devices)&#10;Item: device page instructions">Please select the existing device configured in your Configuration Panel corresponding to this machine.</property>
                             <property name="wrap">True</property>
                           </object>
                           <packing>
@@ -849,7 +849,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_device">
+                          <object class="GtkLabel" id="lbl_device">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
@@ -882,13 +882,13 @@
                       <object class="GtkFixed" id="standalone_options">
                         <property name="visible">True</property>
                         <child>
-                          <object class="GtkLabel" id="label27">
+                          <object class="GtkLabel" id="lbl_standalone_instructions">
                             <property name="width_request">570</property>
                             <property name="height_request">55</property>
                             <property name="visible">True</property>
                             <property name="xalign">0</property>
                             <property name="yalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 6 (Standalone parameters)&#10;Item: standalone parameters page instructions">Please configure your SMTP settings. You also need to generate the URL that when deleted will trigger Prey, otherwise you'll start receiving reports immediately.</property>
+                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 6 (standalone parameters)&#10;Item: standalone parameters page instructions">Please configure your SMTP settings. You also need to generate the URL that when deleted will trigger Prey, otherwise you'll start receiving reports immediately.</property>
                             <property name="wrap">True</property>
                           </object>
                           <packing>
@@ -911,12 +911,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_smtp_server">
+                          <object class="GtkLabel" id="lbl_smtp_server">
                             <property name="width_request">85</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (Standalone parameters)&#10;Item: smtp server" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP Server</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: smtp server" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP _Server</property>
+                            <property name="use_underline">True</property>
                             <property name="mnemonic_widget">smtp_server</property>
                           </object>
                           <packing>
@@ -925,12 +926,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_mail_to">
+                          <object class="GtkLabel" id="lbl_mail_to">
                             <property name="width_request">85</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (Standalone parameters)&#10;Item: mail to" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Email</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: mail to" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">_Email</property>
+                            <property name="use_underline">True</property>
                             <property name="mnemonic_widget">mail_to</property>
                           </object>
                           <packing>
@@ -939,12 +941,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_check_url">
+                          <object class="GtkLabel" id="lbl_check_url">
                             <property name="width_request">85</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (Standalone parameters)&#10;Item: check url" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Check URL</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: check url" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">C_heck URL</property>
+                            <property name="use_underline">True</property>
                             <property name="mnemonic_widget">check_url</property>
                           </object>
                           <packing>
@@ -1006,12 +1009,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_smtp_password">
+                          <object class="GtkLabel" id="lbl_smtp_password">
                             <property name="width_request">80</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (Standalone parameters)&#10;Item: smtp password" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP Pass</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: smtp password" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP _Pass</property>
+                            <property name="use_underline">True</property>
                             <property name="mnemonic_widget">smtp_password</property>
                           </object>
                           <packing>
@@ -1020,12 +1024,13 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_smtp_username">
+                          <object class="GtkLabel" id="lbl_smtp_username">
                             <property name="width_request">80</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (Standalone parameters)&#10;Item: smtp username" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP User</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: smtp username" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP _User</property>
+                            <property name="use_underline">True</property>
                             <property name="mnemonic_widget">smtp_username</property>
                           </object>
                           <packing>
@@ -1080,7 +1085,7 @@
           <object class="GtkHBox" id="hbox2">
             <property name="visible">True</property>
             <child>
-              <object class="GtkImage" id="ssl_icon">
+              <object class="GtkImage" id="icon_ssl">
                 <property name="width_request">28</property>
                 <property name="height_request">28</property>
                 <property name="pixbuf">../../pixmaps/conf/secure.png</property>
@@ -1093,7 +1098,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkLabel" id="ssl_text">
+              <object class="GtkLabel" id="lbl_ssl">
                 <property name="xalign">0</property>
                 <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Application&#10;Item: SSL connection indicator">Connection secured with SSL.</property>
                 <attributes>
