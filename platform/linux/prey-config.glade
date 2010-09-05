@@ -41,7 +41,7 @@
                 <property name="tab_vborder">4</property>
                 <signal name="switch_page" handler="toggle_buttons"/>
                 <child>
-                  <object class="GtkScrolledWindow" id="scrolledwindow1">
+                  <object class="GtkScrolledWindow" id="main_settings_scrollwindow">
                     <property name="width_request">590</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
@@ -52,6 +52,21 @@
                         <property name="visible">True</property>
                         <property name="height">340</property>
                         <child>
+                          <object class="GtkLabel" id="lbl_main_settings_instructions">
+                            <property name="width_request">550</property>
+                            <property name="height_request">55</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 0(Main Settings)&#10;Item: main settings page instructions">For advanced settings please check the config file. Modules are set up on the Control Panel.</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkImage" id="icon_delay">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
@@ -61,6 +76,42 @@
                           <packing>
                             <property name="x">10</property>
                             <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkSpinButton" id="delay">
+                            <property name="width_request">50</property>
+                            <property name="height_request">25</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
+                            <property name="is_focus">True</property>
+                            <property name="editable">False</property>
+                            <property name="invisible_char">&#x2022;</property>
+                            <property name="caps_lock_warning">False</property>
+                            <property name="adjustment">delay_adjustment</property>
+                            <property name="snap_to_ticks">True</property>
+                            <property name="numeric">True</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">61</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lbl_delay">
+                            <property name="width_request">250</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 0 (Main Settings)&#10;Item: frequency" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Fre_quency of reports and actions</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">delay</property>
+                          </object>
+                          <packing>
+                            <property name="x">130</property>
+                            <property name="y">60</property>
                           </packing>
                         </child>
                         <child>
@@ -79,38 +130,6 @@
                           <packing>
                             <property name="x">70</property>
                             <property name="y">90</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="lbl_main_settings_instructions">
-                            <property name="width_request">550</property>
-                            <property name="height_request">55</property>
-                            <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 0(Main Settings)&#10;Item: main settings page instructions">For advanced settings please check the config file. Modules are set up on the Control Panel.</property>
-                            <property name="wrap">True</property>
-                          </object>
-                          <packing>
-                            <property name="x">10</property>
-                            <property name="y">10</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="lbl_guest_account_description">
-                            <property name="width_request">490</property>
-                            <property name="height_request">55</property>
-                            <property name="visible">True</property>
-                            <property name="yalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 0 (Main Settings)&#10;Item: guest login description">Whether we should allow guest logins on the system. On password-protected computers, this greatly increases the chances of gathering information.</property>
-                            <property name="wrap">True</property>
-                            <attributes>
-                              <attribute name="foreground" value="#444444444444"/>
-                            </attributes>
-                          </object>
-                          <packing>
-                            <property name="x">70</property>
-                            <property name="y">160</property>
                           </packing>
                         </child>
                         <child>
@@ -142,39 +161,20 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="lbl_delay">
-                            <property name="width_request">250</property>
-                            <property name="height_request">30</property>
+                          <object class="GtkLabel" id="lbl_guest_account_description">
+                            <property name="width_request">490</property>
+                            <property name="height_request">55</property>
                             <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 0 (Main Settings)&#10;Item: frequency" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Fre_quency of reports and actions</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">delay</property>
-                          </object>
-                          <packing>
-                            <property name="x">130</property>
-                            <property name="y">60</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkSpinButton" id="delay">
-                            <property name="width_request">50</property>
-                            <property name="height_request">25</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="has_focus">True</property>
-                            <property name="is_focus">True</property>
-                            <property name="editable">False</property>
-                            <property name="invisible_char">&#x2022;</property>
-                            <property name="caps_lock_warning">False</property>
-                            <property name="adjustment">delay_adjustment</property>
-                            <property name="snap_to_ticks">True</property>
-                            <property name="numeric">True</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 0 (Main Settings)&#10;Item: guest login description">Whether we should allow guest logins on the system. On password-protected computers, this greatly increases the chances of gathering information.</property>
                             <property name="wrap">True</property>
+                            <attributes>
+                              <attribute name="foreground" value="#444444444444"/>
+                            </attributes>
                           </object>
                           <packing>
                             <property name="x">70</property>
-                            <property name="y">61</property>
+                            <property name="y">160</property>
                           </packing>
                         </child>
                         <child>
@@ -294,6 +294,21 @@
                       <object class="GtkFixed" id="reports_options">
                         <property name="visible">True</property>
                         <child>
+                          <object class="GtkLabel" id="lbl_reporting_mode_instructions">
+                            <property name="width_request">570</property>
+                            <property name="height_request">55</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 1 (Reporting mode)&#10;Item: reporting mode page instructions">Please choose the reporting method for Prey. If you're not sure what you're doing, please visit preyproject.com.</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkImage" id="icon_cp_mode">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
@@ -303,6 +318,24 @@
                           <packing>
                             <property name="x">10</property>
                             <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="reporting_mode_cp">
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 1 (Reporting mode)&#10;Item: control panel mode" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Prey + Control _Panel (Recommended)</property>
+                            <property name="width_request">420</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="use_underline">True</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">60</property>
                           </packing>
                         </child>
                         <child>
@@ -324,36 +357,15 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="lbl_reporting_mode_instructions">
-                            <property name="width_request">570</property>
-                            <property name="height_request">55</property>
+                          <object class="GtkImage" id="icon_standalone">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
                             <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 1 (Reporting mode)&#10;Item: reporting mode page instructions">Please choose the reporting method for Prey. If you're not sure what you're doing, please visit preyproject.com.</property>
-                            <property name="wrap">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/email.png</property>
                           </object>
                           <packing>
                             <property name="x">10</property>
-                            <property name="y">10</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="reporting_mode_cp">
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 1 (Reporting mode)&#10;Item: control panel mode" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Prey + Control _Panel (Recommended)</property>
-                            <property name="width_request">420</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="has_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="x">70</property>
-                            <property name="y">60</property>
+                            <property name="y">140</property>
                           </packing>
                         </child>
                         <child>
@@ -390,18 +402,6 @@
                             <property name="y">160</property>
                           </packing>
                         </child>
-                        <child>
-                          <object class="GtkImage" id="icon_standalone">
-                            <property name="width_request">48</property>
-                            <property name="height_request">48</property>
-                            <property name="visible">True</property>
-                            <property name="pixbuf">../../pixmaps/conf/email.png</property>
-                          </object>
-                          <packing>
-                            <property name="x">10</property>
-                            <property name="y">140</property>
-                          </packing>
-                        </child>
                       </object>
                     </child>
                     <child type="tab">
@@ -417,6 +417,21 @@
                       <object class="GtkFixed" id="control_panel_options">
                         <property name="visible">True</property>
                         <child>
+                          <object class="GtkLabel" id="lbl_user_determination_instructions">
+                            <property name="width_request">570</property>
+                            <property name="height_request">55</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">0</property>
+                            <property name="yalign">0</property>
+                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 2 (User determination)&#10;Item: user determination page instructions">Good choice! Have you already registered for a Control Panel account at preyproject.com?</property>
+                            <property name="wrap">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">10</property>
+                            <property name="y">10</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkImage" id="icon_new_user">
                             <property name="width_request">48</property>
                             <property name="height_request">48</property>
@@ -426,6 +441,24 @@
                           <packing>
                             <property name="x">10</property>
                             <property name="y">65</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkRadioButton" id="new_user_option">
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 2 (User determination)&#10;Item: new user" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">_New user</property>
+                            <property name="width_request">420</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
+                            <property name="receives_default">False</property>
+                            <property name="use_underline">True</property>
+                            <property name="active">True</property>
+                            <property name="draw_indicator">True</property>
+                          </object>
+                          <packing>
+                            <property name="x">70</property>
+                            <property name="y">60</property>
                           </packing>
                         </child>
                         <child>
@@ -446,36 +479,15 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="lbl_user_determination_instructions">
-                            <property name="width_request">570</property>
-                            <property name="height_request">55</property>
+                          <object class="GtkImage" id="icon_existing_user">
+                            <property name="width_request">48</property>
+                            <property name="height_request">48</property>
                             <property name="visible">True</property>
-                            <property name="xalign">0</property>
-                            <property name="yalign">0</property>
-                            <property name="label" translatable="yes" context="Mnemonic: No&#10;Context: Page 2 (User determination)&#10;Item: user determination page instructions">Good choice! Have you already registered for a Control Panel account at preyproject.com?</property>
-                            <property name="wrap">True</property>
+                            <property name="pixbuf">../../pixmaps/conf/olduser.png</property>
                           </object>
                           <packing>
                             <property name="x">10</property>
-                            <property name="y">10</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="new_user_option">
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 2 (User determination)&#10;Item: new user" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">_New user</property>
-                            <property name="width_request">420</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="has_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="active">True</property>
-                            <property name="draw_indicator">True</property>
-                          </object>
-                          <packing>
-                            <property name="x">70</property>
-                            <property name="y">60</property>
+                            <property name="y">145</property>
                           </packing>
                         </child>
                         <child>
@@ -513,18 +525,6 @@
                             <property name="y">160</property>
                           </packing>
                         </child>
-                        <child>
-                          <object class="GtkImage" id="icon_existing_user">
-                            <property name="width_request">48</property>
-                            <property name="height_request">48</property>
-                            <property name="visible">True</property>
-                            <property name="pixbuf">../../pixmaps/conf/olduser.png</property>
-                          </object>
-                          <packing>
-                            <property name="x">10</property>
-                            <property name="y">145</property>
-                          </packing>
-                        </child>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -559,6 +559,21 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="lbl_user_name">
+                            <property name="width_request">135</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 3 (Create user)&#10;Item: user name" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Your _name</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">user_name</property>
+                          </object>
+                          <packing>
+                            <property name="x">5</property>
+                            <property name="y">75</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkEntry" id="user_name">
                             <property name="width_request">400</property>
                             <property name="height_request">30</property>
@@ -570,36 +585,6 @@
                           <packing>
                             <property name="x">150</property>
                             <property name="y">75</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="lbl_password_confirm">
-                            <property name="width_request">135</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 3 (Create user)&#10;Item: password confirmation" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Confirm pass_word</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">password_confirm</property>
-                          </object>
-                          <packing>
-                            <property name="x">5</property>
-                            <property name="y">210</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="lbl_password">
-                            <property name="width_request">135</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 3 (Create user)&#10;Item: password" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">_Password</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">password</property>
-                          </object>
-                          <packing>
-                            <property name="x">5</property>
-                            <property name="y">165</property>
                           </packing>
                         </child>
                         <child>
@@ -618,21 +603,6 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="lbl_user_name">
-                            <property name="width_request">135</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 3 (Create user)&#10;Item: user name" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Your _name</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">user_name</property>
-                          </object>
-                          <packing>
-                            <property name="x">5</property>
-                            <property name="y">75</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkEntry" id="email">
                             <property name="width_request">400</property>
                             <property name="height_request">30</property>
@@ -643,6 +613,21 @@
                           <packing>
                             <property name="x">150</property>
                             <property name="y">120</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lbl_password">
+                            <property name="width_request">135</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 3 (Create user)&#10;Item: password" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">_Password</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">password</property>
+                          </object>
+                          <packing>
+                            <property name="x">5</property>
+                            <property name="y">165</property>
                           </packing>
                         </child>
                         <child>
@@ -657,6 +642,21 @@
                           <packing>
                             <property name="x">150</property>
                             <property name="y">165</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lbl_password_confirm">
+                            <property name="width_request">135</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 3 (Create user)&#10;Item: password confirmation" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">Confirm pass_word</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">password_confirm</property>
+                          </object>
+                          <packing>
+                            <property name="x">5</property>
+                            <property name="y">210</property>
                           </packing>
                         </child>
                         <child>
@@ -707,21 +707,6 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="lbl_existing_password">
-                            <property name="width_request">135</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 4 (Existing credentials)&#10;Item: password" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">_Password</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">existing_password</property>
-                          </object>
-                          <packing>
-                            <property name="x">5</property>
-                            <property name="y">120</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkLabel" id="lbl_existing_email">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
@@ -748,6 +733,21 @@
                           <packing>
                             <property name="x">150</property>
                             <property name="y">75</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="lbl_existing_password">
+                            <property name="width_request">135</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 4 (Existing credentials)&#10;Item: password" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">_Password</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">existing_password</property>
+                          </object>
+                          <packing>
+                            <property name="x">5</property>
+                            <property name="y">120</property>
                           </packing>
                         </child>
                         <child>
@@ -835,20 +835,6 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkComboBox" id="device">
-                            <property name="width_request">400</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="has_focus">True</property>
-                            <property name="button_sensitivity">on</property>
-                          </object>
-                          <packing>
-                            <property name="x">150</property>
-                            <property name="y">75</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkLabel" id="lbl_device">
                             <property name="width_request">135</property>
                             <property name="height_request">30</property>
@@ -860,6 +846,20 @@
                           </object>
                           <packing>
                             <property name="x">5</property>
+                            <property name="y">75</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="device">
+                            <property name="width_request">400</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="has_focus">True</property>
+                            <property name="button_sensitivity">on</property>
+                          </object>
+                          <packing>
+                            <property name="x">150</property>
                             <property name="y">75</property>
                           </packing>
                         </child>
@@ -897,6 +897,21 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkLabel" id="lbl_check_url">
+                            <property name="width_request">85</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: check url" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">C_heck URL</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">check_url</property>
+                          </object>
+                          <packing>
+                            <property name="x">5</property>
+                            <property name="y">75</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkEntry" id="check_url">
                             <property name="width_request">480</property>
                             <property name="height_request">30</property>
@@ -908,21 +923,6 @@
                           <packing>
                             <property name="x">100</property>
                             <property name="y">75</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="lbl_smtp_server">
-                            <property name="width_request">85</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: smtp server" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP _Server</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">smtp_server</property>
-                          </object>
-                          <packing>
-                            <property name="x">5</property>
-                            <property name="y">165</property>
                           </packing>
                         </child>
                         <child>
@@ -941,21 +941,6 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="lbl_check_url">
-                            <property name="width_request">85</property>
-                            <property name="height_request">30</property>
-                            <property name="visible">True</property>
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: check url" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">C_heck URL</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">check_url</property>
-                          </object>
-                          <packing>
-                            <property name="x">5</property>
-                            <property name="y">75</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkEntry" id="mail_to">
                             <property name="width_request">210</property>
                             <property name="height_request">30</property>
@@ -969,16 +954,18 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="smtp_server">
-                            <property name="width_request">210</property>
+                          <object class="GtkLabel" id="lbl_smtp_username">
+                            <property name="width_request">80</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="invisible_char">&#x2022;</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: smtp username" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP _User</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">smtp_username</property>
                           </object>
                           <packing>
-                            <property name="x">100</property>
-                            <property name="y">165</property>
+                            <property name="x">310</property>
+                            <property name="y">120</property>
                           </packing>
                         </child>
                         <child>
@@ -995,16 +982,30 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkEntry" id="smtp_password">
-                            <property name="width_request">180</property>
+                          <object class="GtkLabel" id="lbl_smtp_server">
+                            <property name="width_request">85</property>
+                            <property name="height_request">30</property>
+                            <property name="visible">True</property>
+                            <property name="xalign">1</property>
+                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: smtp server" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP _Server</property>
+                            <property name="use_underline">True</property>
+                            <property name="mnemonic_widget">smtp_server</property>
+                          </object>
+                          <packing>
+                            <property name="x">5</property>
+                            <property name="y">165</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkEntry" id="smtp_server">
+                            <property name="width_request">210</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
-                            <property name="visibility">False</property>
                             <property name="invisible_char">&#x2022;</property>
                           </object>
                           <packing>
-                            <property name="x">400</property>
+                            <property name="x">100</property>
                             <property name="y">165</property>
                           </packing>
                         </child>
@@ -1024,18 +1025,17 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="lbl_smtp_username">
-                            <property name="width_request">80</property>
+                          <object class="GtkEntry" id="smtp_password">
+                            <property name="width_request">180</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
-                            <property name="xalign">1</property>
-                            <property name="label" translatable="yes" context="Mnemonic: Yes&#10;Context: Page 6 (standalone parameters)&#10;Item: smtp username" comments="Place an underscore before the character that is to serve as the keyboard mnemonic.&#10;&#10;The mnemonic chosen for this item cannot be shared by any other item on this page (see context for translation) nor by any of the global context items!">SMTP _User</property>
-                            <property name="use_underline">True</property>
-                            <property name="mnemonic_widget">smtp_username</property>
+                            <property name="can_focus">True</property>
+                            <property name="visibility">False</property>
+                            <property name="invisible_char">&#x2022;</property>
                           </object>
                           <packing>
-                            <property name="x">310</property>
-                            <property name="y">120</property>
+                            <property name="x">400</property>
+                            <property name="y">165</property>
                           </packing>
                         </child>
                       </object>
