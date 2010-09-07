@@ -234,7 +234,33 @@ class PreyConfigurator(object):
 				button_next.grab_default()
 			else:
 				button_apply.grab_default()
+
+	def ensure_visible(self,widget,event): #ensure the widget focused is visible in the scroll window
+		self.get('delay').set_name('delay')
+		self.get('extended_headers').set_name('extended_headers')
+		widget_name = widget.get_name()
+		scrollwindow = self.get('main_settings_scrollwindow')
+		internal_height = self.get('main_settings').get_size()[1]
+		port_height = scrollwindow.allocation.height
+		port_vadjust = scrollwindow.get_vadjustment()
+		port_posn = port_vadjust.value
+		widget_posn = widget.allocation.y
+		widget_height = widget.allocation.height
+		if (widget_posn - port_posn) >= 0 and (widget_posn + widget_height - port_posn) <= port_height:
+			#widget is fully visible (even if its description or icon is not), so do nothing
+			return False
 		
+		# for now we know there are only two possible hidden widgets so we scroll all the way up or all the way down
+		# if we add options to this page we will have to scroll differently
+		if widget_name == 'delay':
+			#scroll to top
+			port_vadjust.set_value(0)
+		elif widget_name == 'extended_headers':
+			#scroll to bottom
+			port_vadjust.set_value(internal_height - port_height)
+		
+		return True
+
 
 	################################################
 	# setting getting
@@ -528,7 +554,8 @@ class PreyConfigurator(object):
 			"toggle_buttons" : self.toggle_buttons,
 			"apply_settings" : self.apply_settings,
 			"toggle_pg3_next_apply" : self.toggle_pg3_next_apply,
-			"set_default_action" : self.set_default_action
+			"set_default_action" : self.set_default_action,
+			"ensure_visible" : self.ensure_visible
 		})
 		self.window = builder.get_object("window")
 		self.window.set_title(self.window.get_title() + " (v" + VERSION + ")")
@@ -536,6 +563,7 @@ class PreyConfigurator(object):
 		self.tabs = builder.get_object("reporting_mode_tabs")
 		self.root = builder
 
+		self.get('delay').grab_focus()
 		self.display_real_settings()
 		self.check_if_configured()
 
