@@ -99,7 +99,7 @@ class PreyConfigurator(object):
 	def show_alert(self, title, message, quit = False):
 		dialog = gtk.MessageDialog(
 			parent         = None,
-			flags          = gtk.DIALOG_DESTROY_WITH_PARENT,
+			flags          = gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
 			type           = gtk.MESSAGE_INFO,
 			buttons        = gtk.BUTTONS_OK,
 			message_format = message)
@@ -108,18 +108,33 @@ class PreyConfigurator(object):
 			dialog.connect('response', lambda dialog, response: gtk.main_quit())
 		else:
 			dialog.connect('response', lambda dialog, response: dialog.destroy())
-
+		self.center_dialog(dialog)
 		dialog.show()
 
 	def show_question(self, title, message):
 		dialog = gtk.MessageDialog(
 			parent         = None,
-			flags          = gtk.DIALOG_DESTROY_WITH_PARENT,
-			type           = gtk.MESSAGE_INFO,
+			flags          = gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
+			type           = gtk.MESSAGE_QUESTION,
 			buttons        = gtk.BUTTONS_YES_NO,
 			message_format = message)
 		dialog.set_title(title)
-		return dialog
+		self.center_dialog(dialog)
+		response = dialog.run()
+		dialog.destroy()
+		return response
+
+	def show_about(self):
+		dialog = self.get('about_prey_config')
+		self.center_dialog(dialog)
+		dialog.show()
+
+	def close_about(self, dialog, response):
+		dialog.hide()
+
+	def center_dialog(self, dialog):
+		dialog.set_transient_for(self.window)
+		dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
 
 	################################################
 	# window and widget management
@@ -150,9 +165,7 @@ class PreyConfigurator(object):
 		if page_name == 'report_options':
 			if self.get('reporting_mode_cp').get_active() == True:
 				if self.current_api_key != '':
-					dialog = self.show_question(_("Hold your horses!"), _("Your device seems to be already synchronized with the Control Panel! Do you want to re-setup your account? (Not recommended)"))
-					response = dialog.run()
-					dialog.destroy()
+					response = self.show_question(_("Hold your horses!"), _("Your device seems to be already synchronized with the Control Panel! Do you want to re-setup your account? (Not recommended)"))
 					if response == gtk.RESPONSE_NO:
 						return
 			else:
@@ -261,6 +274,15 @@ class PreyConfigurator(object):
 		
 		return True
 
+	def key_pressed(self, widget, event):
+		# show about dialog on F1 keypress
+		if (event.keyval == gtk.keysyms.F1) \
+		   and (event.state & gtk.gdk.CONTROL_MASK) == 0 \
+		   and (event.state & gtk.gdk.SHIFT_MASK) == 0:
+			self.show_about()
+			return True
+
+		return False
 
 	################################################
 	# setting getting
@@ -555,15 +577,19 @@ class PreyConfigurator(object):
 			"apply_settings" : self.apply_settings,
 			"toggle_pg3_next_apply" : self.toggle_pg3_next_apply,
 			"set_default_action" : self.set_default_action,
-			"ensure_visible" : self.ensure_visible
+			"ensure_visible" : self.ensure_visible,
+			"key_pressed" : self.key_pressed,
+			"close_about" : self.close_about
 		})
 		self.window = builder.get_object("window")
 		self.window.set_title(self.window.get_title() + " (v" + VERSION + ")")
 		# self.window.get_settings().set_string_property('gtk-font-name', 'sans normal 11','');
 		self.tabs = builder.get_object("reporting_mode_tabs")
 		self.root = builder
-
+		
 		self.get('delay').grab_focus()
+		about = self.get('about_prey_config')
+		about.set_version(VERSION)
 		self.display_real_settings()
 		self.check_if_configured()
 
