@@ -141,7 +141,7 @@ class PreyConfigurator(object):
 	################################################
 
 	def get_page_name(self):
-		return PAGES[self.tabs.get_current_page()]
+		return PAGES[self.pages.get_current_page()]
 		
 	def toggle_pg3_next_apply(self, button):
 		button_next = self.get('button_next')
@@ -172,18 +172,12 @@ class PreyConfigurator(object):
 				increment = 5
 		
 		if page_name == 'existing_user': # then we are going to select an exising device
-			if not self.get_existing_user(True): return
+			if not self.get_existing_user(True):
+				# login didn't work, so don't go to next page
+				return
 
-		self.tabs.set_current_page(self.tabs.get_current_page()+increment)
-		self.get('button_prev').show()
-
-		if self.tabs.get_current_page() > 1 and (self.tabs.get_current_page() != 3 or self.get('use_existing_device').get_active() == False):
-			self.get('button_next').hide()
-			button_apply = self.get('button_apply')
-			button_apply.show()
-			button_apply.grab_default()
-
-		self.show_ssl()
+		self.pages.set_current_page(self.pages.get_current_page() + increment)
+		self.toggle_buttons(button, None, 1)
 
 	def prev_page(self, button):
 		page_name = self.get_page_name()
@@ -194,46 +188,48 @@ class PreyConfigurator(object):
 		elif page_name == 'standalone_options':
 			decrement = 5
 
-		if self.tabs.get_current_page() != 0:
-			self.tabs.set_current_page(self.tabs.get_current_page()-decrement)
+		if self.pages.get_current_page() != 0:
+			self.pages.set_current_page(self.pages.get_current_page() - decrement)
 
-		if self.tabs.get_current_page() == 0:
-			self.get('button_prev').hide()
+		self.toggle_buttons(button, None, 1)
 
-		if self.tabs.get_current_page() < 2 or (self.tabs.get_current_page() == 3 and self.get('use_existing_device').get_active() == True):
-			self.get('button_apply').hide()
-			button_next = self.get('button_next')
-			button_next.show()
-			button_next.grab_default()
-
-		self.hide_ssl()
-
-	def toggle_buttons(self, button, pointer, page_number):
+	def toggle_buttons(self, button, tab, tab_number):
 		button_prev = self.get('button_prev')
 		button_next = self.get('button_next')
 		button_apply = self.get('button_apply')
-		if button_next.flags() & gtk.VISIBLE:
+		if tab_number == 0: #main settings tab
 			button_prev.hide()
 			button_next.hide()
 			button_apply.show()
-			button_apply.grab_default()
-			self.show_ssl()
-		else:
-			button_next.show()
-			button_next.grab_default()
-			button_apply.hide()
 			self.hide_ssl()
-			if self.tabs.get_current_page() > 0:
+		else:
+			page_name = self.get_page_name()
+			if page_name == 'report_options':
+				button_prev.hide()
+			else:
 				button_prev.show()
+
+			if page_name == 'report_options' or page_name == 'control_panel_options' or (page_name == 'existing_user' and self.get('use_existing_device').get_active() == True):
+				button_apply.hide()
+				button_next.show()
+				button_next.grab_default()
+			else:
+				button_next.hide()
+				button_apply.show()
+				button_apply.grab_default()
+
+			if self.get_page_name() == 'new_user' or self.get_page_name() == 'existing_user':
+				self.show_ssl()
+			else:
+				self.hide_ssl()
 
 	def hide_ssl(self):
 		self.get('icon_ssl').hide()
 		self.get('lbl_ssl').hide()
 
 	def show_ssl(self):
-		if self.get_page_name() == 'new_user' or self.get_page_name() == 'existing_user':
-			self.get('icon_ssl').show()
-			self.get('lbl_ssl').show()
+		self.get('icon_ssl').show()
+		self.get('lbl_ssl').show()
 
 	def set_default_action(self,button,ctrl):
 		button_cancel = self.get('button_cancel')
@@ -584,7 +580,7 @@ class PreyConfigurator(object):
 		self.window = builder.get_object("window")
 		self.window.set_title(self.window.get_title() + " (v" + VERSION + ")")
 		# self.window.get_settings().set_string_property('gtk-font-name', 'sans normal 11','');
-		self.tabs = builder.get_object("reporting_mode_tabs")
+		self.pages = builder.get_object("reporting_mode_tabs")
 		self.root = builder
 		
 		self.get('delay').grab_focus()
