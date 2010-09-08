@@ -1,0 +1,24 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# English lang file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_START="\n ### PREY $version déploies ses ailes !\n"
+STRING_TRY_TO_CONNECT=" -- Tentative de connexion au premier réseau wifi public disponible..."
+STRING_NO_CONNECT_TO_WIFI=" -- Impossible de se connecter à un réseau wifi public !"
+STRING_CHECK_URL=" -- vérification de l'URL..."
+STRING_NO_PROBLEM=" -- Aucun souci. :)\n"
+STRING_PROBLEM=" -- NOM D'UN GUACAMOLE!!"
+STRING_WRITE_EMAIL=" -- Rédaction du courriel..."
+STRING_SENDING_EMAIL=" -- Envoi du rapport..."
+STRING_ERROR_EMAIL="\n\033[1m !! Il y a eu un problème avec l'envoi du courriel : êtes-vous certain qu'il est correctement paramétré ?
+Si vous utilisez Gmail, essayez d'enlever le \"@gmail.com\" du champ smtp_username dans le fichier de configuration de Prey.\033[0m\n"
+STRING_REMOVE_EVIDENCE=" -- Suppression de toutes traces de preuves..."
+STRING_DONE=" -- Terminé ! Bonne chasse ! :)"
+
+EMAIL_NOTICE=""
+EMAIL_HEADER="Bonne nouvelle mon cher, il semble qu'on l'a retrouvé.\n\nVoici le rapport envoyé par votre ordinateur :\n\n"
+EMAIL_FOOTER="\n\nBonne chasse !\n\n--\nVotre humble serviteur, Prey\nhttp://preyproject.com"
