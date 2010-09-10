@@ -38,7 +38,7 @@ process_config(){
 		log " -- Setting frequency to $delay!"
 		update_execution_delay "$new_delay"
 	else
-		log " -- Frequency in sync."
+		log " -- Frequency in sync ($delay)."
 	fi
 
 	# check the current version against the one gotten from the server

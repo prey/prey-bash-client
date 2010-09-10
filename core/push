@@ -44,7 +44,8 @@ send_via_email(){
 
 	local decoded_pass=`decrypt "$smtp_password"`
 	local complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
-	echo -e "$EMAIL_NOTICE $EMAIL_HEADER" | cat - "$trace_file" | sed "s/%0A/\n/g;s/%22/\"/g" > "$trace_file.msg" && echo -e "$EMAIL_FOOTER" >> "$trace_file.msg"
+	local decoded_traces=`urldecode \`cat "$trace_file"\``
+	echo -e "$EMAIL_NOTICE $EMAIL_HEADER $decoded_traces $EMAIL_FOOTER" > "$trace_file.msg"
 
 	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username=$smtp_username password=$decoded_pass`
 
