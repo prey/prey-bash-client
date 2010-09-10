@@ -587,7 +587,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="user_name">
-                            <property name="width_request">400</property>
+                            <property name="width_request">350</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -616,7 +616,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="email">
-                            <property name="width_request">400</property>
+                            <property name="width_request">350</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -644,7 +644,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="password">
-                            <property name="width_request">400</property>
+                            <property name="width_request">350</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -673,7 +673,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="password_confirm">
-                            <property name="width_request">400</property>
+                            <property name="width_request">350</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -735,7 +735,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="existing_email">
-                            <property name="width_request">400</property>
+                            <property name="width_request">350</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -764,7 +764,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="existing_password">
-                            <property name="width_request">400</property>
+                            <property name="width_request">350</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -863,7 +863,7 @@
                         </child>
                         <child>
                           <object class="GtkComboBox" id="device">
-                            <property name="width_request">400</property>
+                            <property name="width_request">350</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -925,7 +925,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="check_url">
-                            <property name="width_request">480</property>
+                            <property name="width_request">450</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -954,7 +954,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="mail_to">
-                            <property name="width_request">210</property>
+                            <property name="width_request">180</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -976,7 +976,7 @@
                             <property name="mnemonic_widget">smtp_username</property>
                           </object>
                           <packing>
-                            <property name="x">310</property>
+                            <property name="x">280</property>
                             <property name="y">120</property>
                           </packing>
                         </child>
@@ -989,7 +989,7 @@
                             <property name="invisible_char">&#x2022;</property>
                           </object>
                           <packing>
-                            <property name="x">400</property>
+                            <property name="x">370</property>
                             <property name="y">120</property>
                           </packing>
                         </child>
@@ -1010,7 +1010,7 @@
                         </child>
                         <child>
                           <object class="GtkEntry" id="smtp_server">
-                            <property name="width_request">210</property>
+                            <property name="width_request">180</property>
                             <property name="height_request">30</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
@@ -1032,7 +1032,7 @@
                             <property name="mnemonic_widget">smtp_password</property>
                           </object>
                           <packing>
-                            <property name="x">310</property>
+                            <property name="x">280</property>
                             <property name="y">165</property>
                           </packing>
                         </child>
@@ -1046,7 +1046,7 @@
                             <property name="invisible_char">&#x2022;</property>
                           </object>
                           <packing>
-                            <property name="x">400</property>
+                            <property name="x">370</property>
                             <property name="y">165</property>
                           </packing>
                         </child>
