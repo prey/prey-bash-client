@@ -143,7 +143,7 @@ class PreyConfigurator(object):
 
 	def get_page_name(self):
 		return PAGES[self.pages.get_current_page()]
-		
+
 	def toggle_pg3_next_apply(self, button):
 		button_next = self.get('button_next')
 		button_apply = self.get('button_apply')
@@ -171,7 +171,7 @@ class PreyConfigurator(object):
 						return
 			else:
 				increment = 5
-		
+
 		if page_name == 'existing_user': # then we are going to select an exising device
 			if not self.get_existing_user(True):
 				# login didn't work, so don't go to next page
@@ -259,7 +259,7 @@ class PreyConfigurator(object):
 		if (widget_posn - port_posn) >= 0 and (widget_posn + widget_height - port_posn) <= port_height:
 			#widget is fully visible (even if its description or icon is not), so do nothing
 			return False
-		
+
 		# for now we know there are only two possible hidden widgets so we scroll all the way up or all the way down
 		# if we add options to this page we will have to scroll differently
 		if widget_name == 'delay':
@@ -268,7 +268,7 @@ class PreyConfigurator(object):
 		elif widget_name == 'extended_headers':
 			#scroll to bottom
 			port_vadjust.set_value(internal_height - port_height)
-		
+
 		return True
 
 	def key_pressed(self, widget, event):
@@ -359,7 +359,7 @@ class PreyConfigurator(object):
 		self.get('smtp_username').set_text(self.current_smtp_username)
 
 		if self.current_post_method == 'email':
-			self.get('reporting_mode_email').set_active(True)
+			self.get('reporting_mode_standalone').set_active(True)
 
 	def check_if_configured(self):
 		if self.current_post_method == 'http' and self.current_api_key == '':
@@ -511,7 +511,7 @@ class PreyConfigurator(object):
 		else:
 			self.show_alert(_("Couldn't create user!"), _("There was a problem creating your account. Please make sure the email address you entered is valid, as well as your password."))
 			return
-			
+
 		self.apply_control_panel_settings()
 		self.run_prey()
 		self.show_alert(_("Account created!"), _("Your account has been succesfully created and configured in Prey's Control Panel.\n\nPlease check your inbox now, you should have received a verification email."), True)
@@ -530,7 +530,7 @@ class PreyConfigurator(object):
 		else:
 			self.report_connection_issue()
 			return False
-			
+
 		has_available_slots = self.user_has_available_slots(result)
 		if not has_available_slots and not show_devices:
 			self.show_alert(_("Not allowed"),  _("It seems you've reached your limit for devices!\n\nIf you had previously added this PC, you should select the \"Device already exists\" option to select the device from a list of devices you have already defined.\n\nIf this is a new device, you can also upgrade to a Pro Account to increase your slot count and get access to additional features. For more information, please check\nhttp://preyproject.com/plans."))
@@ -583,7 +583,7 @@ class PreyConfigurator(object):
 		# self.window.get_settings().set_string_property('gtk-font-name', 'sans normal 11','');
 		self.pages = builder.get_object("reporting_mode_tabs")
 		self.root = builder
-		
+
 		self.get('delay').grab_focus()
 		about = self.get('about_prey_config')
 		about.set_version(VERSION)
