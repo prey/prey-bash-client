@@ -133,7 +133,8 @@ class PreyConfigurator(object):
 		dialog.hide()
 
 	def center_dialog(self, dialog):
-		dialog.set_transient_for(self.window)
+		if 'window' in self.__dict__:
+			dialog.set_transient_for(self.window)
 		dialog.set_position(gtk.WIN_POS_CENTER_ON_PARENT)
 
 	################################################
