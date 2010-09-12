@@ -1,0 +1,24 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# English lang file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_START="\n ### PREY $version estende suas asas!\n"
+STRING_TRY_TO_CONNECT=" -- Tentando conectar na primeira rede wifi aberta disponível..."
+STRING_NO_CONNECT_TO_WIFI=" -- Não foi possível conectar em nenhuma rede wifi aberta!"
+STRING_CHECK_URL=" -- Checando URL..."
+STRING_NO_PROBLEM=" -- Nada para se preocupar. :)\n"
+STRING_PROBLEM=" -- PROBLEMA!!"
+STRING_WRITE_EMAIL=" -- Escrevendo e-mail..."
+STRING_SENDING_EMAIL=" -- Enviando o relatório..."
+STRING_ERROR_EMAIL="\n\033[1m !! Houve um problema ao enviar o e-mail. Tem certeza de que foi configurado corretamente?
+Se você estiver usando o Gmail, tente remover o '@gmail.com' do campo smtp_username no arquivo de configuração do Prey.\033[0m\n"
+STRING_REMOVE_EVIDENCE=" -- Removendo todos os traços de evidência..."
+STRING_DONE=" -- Pronto! Boa caçada! :)"
+
+EMAIL_NOTICE=""
+EMAIL_HEADER="Boa notícia, amigo, parece que encontramos.\n\nAqui está o relatório do seu computador:\n\n"
+EMAIL_FOOTER="\n\nBoa caçada!\n\n--\nSeu humilde servo, Prey\nhttp://preyproject.com"
