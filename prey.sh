@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-PATH=/bin:$PATH # for windows
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:$PATH
 readonly base_path=`dirname "$0"`
 
 ####################################################################

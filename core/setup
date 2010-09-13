@@ -75,7 +75,7 @@ set_constants(){
 
 	readonly config_file="$base_path/config"
 	readonly tmpdir="$tmpbase/p${RANDOM}"
-	readonly last_response="$tmpbase/last_response.tmp"
+	# readonly last_response="$tmpbase/last_response.tmp"
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
