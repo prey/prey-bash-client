@@ -54,6 +54,9 @@ try_to_connect() {
 	local essid=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
 
 	if [ -n "$essid" ]; then
+		if [ $osx_version == "snow-leopard" ]; then
+			local airportstring="Airport"
+		fi
 		networksetup -setairportnetwork $airportstring $essid 2>/dev/null
 	fi
 }
