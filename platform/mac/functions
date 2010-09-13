@@ -23,12 +23,12 @@ get_gateway_ip() {
 }
 
 get_wifi_info() {
-  wifi_info=`$airport -I | grep -v "Off"`
-  if [ -n $wifi_info ]; then
-    # Turn on wifi
-    networksetup -setairportpower Airport on 2>/dev/null
-    wifi_info=`$airport -I | grep -v "Off"`
-  fi
+	wifi_info=`$airport -I | grep -v "Off"`
+	if [ -z "$wifi_info" ]; then
+		# Turn on wifi
+		networksetup -setairportpower Airport on
+		wifi_info=`$airport -I | grep -v "Off"`
+	fi
 }
 
 try_to_connect() {
