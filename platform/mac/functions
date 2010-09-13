@@ -23,26 +23,32 @@ get_gateway_ip() {
 }
 
 get_wifi_info() {
-  wifi_info=`$airport -I | grep -v "Off"`
-  if [ -n $wifi_info ]; then
-    # Turn on wifi
-    networksetup -setairportpower Airport on 2>/dev/null
-    wifi_info=`$airport -I | grep -v "Off"`
-  fi
+	wifi_info=`$airport -I | grep -v "Off"`
+	if [ -n $wifi_info ]; then
+		enable_airport
+		wifi_info=`$airport -I | grep -v "Off"`
+	fi
 }
 
-try_to_connect() {
-	# restart airport service
-	networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
-	networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
-
+disable_airport(){
 	if [ $osx_version == "snow-leopard" ]; then
 		local airportstring="Airport"
 	fi
-
-	# power on the airport
+	networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
 	networksetup -setairportpower $airportstring off 2>/dev/null
+}
+
+enable_airport(){
+	if [ $osx_version == "snow-leopard" ]; then
+		local airportstring="Airport"
+	fi
+	networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
 	networksetup -setairportpower $airportstring on 2>/dev/null
+}
+
+try_to_connect() {
+	disable_airport
+	enable_airport
 
 	# list available access points and parse to get first SSID with security "NONE"
 	local essid=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
