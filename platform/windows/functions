@@ -191,9 +191,14 @@ post_update_hook(){
 ############################################
 # Device creation parameters
 ############################################
+
+get_current_hostname(){
+	reg query "HKLM\System\CurrentControlSet\Control\ComputerName\ComputerName" | grep ComputerName | tail -1 | sed "s/.*\t\(.*\)$/\1/"
+}
+
 get_pc_info(){
 
-	pc_name=`hostname`
+	pc_name=`get_current_hostname`
 	if [ -n "$winxp" ]; then
 		pc_os_version="xp"
 	else

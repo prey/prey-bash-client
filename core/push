@@ -19,6 +19,18 @@ update_device_info_with(){
 
 }
 
+deactivate_modules_on_panel(){
+	log " -- Deactivating module(s) ${1} on Control Panel..."
+
+	local param_string=""
+	until [ -z "$1" ]; do
+		local param_string="${param_string}device[deactivate_modules][]=$1&"
+		shift
+	done
+
+	update_device_info_with "$param_string"
+}
+
 send_report(){
 	log ' -- Packing all gathered traces...'
 	local trace_list=`list_traces`
