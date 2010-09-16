@@ -20,6 +20,10 @@ update_device_info_with(){
 }
 
 deactivate_modules_on_panel(){
+	if [ "$post_method" != "http" ]; then
+		return 1
+	fi
+
 	log " -- Deactivating module(s) ${1} on Control Panel..."
 
 	local param_string=""
