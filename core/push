@@ -7,6 +7,8 @@
 
 update_device_info_with(){
 
+	if [ -z "$device_key" ]; then return 1; fi
+
 	log ' -- Updating device info...'
 	local response=`getter -i -X PUT -u $api_key:x $check_url/devices/$device_key.xml -d "$1"`
 
@@ -20,9 +22,8 @@ update_device_info_with(){
 }
 
 deactivate_modules_on_panel(){
-	if [ "$post_method" != "http" ]; then
-		return 1
-	fi
+
+	if [ -z "$device_key" ]; then return 1; fi
 
 	log " -- Deactivating module(s) ${1} on Control Panel..."
 
@@ -52,7 +53,7 @@ send_report(){
 		remove_traces
 		remove_files
 	else
-		log " -- No data to send. We're done!"
+		log " -- No data to send. It seems you didn't activate any report modules. Skipping..."
 	fi
 }
 
