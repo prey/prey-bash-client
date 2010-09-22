@@ -436,17 +436,17 @@ class PreyConfigurator(object):
 		smtp_password = self.text('smtp_password')
 
 		if smtp_password != '':
-			encoded_pass = os.popen('echo -n "'+ smtp_password + '" | openssl enc -base64').read().strip()
+			encoded_pass = os.popen('echo -n "'+ smtp_password +'" | openssl enc -base64').read().strip()
 			self.save('smtp_password', encoded_pass)
 
 		self.exit_configurator()
 
 	def exit_configurator(self):
 		self.run_prey()
-		self.show_alert(_("You can now rest assured."), _("Configuration saved! Your device is now setup and being tracked by Prey. Happy hunting!"), True)
+		self.show_alert(_("Success"), _("Configuration saved! Your device is now setup and being tracked by Prey. Happy hunting!"), True)
 
 	def run_prey(self):
-		os.system(PREY_PATH + '/prey.sh > /var/log/prey.log')
+		os.system(PREY_PATH + '/prey.sh > /var/log/prey.log &')
 
 	################################################
 	# control panel api
