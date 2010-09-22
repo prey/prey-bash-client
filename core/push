@@ -59,12 +59,10 @@ send_report(){
 
 send_via_email(){
 
-	local decoded_pass=`decrypt "$smtp_password"`
 	local complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
-	local decoded_traces=`urldecode \`cat "$trace_file"\``
-	echo -e "$EMAIL_NOTICE $EMAIL_HEADER $decoded_traces $EMAIL_FOOTER" > "$trace_file.msg"
+	echo -e "${EMAIL_NOTICE}${EMAIL_HEADER}`urldecode "$trace_list"`${EMAIL_FOOTER}" > "$trace_file.msg"
 
-	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username=$smtp_username password=$decoded_pass`
+	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username=$smtp_username password=\`decrypt "$smtp_password"\``
 
 	if [ `find_in "$response" 'ERROR'` ]; then
 		log "$STRING_ERROR_EMAIL"
@@ -80,17 +78,12 @@ send_via_http(){
 	if [ -z "$api_key" ]; then
 		log ' -- API key not set! Cannot post data to server.'
 		return 1
-	else
-		local args="-u $api_key:x"
-	fi
-	if [ -z "$post_url" ]; then
-		local post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`
 	fi
 	if [ `find_in "$post_url" 'https'` ]; then
 		echo " -- Using SSL encryption v3! Nice."
 		args="$args -k -3"
 	fi
-	response=`getter $args -K "$trace_file" $file_list "$post_url" \
+	response=`getter -u $api_key:x -K "$trace_file" $file_list "$post_url" \
 	--write "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec."`
 
 	log " -- $response"
