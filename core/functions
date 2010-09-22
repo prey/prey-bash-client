@@ -44,10 +44,10 @@ set_module_config(){
 save_config_value(){
 	sed -i.backup -e "s/^$1=.*/$1='$2'/" $config_file 2> /dev/null
 	local rs=$?
-	if [ !-f "$config_file" ]; then
-		mv "$config_file.backup" "$config_file" 2> /dev/null
-	else
+	if [ -f "$config_file" ]; then
 		rm -f "$config_file.backup" 2> /dev/null
+	else
+		mv "$config_file.backup" "$config_file" 2> /dev/null
 	fi
 	return $rs
 }
