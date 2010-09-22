@@ -333,13 +333,13 @@ class PreyConfigurator(object):
 	def toggle_guest_account(self, enabled):
 		if enabled:
 			# create user and leave password blank
-			os.system("useradd " + GUEST_ACCOUNT_NAME + "; passwd -d " + GUEST_ACCOUNT_NAME)
+			os.system("useradd -m " + GUEST_ACCOUNT_NAME + "; passwd -d " + GUEST_ACCOUNT_NAME)
 			# Authorize login with no passwords in gdm
 			os.system("sed -i 's/PasswordRequired=false/#PasswordRequired=false/' /etc/gdm/gdm.conf")
 			# Authorize login with no passwords in pam
 			os.system("sed -i 's/nullok_secure/nullok/' /etc/pam.d/common-auth")
 		else:
-			os.system("userdel " + GUEST_ACCOUNT_NAME)
+			os.system("userdel -r " + GUEST_ACCOUNT_NAME)
 			os.system("sed -i 's/#PasswordRequired=false/PasswordRequired=false/' /etc/gdm/gdm.conf")
 			os.system("sed -i 's/nullok/nullok_secure/' /etc/pam.d/common-auth")
 
