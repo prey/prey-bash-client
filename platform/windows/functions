@@ -8,7 +8,7 @@
 # in windows, prey always runs as the local user
 run_as_current_user(){
 	if [ "`whoami`" == "SYSTEM" ]; then
-		run $1
+		userrun $1
 	else
 		eval $1
 	fi
