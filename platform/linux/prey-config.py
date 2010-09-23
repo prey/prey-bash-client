@@ -43,6 +43,7 @@ _ = gettext.gettext
 
 PREY_PATH = '/usr/share/prey'
 CONFIG_FILE = PREY_PATH + '/config'
+CONTROL_PANEL_URL = 'http://control.preyproject.com'
 CONTROL_PANEL_URL_SSL = 'https://control.preyproject.com'
 GUEST_ACCOUNT_NAME = 'guest_account'
 VERSION = os.popen("cat " + PREY_PATH + "/version 2> /dev/null").read().strip().replace('version=', '').replace("'",'')
@@ -417,11 +418,16 @@ class PreyConfigurator(object):
 		if self.current_post_method != 'http':
 			self.save('post_method', 'http')
 
+		if self.current_check_url != CONTROL_PANEL_URL:
+			self.save('check_url', CONTROL_PANEL_URL)
+
 		# we could eventually use the email as a checking method to remove prey
 		# i.e. "under which email was this account set up?"
 		# self.save('mail_to', self.email)
 		self.save('api_key', self.api_key)
-		self.save('device_key', self.device_key)
+
+		if self.device_key != "":
+			self.save('device_key', self.device_key)
 
 	def apply_standalone_settings(self):
 
