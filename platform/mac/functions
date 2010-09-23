@@ -24,7 +24,7 @@ get_gateway_ip() {
 
 get_wifi_info() {
 	wifi_info=`$airport -I | grep -v "Off"`
-	if [ -n $wifi_info ]; then
+	if [ -z "$wifi_info" ]; then
 		enable_airport
 		wifi_info=`$airport -I | grep -v "Off"`
 	fi
