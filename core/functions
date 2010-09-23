@@ -192,7 +192,7 @@ update_execution_delay(){
 
 get_internal_ip() {
 	if [ -z "$internal_ip" ]; then
-		internal_ip=`/sbin/ifconfig 2> /dev/null | grep "inet " | grep -v "127.0.0.1" | awk '{ print $2}' | sed 's/addr://' | head -1`
+		internal_ip=`/sbin/ifconfig 2> /dev/null | grep "inet" | grep -v "inet6" | grep -v "127.0.0.1" | awk '{print $2}' | sed "s/[^0-9\.]//g" | head -1`
 	fi
 }
 

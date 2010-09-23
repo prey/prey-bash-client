@@ -78,12 +78,14 @@ send_via_http(){
 	if [ -z "$api_key" ]; then
 		log ' -- API key not set! Cannot post data to server.'
 		return 1
+	else
+		local args="-u $api_key:x"
 	fi
 	if [ `find_in "$post_url" 'https'` ]; then
-		echo " -- Using SSL encryption v3! Nice."
+		echo " -- Using SSL v3 encryption! Nice."
 		args="$args -k -3"
 	fi
-	response=`getter -u $api_key:x -K "$trace_file" $file_list "$post_url" \
+	response=`getter $args -K "$trace_file" $file_list "$post_url" \
 	--write "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec."`
 
 	log " -- $response"
