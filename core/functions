@@ -42,7 +42,7 @@ set_module_config(){
 }
 
 save_config_value(){
-	sed -i.backup -e "s/^$1=.*/$1='$2'/" $config_file 2> /dev/null
+	sed -i.backup -e "s/^$1=.*/$1='$2'/" "$config_file" 2> /dev/null
 	local rs=$?
 	if [ -f "$config_file" ]; then
 		rm -f "$config_file.backup" 2> /dev/null
@@ -143,7 +143,7 @@ remove_files(){
 	for f in "${files[@]}"
 	do
 		file=`echo $f | sed 's/^.*=\(.*\)/\1/'`
-		rm -f $file
+		rm -f "$file"
 		log " -- Removed $file"
 	done
 	unset -v files
