@@ -9,7 +9,7 @@ run_as_current_user(){
 	if [ "`whoami`" == "root" ]; then
 		launchctl bsexec $logged_pid $1
 	else
-		$1
+		eval $1
 	fi
 }
 
