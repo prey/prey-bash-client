@@ -101,43 +101,42 @@ action_finished(){
 
 run_pending_actions(){
 
-	if [ "${#actions[*]}" -gt 0 ]; then
+	# -b -> Cause the status of terminated background jobs to be reported immediately,
+	# rather than before printing the next primary prompt.
+	# -m job control enabled
+	set -bm
 
-		# -b -> Cause the status of terminated background jobs to be reported immediately,
-		# rather than before printing the next primary prompt.
-		# -m job control enabled
-		set -bm
+	log "\n${bold} >> Running pending actions...${bold_end}"
+	for action in "${actions[@]}"; do
 
-		log "${bold} >> Running pending actions...${bold_end}"
-		for action in "${actions[@]}"; do
+		local current_module=`echo $action | sed 's/=.*//'`
+		local function=`echo $action | sed 's/.*=\(.*\)/\1/'`
 
-			local current_module=`echo $action | sed 's/=.*//'`
-			local function=`echo $action | sed 's/.*=\(.*\)/\1/'`
+		if [ ! -z `get_running_action $current_module` ]; then
+			log " -- $current_module is already running! Skipping..."
+			continue
+		fi
 
-			if [ ! -z `get_running_action $current_module` ]; then
-				log " -- $current_module is already running! Skipping..."
-				continue
-			fi
+		set_module_paths_for $current_module
 
-			set_module_paths_for $current_module
+		if [ "$function" != "1" ]; then # specific function requested
+			log " -- Running action $function from $current_module module."
+			eval "$function" &
+		else # no specific action requested, we'll assume there's a run file
+			log "\n${bold} >> Running $current_module module!${bold_end}\n"
+			. "$module_path/core/run" &
+		fi
 
-			if [ "$function" != "1" ]; then # specific function requested
-				log " -- Running action $function from $current_module module."
-				eval "$function" &
-			else # no specific action requested, we'll assume there's a run file
-				log "\n${bold} >> Running $current_module module!${bold_end}\n"
-				. "$module_path/core/run" &
-			fi
+		pid=$!
+		create_pidfile_for $pid
+		add_running_action $current_module $pid
+		trap 'action_finished $pid $current_module' SIGCHLD
 
-			pid=$!
-			create_pidfile_for $pid
-			add_running_action $current_module $pid
-			trap 'action_finished $pid $current_module' SIGCHLD
+	done
 
-		done
-
-		wait
-		log " -- No pending actions left. All done!\n"
-	fi
+	wait
+	log " -- No pending actions left. All done!\n"
+	trap - SIGCHLD
+	cleanup
 
 }

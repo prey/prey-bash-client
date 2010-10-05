@@ -48,13 +48,15 @@ send_report(){
 				echo -e "$trace_list" > "$trace_file"
 				log " -- Posting data via $post_method..."
 				eval 'send_via_'"${post_method}"''
-				rm -f "$trace_file"
+				local rs=$?
+				rm -f "$trace_file" 2> /dev/null
 			fi
 		remove_traces
 		remove_files
 	else
 		log " -- No data to send. It seems you didn't activate any report modules. Skipping..."
 	fi
+	return $rs
 }
 
 send_via_email(){
