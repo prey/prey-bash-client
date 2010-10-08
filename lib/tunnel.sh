@@ -24,11 +24,12 @@ cleanup_tunnel(){
 }
 
 cwd=`pwd`
+askfile="$cwd/return"
 export SSH_ASKPASS="$askfile"
 export SSH_TTY=/dev/null
 # export DISPLAY=none:0.0
 
-askfile="$cwd/return"
+echo "$askfile"
 cat > "$askfile" << END
 #!/bin/sh
 echo $2
