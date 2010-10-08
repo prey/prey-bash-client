@@ -33,7 +33,9 @@ get_attribute(){
 
 # key, value
 set_config(){
-	eval "${1}=\"$2\""
+	if [ -n "$2" ]; then
+		eval "${1}=\"$2\""
+	fi
 }
 
 # module, key, value
@@ -249,4 +251,50 @@ self_setup(){
 
 	fi
 
+}
+
+####################################################################
+# reverse ssh tunnel
+####################################################################
+
+get_reverse_tunnel_port(){
+	local check_port=3333
+	local port=`nc -q 1 $1 $check_port < /dev/null`
+	echo $port
+}
+
+open_reverse_tunnel(){
+
+	if [ -z "$reverse_tunnel_port" ]; then
+		log " -- Looking for port on $reverse_tunnel_host..."
+		reverse_tunnel_port=`get_reverse_tunnel_port ${reverse_tunnel_host}`
+		if [ -z "$reverse_tunnel_port" ]; then
+			log " -- Coulnd't find an open port. Please try again later."
+			return 1
+		fi
+	fi
+
+	if [ ! -f "$tmpbase/reverse_tunnel.pid" ]; then
+		log " -- Opening reverse tunnel..."
+		setsid "$base_path/lib/tunnel.sh" ${reverse_tunnel_user} ${reverse_tunnel_pass} ${reverse_tunnel_host} ${local_tunnel_port} ${reverse_tunnel_port}
+		if [ -f "$tmpbase/reverse_tunnel.pid" ]; then
+			log " -- Tunnel open and ready to serve!"
+			return 0
+		else
+			log " -- Couldn't open reverse tunnel!"
+			return 1
+		fi
+	else
+		echo " -- Reverse tunnel already on!"
+		return 0
+	fi
+}
+
+close_reverse_tunnel(){
+	if [ -f "$tmpbase/reverse_tunnel.pid" ]; then
+		local tunnel_pid=`cat "$tmpbase/reverse_tunnel.pid"`
+		log " -- Closing reverse tunnel with PID ${tunnel_pid}..."
+		kill -9 $tunnel_pid
+		rm "$tmpbase/reverse_tunnel.pid"
+	fi
 }

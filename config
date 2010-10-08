@@ -89,5 +89,24 @@ sftp_server='my.server.com'
 sftp_path='.'
 
 ####################################################################
+# SSH Tunnel config
+# you can log in either by RSA key or entering the pass below
+####################################################################
+
+local_tunnel_port='1234'
+remote_tunnel_port='1234'
+remote_tunnel_host='my.server.com'
+remote_tunnel_user='username'
+remote_tunnel_pass='password'
+
+####################################################################
+# Amazon S3 keys
+####################################################################
+
+s3_access_key_id=''
+s3_secret_access_key=''
+s3_bucket_name=''
+
+####################################################################
 # if you have any questions please visit preyproject.com
 ####################################################################
