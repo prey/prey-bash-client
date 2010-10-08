@@ -42,7 +42,7 @@ ssh-add < /dev/null
 ssh -N -o 'ExitOnForwardFailure=yes' -R ${5}:localhost:${4} ${1}@${3} &
 tunnel_pid=$!
 
-sleep 5
+sleep 3
 if [ "`ps -p $tunnel_pid | grep $tunnel_pid`" ]; then
 	echo "$tunnel_pid" > "/tmp/reverse_tunnel.pid"
 fi
