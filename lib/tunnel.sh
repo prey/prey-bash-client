@@ -17,7 +17,7 @@
 #	done
 # }
 
-trap cleanup_tunnel EXIT
+# trap cleanup_tunnel EXIT
 
 cleanup_tunnel(){
 	rm -Rf "$askfile" 2> /dev/null
@@ -29,7 +29,6 @@ export SSH_ASKPASS="$askfile"
 export SSH_TTY=/dev/null
 # export DISPLAY=none:0.0
 
-echo "$askfile"
 cat > "$askfile" << END
 #!/bin/sh
 echo $2
@@ -47,3 +46,4 @@ sleep 3
 if [ "`ps -p $tunnel_pid | grep $tunnel_pid`" ]; then
 	echo "$tunnel_pid" > "/tmp/reverse_tunnel.pid"
 fi
+cleanup_tunnel

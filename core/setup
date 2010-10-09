@@ -20,6 +20,7 @@ until [ -z "$1" ]; do
 		trap - INT # set off trap
 		test_mode=1
 		. $base_path/test/include "$2" 2> /dev/null
+		shift
 	elif [[ "$1" == '-c' || "$1" == '--check' ]]; then
 		echo -e "\n -- CHECK MODE ENABLED."
 		check_mode=1

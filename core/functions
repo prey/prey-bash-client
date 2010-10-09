@@ -275,7 +275,7 @@ open_reverse_tunnel(){
 	fi
 
 	if [ ! -f "$tmpbase/reverse_tunnel.pid" ]; then
-		log " -- Opening reverse tunnel..."
+		log " -- Opening reverse tunnel from ${local_tunnel_port} to ${remote_tunnel_port} as ${reverse_tunnel_user} on ${reverse_tunnel_host}..."
 		setsid "$base_path/lib/tunnel.sh" ${reverse_tunnel_user} ${reverse_tunnel_pass} ${reverse_tunnel_host} ${local_tunnel_port} ${reverse_tunnel_port}
 		if [ -f "$tmpbase/reverse_tunnel.pid" ]; then
 			log " -- Tunnel open and ready to serve!"
@@ -294,7 +294,10 @@ close_reverse_tunnel(){
 	if [ -f "$tmpbase/reverse_tunnel.pid" ]; then
 		local tunnel_pid=`cat "$tmpbase/reverse_tunnel.pid"`
 		log " -- Closing reverse tunnel with PID ${tunnel_pid}..."
-		kill -9 $tunnel_pid
+		kill -9 $tunnel_pid 2> /dev/null
+		if [ $? == 1 ]; then
+			log " -- Seems like the reverse tunnel was already closed!"
+		fi
 		rm "$tmpbase/reverse_tunnel.pid"
 	fi
 }
