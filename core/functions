@@ -257,23 +257,13 @@ self_setup(){
 # reverse ssh tunnel
 ####################################################################
 
-get_remote_tunnel_port(){
-	local check_port=3333
-	local port=`nc -q 1 $1 $check_port < /dev/null`
-	echo $port
-}
-
 open_reverse_tunnel(){
 
 	local local_tunnel_port="$1"
 
-	if [[ -z "$remote_tunnel_port" && -n "$remote_tunnel_host" ]]; then
-		log " -- Looking for port on $remote_tunnel_host..."
-		remote_tunnel_port=`get_remote_tunnel_port ${remote_tunnel_host}`
-		if [ -z "$remote_tunnel_port" ]; then
-			log " -- Coulnd't find an open port. Please try again later."
-			return 1
-		fi
+	if [ -z "$remote_tunnel_port" ]; then
+		log " -- Unknown remote port to connect to. Please try again later."
+		return 1
 	fi
 
 	if [ ! -f "$tmpbase/prey-tunnel-${local_tunnel_port}.pid" ]; then
