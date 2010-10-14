@@ -257,7 +257,7 @@ self_setup(){
 # reverse ssh tunnel
 ####################################################################
 
-get_reverse_tunnel_port(){
+get_remote_tunnel_port(){
 	local check_port=3333
 	local port=`nc -q 1 $1 $check_port < /dev/null`
 	echo $port
@@ -265,20 +265,24 @@ get_reverse_tunnel_port(){
 
 open_reverse_tunnel(){
 
-	if [ -z "$reverse_tunnel_port" ]; then
-		log " -- Looking for port on $reverse_tunnel_host..."
-		reverse_tunnel_port=`get_reverse_tunnel_port ${reverse_tunnel_host}`
-		if [ -z "$reverse_tunnel_port" ]; then
+	local local_tunnel_port="$1"
+
+	if [[ -z "$remote_tunnel_port" && -n "$remote_tunnel_host" ]]; then
+		log " -- Looking for port on $remote_tunnel_host..."
+		remote_tunnel_port=`get_remote_tunnel_port ${remote_tunnel_host}`
+		if [ -z "$remote_tunnel_port" ]; then
 			log " -- Coulnd't find an open port. Please try again later."
 			return 1
 		fi
 	fi
 
-	if [ ! -f "$tmpbase/reverse_tunnel.pid" ]; then
-		log " -- Opening reverse tunnel from ${local_tunnel_port} to ${remote_tunnel_port} as ${reverse_tunnel_user} on ${reverse_tunnel_host}..."
-		setsid "$base_path/lib/tunnel.sh" ${reverse_tunnel_user} ${reverse_tunnel_pass} ${reverse_tunnel_host} ${local_tunnel_port} ${reverse_tunnel_port}
-		if [ -f "$tmpbase/reverse_tunnel.pid" ]; then
+	if [ ! -f "$tmpbase/prey-tunnel-${local_tunnel_port}.pid" ]; then
+		log " -- Opening reverse tunnel from ${local_tunnel_port} to ${remote_tunnel_port} as ${remote_tunnel_user} on ${remote_tunnel_host}..."
+		setsid "$base_path/lib/tunnel.sh" ${remote_tunnel_user} ${remote_tunnel_pass} ${remote_tunnel_host} ${local_tunnel_port} ${remote_tunnel_port} &> /dev/null
+		if [ -f "prey-tunnel.pid" ]; then
+			mv "prey-tunnel.pid" "$tmpbase/prey-tunnel-${local_tunnel_port}.pid"
 			log " -- Tunnel open and ready to serve!"
+			update_device_info_with "device[active_tunnel]=${remote_tunnel_host}:${remote_tunnel_port}"
 			return 0
 		else
 			log " -- Couldn't open reverse tunnel!"
@@ -291,13 +295,14 @@ open_reverse_tunnel(){
 }
 
 close_reverse_tunnel(){
-	if [ -f "$tmpbase/reverse_tunnel.pid" ]; then
-		local tunnel_pid=`cat "$tmpbase/reverse_tunnel.pid"`
-		log " -- Closing reverse tunnel with PID ${tunnel_pid}..."
+	local tunnel_pidfile="$tmpbase/prey-tunnel-${1}.pid"
+	if [ -f "${tunnel_pidfile}" ]; then
+		local tunnel_pid=`cat "$tunnel_pidfile"`
+		log " -- Closing reverse tunnel on port ${1} with PID ${tunnel_pid}..."
 		kill -9 $tunnel_pid 2> /dev/null
 		if [ $? == 1 ]; then
 			log " -- Seems like the reverse tunnel was already closed!"
 		fi
-		rm "$tmpbase/reverse_tunnel.pid"
+		rm -f "$tunnel_pidfile"
 	fi
 }

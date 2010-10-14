@@ -42,8 +42,8 @@ ssh-add < /dev/null
 ssh -N -o 'ExitOnForwardFailure=yes' -R ${5}:localhost:${4} ${1}@${3} &
 tunnel_pid=$!
 
-sleep 3
+sleep 5
 if [ "`ps -p $tunnel_pid | grep $tunnel_pid`" ]; then
-	echo "$tunnel_pid" > "/tmp/reverse_tunnel.pid"
+	echo "$tunnel_pid" > "prey-tunnel.pid"
 fi
-cleanup_tunnel
+# cleanup_tunnel

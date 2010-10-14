@@ -43,17 +43,17 @@ action_callback(){
 # receives the pid name, assigns it to the module name
 create_pidfile_for(){
 	log " -- Creating pidfile for $current_module's $1..."
-	echo $1 > "$tmpbase/prey-$current_module.pid"
+	echo $1 > "$tmpbase/prey-action-$current_module.pid"
 }
 
 unload_action(){
 	log " -- Unloading $1 from memory..."
-	local pidfile="$tmpbase/prey-$1.pid"
+	local pidfile="$tmpbase/prey-action-$1.pid"
 	kill -HUP -- -`cat $pidfile` &> /dev/null
 }
 
 remove_pidfile(){
-	local pidfile="$tmpbase/prey-$1.pid"
+	local pidfile="$tmpbase/prey-action-$1.pid"
 	if [ -f "$pidfile" ]; then
 		log ' -- Removing pidfile...'
 		rm -f "$pidfile" 2> /dev/null
@@ -64,13 +64,13 @@ remove_pidfile(){
 
 check_running_actions(){
 
-	for pidfile in `ls $tmpbase/prey-*.pid 2> /dev/null`; do
+	for pidfile in `ls $tmpbase/prey-action-*.pid 2> /dev/null`; do
 
 		if [ ! -f $pidfile ]; then
 			continue # just to make sure
 		fi
 
-		local action_name=`basename $pidfile | sed -e 's/prey-//' -e 's/\.pid//'`
+		local action_name=`basename $pidfile | sed -e 's/prey-action-//' -e 's/\.pid//'`
 		log " -- Found pid for running action: $action_name"
 
 		local pid=`cat $pidfile`

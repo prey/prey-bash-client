@@ -92,7 +92,6 @@ sftp_path='.'
 # you can log in either by RSA key or entering the pass below
 ####################################################################
 
-local_tunnel_port=''
 remote_tunnel_port=''
 remote_tunnel_host='my.server.com'
 remote_tunnel_user='username'
