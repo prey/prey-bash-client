@@ -50,7 +50,7 @@ smtp_password='password'
 
 # you dont need to change this
 mail_from='Prey <no-reply@gmail.com>'
-mail_subject='[Prey] Status Report'
+mail_subject='[Prey] Report'
 
 ####################################################################
 # additional http options
@@ -86,6 +86,7 @@ scp_path='~'
 sftp_user='username'
 sftp_server='my.server.com'
 sftp_path='.'
+
 
 ####################################################################
 # SSH Tunnel config

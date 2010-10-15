@@ -104,7 +104,7 @@ run_pending_actions(){
 	# -b -> Cause the status of terminated background jobs to be reported immediately,
 	# rather than before printing the next primary prompt.
 	# -m job control enabled
-	set -bm
+	# set -bm
 
 	log "\n${bold} >> Running pending actions...${bold_end}"
 	for action in "${actions[@]}"; do
@@ -138,5 +138,6 @@ run_pending_actions(){
 	log " -- No pending actions left. All done!\n"
 	trap - SIGCHLD
 	cleanup
+	# set +bm
 
 }

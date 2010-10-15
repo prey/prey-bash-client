@@ -1,49 +1,45 @@
 #!/bin/sh
-# Auto SSH Tunnel script, by Tomas Pollak
-# ./tunnel.sh [user] [pass] [host] [local_port] [remote_port]
-
-# starting_port=$4
-#get_port(){
-#	search_ports=10
-#	port=$starting_port
-
-#	while [ -z "`telnet $3 $port < /dev/null 2>&1 | grep Connected`" ]; do
-#		port=`expr $port + 1`
-#		echo " -- Probing for connection on port $port..."
-#		if [ $port -eq $(($starting_port+$search_ports)) ]; then
-#			port=0
-#			break
-#		fi
-#	done
-# }
+# Auto SSH Reverse Tunnel script, by Tomas Pollak
+# ./tunnel.sh [host] [local_port] [remote_port] [user] [pass]
 
 # trap cleanup_tunnel EXIT
+
+cwd=`pwd`
 
 cleanup_tunnel(){
 	rm -Rf "$askfile" 2> /dev/null
 }
 
-cwd=`pwd`
-askfile="$cwd/return"
-export SSH_ASKPASS="$askfile"
-export SSH_TTY=/dev/null
-# export DISPLAY=none:0.0
+create_askfile(){
+
+	askfile="$cwd/ssh_askpass"
 
 cat > "$askfile" << END
 #!/bin/sh
-echo $2
+echo $1
 END
-chmod 700 "$askfile"
 
-# eval `ssh-agent` >/dev/null
-ssh-add < /dev/null
+	chmod 700 "$askfile"
+}
+
+if [ -n "$5" ]; then # using password-based authentication
+
+	create_askfile "$5"
+	export SSH_ASKPASS="$askfile"
+	export SSH_TTY=/dev/null
+	# export DISPLAY=none:0.0
+	# eval `ssh-agent` >/dev/null
+	ssh-add < /dev/null
+
+fi
 
 # echo " -- Connecting to $host_port..."
-ssh -N -o 'ExitOnForwardFailure=yes' -R ${5}:localhost:${4} ${1}@${3} &
+ssh -N -o 'ExitOnForwardFailure=yes' -R ${3}:localhost:${2} ${4}@${1} &
 tunnel_pid=$!
 
 sleep 5
 if [ "`ps -p $tunnel_pid | grep $tunnel_pid`" ]; then
 	echo "$tunnel_pid" > "prey-tunnel.pid"
 fi
+
 # cleanup_tunnel
