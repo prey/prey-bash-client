@@ -37,9 +37,9 @@ fi
 ssh -N -o 'ExitOnForwardFailure=yes' -R ${3}:localhost:${2} ${4}@${1} &
 tunnel_pid=$!
 
-sleep 5
+sleep 3
 if [ "`ps -p $tunnel_pid | grep $tunnel_pid`" ]; then
 	echo "$tunnel_pid" > "prey-tunnel.pid"
 fi
 
-# cleanup_tunnel
+cleanup_tunnel

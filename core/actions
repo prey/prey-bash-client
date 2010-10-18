@@ -71,7 +71,7 @@ check_running_actions(){
 		fi
 
 		local action_name=`basename $pidfile | sed -e 's/prey-action-//' -e 's/\.pid//'`
-		log " -- Found pid for running action: $action_name"
+		log " -- Found PID for running action: $action_name"
 
 		local pid=`cat $pidfile`
 		local actually_running=`ps ax | grep $pid | grep -v grep > /dev/null && echo 1`
@@ -81,7 +81,7 @@ check_running_actions(){
 			unload_action $action_name
 			sleep 1
 		elif [ -z "$actually_running" ]; then
-			log " -- Not really running! Pidfile was just lying around."
+			log " -- Not really running! PID file was just lying around."
 			rm -f "$pidfile"
 		else
 			add_running_action $action_name $pid
@@ -104,9 +104,9 @@ run_pending_actions(){
 	# -b -> Cause the status of terminated background jobs to be reported immediately,
 	# rather than before printing the next primary prompt.
 	# -m job control enabled
-	# set -bm
+	set -bm
 
-	log "\n${bold} >> Running pending actions...${bold_end}"
+	log "\n${bold} >> Running pending actions...${bold_end}\n"
 	for action in "${actions[@]}"; do
 
 		local current_module=`echo $action | sed 's/=.*//'`
