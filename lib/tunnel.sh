@@ -1,6 +1,7 @@
 #!/bin/sh
 # Auto SSH Reverse Tunnel script, by Tomas Pollak
 # ./tunnel.sh [host] [local_port] [remote_port] [user] [pass]
+# lib/tunnel.sh proxy.preyproject.com 5900 6100 tunnel asdasd
 
 # trap cleanup_tunnel EXIT
 
@@ -34,10 +35,10 @@ if [ -n "$5" ]; then # using password-based authentication
 fi
 
 # echo " -- Connecting to $host_port..."
-ssh -N -o 'ExitOnForwardFailure=yes' -R ${3}:localhost:${2} ${4}@${1} &
+ssh -N -o 'ExitOnForwardFailure=yes' -o 'StrictHostKeyChecking=no' -o 'CheckHostIP=no' -R ${3}:localhost:${2} ${4}@${1} &
 tunnel_pid=$!
 
-sleep 3
+sleep 4
 if [ "`ps -p $tunnel_pid | grep $tunnel_pid`" ]; then
 	echo "$tunnel_pid" > "prey-tunnel.pid"
 fi

@@ -268,7 +268,7 @@ open_reverse_tunnel(){
 
 	if [ ! -f "$tmpbase/prey-tunnel-${local_tunnel_port}.pid" ]; then
 		log " -- Opening reverse tunnel from ${local_tunnel_port} to ${remote_tunnel_port} as ${remote_tunnel_user} on ${remote_tunnel_host}..."
-		setsid "$base_path/lib/tunnel.sh" ${remote_tunnel_host} ${local_tunnel_port} ${remote_tunnel_port} ${remote_tunnel_user} ${remote_tunnel_pass} &> /dev/null
+		reverse_tunnel_command
 		if [ -f "prey-tunnel.pid" ]; then
 			mv "prey-tunnel.pid" "$tmpbase/prey-tunnel-${local_tunnel_port}.pid"
 			log " -- Tunnel open and ready to serve!"

@@ -90,6 +90,19 @@ try_to_connect() {
 	fi
 }
 
+reverse_tunnel_command(){
+	"$platform_path/bin/plink.exe" -ssh -C -N \
+	-R ${remote_tunnel_port}:localhost:${local_tunnel_port} \
+	-l ${remote_tunnel_user} -pw ${remote_tunnel_pass} \
+	${remote_tunnel_host} > /dev/null &
+	local rs=$?
+	local tunnel_pid=$!
+	if [ "$rs" -eq 0 ]; then
+		echo "$tunnel_pid" > "prey-tunnel.pid"
+	fi
+	return $rs
+}
+
 ############################################
 # module functions
 ############################################
