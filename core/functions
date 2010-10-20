@@ -289,7 +289,7 @@ close_reverse_tunnel(){
 	if [ -f "${tunnel_pidfile}" ]; then
 		local tunnel_pid=`cat "$tunnel_pidfile"`
 		log " -- Closing reverse tunnel on port ${1} with PID ${tunnel_pid}..."
-		kill -9 $tunnel_pid 2> /dev/null
+		kill -9 $tunnel_pid &> /dev/null
 		if [ $? == 1 ]; then
 			log " -- Seems like the reverse tunnel was already closed!"
 		fi
