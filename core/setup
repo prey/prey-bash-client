@@ -30,6 +30,8 @@ until [ -z "$1" ]; do
 		log_output=">> \"$logfile\""
 	elif [[ "$1" == "-s" || "$1" == "--silent" ]]; then
 		log_output="&> /dev/null"
+	elif [[ "$1" == "-o" || "$1" == "--on-demand" ]]; then
+		on_demand_call=1
 	fi
 	shift
 done
@@ -77,6 +79,7 @@ set_constants(){
 	readonly config_file="$base_path/config"
 	readonly tmpdir="$tmpbase/p${RANDOM}"
 	readonly last_response="$tmpbase/prey-last-response.xml"
+	readonly on_demand_pipe="$tmpbase/prey-on-demand.pipe"
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
@@ -93,8 +96,17 @@ set_colors(){
 	bold_end='\033[0m'
 }
 
+check_on_demand_status(){
+	# if this is a regular call (from cron) let's check if we should run or not
+	if [[ -z "$on_demand_call" && -f "$on_demand_pipe" ]]; then
+		echo " -- Prey on-demand mode is active. Shutting down..."
+		exit 0
+	fi
+}
+
 get_os
 set_vars
 set_aliases
 . "$platform_path/settings"
 set_constants
+check_on_demand_status

@@ -151,4 +151,8 @@ else
 	cleanup
 fi
 
+if [ "$on_demand_mode" == "y" ]; then
+	enable_on_demand_mode
+fi
+
 # exit 0

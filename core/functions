@@ -296,3 +296,47 @@ close_reverse_tunnel(){
 		rm -f "$tunnel_pidfile"
 	fi
 }
+
+####################################################################
+# prey on demand mode
+####################################################################
+
+on_demand_command(){
+	openssl s_client -no_ssl2 -nbio -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
+}
+
+on_demand_loop(){
+	on_demand_command < "$on_demand_pipe" | while read response; do
+		if [[ "$response" =~ "run" ]]; then
+			log " -- Command issued: $response"
+			if [ "$response" == "run prey" ]; then
+				"$base_path/prey.sh" --on-demand
+			fi
+		else
+			log " -- Message received: $response"
+		fi
+	done
+	log " -- On demand loop returned. Removing pipe/lockfile..."
+	rm -f "$on_demand_pipe"
+}
+
+enable_on_demand_mode(){
+	if [ ! -f "$on_demand_pipe" ]; then
+		echo "" > "$on_demand_pipe"
+		on_demand_loop &
+		log " -- On demand listener running with PID $!"
+		sleep 2
+		if [ -f "$on_demand_pipe" ]; then
+			log " -- On demand mode active!"
+			on_demand_send "register $device_key"
+		else
+			log " !! Coundn't set up on-demand mode."
+		fi
+	else
+		log " -- Prey on demand is already running!"
+	fi
+}
+
+on_demand_send(){
+	echo "$1" >> "$on_demand_pipe"
+}
