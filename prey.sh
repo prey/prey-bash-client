@@ -151,7 +151,8 @@ else
 	cleanup
 fi
 
-if [ "$on_demand_mode" == "y" ]; then
+# if on demand mode was activated, and we're not being by on demand mode itself
+if [[ -z "$on_demand_call" && "$on_demand_mode" == "y" ]]; then
 	enable_on_demand_mode
 fi
 

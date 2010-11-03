@@ -306,14 +306,14 @@ on_demand_command(){
 }
 
 on_demand_loop(){
-	on_demand_command < "$on_demand_pipe" | while read response; do
-		if [[ "$response" =~ "run" ]]; then
-			log " -- Command issued: $response"
-			if [ "$response" == "run prey" ]; then
-				"$base_path/prey.sh" --on-demand
+	on_demand_command < "$on_demand_pipe" | while read message; do
+		if [[ "$message" =~ "run" ]]; then
+			log " -- Command issued: $message"
+			if [ "$message" == "run" ]; then
+				"$base_path/prey.sh" --on-demand & disown -h
 			fi
 		else
-			log " -- Message received: $response"
+			log " -- Message received: $message"
 		fi
 	done
 	log " -- On demand loop returned. Removing pipe/lockfile..."
