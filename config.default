@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-# language, en (English), es (Espanol), fr (French)
+# language, en (English), es (Espanol), fr (French), pt (Portuguese)
 lang='en'
 
 # autoconnect feature, disabled by default until we are 200% sure it
