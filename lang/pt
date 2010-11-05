@@ -1,10 +1,74 @@
 #!/bin/bash
 ####################################################################
 # Prey - by Tomas Pollak (http://bootlog.org)
-# English lang file v 0.2 - by Juan C. Mardones (http://juanmardones.com)
+# Portuguese lang file v 0.2 - by Rodrigo G. M. Catto (http://github.com/iskigow)
+#    previous portuguese lang file (v 0.1) by Cleiton Francisco (http://github.com/cleitonfco)
 # URL : http://preyproject.com
 # License: GPLv3
 ####################################################################
+
+if [ -n "$DEFAULT_INSTALLPATH" ]; then # Estamos iniciando o instalador
+
+# mensagens do instalador
+
+HELLO_IN_LANGUAGE=" -- Prey agora fala português!"
+WHERE_TO_INSTALL_PREY=" -> Onde deseja instalar Prey? [$DEFAULT_INSTALLPATH] "
+USING_DEFAULT_INSTALL_PATH=" -- Ótimo, usaremos o caminho default..."
+INVALID_INSTALL_PATH=" !! Caminho inválido. O diretório não existe!\n"
+SETTING_INSTALL_PATH=" -- Ok, configurado $INSTALLPATH como caminho da instalação."
+
+IT_SEEMS_PATH="Parece que Prey já está instalado"
+DIFFERENT_PATH="\nA nova versão usa um caminho diferente para a instalação,"
+REMOVE_OLD_FILES="então será removido os arquivos antigos que não serão mais usados."
+ASK_RM_OLD_FILES="Você deseja que seja feito de forma automática?"
+DELETING_OLD_FILES=" -- Apagando os arquivos da instalação Prey anterior...\n"
+CONFIG_FILE_EXISTS=" -> O arquivo de configuração já existe! Deseja pular as perguntas chatas?(não recomendado)[n] "
+
+SKIP_INSTALL_QUESTIONS=" -- Ótimo, atualizar os arquivos!\n"
+
+DEFINE_REPORT_METHOD=" -> Qual qual forma devo reportar? (email, tunnel, web) [email] "
+IS_REGISTERED_ON_WEB=" -- Você já possui cadastro no site?"
+DEFAULT_REPORT_METHOD=" -- Usar o email para reportar. Tudo ok!"
+ADD_API_KEY=" -> Digite a tua chave API (API Key) como reportado pelo serviço web"
+INVALID_API_KEY=" !! Chave API (API Key) inválida! Lembre-se de se cadastrar em preyproject.com para obter uma.\n"
+ADD_DEVICE_KEY=" -> Digite a chave do dispositivo como indicado no site: "
+INVALID_DEVICE_KEY=" !! Chave de dispositivo inválida! Lembre-se de se cadastrar em preyproject.com para obter uma.\n"
+
+DESIRED_USER_WEB=" -- Digite teu userário: "
+ASK_EMAIL_WEB=" -- Digite teu email: "
+DESIRED_PASS_WEB=" -- Digite uma senha: "
+PROBLEM_SIGNUP_WEB="Há um problema com o serviço web. Tente novamente."
+PROBLEM_RESPONSE_WEB="A resposta recebida é:"
+
+USING_DEFAULT_APP_URL=" -- Uso a rota default da aplicação web. Nada de novo!"
+
+ENTER_EMAIL_ADDRESS=" -> A qual endereço devo enviar o e-mail? (ex. mailbox@domain.com.br) [] "
+INVALID_EMAIL_ADDRESS=" !! Deve especificar um endereço válido...\n"
+
+ENTER_SMTP_SERVER=" -> Qual o servidor SMTP que devo usar? (e qual a porta?) [smtp.gmail.com:587] "
+DEFAULT_SMTP_SERVER=" -- Ok, usará gmail! "
+ENTER_SMTP_USER=" -> Seu nome de usuário no SMTP: (ex. mailbox@gmail.com)"
+DEFAULT_SMTP_USER=" -- Ok, o teu nome de usuário SMTP é" # the installer appends the email var
+ENTER_SMTP_PASS=" -> A tua senha no SMTP: (não será mostrata) [] "
+INVALID_SMTP_PASS=" !! Deve digitar a senha válida...\n"
+YES_NO="s/n"
+YES="s"
+CHECK_URL_OR_NOT=" -- Quer que Prey verifique periodicamente uma URL? (Resposta do servidor não significa gerar automaticamente relatório na inicialização do programa) [n] "
+ENTER_URL=" -- Ok, digite a URL? [ex. http://myserver.com/prey_check_url] "
+INVALID_URL=" !! Digite uma URL...\n"
+SET_TIMING=" -- Ok, última.. quantas vezes (em minutos) Prey deve verificar? [$TIMING] "
+
+INSTALLING_SOFTWARE=" -- Ok, instalação do programa necessária...\n"
+COPYING_ISIGHTCAPTURE=" -- Copiando iSightCapture em $INSTALLPATH..."
+COPYING_FILES="\n -- Copiando o(s) arquivo(s) necessário(s) em $INSTALLPATH e configurando a(s) permição(ões) ..."
+ADDING_CRONTAB=" -- Adicionando a entrada no crontab..."
+INSTALL_OK="\033[1m\n -- Tudo bem! Prey está instalado e iniciado. Agora pode apagar esse diretório com segurança.
+-- Se deseja desinstalar Prey, basta apagar o diretório $INSTALLPATH
+e remover a regra da aplicação Prey no crontab: \n
+\t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
+-- Para obter atualizações acesse o site http://preyproject.com!\033[0m\n\n"
+
+else # prey status messages
 
 STRING_START="\n ### PREY $version estende suas asas!\n"
 STRING_TRY_TO_CONNECT=" -- Tentando conectar na primeira rede wifi aberta disponível..."
@@ -19,6 +83,7 @@ Se você estiver usando o Gmail, tente remover o '@gmail.com' do campo smtp_user
 STRING_REMOVE_EVIDENCE=" -- Removendo todos os traços de evidência..."
 STRING_DONE=" -- Pronto! Boa caçada! :)"
 
-EMAIL_NOTICE=""
 EMAIL_HEADER="Boa notícia, amigo, parece que encontramos.\n\nAqui está o relatório do seu computador:\n\n"
 EMAIL_FOOTER="\n\nBoa caçada!\n\n--\nSeu humilde servo, Prey\nhttp://preyproject.com"
+
+fi
