@@ -99,7 +99,7 @@ set_colors(){
 check_on_demand_status(){
 	# if this is a regular call (from cron) let's check if we should run or not
 	if [[ -z "$on_demand_call" && -f "$on_demand_pipe" ]]; then
-		echo " -- Prey on-demand mode is active. Shutting down..."
+		echo -e " -- Prey on-demand mode is active. Back to sleep...\n"
 		exit 0
 	fi
 }
