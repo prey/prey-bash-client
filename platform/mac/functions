@@ -51,7 +51,7 @@ try_to_connect() {
 	enable_airport
 
 	# list available access points and parse to get first SSID with security "NONE"
-	local essid=`$airport -s | grep NONE | head -1 | cut -c1-33 | sed 's/^[ \t]*//'`
+	local essid=`$airport -s | grep NONE | sort -k3 -r | head -1 | cut -c1-32 | sed 's/^[ \t]*//'`
 
 	if [ -n "$essid" ]; then
 		if [ $osx_version == "snow-leopard" ]; then
