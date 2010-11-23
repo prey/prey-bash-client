@@ -305,10 +305,15 @@ on_demand_command(){
 	openssl s_client -no_ssl2 -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
 	log " -- OpenSSL returned. Removing pipe/lockfile..."
 	rm -f "$on_demand_pipe"
+	kill_process "$on_demand_pipe"
+}
+
+on_demand_stdin(){
+	tail -f "$on_demand_pipe" 2> /dev/null
 }
 
 on_demand_loop(){
-	tail --follow=name "$on_demand_pipe" 2> /dev/null | on_demand_command | while read message; do
+	on_demand_stdin | on_demand_command | while read message; do
 		if [[ "$message" =~ "run" ]]; then
 			log " -- Command issued: $message"
 			if [ "$message" == "run" ]; then
