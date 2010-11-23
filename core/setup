@@ -5,11 +5,19 @@
 # License: GPLv3
 ####################################################################
 
-# step throught the params and check
+trap "" INT TERM
+# trap cleanup EXIT
 
+cleanup(){
+	log " -- Cleaning up!\n"
+	delete_tmpdir
+}
+
+# step throught the params and check
 until [ -z "$1" ]; do
 	if [[ "$1" == "-t" || "$1" == "--test" ]]; then
 		echo -e "\n -- TEST MODE ENABLED."
+		trap - INT # set off trap
 		test_mode=1
 		. $base_path/test/include "$2" 2> /dev/null
 	elif [[ "$1" == '-c' || "$1" == '--check' ]]; then
@@ -18,16 +26,12 @@ until [ -z "$1" ]; do
 	elif [[ "$1" == "-l" || "$1" == "--log" ]]; then
 		logfile="$base_path/prey.log"
 		echo -n "" > "$logfile" # empty the logfile first
-		log_output=">> $logfile"
+		log_output=">> \"$logfile\""
 	elif [[ "$1" == "-s" || "$1" == "--silent" ]]; then
 		log_output="&> /dev/null"
 	fi
 	shift
 done
-
-lowercase(){
-	echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
-}
 
 get_os(){
 	os=`lowercase \`uname\``
@@ -56,13 +60,13 @@ set_vars(){
 	tmpbase="/tmp"
 	line_breaker="\n"
 	user_agent="-A Prey/$version ($os)"
+	processes='ps ax'
 }
 
 set_aliases(){
 	shopt -s expand_aliases
 	alias getter="curl $curl_options -s \"$user_agent\""
 	alias mailsender="sendEmail"
-	alias processes='ps ax'
 }
 
 set_constants(){
@@ -71,7 +75,7 @@ set_constants(){
 
 	readonly config_file="$base_path/config"
 	readonly tmpdir="$tmpbase/p${RANDOM}"
-	readonly last_response="$tmpbase/last_response.tmp"
+	# readonly last_response="$tmpbase/last_response.tmp"
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null

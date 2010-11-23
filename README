@@ -59,7 +59,7 @@ Device keys; otherwise you need to set up your SMTP server settings.
 Finally, you need to add a crontab entry for root. You can do this by typing
 the following in a terminal:
 
-$ (sudo crontab -l | grep -v prey; echo "*/20 * * * * /usr/share/prey.sh > /dev/null") | sudo crontab -
+$ (sudo crontab -l | grep -v prey; echo "*/20 * * * * /usr/share/prey/prey.sh > /var/log/prey.log") | sudo crontab -
 
 ##############################################
 3. Requisites for Linux

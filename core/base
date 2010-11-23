@@ -5,6 +5,7 @@
 # License: GPLv3
 ####################################################################
 
+. "$base_path/core/framework"
 . "$base_path/core/setup"
 . "$base_path/core/functions"
 . "$base_path/core/pull"

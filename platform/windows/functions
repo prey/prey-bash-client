@@ -10,12 +10,12 @@ run_as_current_user(){
 	if [ "`whoami`" == "SYSTEM" ]; then
 		userrun $1
 	else
-		$1
+		eval $1
 	fi
 }
 
 get_pid(){
-	processes | grep "$1" | head -1 | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
+	$processes | grep "$1" | head -1 | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
 }
 
 ############################################
@@ -26,8 +26,7 @@ verify_installation(){
 
 	# check prey service on
 	log " -- Checking if Prey's cron service is running..."
-	local cron_running=`is_process_running "cron"`
-	if [ -n "$cron_running" ]; then
+	if [ -n `is_process_running "cron"` ]; then
 		echo " -- Cron service up and running. Good."
 	else
 		echo " !! Cron service not found! Please make sure no antivirus is blocking cron.exe from running. Optionally reinstall. :)"
@@ -48,7 +47,7 @@ is_net_framework_installed() {
 	local results=`reg query "HKLM\Software\Microsoft\NET Framework Setup\NDP" | sed -e '1,2d' -e 's/[^0-9.]//g' | grep -v "^$"`
 
 	for result in `echo -e "$results"`; do
-		if [[ "$result" == "$version" || `is_bigger_than $result $version` == 1 ]]; then
+		if [[ "$result" == "$version" || `is_greater_than $result $version` == 1 ]]; then
 			echo 1
 			break
 		fi
@@ -61,13 +60,13 @@ is_net_framework_installed() {
 
 get_gateway_ip() {
 	if [ -z "$gateway_ip" ]; then
-		gateway_ip=`ipconfig | grep Gateway | sed 's/^.*: //g' | grep -v '^$' | head -1`
+		gateway_ip=`ifconfig.exe //all | awk -F ":" '/Gateway/	{print $2}'`
 	fi
 }
 
 get_internal_ip() {
 	if [ -z "$internal_ip" ]; then
-		internal_ip=`ipconfig | grep "Address" | grep -v "local" | sed 's/^.*: //g' | grep -v '^$' | head -1`
+		internal_ip=`ifconfig.exe //all | grep "IP  Address" | sed "s/.*:\([0-9\.]*\) .*/\1/g" | grep -v "^$" | grep -v "0.0.0.0" | head -1`
 	fi
 }
 
@@ -158,10 +157,12 @@ reset_permissions(){
 pre_update_hook(){
 
 	# kill any instances of cron that may be running
-	for cron in "`tasklist | grep 'cron.exe'`"; do
+	for cron in "`TASKLIST | grep 'cron.exe'`"; do
 		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
-		echo " -- Shutting down cron with PID $pid..."
-		"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
+		if [ -n "$pid" ]; then
+			echo " -- Shutting down cron with PID $pid..."
+			"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
+		fi
 	done
 
 	# stop the cron service
@@ -190,9 +191,14 @@ post_update_hook(){
 ############################################
 # Device creation parameters
 ############################################
+
+get_current_hostname(){
+	reg query "HKLM\System\CurrentControlSet\Control\ComputerName\ComputerName" | grep ComputerName | tail -1 | awk '{print $3}'
+}
+
 get_pc_info(){
 
-	pc_name=`hostname`
+	pc_name=`get_current_hostname`
 	if [ -n "$winxp" ]; then
 		pc_os_version="xp"
 	else

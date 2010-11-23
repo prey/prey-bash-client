@@ -7,6 +7,8 @@
 
 update_device_info_with(){
 
+	if [ -z "$device_key" ]; then return 1; fi
+
 	log ' -- Updating device info...'
 	local response=`getter -i -X PUT -u $api_key:x $check_url/devices/$device_key.xml -d "$1"`
 
@@ -17,6 +19,21 @@ update_device_info_with(){
 		log " -- Couldn't update your device. Maybe the Control Panel is taking a bath."
 	fi
 
+}
+
+deactivate_modules_on_panel(){
+
+	if [ -z "$device_key" ]; then return 1; fi
+
+	log " -- Deactivating module(s) ${1} on Control Panel..."
+
+	local param_string=""
+	until [ -z "$1" ]; do
+		local param_string="${param_string}device[deactivate_modules][]=$1&"
+		shift
+	done
+
+	update_device_info_with "$param_string"
 }
 
 send_report(){
@@ -31,22 +48,23 @@ send_report(){
 				echo -e "$trace_list" > "$trace_file"
 				log " -- Posting data via $post_method..."
 				eval 'send_via_'"${post_method}"''
-				rm -f "$trace_file"
+				local rs=$?
+				rm -f "$trace_file" 2> /dev/null
 			fi
 		remove_traces
 		remove_files
 	else
-		log " -- No data to send. We're done!"
+		log " -- No data to send. It seems you didn't activate any report modules. Skipping..."
 	fi
+	return $rs
 }
 
 send_via_email(){
 
-	local decoded_pass=`decrypt "$smtp_password"`
 	local complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
-	echo -e "$EMAIL_NOTICE $EMAIL_HEADER" | cat - "$trace_file" | sed "s/%0A/\n/g;s/%22/\"/g" > "$trace_file.msg" && echo -e "$EMAIL_FOOTER" >> "$trace_file.msg"
+	echo -e "${EMAIL_NOTICE}${EMAIL_HEADER}`urldecode "$trace_list"`${EMAIL_FOOTER}" > "$trace_file.msg"
 
-	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username=$smtp_username password=$decoded_pass`
+	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username=$smtp_username password=\`decrypt \"$smtp_password\"\``
 
 	if [ `find_in "$response" 'ERROR'` ]; then
 		log "$STRING_ERROR_EMAIL"
@@ -65,10 +83,8 @@ send_via_http(){
 	else
 		local args="-u $api_key:x"
 	fi
-	if [ -z "$post_url" ]; then
-		local post_url=`echo $check_url | sed 's/\.xml/\/reports\.xml/'`
-	fi
 	if [ `find_in "$post_url" 'https'` ]; then
+		echo " -- Using SSL v3 encryption! Nice."
 		args="$args -k -3"
 	fi
 	response=`getter $args -K "$trace_file" $file_list "$post_url" \

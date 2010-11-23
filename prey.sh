@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-PATH=/bin:$PATH # for windows
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:$PATH
 readonly base_path=`dirname "$0"`
 
 ####################################################################
@@ -25,8 +25,6 @@ fi
 # 	log ' -- Prey is already running!'
 # 	exit 1
 # fi
-
-# trap "echo -- Kill signal detected.; wait" SIGTERM SIGKILL SIGQUIT
 
 log "${cyan}$STRING_START ### `uname -a`${color_end}\n"
 
@@ -135,7 +133,11 @@ fi
 ####################################################################
 
 check_running_actions
-run_pending_actions &
-delete_tmpdir
+
+if [ "${#actions[*]}" -gt 0 ]; then
+	run_pending_actions &
+else
+	cleanup
+fi
 
 exit 0
