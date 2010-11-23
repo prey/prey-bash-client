@@ -57,7 +57,7 @@ try_to_connect() {
 		if [ $osx_version == "snow-leopard" ]; then
 			local airportstring="Airport"
 		fi
-		networksetup -setairportnetwork $airportstring $essid 2>/dev/null
+		networksetup -setairportnetwork $airportstring "$essid" 2>/dev/null
 	fi
 }
 
