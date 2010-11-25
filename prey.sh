@@ -41,7 +41,7 @@ if [ $connected == 0 ]; then
 		try_to_connect
 	fi
 
-	# ok, lets check again, after waiting three seconds
+	# ok, lets check again, after waiting a bit
 	sleep 10
 	check_net_status
 	if [ $connected == 0 ]; then
