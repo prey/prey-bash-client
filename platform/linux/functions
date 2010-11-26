@@ -68,6 +68,10 @@ try_to_connect() {
 
 }
 
+reverse_tunnel_command(){
+	setsid "$base_path/lib/tunnel.sh" ${remote_tunnel_host} ${local_tunnel_port} ${remote_tunnel_port} ${remote_tunnel_user} ${remote_tunnel_pass} &> /dev/null
+}
+
 ############################################
 # updater-specific functions
 ############################################

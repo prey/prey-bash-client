@@ -69,6 +69,10 @@ randomize_check_host='n'
 # future it may prove useful. :)
 extended_headers='n'
 
+# when enabled, Prey will keep a copy of last response gotten from
+# the server, and use it for instructions when no connection is found
+offline_actions='y'
+
 ####################################################################
 # scp/sftp posting configuration -- EXPERIMENTAL!
 # we dont use user/pass but RSA keys
@@ -87,6 +91,24 @@ scp_path='~'
 sftp_user='username'
 sftp_server='my.server.com'
 sftp_path='.'
+
+####################################################################
+# SSH Tunnel config
+# you can log in either by RSA key or entering the pass below
+####################################################################
+
+remote_tunnel_port=''
+remote_tunnel_host='my.server.com'
+remote_tunnel_user='username'
+remote_tunnel_pass='password'
+
+####################################################################
+# Amazon S3 keys
+####################################################################
+
+s3_access_key_id=''
+s3_secret_access_key=''
+s3_bucket_name=''
 
 ####################################################################
 # if you have any questions please visit preyproject.com

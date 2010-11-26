@@ -27,9 +27,9 @@ verify_installation(){
 	# check prey service on
 	log " -- Checking if Prey's cron service is running..."
 	if [ -n `is_process_running "cron"` ]; then
-		echo " -- Cron service up and running. Good."
+		log " -- Cron service up and running. Good."
 	else
-		echo " !! Cron service not found! Please make sure no antivirus is blocking cron.exe from running. Optionally reinstall. :)"
+		log " !! Cron service not found! Please make sure no antivirus is blocking cron.exe from running. Optionally reinstall. :)"
 	fi
 
 	# check net framework
@@ -89,6 +89,31 @@ try_to_connect() {
 		log " !! .NET framework version $required_net_version or newer not installed!"
 	fi
 }
+
+reverse_tunnel_command(){
+	"$platform_path/bin/plink.exe" -ssh -C -N \
+	-R ${remote_tunnel_port}:localhost:${local_tunnel_port} \
+	-l ${remote_tunnel_user} -pw ${remote_tunnel_pass} \
+	${remote_tunnel_host} > /dev/null &
+	local rs=$?
+	local tunnel_pid=$!
+	if [ "$rs" -eq 0 ]; then
+		echo "$tunnel_pid" > "prey-tunnel.pid"
+	fi
+	return $rs
+}
+
+on_demand_stdin(
+	local sleep_interval=1
+	local last_msg=""
+	while sleep $sleep_interval; do
+		local new_msg=`tail -1 "$on_demand_pipe"`
+		if [ "$new_msg" != "$last_msg" ]; then
+			echo "$new_msg"
+		fi
+		last_msg="$new_msg"
+	done
+)
 
 ############################################
 # module functions

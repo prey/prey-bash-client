@@ -33,7 +33,9 @@ get_attribute(){
 
 # key, value
 set_config(){
-	eval "${1}=\"$2\""
+	if [ -n "$2" ]; then
+		eval "${1}=\"$2\""
+	fi
 }
 
 # module, key, value
@@ -249,4 +251,97 @@ self_setup(){
 
 	fi
 
+}
+
+####################################################################
+# reverse ssh tunnel
+####################################################################
+
+open_reverse_tunnel(){
+
+	local local_tunnel_port="$1"
+
+	if [ -z "$remote_tunnel_port" ]; then
+		log " -- Unknown remote port to connect to. Please try again later."
+		return 1
+	fi
+
+	if [ ! -f "$tmpbase/prey-tunnel-${local_tunnel_port}.pid" ]; then
+		log " -- Opening reverse tunnel from ${local_tunnel_port} to ${remote_tunnel_port} as ${remote_tunnel_user} on ${remote_tunnel_host}..."
+		reverse_tunnel_command
+		if [ -f "prey-tunnel.pid" ]; then
+			mv "prey-tunnel.pid" "$tmpbase/prey-tunnel-${local_tunnel_port}.pid"
+			log " -- Tunnel open and ready to serve!"
+			update_device_info_with "device[active_tunnel]=${remote_tunnel_host}:${remote_tunnel_port}"
+			return 0
+		else
+			log " -- Couldn't open reverse tunnel!"
+			return 1
+		fi
+	else
+		echo " -- Reverse tunnel already on!"
+		return 0
+	fi
+}
+
+close_reverse_tunnel(){
+	local tunnel_pidfile="$tmpbase/prey-tunnel-${1}.pid"
+	if [ -f "${tunnel_pidfile}" ]; then
+		local tunnel_pid=`cat "$tunnel_pidfile"`
+		log " -- Closing reverse tunnel on port ${1} with PID ${tunnel_pid}..."
+		kill -9 $tunnel_pid &> /dev/null
+		if [ $? == 1 ]; then
+			log " -- Seems like the reverse tunnel was already closed!"
+		fi
+		rm -f "$tunnel_pidfile"
+	fi
+}
+
+####################################################################
+# prey on demand mode
+####################################################################
+
+on_demand_command(){
+	openssl s_client -no_ssl2 -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
+	log " -- OpenSSL returned. Removing pipe/lockfile..."
+	rm -f "$on_demand_pipe"
+	kill_process "$on_demand_pipe"
+}
+
+on_demand_stdin(){
+	tail -f "$on_demand_pipe" 2> /dev/null
+}
+
+on_demand_loop(){
+	on_demand_stdin | on_demand_command | while read message; do
+		if [[ "$message" =~ "run" ]]; then
+			log " -- Command issued: $message"
+			if [ "$message" == "run" ]; then
+				"$base_path/prey.sh" --on-demand & disown -h
+			fi
+		else
+			log " -- Message received: $message"
+		fi
+	done
+}
+
+enable_on_demand_mode(){
+	if [ ! -f "$on_demand_pipe" ]; then
+		echo "" > "$on_demand_pipe"
+		on_demand_loop &
+		log " -- On demand listener running with PID $!"
+		sleep 2
+		if [ -f "$on_demand_pipe" ]; then
+			log " -- On demand mode active!"
+			on_demand_send "register $device_key"
+		else
+			log " !! Coundn't set up on-demand mode."
+		fi
+	else
+		log " -- Prey on demand is already running!"
+	fi
+}
+
+on_demand_send(){
+	echo "$1" >> "$on_demand_pipe"
 }

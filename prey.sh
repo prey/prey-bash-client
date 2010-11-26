@@ -46,6 +46,13 @@ if [ $connected == 0 ]; then
 	check_net_status
 	if [ $connected == 0 ]; then
 		log "$STRING_NO_CONNECT_TO_WIFI"
+		if [ -f "$last_response" ]; then # offline actions were enabled
+			log ' -- Offline actions enabled!'
+			offline_mode=1
+			get_last_response
+		else
+			exit 1
+		fi
 	fi
 fi
 
@@ -132,12 +139,21 @@ fi
 # if we have any pending actions, run them
 ####################################################################
 
+if [ -n "$offline_mode" ]; then
+	process_module_config
+fi
+
 check_running_actions
 
 if [ "${#actions[*]}" -gt 0 ]; then
-	run_pending_actions &
+	run_pending_actions & disown -h
 else
 	cleanup
 fi
 
-exit 0
+# if on demand mode was activated, and we're not being by on demand mode itself
+if [[ -z "$on_demand_call" && "$on_demand_mode" == "y" ]]; then
+	enable_on_demand_mode
+fi
+
+# exit 0

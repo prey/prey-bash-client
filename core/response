@@ -106,7 +106,7 @@ process_module_config(){
 				initialize_module $module_name
 
 				local module_type=`get_attribute 'type' "$line"`
-				if [ "$module_type" == 'action' ]; then
+				if [[ "$module_type" == 'action' || "$module_type" == "tunnel" ]]; then
 
 					if [ `find_in "$line" 'function='` ]; then # a specific function was requested
 						local function_name=`get_attribute 'function' "$line"`

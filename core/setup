@@ -13,23 +13,46 @@ cleanup(){
 	delete_tmpdir
 }
 
+show_usage(){
+	echo "Prey ${version} ( http://preyproject.com )"
+	echo -e "\nUsage: `basename $0` [options]"
+	echo -e "Options:"
+	echo -e "  -t | --test\t\tTest mode. Runs Prey without sending any data."
+	echo -e "  -c | --check\t\tCheck mode. Checks if configuration is correctly set up."
+	echo -e "  -l | --log\t\tLog output to ${base_path}/prey.log (default in Windows)."
+	echo -e "  -s | --silent\t\tDon't log any output."
+	echo -e "  -o | --on-demand\tRuns Prey without checking if on-demand mode is active.\n"
+}
+
 # step throught the params and check
 until [ -z "$1" ]; do
-	if [[ "$1" == "-t" || "$1" == "--test" ]]; then
-		echo -e "\n -- TEST MODE ENABLED."
-		trap - INT # set off trap
-		test_mode=1
-		. $base_path/test/include "$2" 2> /dev/null
-	elif [[ "$1" == '-c' || "$1" == '--check' ]]; then
-		echo -e "\n -- CHECK MODE ENABLED."
-		check_mode=1
-	elif [[ "$1" == "-l" || "$1" == "--log" ]]; then
-		logfile="$base_path/prey.log"
-		echo -n "" > "$logfile" # empty the logfile first
-		log_output=">> \"$logfile\""
-	elif [[ "$1" == "-s" || "$1" == "--silent" ]]; then
-		log_output="&> /dev/null"
-	fi
+	case "$1" in
+		-t | --test )
+			echo -e "\n -- TEST MODE ON."
+			trap - INT # set off trap
+			test_mode=1
+			. $base_path/test/include "$2" 2> /dev/null
+			shift
+		;;
+		-c | --check )
+			echo -e "\n -- CHECK MODE ON."
+			check_mode=1
+		;;
+			-o | --on-demand )
+			echo -e "\n -- ON-DEMAND MODE ON."
+			on_demand_call=1
+		;;
+			-l | --log )
+			logfile="$base_path/prey.log"
+			echo -n "" > "$logfile" # empty the logfile first
+			log_output=">> \"$logfile\""
+		;;
+			-s | --silent )
+			log_output="&> /dev/null"
+		;;
+			-h | --help | * )
+			show_usage && exit
+	esac
 	shift
 done
 
@@ -75,7 +98,8 @@ set_constants(){
 
 	readonly config_file="$base_path/config"
 	readonly tmpdir="$tmpbase/p${RANDOM}"
-	# readonly last_response="$tmpbase/last_response.tmp"
+	readonly last_response="$tmpbase/prey-last-response.xml"
+	readonly on_demand_pipe="$tmpbase/prey-on-demand.pipe"
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
@@ -92,8 +116,17 @@ set_colors(){
 	bold_end='\033[0m'
 }
 
+check_on_demand_status(){
+	# if this is a regular call (from cron) let's check if we should run or not
+	if [[ -z "$on_demand_call" && -f "$on_demand_pipe" ]]; then
+		echo -e " -- Prey on-demand mode is active. Back to sleep...\n"
+		exit 0
+	fi
+}
+
 get_os
 set_vars
 set_aliases
 . "$platform_path/settings"
 set_constants
+check_on_demand_status
