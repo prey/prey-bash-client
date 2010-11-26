@@ -42,7 +42,7 @@ if [ $connected == 0 ]; then
 	fi
 
 	# ok, lets check again, after waiting a bit
-	sleep 10
+	sleep 5
 	check_net_status
 	if [ $connected == 0 ]; then
 		log "$STRING_NO_CONNECT_TO_WIFI"
