@@ -69,14 +69,9 @@ randomize_check_host='n'
 # future it may prove useful. :)
 extended_headers='n'
 
-# when enabled, Prey will keep a copy of last response gotten from
-# the server, and use it for instructions when no connection is found
-offline_actions='y'
-
 ####################################################################
 # scp/sftp posting configuration -- EXPERIMENTAL!
 # we dont use user/pass but RSA keys
-# for more info check http://tinyurl.com/sshtip
 ####################################################################
 
 # this applies both to scp and sftp posting methods
@@ -91,6 +86,7 @@ scp_path='~'
 sftp_user='username'
 sftp_server='my.server.com'
 sftp_path='.'
+
 
 ####################################################################
 # SSH Tunnel config

@@ -30,6 +30,12 @@ process_config(){
 
 	done <<< "$STDOUT"
 
+	if [ "$offline_actions" == "true" ]; then # offline actions selected
+		echo -e "$response" > "$last_response"
+	elif [ -f "$last_response" ]; then # otherwise, lets make sure there's nothing there
+		rm -f "$last_response" 2> /dev/null
+	fi
+
 	# check the current delay against the instruction from the server
 
 	new_delay=`get_delay_for $delay`

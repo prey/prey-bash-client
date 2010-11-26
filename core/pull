@@ -57,11 +57,6 @@ check_device_status(){
 		curl_headers="-H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
 	fi
 	response=`getter $curl_headers -L -i $check_url`
-	if [ "$offline_actions" == 'y' ]; then # we save the response in case we need it later
-		echo -e "$response" > "$last_response"
-	elif [ -f "$last_response" ]; then # otherwise, lets make sure there's nothing there
-		rm -f "$last_response" 2> /dev/null
-	fi
 	get_status_code
 }
 
