@@ -31,6 +31,14 @@ capitalize(){
 	echo "$1" | awk '{for(i=1;i<=NF;i++)sub(/./,toupper(substr($i,1,1)),$i)}1'
 }
 
+get_in_quotes(){
+	echo "$1" | sed "s/.*$2=\"\(.*\)\".*/\1/"
+}
+
+get_json_val(){
+	echo "$1" | sed "s/.*$2\":\"\([^\"]*\)\".*/\1/"
+}
+
 # returns a urlencoded string, expects string as $1
 urlencode(){
 	echo "$1" | tr $line_breaker "^" | sed -e 's/%/%25/g;s/ /%20/g;s/!/%21/g;s/"/%22/g;s/#/%23/g;s/\$/%24/g;s/\&/%26/g;s/=/%3D/g;s/'\''/%27/g;s/(/%28/g;s/)/%29/g' -e "s/\^$//;s/\^/%0A/g"

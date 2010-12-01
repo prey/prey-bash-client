@@ -14,3 +14,4 @@
 . "$base_path/core/modules"
 . "$base_path/core/push"
 . "$base_path/core/actions"
+. "$base_path/core/on_demand"

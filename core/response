@@ -5,18 +5,10 @@
 # License: GPLv3
 ####################################################################
 
-process_config(){
-
-	local prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
-	if [ -z "$prey_configuration" ]; then
-		return 1
-	fi
-
-	log "\n${bold} >> Reading configuration...${bold_end}\n"
-
+process_xml(){
 	# inmense thanks to this post, it saved my day
 	# http://edwardawebb.com/linux/scope-issue-bash-loops
-	STDOUT=$(echo -e "$prey_configuration")
+	STDOUT=$(echo -e "$1")
 	while read line; do
 
 		local key=`get_key "$line"`
@@ -29,6 +21,17 @@ process_config(){
 		set_config "$key" "$value"
 
 	done <<< "$STDOUT"
+}
+
+process_config(){
+
+	local prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
+	if [ -z "$prey_configuration" ]; then
+		return 1
+	fi
+
+	log "\n${bold} >> Reading configuration...${bold_end}\n"
+	process_xml "$prey_configuration"
 
 	if [ "$offline_actions" == "true" ]; then # offline actions selected
 		echo -e "$response" > "$last_response"
