@@ -7,9 +7,9 @@
 
 on_demand_command(){
 	openssl s_client -no_ssl2 -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
-	log " -- OpenSSL returned. Removing pipe/lockfile..."
+	# log " -- OpenSSL returned. Removing pipe/lockfile..."
 	rm -f "$on_demand_pipe"
-	kill_process "$on_demand_pipe"
+	kill_process "$on_demand_pipe" &> /dev/null
 }
 
 on_demand_stdin(){
@@ -18,18 +18,39 @@ on_demand_stdin(){
 
 on_demand_loop(){
 	on_demand_stdin | on_demand_command | while read data; do
-		local message_type=`get_json_val "$data" "type"`
-		if [ "$message_type" == "text" ]; then
-			local message_body=`get_in_quotes "$data" 'body'`
-			if [ "$message_body" == "run" ]; then
-				"$base_path/prey.sh" --on-demand & disown -h
-			else
-				log " -- Message received: $message_body"
-			fi
-		else
-			log " -- Unsupported message type. Please update to new version"
-		fi
+		on_demand_process_msg "$data"
 	done
+}
+
+on_demand_process_msg(){
+	local data="$1"
+	[ "$data" == "" ] && return 1
+	# log " -- Got message: ${data}."
+	local event=`get_json_val "$data" "event"`
+	log " -- New event from Prey On-Demand Hub: ${event}"
+	case "$event" in
+		"info")
+			local message=`get_json_val "$data" "message"`
+			log " -- Message from server: $message"
+			;;
+		"message")
+			log ' -- Got message!'
+			local message_type=`get_json_val "$data" "type"`
+			if [ "$message_type" == "text" ]; then
+				local message_body=`get_json_val "$data" 'body'`
+				if [ "$message_body" == "run" ]; then
+					"$base_path/prey.sh" --on-demand & disown -h
+				else
+					log " -- Unknown message: $message_body. Please update to latest version."
+				fi
+			else
+				log " -- Unsupported message type: $message_type. Please update to latest version."
+			fi
+			;;
+		*)
+			log " -- Unknown event: ${event}. Please update to latest version."
+			;;
+	esac
 }
 
 enable_on_demand_mode(){
@@ -50,7 +71,8 @@ enable_on_demand_mode(){
 }
 
 on_demand_handshake(){
-	on_demand_send "{\"action\": \"connect\", \"data\": { \"client_version\": \"${version}\",\"key\":\"${device_key}\",\"pass\":\"${api_key}\"}}"
+	log " -- Sending credentials to Prey On Demand Hub..."
+	on_demand_send "{\"action\": \"connect\", \"data\": {\"client_version\": \"${version}\",\"key\":\"${device_key}\",\"pass\":\"${api_key}\"}}"
 }
 
 
