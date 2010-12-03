@@ -71,8 +71,9 @@ enable_on_demand_mode(){
 }
 
 on_demand_handshake(){
+	local protocol_version=1
 	log " -- Sending credentials to Prey On Demand Hub..."
-	on_demand_send "{\"action\": \"connect\", \"data\": {\"client_version\": \"${version}\",\"key\":\"${device_key}\",\"pass\":\"${api_key}\"}}"
+	on_demand_send "{\"action\": \"connect\", \"data\": {\"client_version\": \"${version}\",\"key\":\"${device_key}\",\"group\":\"${api_key}\", \"protocol\": ${protocol_version} }}"
 }
 
 
