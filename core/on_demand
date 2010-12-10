@@ -29,6 +29,9 @@ on_demand_process_msg(){
 	local event=`get_json_val "$data" "event"`
 	log " -- New event from Prey On-Demand Hub: ${event}"
 	case "$event" in
+		"ping")
+			log " -- Server pinged."
+			;;
 		"info")
 			local message=`get_json_val "$data" "message"`
 			log " -- Message from server: $message"
