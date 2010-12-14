@@ -11,7 +11,7 @@
 
 check_for_failed_update(){
 	if [ -f "$base_path/.update_failed" ]; then
-		update_failed_for=`cat "$base_path/.update_failed"`
+		local update_failed_for=`cat "$base_path/.update_failed"`
 		if [ $update_failed_for == $version ]; then
 			log ' -- Already attempted to update to next version with no luck. Skipping!'
 			return 1
@@ -23,6 +23,9 @@ check_for_failed_update(){
 verify_write_access(){
 	if [ ! -w "$base_path/version" ]; then
 		log " -- Unfortunately the current user who's running Prey cannot perform the upgrade."
+		return 1
+	elif [[ "$os" == "windows" && -n `is_process_running 'cron.exe'` ]]; then
+		log " !! Running at user mode (cron.exe) still. Please switch to System mode if you wish to update."
 		return 1
 	fi
 }
@@ -250,6 +253,7 @@ perform_update() {
 	if [[ $update_status == 0 && `is_greater_than $version $previous_version` == 1 ]]; then
 
 			log " ++ Update OK! New installed version of Prey is $version."
+			rm -f "$base_path/.update_failed" 2> /dev/null
 
 	else
 

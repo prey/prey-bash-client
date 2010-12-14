@@ -26,8 +26,10 @@ verify_installation(){
 
 	# check prey service on
 	log " -- Checking if Prey's cron service is running..."
-	if [ -n `is_process_running "cron"` ]; then
+	if [ -n `is_process_running "cronsvc.exe"` ]; then
 		log " -- Cron service up and running. Good."
+	elif [ -n `is_process_running "cron.exe"` ]; then
+		log " -- Cron.exe up. You're OK, but you should switch to System mode, otherwise auto-updating won't work!"
 	else
 		log " !! Cron service not found! Please make sure no antivirus is blocking cron.exe from running. Optionally reinstall. :)"
 	fi
@@ -179,16 +181,8 @@ reset_permissions(){
 	# eval $command \"$platform_path\tmp\" "$fullaccess" &> /dev/null
 }
 
+# this runs in the context of the new process, already daemonized
 pre_update_hook(){
-
-	# kill any instances of cron that may be running
-	for cron in "`TASKLIST | grep 'cron.exe'`"; do
-		local pid=`echo "$cron" | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'`
-		if [ -n "$pid" ]; then
-			echo " -- Shutting down cron with PID $pid..."
-			"$platform_path/bin/kill.exe" -f $pid 2> /dev/null
-		fi
-	done
 
 	# stop the cron service
 	TASKKILL //F //IM cronsvc.exe //T &> /dev/null
@@ -201,16 +195,14 @@ pre_update_hook(){
 		TASKKILL //F //IM prey-config.exe //T &> /dev/null
 	fi
 
-	return $?
+	return 0
 }
 
 # lets restart prey so it refreshes with the new status
 post_update_hook(){
 	reset_permissions
-	log ' -- Reloading Prey...'
-	# as we cannot restart the service as a normal user, we'll just keep using
-	# cron.exe until the end of the session. cronsvc should be back on next reboot
-	"$platform_path/cron.exe" --log &
+	log ' -- Restarting Prey Cron Service...'
+	net start CronService
 }
 
 ############################################
