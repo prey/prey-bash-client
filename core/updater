@@ -24,8 +24,8 @@ verify_write_access(){
 	if [ ! -w "$base_path/version" ]; then
 		log " -- Unfortunately the current user who's running Prey cannot perform the upgrade."
 		return 1
-	elif [[ "$os" == "windows" && -n `is_process_running 'cron.exe'` ]]; then
-		log " !! Running at user mode (cron.exe) still. Please switch to System mode if you wish to update."
+	elif [[ "$os" == "windows" && "`whoami`" != "SYSTEM" ]]; then
+		log " !! Running on user mode! Please switch to System Service mode if you wish to update."
 		return 1
 	fi
 }
