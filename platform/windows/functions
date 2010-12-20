@@ -105,11 +105,14 @@ reverse_tunnel_command(){
 	return $rs
 }
 
-on_demand_stdin(
+on_demand_stdin(){
 	local sleep_interval=1
 	local last_msg=""
 	while sleep $sleep_interval; do
-		local new_msg=`tail -1 "$on_demand_pipe"`
+		if [ ! -e "$on_demand_pipefile" ]; then
+			break
+		fi
+		local new_msg=`tail -1 "$on_demand_pipefile"`
 		if [ "$new_msg" != "$last_msg" ]; then
 			echo "$new_msg"
 		fi
