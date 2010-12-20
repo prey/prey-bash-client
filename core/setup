@@ -65,10 +65,10 @@ get_os(){
 		if [ "$os" == "darwin" ]; then
 			os=mac
 		fi
-		readonly logged_user=`who | cut -d' ' -f1 | sort -u | tail -1`
+		readonly logged_user=`who | cut -d' ' -f1 | tail -1`
 		readonly root_path='/'
 		readonly home_path=`eval echo ~`
-		set_colors
+		[ -t 1 ] && set_colors # only set color if running from terminal (not Cron)
 	fi
 
 	readonly os
@@ -99,7 +99,8 @@ set_constants(){
 	readonly config_file="$base_path/config"
 	readonly tmpdir="$tmpbase/p${RANDOM}"
 	readonly last_response="$tmpbase/prey-last-response.xml"
-	readonly on_demand_pipe="$tmpbase/prey-on-demand.pipe"
+	readonly on_demand_pipefile="$tmpbase/prey-on-demand.pipe"
+	readonly on_demand_pingfile="$tmpbase/prey-on-demand.ping"
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
@@ -118,9 +119,17 @@ set_colors(){
 
 check_on_demand_status(){
 	# if this is a regular call (from cron) let's check if we should run or not
-	if [[ -z "$on_demand_call" && -f "$on_demand_pipe" ]]; then
-		echo -e " -- Prey on-demand mode is active. Back to sleep...\n"
-		exit 0
+	if [[ -z "$on_demand_call" && -f "$on_demand_pipefile" ]]; then
+
+		# check if last ping from On Demand Hub was at least five minutes ago
+		if [ -n `was_file_modified "$on_demand_pingfile" 5` ]; then
+			. "$base_path/core/on_demand"
+			on_demand_ping
+			echo -e " -- Prey On Demand mode is active. Back to sleep...\n"
+			exit 0
+		else # last ping was before than five minutes ago. connection must have broken
+			rm -f "$on_demand_pipefile" 2> /dev/null
+		fi
 	fi
 }
 

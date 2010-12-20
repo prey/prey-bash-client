@@ -98,7 +98,7 @@ send_via_scp(){
 		log " -- Uploading the stuff to $scp_path in $scp_server..."
 		local new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
 		ssh $scp_user@$scp_server mkdir $scp_path/$new_folder
-		response=`scp $ssh_options "$trace_file" "$file_list" $scp_user@$scp_server:$scp_path/$new_folder`
+		response=`scp $ssh_options "$trace_file" $file_list $scp_user@$scp_server:$scp_path/$new_folder`
 	else
 		log ' !! You need to set up a server in order to send the report via SCP!'
 	fi
