@@ -118,7 +118,7 @@ on_demand_stdin(){
 		fi
 		last_msg="$new_msg"
 	done
-)
+}
 
 ############################################
 # module functions
