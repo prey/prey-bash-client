@@ -120,18 +120,15 @@ set_colors(){
 check_on_demand_status(){
 
 	# if this is a regular call (from cron) let's check if we should run or not
-	if [[ -z "$on_demand_call" && -f "$on_demand_pidfile" ]]; then
+	if [[ -z "$on_demand_call" && -f "$on_demand_pipefile" ]]; then
 
-	local on_demand_pid=`cat "$on_demand_pidfile"`
-
-		if [ -n `is_process_running $on_demand_pid` ]; then
+		if [ -n `is_process_running $on_demand_pipefile` ]; then
 			. "$base_path/core/on_demand"
 			on_demand_ping
 			echo -e " -- Prey On Demand mode is active. Back to sleep...\n"
 			exit 0
 		else # last ping was before than five minutes ago. connection must have broken
 			rm -f "$on_demand_pipefile" 2> /dev/null
-			rm -f "$on_demand_pidfile" 2> /dev/null
 		fi
 
 	fi

@@ -9,7 +9,6 @@ on_demand_command(){
 	openssl s_client -no_ssl2 -nbio -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
 	# log " -- OpenSSL returned. Removing pipe/lockfile..."
 	rm -f "$on_demand_pipefile" 2> /dev/null
-	rm -f "$on_demand_pidfile" 2> /dev/null
 	kill_process "$on_demand_pipefile" &> /dev/null
 }
 
@@ -67,7 +66,6 @@ enable_on_demand_mode(){
 		sleep 2
 		if [ -f "$on_demand_pipefile" ]; then
 			log " -- On demand mode active!"
-			echo "$on_demand_pid" > "$on_demand_pidfile"
 			on_demand_handshake
 		else
 			log " !! Coundn't set up on-demand mode."
