@@ -82,7 +82,8 @@ on_demand_handshake(){
 }
 
 on_demand_ping(){
-	on_demand_send "{\"action\": \"ping\", \"data\": {\"key\":\"${device_key}\" }}"
+	local timestamp=$(date +%s)
+	on_demand_send "{\"action\": \"ping\", \"data\": {\"key\":\"${device_key}\", \"timestamp\":${timestamp} }}"
 }
 
 on_demand_send(){
