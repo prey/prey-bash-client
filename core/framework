@@ -32,11 +32,11 @@ capitalize(){
 }
 
 get_in_quotes(){
-	echo "$1" | sed "s/.*$2=\"\(.*\)\".*/\1/"
+	echo "$1" | sed "s/.*$2=\"\([^\"]*\)\".*/\1/"
 }
 
 get_json_val(){
-	echo "$1" | sed "s/.*$2\":\"\([^\"]*\)\".*/\1/"
+	echo "$1" | sed -e "s/.*$2\":\([^},]*\).*/\1/" -e "s/^ //" -e "s/ $//" -e 's/^"//' -e 's/"$//'
 }
 
 # returns a urlencoded string, expects string as $1

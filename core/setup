@@ -100,7 +100,6 @@ set_constants(){
 	readonly tmpdir="$tmpbase/p${RANDOM}"
 	readonly last_response="$tmpbase/prey-last-response.xml"
 	readonly on_demand_pipefile="$tmpbase/prey-on-demand.pipe"
-	readonly on_demand_pidfile="$tmpbase/prey-on-demand.pid"
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
@@ -122,12 +121,12 @@ check_on_demand_status(){
 	# if this is a regular call (from cron) let's check if we should run or not
 	if [[ -z "$on_demand_call" && -f "$on_demand_pipefile" ]]; then
 
-		if [ -n `is_process_running $on_demand_pipefile` ]; then
+		if [ -n "`is_process_running 'openssl'`" ]; then
 			. "$base_path/core/on_demand"
 			on_demand_ping
 			echo -e " -- Prey On Demand mode is active. Back to sleep...\n"
 			exit 0
-		else # last ping was before than five minutes ago. connection must have broken
+		else # on demand listener is not running anymore
 			rm -f "$on_demand_pipefile" 2> /dev/null
 		fi
 
