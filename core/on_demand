@@ -9,7 +9,7 @@ on_demand_command(){
 	openssl s_client -no_ssl2 -nbio -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
 	# log " -- OpenSSL returned. Removing pipe/lockfile..."
 	rm -f "$on_demand_pipefile" 2> /dev/null
-	rm -f "$on_demand_pingfile" 2> /dev/null
+	rm -f "$on_demand_pidfile" 2> /dev/null
 	kill_process "$on_demand_pipefile" &> /dev/null
 }
 
@@ -33,7 +33,6 @@ on_demand_process_msg(){
 		"ping")
 			# log " -- Server pinged."
 			last_pinged_at=`get_json_val "$data" 'timestamp'`
-			echo "$last_pinged_at" > "$on_demand_pingfile"
 			;;
 		"info")
 			local message=`get_json_val "$data" "message"`
@@ -63,10 +62,12 @@ enable_on_demand_mode(){
 	if [ ! -f "$on_demand_pipefile" ]; then
 		echo "" > "$on_demand_pipefile"
 		on_demand_loop &
-		log " -- On demand listener running with PID $!"
+		local on_demand_pid=$!
+		log " -- On Demand listener running with PID $on_demand_pid"
 		sleep 2
 		if [ -f "$on_demand_pipefile" ]; then
 			log " -- On demand mode active!"
+			echo "$on_demand_pid" > "$on_demand_pidfile"
 			on_demand_handshake
 		else
 			log " !! Coundn't set up on-demand mode."

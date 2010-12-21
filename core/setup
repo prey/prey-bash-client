@@ -100,12 +100,12 @@ set_constants(){
 	readonly tmpdir="$tmpbase/p${RANDOM}"
 	readonly last_response="$tmpbase/prey-last-response.xml"
 	readonly on_demand_pipefile="$tmpbase/prey-on-demand.pipe"
-	readonly on_demand_pingfile="$tmpbase/prey-on-demand.ping"
+	readonly on_demand_pidfile="$tmpbase/prey-on-demand.pid"
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
-	readonly updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null
 	readonly modules_url=$control_panel_url 2> /dev/null
+	updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null
 }
 
 set_colors(){
@@ -118,18 +118,20 @@ set_colors(){
 }
 
 check_on_demand_status(){
-	# if this is a regular call (from cron) let's check if we should run or not
-	if [[ -z "$on_demand_call" && -f "$on_demand_pipefile" ]]; then
 
-	# check if last ping from On Demand Hub was at least five minutes ago
-		if [ -n "`was_file_modified \"$on_demand_pingfile\" 5`" ]; then
+	# if this is a regular call (from cron) let's check if we should run or not
+	if [[ -z "$on_demand_call" && -f "$on_demand_pidfile" ]]; then
+
+	local on_demand_pid=`cat "$on_demand_pidfile"`
+
+		if [ -n `is_process_running $on_demand_pid` ]; then
 			. "$base_path/core/on_demand"
 			on_demand_ping
 			echo -e " -- Prey On Demand mode is active. Back to sleep...\n"
 			exit 0
 		else # last ping was before than five minutes ago. connection must have broken
 			rm -f "$on_demand_pipefile" 2> /dev/null
-			rm -f "$on_demand_pingfile" 2> /dev/null
+			rm -f "$on_demand_pidfile" 2> /dev/null
 		fi
 
 	fi
