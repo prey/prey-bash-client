@@ -122,9 +122,7 @@ check_on_demand_status(){
 	if [[ -z "$on_demand_call" && -f "$on_demand_pipefile" ]]; then
 
 		if [ -n "`is_process_running 'openssl'`" ]; then
-			. "$base_path/core/on_demand"
-			on_demand_ping
-			echo -e " -- Prey On Demand mode is active. Back to sleep...\n"
+			echo -e "\n -- Prey On Demand mode is active. Back to sleep...\n"
 			exit 0
 		else # on demand listener is not running anymore
 			rm -f "$on_demand_pipefile" 2> /dev/null
