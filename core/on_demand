@@ -6,7 +6,7 @@
 ####################################################################
 
 on_demand_command(){
-	openssl s_client -no_ssl2 -nbio -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
+	openssl s_client -no_ssl2 -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
 	# log " -- OpenSSL returned. Removing pipe/lockfile..."
 	rm -f "$on_demand_pipefile" 2> /dev/null
 	kill_process "$on_demand_pipefile" &> /dev/null # the tail process
