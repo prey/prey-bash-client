@@ -24,6 +24,10 @@ show_usage(){
 	echo -e "  -o | --on-demand\tRuns Prey without checking if on-demand mode is active.\n"
 }
 
+show_version(){
+	echo "Prey ${version}"
+}
+
 # step throught the params and check
 until [ -z "$1" ]; do
 	case "$1" in
@@ -49,6 +53,9 @@ until [ -z "$1" ]; do
 		;;
 			-s | --silent )
 			log_output="&> /dev/null"
+		;;
+			-v | --version )
+			show_version && exit
 		;;
 			-h | --help | * )
 			show_usage && exit
@@ -90,6 +97,7 @@ set_aliases(){
 	shopt -s expand_aliases
 	alias getter="curl $curl_options -s \"$user_agent\""
 	alias mailsender="sendEmail"
+	[ "$os" == "mac" ] && alias md5sum='/sbin/md5 -r'
 }
 
 set_constants(){

@@ -83,8 +83,14 @@ if [ -n "$check_mode" ]; then
 	log "\n${bold} >> Verifying Prey installation...${bold_end}\n"
 	verify_installation
 
-	log "\n${bold} >> Verifying API and Device keys...${bold_end}\n"
-	verify_keys
+	if [ "$post_method" == "http" ]; then
+		log "\n${bold} >> Verifying API and Device keys...${bold_end}\n"
+		verify_keys
+	elif [ "$post_method" == "email" ]; then
+		log "\n${bold} >> Verifying SMTP settings...${bold_end}\n"
+		verify_smtp_settings
+	fi
+
 	exit $?
 
 fi

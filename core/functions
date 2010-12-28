@@ -228,6 +228,28 @@ verify_installation(){
 	fi
 }
 
+verify_smtp_settings(){
+
+	if [ "$mail_to" != "mailbox@domain.com" ]; then
+		log " -- Target mailbox set."
+	else
+		log " !! Target mailbox not set!"
+	fi
+
+	if [ "$smtp_username" != "username@gmail.com" ]; then
+		log " -- SMTP username set."
+	else
+		log " -- SMTP password not set!"
+	fi
+
+	if [ "$(decrypt \"$smtp_password\")" != "" ]; then
+		log " -- Password seems to be fine as well."
+	else
+		log " -- Password not set! (Remember it should be base64 encrypted)."
+	fi
+
+}
+
 ####################################################################
 # self setup functions
 ####################################################################

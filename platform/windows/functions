@@ -7,9 +7,9 @@
 
 # in windows, prey always runs as the local user
 run_as_current_user(){
-	if [ "`whoami`" == "SYSTEM" ]; then
+	if [ -z "`env | grep USERNAME`" ]; then
 		userrun $1
-	else
+	else # username exists
 		eval $1
 	fi
 }

@@ -50,11 +50,7 @@ urldecode(){
 
 # returns the md5 hash for a string, expects string as $1
 md5_hash_for(){
-	if [ "$os" == "mac" ]; then
-		echo -n "$1" | /sbin/md5 -r | sed 's/.*\([a-f0-9]\{32\}\).*/\1/'
-	else
-		echo -n "$1" | md5sum | sed 's/.*\([a-f0-9]\{32\}\).*/\1/'
-	fi
+	echo -n "$1" | md5sum | sed 's/.*\([a-f0-9]\{32\}\).*/\1/'
 }
 
 # returns base64 encoded string, expects string as $1
