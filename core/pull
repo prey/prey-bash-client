@@ -39,7 +39,7 @@ get_last_response(){
 
 # we could eventually use a different method for status checking
 check_device_status(){
-	if [[ "$post_method" == 'http' ]]; then
+	if [ "$post_method" == 'http' ]; then
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
 		else
