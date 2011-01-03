@@ -65,7 +65,9 @@ send_via_email(){
 	local decrypted_pass=`decrypt "$smtp_password"`
 	echo -e "${EMAIL_NOTICE}${EMAIL_HEADER}`urldecode "$trace_list"`${EMAIL_FOOTER}" > "$trace_file.msg"
 
-	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username=$smtp_username password="$decrypted_pass"`
+	# 89
+	[ -n "$smtp_username" ] && local auth="tls=auto username=$smtp_username password=$decrypted_pass"
+	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" $auth`
 
 	if [ `find_in "$response" 'ERROR'` ]; then
 		log "$STRING_ERROR_EMAIL"
