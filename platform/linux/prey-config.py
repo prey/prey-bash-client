@@ -458,8 +458,9 @@ class PreyConfigurator(object):
 	# control panel api
 	################################################
 
-	def report_connection_issue(self):
-		self.show_alert(_("Problem connecting"), _("We seem to be having a problem connecting to your Control Panel. This is likely a temporary issue. Please try again in a few moments."))
+	def report_connection_issue(self, result):
+		print("Connection error. Response from server: " + result)
+		self.show_alert(_("Problem connecting"), _("We seem to be having a problem connecting to the Prey Control Panel. This is likely a temporary issue. Please try again in a few moments."))
 
 	def user_has_available_slots(self, string):
 		matches = re.search(r"<available_slots>(\w*)</available_slots>", string)
@@ -534,12 +535,12 @@ class PreyConfigurator(object):
 		if result.find("<user>") != -1:
 			self.get_api_key(result)
 		else:
-			self.report_connection_issue()
+			self.report_connection_issue(result)
 			return False
 
 		has_available_slots = self.user_has_available_slots(result)
 		if not has_available_slots and not show_devices:
-			self.show_alert(_("Not allowed"),  _("It seems you've reached your limit for devices!\n\nIf you had previously added this PC, you should select the \"Device already exists\" option to select the device from a list of devices you have already defined.\n\nIf this is a new device, you can also upgrade to a Pro Account to increase your slot count and get access to additional features. For more information, please check\nhttp://preyproject.com/plans."))
+			self.show_alert(_("Not allowed"),  _("It seems you've reached your limit for devices!\n\nIf you had previously added this PC, you should select the \"Device already exists\" option to select the device from a list of the ones you have already created.\n\nIf this is a new device, you can also upgrade to a Pro Account to increase your slot count and get access to additional features. For more information, please check\nhttp://preyproject.com/plans."))
 			return False
 
 		if show_devices:

@@ -33,8 +33,11 @@ get_attribute(){
 
 # key, value
 set_config(){
-	if [ -n "$2" ]; then
-		eval "${1}=\"$2\""
+	# filter possible $() to prevent remote command execution
+	if [[ -n "$2" && -z `echo "$2" | grep '$\(' > /dev/null && echo 1` ]; then
+		# take care also of backticks
+		local clean_val=$(echo "$2" | sed "s/\`//g")
+		eval "${1}=\"$clean_val\""
 	fi
 }
 
