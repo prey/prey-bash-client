@@ -25,7 +25,7 @@ process_xml(){
 
 process_config(){
 
-	local prey_configuration=`echo -e "$response" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
+	local prey_configuration=`echo -e "$response_body" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
 	if [ -z "$prey_configuration" ]; then
 		return 1
 	fi
@@ -35,6 +35,7 @@ process_config(){
 
 	if [ "$offline_actions" == "true" ]; then # offline actions selected
 		echo -e "$response" > "$last_response"
+		chmod 600 "$last_response"
 	elif [ -f "$last_response" ]; then # otherwise, lets make sure there's nothing there
 		rm -f "$last_response" 2> /dev/null
 	fi
@@ -84,7 +85,7 @@ process_config(){
 
 process_module_config(){
 
-	local module_configuration=`echo -e "$response" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
+	local module_configuration=`echo -e "$response_body" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	if [ -z "$module_configuration" ]; then
 		return 1
 	fi

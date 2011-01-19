@@ -54,15 +54,29 @@ check_device_status(){
 		log ' -- Requesting with extra sauce!'
 		get_internal_ip
 		get_gateway_ip
-		curl_headers="-H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
+		local curl_headers="-H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
 	fi
-	response=`getter $curl_headers -L -i $check_url`
+	if [ "$encrypted_response" == 'y' ]; then
+		local curl_headers="$curl_headers -H X-Encrypt-Response:bf-cbc"
+	fi
+
+	local response=`getter $curl_headers -L -i $check_url`
+	response_headers=$(echo "$response" | sed '/^\r/q')
+	response_body=$(echo "$response" | sed '1,/^\r/d')
+
+	# echo "$response_body"
+
+	if [ "$encrypted_response" == 'y' ]; then
+		local cipher_key=`md5_hash_for ${api_key}`
+		response_body=$(echo -e "$response_body" | /usr/bin/openssl bf-cbc -d -a -salt -k "$cipher_key")
+	fi
+
 	get_status_code
 }
 
 get_status_code(){
 	# if we get a redirect response, we should capture the last http status code
-	status=`echo -e "$response" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
+	status=`echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
 }
 
 verify_keys(){
@@ -92,7 +106,7 @@ verify_keys(){
 
 # we may eventually use a specific header for Prey
 parse_headers(){
-	content_type=`echo "$response" | grep "Content-Type" | tail -1 | sed 's/.*: \([a-z\/-]*\).*/\1/'`
+	content_type=`echo "$response_headers" | grep "Content-Type" | tail -1 | sed 's/.*: \([a-z\/-]*\).*/\1/'`
 }
 
 # this is where the magic will happen. :)
