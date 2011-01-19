@@ -34,7 +34,7 @@ randomize_subdomain(){
 
 # fetches last response if online actions were enabled for the device
 get_last_response(){
-	response=`cat "$last_response"`
+	response_body=`cat "$last_response"`
 }
 
 # we could eventually use a different method for status checking
@@ -64,11 +64,13 @@ check_device_status(){
 	response_headers=$(echo "$response" | sed '/^\r/q')
 	response_body=$(echo "$response" | sed '1,/^\r/d')
 
-	# echo "$response_body"
-
 	if [ "$encrypted_response" == 'y' ]; then
 		local cipher_key=`md5_hash_for ${api_key}`
-		response_body=$(echo -e "$response_body" | /usr/bin/openssl bf-cbc -d -a -salt -k "$cipher_key")
+		response_body=$(echo -e "$response_body" | /usr/bin/openssl bf-cbc -d -a -salt -k "$cipher_key" 2> /dev/null)
+		if [ $? == 1 ]; then
+			log " -- Unable to decrypt response correctly! Exiting..."
+			exit 1
+		fi
 	fi
 
 	get_status_code

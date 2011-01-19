@@ -34,7 +34,7 @@ process_config(){
 	process_xml "$prey_configuration"
 
 	if [ "$offline_actions" == "true" ]; then # offline actions selected
-		echo -e "$response" > "$last_response"
+		echo -e "$response_body" > "$last_response"
 		chmod 600 "$last_response"
 	elif [ -f "$last_response" ]; then # otherwise, lets make sure there's nothing there
 		rm -f "$last_response" 2> /dev/null
