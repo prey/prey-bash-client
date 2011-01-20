@@ -100,7 +100,7 @@ create_tmpdir(){
 	if [ ! -d "$tmpdir" ]; then
 		mkdir -p "$tmpdir" 2> /dev/null
 		# we need to give access to the logged in user in order to save files
-		if [ `whoami` == 'root' ]; then
+		if [ "`whoami`" != "$logged_user" ]; then
 				chmod 777 "$tmpdir" 2> /dev/null
 		fi
 	fi
