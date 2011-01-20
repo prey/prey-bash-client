@@ -56,15 +56,12 @@ check_device_status(){
 		get_gateway_ip
 		local curl_headers="-H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
 	fi
-	if [ "$encrypted_response" == 'y' ]; then
-		local curl_headers="$curl_headers -H X-Encrypt-Response:bf-cbc"
-	fi
 
 	local response=`getter $curl_headers -L -i $check_url`
 	response_headers=$(echo "$response" | sed '/^\r/q')
 	response_body=$(echo "$response" | sed '1,/^\r/d')
 
-	if [ "$encrypted_response" == 'y' ]; then
+	if [ -n "`encrypted_response`" ]; then
 		local cipher_key=`md5_hash_for ${api_key}`
 		response_body=$(echo -e "$response_body" | openssl bf-cbc -d -a -salt -k "$cipher_key" 2> /dev/null)
 		if [ $? == 1 ]; then
@@ -74,6 +71,10 @@ check_device_status(){
 	fi
 
 	get_status_code
+}
+
+encrypted_response(){
+	echo -e "$response_body" | grep "<device>" > /dev/null && return 0 || echo 1
 }
 
 get_status_code(){

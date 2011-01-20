@@ -346,12 +346,14 @@ get_module(){
 
 install_or_update_module(){
 
+	# not local var as we use it upstairs
 	module_file="$tmpdir/module-$1.zip"
 
 	log " -- Trying to fetch $1 module from repository..."
 	get_module $1
 
-	if [[ -f "$module_file" && `file_size "$module_file"` -gt 1 ]]; then
+	# we check the file's size as we may have received a 404 html file
+	if [[ -f "$module_file" && `file_size "$module_file"` -gt 1500 ]]; then
 		log " -- Got new $1 module from repository! Unpackaging..."
 
 		log ' -- Unzipping module...'
@@ -377,7 +379,7 @@ install_or_update_module(){
 
 	else
 
-		log " -- Couldn't grab module. The repository may be temporarily down."
+		log " -- Couldn't grab module package. The repository may be temporarily down."
 
 	fi
 

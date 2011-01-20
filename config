@@ -69,11 +69,6 @@ randomize_check_host='n'
 # future it may prove useful. :)
 extended_headers='n'
 
-# requests the Control Panel to encrypt the check file with the instructions
-# the contents are decrypted using a secret key to avoid possible
-# man-in-the-middle attacks
-encrypted_response='y'
-
 ####################################################################
 # scp/sftp posting configuration -- EXPERIMENTAL!
 # we dont use user/pass but RSA keys

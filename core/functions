@@ -24,7 +24,7 @@ get_value(){
 # expects attr name, returns value
 # example: get_attribute 'name' $line
 get_attribute(){
-	echo "$2" | sed -e "s/.*$1=\([^ \"'>]*\).*/\1/"
+	echo "$2" | sed -e "s/.*$1=\([a-z_\"']*\).*/\1/" -e "s/[^a-z_]//g"
 }
 
 ####################################################################
@@ -33,10 +33,9 @@ get_attribute(){
 
 # key, value
 set_config(){
-	# filter possible $() to prevent remote command execution
-	if [[ -n "$2" && -z `echo "$2" | grep '$(' > /dev/null && echo 1` ]]; then
-		# take care also of backticks
-		local clean_val=$(echo "$2" | sed "s/\`//g")
+	if [ -n "$2" ]; then
+		# filter $() or backticks to prevent unwanted command execution
+		local clean_val=$(echo "$2" | sed "s/[\`|\$(].*[\`|)]//g")
 		eval "${1}=\"$clean_val\""
 	fi
 }
