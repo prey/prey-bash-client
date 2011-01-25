@@ -127,16 +127,26 @@ set_colors(){
 check_on_demand_status(){
 
 	# if this is a regular call (from cron) let's check if we should run or not
-	if [[ -z "$on_demand_call" && -f "$on_demand_pipefile" ]]; then
+	if [[ -n "$on_demand_call" || ! -f "$on_demand_pipefile" ]]; then
+		return 1
+	fi
 
-		if [ -n "`is_process_running 'openssl'`" ]; then
-			echo -e "\n -- Prey On Demand mode is active. Back to sleep...\n"
-			exit 0
-		else # on demand listener is not running anymore
+	# we check if the pipe has been used to send pings in the last ten minutes
+	# if not, then we assume the connection has been cut off
+	if test `find "$on_demand_pipefile" -mmin +10`; then
+
+		echo " -- Connection seems to have broken. Cleaning up..."
+
+			[ -n "`is_process_running 'openssl'`" ] && kill_process 'openssl'
 			rm -f "$on_demand_pipefile" 2> /dev/null
-		fi
+
+	else
+
+		echo -e " -- Prey On Demand is active and connected. Back to sleep...\n"
+		exit 1
 
 	fi
+
 }
 
 get_os

@@ -34,13 +34,13 @@ randomize_subdomain(){
 
 # fetches last response if online actions were enabled for the device
 get_last_response(){
-	response_body=`cat "$last_response"`
+	response_body=$(cat "$last_response")
 }
 
 # we could eventually use a different method for status checking
 check_device_status(){
 	if [ "$post_method" == 'http' ]; then
-		local curl_headers="-H X-Encrypt-Response:bf-cbc"
+		local curl_headers="-H X-Encrypt-Response:aes-128-cbc"
 
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
@@ -76,9 +76,9 @@ check_encrypted_response(){
 
 	if [ -z `find_in "$response_body" '<device>'` ]; then
 
-		log " -- Got encrypted response! Processing... "
+		log " ++ Got encrypted response! Processing... "
 		local cipher_key=$(md5_hash_for ${api_key})
-		response_body=$(echo "$response_body" | openssl bf-cbc -d -a -k "$cipher_key" 2> /dev/null)
+		response_body=$(echo "$response_body" | openssl aes-128-cbc -d -a -k "$cipher_key" 2> /dev/null)
 		if [ $? == 1 ]; then
 			log " -- Unable to decrypt response correctly! Exiting..."
 			exit 1

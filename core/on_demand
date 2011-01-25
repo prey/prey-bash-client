@@ -30,7 +30,7 @@ on_demand_process_msg(){
 	log " -- New event from Prey On-Demand Hub: ${event}"
 	case "$event" in
 		"ping")
-			last_pinged_at=`get_json_val "$data" 'timestamp'`
+			local last_pinged_at=`get_json_val "$data" 'timestamp'`
 			on_demand_ping
 			# log " -- Server pinged. Timestamp: ${last_pinged_at}"
 			;;
