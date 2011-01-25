@@ -265,7 +265,7 @@ self_setup(){
 	local response=`getter --connect-timeout 10 -u $api_key:x -i $check_url/devices.xml -d "$params"`
 	get_status_code
 
-	if [ $status == "201" ]; then
+	if [ $response_status == "201" ]; then
 
 		log ' -- Device succesfully added! Applying configuration...'
 		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`

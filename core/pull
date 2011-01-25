@@ -40,59 +40,70 @@ get_last_response(){
 # we could eventually use a different method for status checking
 check_device_status(){
 	if [ "$post_method" == 'http' ]; then
+		local curl_headers="-H X-Encrypt-Response:bf-cbc"
+
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
 		else
 			log " !! You need to enter your Device Key for querying the Control Panel!\n"
 			exit 1
 		fi
-		if [ "$randomize_check_host" == 'y' ]; then
-			randomize_subdomain
-		fi
+		[ "$randomize_check_host" == 'y' ] && randomize_subdomain
 	fi
+
 	if [ "$extended_headers" == 'y' ]; then
 		log ' -- Requesting with extra sauce!'
 		get_internal_ip
 		get_gateway_ip
-		local curl_headers="-H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
+		local curl_headers="$curl_headers -H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
 	fi
 
-	local response=`getter $curl_headers -L -i $check_url`
+	local response=$(getter $curl_headers -L -i $check_url)
+
 	response_headers=$(echo "$response" | sed '/^\r/q')
 	response_body=$(echo "$response" | sed '1,/^\r/d')
 
-	if [ -n "`encrypted_response`" ]; then
-		local cipher_key=`md5_hash_for ${api_key}`
-		response_body=$(echo -e "$response_body" | openssl bf-cbc -d -a -salt -k "$cipher_key" 2> /dev/null)
+	get_status_code
+	check_encrypted_response
+
+}
+
+check_encrypted_response(){
+
+	if [[ "$response_status" != "200" && "$response_status" != "404" ]]; then
+		return 1
+	fi
+
+	if [ -z `find_in "$response_body" '<device>'` ]; then
+
+		log " -- Got encrypted response! Processing... "
+		local cipher_key=$(md5_hash_for ${api_key})
+		response_body=$(echo "$response_body" | openssl bf-cbc -d -a -k "$cipher_key" 2> /dev/null)
 		if [ $? == 1 ]; then
 			log " -- Unable to decrypt response correctly! Exiting..."
 			exit 1
 		fi
+
 	fi
 
-	get_status_code
-}
-
-encrypted_response(){
-	echo -e "$response_body" | grep "<device>" > /dev/null && return 0 || echo 1
 }
 
 get_status_code(){
 	# if we get a redirect response, we should capture the last http status code
-	status=`echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
+	response_status=`echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
 }
 
 verify_keys(){
 	response=`getter -u $api_key:x -i $control_panel_url/devices.xml`
 	get_status_code
 
-	if [ -n "$status" ]; then
-		if [ "$status" == "401" ]; then
-			log " !! API key not valid! Got $status status code.\n -> Remember to check your inbox to verify your account. If you already have you should reconfigure your settings, or reinstall if necessary.\n"
+	if [ -n "$response_status" ]; then
+		if [ "$response_status" == "401" ]; then
+			log " !! API key not valid! Got $response_status status code.\n -> Remember to check your inbox to verify your account. If you already have you should reconfigure your settings, or reinstall if necessary.\n"
 			return 1
 		else
 			log  ' ** API key is valid. Your user account is correctly set up.'
-			if [[ "$status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
+			if [[ "$response_status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
 				local device_state=`echo "$response" | grep $device_key -A1 | tail -1 | sed 's/<[^>]*>//g;s/ //g'`
 				log " ** Device key is valid. Good. Current status is ${bold}${device_state}${bold_end}.\n"
 			else

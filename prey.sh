@@ -115,7 +115,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 	log "\n${bold} >> Verifying status...${bold_end}\n"
 	log " -- Got status code $status!"
 
-	if [ "$status" == "$missing_status_code" ]; then
+	if [ "$response_status" == "$missing_status_code" ]; then
 
 		log "$STRING_PROBLEM"
 
