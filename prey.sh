@@ -113,7 +113,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 	process_module_config
 
 	log "\n${bold} >> Verifying status...${bold_end}\n"
-	log " -- Got status code $status!"
+	log " -- Got status code $response_status!"
 
 	if [ "$response_status" == "$missing_status_code" ]; then
 
