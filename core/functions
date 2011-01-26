@@ -24,7 +24,8 @@ get_value(){
 # expects attr name, returns value
 # example: get_attribute 'name' $line
 get_attribute(){
-	echo "$2" | sed -e "s/.*$1=\([a-z_\"']*\).*/\1/" -e "s/[^a-z_]//g"
+	echo "$2" | sed "s/.*$1=\"\([^\"]*\)\".*/\1/"
+	# echo "$2" | sed -e "s/.*$1=\([a-z_\"']*\).*/\1/" -e "s/[^a-z_]//g"
 }
 
 ####################################################################

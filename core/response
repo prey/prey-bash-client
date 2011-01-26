@@ -11,12 +11,11 @@ process_xml(){
 	STDOUT=$(echo -e "$1")
 	while read line; do
 
-		local key=`get_key "$line"`
-		local value=`get_value "$line"`
+		local key=$(get_key "$line")
+		local value=$(get_value "$line")
 
-		if [ `find_in "$line" 'save="true"'` ]; then
-			save_config_value "$key" "$value" #write config value to file
-		fi
+		# write config value to file
+		[ `find_in "$line" 'save="true"'` ] && save_config_value "$key" "$value"
 
 		set_config "$key" "$value"
 
@@ -25,24 +24,22 @@ process_xml(){
 
 process_config(){
 
-	local prey_configuration=`echo -e "$response_body" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
-	if [ -z "$prey_configuration" ]; then
-		return 1
-	fi
+	local prey_config=`echo -e "$response_body" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
+	[ -z "$prey_config" ] && return 1
 
 	log "\n${bold} >> Reading configuration...${bold_end}\n"
-	process_xml "$prey_configuration"
+	process_xml "$prey_config"
 
 	if [ "$offline_actions" == "true" ]; then # offline actions selected
-		echo -e "$response_body" > "$last_response"
-		chmod 600 "$last_response"
+		echo -e "$response_body" > "$last_response" 2> /dev/null
+		chmod 600 "$last_response" 2> /dev/null
 	elif [ -f "$last_response" ]; then # otherwise, lets make sure there's nothing there
 		rm -f "$last_response" 2> /dev/null
 	fi
 
 	# check the current delay against the instruction from the server
 
-	new_delay=`get_delay_for $delay`
+	new_delay=$(get_delay_for $delay)
 
 	if [ "`get_current_delay`" != "$new_delay" ]; then
 		log " -- Setting frequency to $delay!"
@@ -85,24 +82,20 @@ process_config(){
 
 process_module_config(){
 
-	local module_configuration=`echo -e "$response_body" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
-	if [ -z "$module_configuration" ]; then
-		return 1
-	fi
+	local module_config=`echo -e "$response_body" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
+	[ -z "$module_config" ] && return 1
 
 	log "\n${bold} >> Reading module configuration...${bold_end}\n"
 
-	STDOUT=$(echo -e "$module_configuration")
+	STDOUT=$(echo -e "$module_config")
 
 	while read line; do
 
 		if [ `find_in "$line" 'name='` ]; then # we have a module node
-			local module_name=`get_attribute 'name' "$line"`
+			local module_name=$(get_attribute 'name' "$line")
 			log " -- Got instructions for $module_name module."
 
-			if [ "$auto_update" == "true" ]; then  # auto_update is enabled
-				local upstream_version=`echo $line | sed 's/^.*version="\([0-9.]*\)".*/\1/'`
-			fi
+			[ "$auto_update" == "true" ] && local upstream_version=$(get_attribute 'version' "$line")  # auto_update is enabled
 
 			setup_module $module_name $upstream_version
 			if [ $? == 1 ]; then # we got an error installing the new module
@@ -115,11 +108,11 @@ process_module_config(){
 
 				initialize_module $module_name
 
-				local module_type=`get_attribute 'type' "$line"`
+				local module_type=$(get_attribute 'type' "$line")
 				if [[ "$module_type" == 'action' || "$module_type" == "tunnel" ]]; then
 
 					if [ `find_in "$line" 'function='` ]; then # a specific function was requested
-						local function_name=`get_attribute 'function' "$line"`
+						local function_name=$(get_attribute 'function' "$line")
 					else
 						local function_name=''
 					fi
@@ -135,8 +128,8 @@ process_module_config(){
 
 		elif [ -n "$module_name" ]; then # config line for module $module
 
-			local key=`get_key "$line"`
-			local value=`get_value "$line"`
+			local key=$(get_key "$line")
+			local value=$(get_value "$line")
 			set_module_config "$module_name" "$key" "$value"
 
 		fi
