@@ -11,7 +11,7 @@
 
 check_for_failed_update(){
 	if [ -f "$base_path/.update_failed" ]; then
-		local update_failed_for=`cat "$base_path/.update_failed"`
+		local update_failed_for=$(cat "$base_path/.update_failed")
 		if [ $update_failed_for == $version ]; then
 			log ' -- Already attempted to update to next version with no luck. Skipping!'
 			return 1
@@ -50,14 +50,15 @@ get_checksum_for() {
 }
 
 validate_package(){
-	local valid_md5=`get_checksum_for $update_package`
+	local valid_md5=$(get_checksum_for $update_package)
 
 	if [ -z "$valid_md5" ]; then
 		log " !! Couldn't grab checksum from server. Skipping update..."
 		return 1
 	fi
 
-	local package_md5=`md5sum $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null`
+	[ "$os" == "mac" ] && local md5_cmd='/sbin/md5 -r' || local md5_cmd='md5sum'
+	local package_md5=$($md5_cmd $updater_file | sed 's/.*\([a-f0-9]\{32\}\).*/\1/' 2> /dev/null)
 
 	if [ "$package_md5" != "$valid_md5" ]; then
 		log ' -- Invalid checksum for downloaded package. Cannot continue.'
@@ -86,7 +87,7 @@ test_diff() {
 	patch_options="-N -f -F1 --ignore-whitespace --backup-if-mismatch --remove-empty-files -d $base_path -p0 -i $diff_file"
 
 	log ' -- Testing if patch will apply cleanly...'
-	outcome=`patch --dry-run $patch_options`
+	outcome=$(patch --dry-run $patch_options)
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
 		log " !! There seems to be discordances between your installed version and the official $version code. Skipping patch!"
@@ -102,8 +103,9 @@ test_diff() {
 }
 
 apply_diff(){
+
 	log ' -- Applying patch...'
-	outcome=`patch $patch_options 2>&1`
+	outcome=$(patch $patch_options 2>&1)
 	# return $?
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
@@ -137,8 +139,8 @@ delete_files_according_to_diff() {
 
 	while read file; do
 
-		local original=`echo "$file" | cut -d" " -f3`
-		local modified=`echo "$file" | cut -d" " -f5`
+		local original=$(echo "$file" | cut -d" " -f3)
+		local modified=$(echo "$file" | cut -d" " -f5)
 
 		if [ "$modified" == "/dev/null" ]; then # deleted file
 
@@ -318,20 +320,26 @@ backup_config(){
 restore_config(){
 	# if there's no default config file, then lets just copy the backup file back
 	if [ ! -f "$config_file.default" ]; then
+
 		cp "$config_file.backup" "$config_file"
 		return 1
+
 	else # lets copy the default config file and restore the previous settings
+
 		cp "$config_file.default" "$config_file"
 		log ' -- Applying current config settings to new config file...'
+
 		# parse file and remove all comments and empty lines
-		config_options=`cat "$config_file.backup" | grep -v '^#' | grep -v "^$" | sed 's/ /-SPACE-/'`
+		config_options=$(cat "$config_file.backup" | grep -v '^#' | grep -v "^$" | sed 's/ /-SPACE-/')
 		for option in $config_options; do
-			local option_name=`echo "$option" | sed 's/=.*//'`
-			local option_value=`echo "$option" | sed -e 's/[^=]*=//' -e "s/^'//" -e "s/'$//" -e "s/\//-SLASH-/g"`
+			local option_name=$(echo "$option" | sed 's/=.*//')
+			local option_value=$(echo "$option" | sed -e 's/[^=]*=//' -e "s/^'//" -e "s/'$//" -e "s/\//-SLASH-/g")
 			save_config_value "$option_name" "$option_value"
 		done
+
 		sed -i -e "s/-SLASH-/\//g" -e "s/-SPACE-/ /g" "$config_file" # resolve the slash and space hacks
 		log ' -- Done!'
+
 	fi
 }
 
