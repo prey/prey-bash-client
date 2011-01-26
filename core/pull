@@ -85,11 +85,14 @@ check_encrypted_response(){
 
 	[[ "$response_status" != "200" && "$response_status" != "404" ]] && return 1
 
-	if [ -z "`find_in "$response_body" '<device>'`" ]; then
+	local content_type=$(get_header_value 'Content-Type')
+
+	if [[ -n "`find_in "$content_type" 'xml'`" && -z "`find_in "$response_body" '<config'`" ]]; then
 
 		log " ++ Got encrypted response! Processing... "
 		local cipher_key=$(md5_hash_for ${api_key})
 		response_body=$(echo "$response_body" | openssl aes-128-cbc -d -a -k "$cipher_key" 2> /dev/null)
+
 		if [ $? == 1 ]; then
 			log " -- Unable to decrypt response correctly! Exiting..."
 			exit 1
