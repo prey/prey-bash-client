@@ -58,18 +58,17 @@ check_device_status(){
 		local curl_headers="$curl_headers -H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
 	fi
 
-	local response=$(getter $curl_headers -L -i $check_url)
-
-	split_header_body "$response"
-	get_status_code
+	send_request "$check_url" "$curl_headers"
 	check_encrypted_response
 
 }
 
-
-split_header_body(){
-	response_headers=$(echo "$1" | sed '/^.$/q')
-	response_body=$(echo "$1" | sed '1,/^.$/d')
+send_request(){
+	local curl_options="$2"
+	local headers_file="$tmpbase/prey-curl-headers.txt"
+	response_body=$(getter $curl_options -L $1 --dump-header "$headers_file")
+	response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
+	get_status_code
 }
 
 get_status_code(){
@@ -84,9 +83,7 @@ get_header_value(){
 
 check_encrypted_response(){
 
-	if [[ "$response_status" != "200" && "$response_status" != "404" ]]; then
-		return 1
-	fi
+	[[ "$response_status" != "200" && "$response_status" != "404" ]] && return 1
 
 	if [ -z "`find_in "$response_body" '<device>'`" ]; then
 
@@ -103,27 +100,28 @@ check_encrypted_response(){
 }
 
 verify_keys(){
-	local response=`getter -u $api_key:x -i $control_panel_url/devices.xml`
-	split_header_body "$response"
-	get_status_code
+	send_request "$control_panel_url/devices.xml" "-u $api_key:x"
 
-	if [ -n "$response_status" ]; then
-		if [ "$response_status" == "401" ]; then
-			log " !! API key not valid! Got $response_status status code.\n -> Remember to check your inbox to verify your account. If you already have you should reconfigure your settings, or reinstall if necessary.\n"
-			return 1
+	if [[ "$response_status" == "200" || "$response_status" == "404" ]]; then
+
+		log  ' ** API key is valid. Your user account is correctly set up.'
+		local device_state=$(echo "$response_body" | grep $device_key -A1 | tail -1 | sed 's/<[^>]*>//g;s/ //g')
+
+		if [ -n "$device_state" ]; then
+			log " ** Device key is valid. Good. Current status is ${bold}${device_state}${bold_end}.\n"
+			return 0
 		else
-			log  ' ** API key is valid. Your user account is correctly set up.'
-			if [[ "$response_status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
-				local device_state=$(echo "$response_body" | grep $device_key -A1 | tail -1 | sed 's/<[^>]*>//g;s/ //g')
-				log " ** Device key is valid. Good. Current status is ${bold}${device_state}${bold_end}.\n"
-			else
-				log " !! Device key not valid!\n -> We couldn't find this device on your Control Panel account. Please reconfigure your settings, or reinstall if necessary.\n"
-				return 1
-			fi
+			log " !! Device key not valid!\n -> We couldn't find this device on your Control Panel account. Please reconfigure your settings, or reinstall if necessary.\n"
 		fi
+
+	elif [ "$response_status" == "401" ]; then
+
+		log " !! API key not valid! Got $response_status status code.\n -> Remember to check your inbox to verify your account. If you already have you should reconfigure your settings, or reinstall if necessary.\n"
+
 	else
-		log " !! Couldn't get a response. Please check your firewall settings so that Curl can connect to $control_panel_url over port 80 (HTTP).\n"
-		return 1
+		log " !! Got unexpected response status: ${response_status}.\n"
+		[ -z "$response_headers" ] && log "It seems your PC is unable to reach the Control Panel. Please check your firewall settings so that Curl can connect to $control_panel_url over port 80 (HTTP).\n"
 	fi
-	return 0
+
+	return 1
 }
