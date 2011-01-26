@@ -132,13 +132,14 @@ check_on_demand_status(){
 
 	# we check if the pipe has been used to send pings in the last ten minutes
 	# if not, then we assume the connection has been cut off
-	if test `find "$on_demand_pipefile" -mmin +10`; then
+	if test `find "$on_demand_pipefile" -mmin +1`; then
 
-		echo " -- Connection seems to have broken. Cleaning up..."
+		echo " -- On Demand connection seems to have ended. Cleaning up and resetting..."
+		. "$base_path/core/on_demand"
 
-			[ -n "`is_process_running 'openssl'`" ] && kill_process 'openssl'
-			rm -f "$on_demand_pipefile" 2> /dev/null
-			sleep 2 # just to make sure changes are reflected as they should
+		[ -n "`is_process_running 'openssl'`" ] && kill_process 'openssl'
+		on_demand_cleanup
+		sleep 3 # just to make sure changes are reflected as they should
 
 	else
 

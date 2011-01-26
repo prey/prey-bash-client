@@ -7,7 +7,11 @@
 
 on_demand_command(){
 	openssl s_client -no_ssl2 -quiet -connect $on_demand_host:$on_demand_port 2> /dev/null
+	on_demand_cleanup
 	# log " -- OpenSSL returned. Removing pipe/lockfile..."
+}
+
+on_demand_cleanup(){
 	rm -f "$on_demand_pipefile" 2> /dev/null
 	kill_process "$on_demand_pipefile" &> /dev/null # the tail process
 }
@@ -61,9 +65,9 @@ on_demand_process_msg(){
 enable_on_demand_mode(){
 	if [ ! -f "$on_demand_pipefile" ]; then
 		echo "" > "$on_demand_pipefile"
-		on_demand_loop &
+		{ on_demand_loop & } 2> /dev/null # suppresses messages
 		local on_demand_pid=$!
-		log " -- On Demand listener running with PID $on_demand_pid"
+		log "\n -- On Demand listener running with PID $on_demand_pid!"
 		sleep 2
 		if [ -f "$on_demand_pipefile" ]; then
 			log " -- On demand mode active!"
@@ -79,7 +83,7 @@ enable_on_demand_mode(){
 
 on_demand_handshake(){
 	local protocol_version=1
-	log " -- Sending credentials to Prey On Demand Hub..."
+	log " -- Sending credentials to Prey On Demand Hub...\n"
 	on_demand_send "{\"action\": \"connect\", \"data\": {\"client_version\": \"${version}\",\"key\":\"${device_key}\",\"group\":\"${api_key}\", \"protocol\": ${protocol_version} }}"
 }
 
