@@ -132,7 +132,7 @@ check_on_demand_status(){
 
 	# we check if the pipe has been used to send pings in the last ten minutes
 	# if not, then we assume the connection has been cut off
-	if test `find "$on_demand_pipefile" -mmin +1`; then
+	if test `find "$on_demand_pipefile" -mmin +10`; then
 
 		echo " -- On Demand connection seems to have ended. Cleaning up and resetting..."
 		. "$base_path/core/on_demand"
