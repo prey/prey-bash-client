@@ -46,7 +46,7 @@ check_device_status(){
 			local check_url="$check_url/devices/$device_key.xml"
 		else
 			log " !! You need to enter your Device Key for querying the Control Panel!\n"
-			exit 1
+			cleanup && exit 1
 		fi
 		[ "$randomize_check_host" == 'y' ] && randomize_subdomain
 	fi

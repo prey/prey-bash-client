@@ -12,8 +12,8 @@
 check_for_failed_update(){
 	if [ -f "$base_path/.update_failed" ]; then
 		local update_failed_for=$(cat "$base_path/.update_failed")
-		if [ $update_failed_for == $version ]; then
-			log ' -- Already attempted to update to next version with no luck. Skipping!'
+		if [ "$update_failed_for" == "$version" ]; then
+			log ' !! Already attempted to update to next version with no luck. Skipping!'
 			return 1
 		fi
 	fi
