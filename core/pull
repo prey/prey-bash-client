@@ -60,12 +60,15 @@ check_device_status(){
 
 	local response=$(getter $curl_headers -L -i $check_url)
 
-	response_headers=$(echo "$response" | sed '/^.$/q')
-	response_body=$(echo "$response" | sed '1,/^.$/d')
-
+	split_header_body "$response"
 	get_status_code
 	check_encrypted_response
 
+}
+
+split_header_body(){
+	response_headers=$(echo "$1" | sed '/^.$/q')
+	response_body=$(echo "$1" | sed '1,/^.$/d')
 }
 
 check_encrypted_response(){
@@ -73,7 +76,7 @@ check_encrypted_response(){
 	if [[ "$response_status" != "200" && "$response_status" != "404" ]]; then
 		return 1
 	fi
-	
+
 	if [ -z "`find_in "$response_body" '<device>'`" ]; then
 
 		log " ++ Got encrypted response! Processing... "
@@ -94,7 +97,8 @@ get_status_code(){
 }
 
 verify_keys(){
-	response=`getter -u $api_key:x -i $control_panel_url/devices.xml`
+	local response=`getter -u $api_key:x -i $control_panel_url/devices.xml`
+	split_header_body "$response"
 	get_status_code
 
 	if [ -n "$response_status" ]; then
@@ -104,7 +108,7 @@ verify_keys(){
 		else
 			log  ' ** API key is valid. Your user account is correctly set up.'
 			if [[ "$response_status" == "200" && `find_in "$response" "<key>$device_key</key>"` ]]; then
-				local device_state=`echo "$response" | grep $device_key -A1 | tail -1 | sed 's/<[^>]*>//g;s/ //g'`
+				local device_state=$(echo "$response_body" | grep $device_key -A1 | tail -1 | sed 's/<[^>]*>//g;s/ //g')
 				log " ** Device key is valid. Good. Current status is ${bold}${device_state}${bold_end}.\n"
 			else
 				log " !! Device key not valid!\n -> We couldn't find this device on your Control Panel account. Please reconfigure your settings, or reinstall if necessary.\n"
