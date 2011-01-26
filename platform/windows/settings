@@ -9,7 +9,6 @@ readonly logged_user=`echo "ComputerSystem Get Username" | wmic 2> /dev/null | g
 
 tmpbase="$WINDIR\Temp"
 line_breaker="\r\n"
-processes='TASKLIST'
 
 readonly required_net_version='2.0.50727'
 readonly prey_reg_key="HKLM\Software\Prey"

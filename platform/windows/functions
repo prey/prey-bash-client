@@ -14,10 +14,6 @@ run_as_current_user(){
 	fi
 }
 
-get_pid(){
-	$processes | grep "$1" | head -1 | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
-}
-
 ############################################
 # verification stuff
 ############################################
@@ -106,16 +102,14 @@ reverse_tunnel_command(){
 }
 
 on_demand_stdin(){
-	local sleep_interval=1
+	local sleep_interval=2
 	local last_msg=""
 	while sleep $sleep_interval; do
-		if [ ! -e "$on_demand_pipefile" ]; then
-			break
-		fi
+		[ ! -e "$on_demand_pipefile" ] && break
+
 		local new_msg=`tail -1 "$on_demand_pipefile"`
-		if [ "$new_msg" != "$last_msg" ]; then
-			echo "$new_msg"
-		fi
+		[ "$new_msg" != "$last_msg" ] && echo "$new_msg"
+
 		last_msg="$new_msg"
 	done
 }

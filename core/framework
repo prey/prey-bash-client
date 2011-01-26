@@ -133,7 +133,11 @@ number_of_instances_of(){
 
 # returns pid for the requested process, expects the full process name
 get_pid(){
-	ps ax | grep -i "$1" | grep -v grep | head -1 | sed 's/ \?\([0-9]*\).*/\1/'
+	if [ "$os" == "windows" ]; then
+		tasklist | grep "$1" | head -1 | sed 's/[a-z\. ]*\([0-9]*\).*/\1/'
+	else
+		ps ax | grep -i "$1" | grep -v grep | head -1 | sed 's/ \?\([0-9]*\).*/\1/'
+	fi
 }
 
 # sends sigterm to specified process, unless a specific signal is passed as $2
