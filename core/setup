@@ -97,7 +97,6 @@ set_aliases(){
 	shopt -s expand_aliases
 	alias getter="curl $curl_options -s \"$user_agent\""
 	alias mailsender="sendEmail"
-	[ "$os" == "mac" ] && alias md5sum='/sbin/md5 -r'
 }
 
 set_constants(){
@@ -139,6 +138,7 @@ check_on_demand_status(){
 
 			[ -n "`is_process_running 'openssl'`" ] && kill_process 'openssl'
 			rm -f "$on_demand_pipefile" 2> /dev/null
+			sleep 2 # just to make sure changes are reflected as they should
 
 	else
 

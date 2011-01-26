@@ -60,8 +60,8 @@ check_device_status(){
 
 	local response=$(getter $curl_headers -L -i $check_url)
 
-	response_headers=$(echo "$response" | sed '/^\r/q')
-	response_body=$(echo "$response" | sed '1,/^\r/d')
+	response_headers=$(echo "$response" | sed '/^.$/q')
+	response_body=$(echo "$response" | sed '1,/^.$/d')
 
 	get_status_code
 	check_encrypted_response
@@ -73,8 +73,8 @@ check_encrypted_response(){
 	if [[ "$response_status" != "200" && "$response_status" != "404" ]]; then
 		return 1
 	fi
-
-	if [ -z `find_in "$response_body" '<device>'` ]; then
+	
+	if [ -z "`find_in "$response_body" '<device>'`" ]; then
 
 		log " ++ Got encrypted response! Processing... "
 		local cipher_key=$(md5_hash_for ${api_key})

@@ -367,6 +367,7 @@ install_or_update_module(){
 			fi
 
 			log ' -- Putting new module where it belongs...'
+			[ ! -d "$base_path/modules" ] && mkdir "$base_path/modules"
 			mv "$tmpdir/$1.tmp/$1" "$base_path/modules/$1"
 
 			log ' -- Cleaning up...'
