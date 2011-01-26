@@ -66,9 +66,20 @@ check_device_status(){
 
 }
 
+
 split_header_body(){
 	response_headers=$(echo "$1" | sed '/^.$/q')
 	response_body=$(echo "$1" | sed '1,/^.$/d')
+}
+
+get_status_code(){
+	# if we get a redirect response, we should capture the last http status code
+	response_status=`echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
+}
+
+# we may eventually use a specific header for Prey
+get_header_value(){
+	echo "$response_headers" | grep "$1" | tail -1 | sed 's/.*: \([a-z\/-]*\).*/\1/'
 }
 
 check_encrypted_response(){
@@ -89,11 +100,6 @@ check_encrypted_response(){
 
 	fi
 
-}
-
-get_status_code(){
-	# if we get a redirect response, we should capture the last http status code
-	response_status=`echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
 }
 
 verify_keys(){
@@ -120,44 +126,4 @@ verify_keys(){
 		return 1
 	fi
 	return 0
-}
-
-# we may eventually use a specific header for Prey
-parse_headers(){
-	content_type=`echo "$response_headers" | grep "Content-Type" | tail -1 | sed 's/.*: \([a-z\/-]*\).*/\1/'`
-}
-
-# this is where the magic will happen. :)
-# some ideas:
-	# if its a shell script, run it and post back the response
-	# if its a zip file, unzip it in modules and run the active modules (the executable ones)
-	# if its a xml/json file, parse it and assign config values correspondingly
-process_response(){
-	case "$content_type" in
-	"application/xml")
-		log ' -- Got XML. Parsing...'
-		local response_type='xml'
-		;;
-	"text/xml")
-		log ' -- Got XML. Parsing...'
-		local response_type='xml'
-		;;
-	# "application/octet-stream")
-	# 	log ' -- Got a stream! What shall we do with it?'
-	#	response_type='zip'
-	#	;;
-	"text/plain")
-		log " -- Got a text file! Let's see if its something we can actually run."
-		local response_type='text'
-		;;
-	"text/html")
-		log " -- Response was an HTML file. Lets just do our job."
-		return
-		;;
-	*)
-		log " -- Couldn't determine Content-Type for response. If you're using the Control Panel, please check your settings."
-		return
-		;;
-	esac
-	# eval 'process_'"${response_type}"''
 }

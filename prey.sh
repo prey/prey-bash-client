@@ -107,7 +107,6 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 	log "$STRING_CHECK_URL"
 
 	check_device_status
-	parse_headers
 
 	process_config
 	process_module_config
