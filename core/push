@@ -91,7 +91,7 @@ send_via_http(){
 		args="$args -k -3"
 	fi
 	response=`getter $args -K "$trace_file" $file_list "$post_url" \
-	--write "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec."`
+	-w "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec."`
 
 	log " -- $response"
 }

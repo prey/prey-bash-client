@@ -35,10 +35,10 @@ verify_write_access(){
 ####################################################################
 
 fetch_update() {
-	log ' -- Fetching new Prey release...'
-	getter "$update_package" -o "$updater_file" 2> /dev/null
+	log " -- Fetching new Prey release at ${update_package}..."
+	local download_status=$(getter "$update_package" -o "$updater_file" -w "%{http_code}" 2> /dev/null)
 
-	if [[ $? != 0 || ! -f "$updater_file" ]]; then
+	if [ "$download_status" != "200" ]; then
 		log " !! Couldn't get updater file! Skipping..."
 		rm $updater_file 2> /dev/null
 		return 1
