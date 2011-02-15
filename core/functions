@@ -200,6 +200,33 @@ update_execution_delay(){
 	(crontab -l | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log") | crontab -
 }
 
+####################################################################
+# http functions
+####################################################################
+
+send_request(){
+	local curl_arguments="$2"
+	local headers_file="$tmpbase/prey-curl-headers.txt"
+	response_body=$(getter $curl_arguments -L $1 --dump-header "$headers_file")
+	response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
+	get_status_code
+}
+
+get_status_code(){
+	# if we get a redirect response, we should capture the last http status code
+	response_status=`echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
+}
+
+# we may eventually use a specific header for Prey
+get_header_value(){
+	echo "$response_headers" | grep "$1" | tail -1 | sed 's/.*: \([a-z\/-]*\).*/\1/'
+}
+
+# fetches last response if online actions were enabled for the device
+get_last_response(){
+	response_body=$(cat "$last_response")
+}
+
 
 ####################################################################
 # network core functions
