@@ -92,27 +92,34 @@ simply shut down and wait for the next interval to check the URL.
 ##############################################
 
 Prey has a 'check mode' to verify it's settings are correct.
-Prey can also be run manually by removing the '--check' argument, Prey will begin running immediately. It will try to contact the Control Panel (or a custom server) & send a report if it detects it is marked as missing. You should see the results of this process echoed directly back to your terminal window.
+Prey can also be run manually by removing the '--check' argument, Prey will 
+begin running immediately. It will try to contact the Control Panel (or a 
+custom server) & send a report if it detects it is marked as missing. You 
+should see the results of this process echoed directly back to your terminal 
+window.
 
-Check Mode - Windows
-Either open the file located at C:\Prey\platform\windows\check.bat (the default install location of Prey)
-or enter the following at a DOS prompt
+ > Check Mode - Windows
+Either open the file located at C:\Prey\platform\windows\check.bat (the default
+install location of Prey) or enter the following at a DOS prompt:
+
 cd c:\Prey\ (or use your custom Prey install path)
 platform\windows\bin\bash.exe prey.sh --check
 
-Full run - Windows
+ > Full run - Windows
 cd c:\Prey\ (or use your custom Prey install path)
 platform\windows\bin\bash.exe prey.sh
 
-Check Mode - Linux & Mac
+ > Check Mode - Linux & Mac
 Type the following in a terminal:
 $ sudo /usr/share/prey/prey.sh --check
 
-Full run - Linux & Mac
+ > Full run - Linux & Mac
 Type the following in a terminal:
 $ sudo /usr/share/prey/prey.sh
 
-Additional support & troubleshooting information can be found at: http://support.preyproject.com/
+Additional support & troubleshooting information can be found at: 
+
+http://support.preyproject.com/
 
 ##############################################
 6. Acknowledgements
