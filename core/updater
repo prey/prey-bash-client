@@ -90,9 +90,9 @@ test_diff() {
 	outcome=$(patch --dry-run $patch_options)
 
 	if [ `find_in "$outcome" 'FAILED'` ]; then
-		log " !! There seems to be discordances between your installed version and the official $version code. Skipping patch!"
+		log " !! It appears there are differences between your installed version and the official Prey $version code. Cannot patch!"
 		echo "$outcome" > "$base_path/patch.log"
-		log " -- Results were logged to patch.log."
+		log " -- Results were logged to $base_path/patch.log."
 		return 1
 	else
 		log ' -- Everything smooth.'
