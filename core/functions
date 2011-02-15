@@ -259,24 +259,24 @@ verify_smtp_settings(){
 
 self_setup(){
 
-	log ' -- Sending request to Control Panel...'
-
+	log ' -- Gathering PC info...'
 	get_pc_info
-	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=`capitalize $os`"
-	local response=`getter --connect-timeout 10 -u $api_key:x -i $check_url/devices.xml -d "$params"`
-	get_status_code
+
+	log ' -- Sending request to Control Panel...'
+	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=$(capitalize $os)"
+	send_request "$check_url/devices.xml" "--connect-timeout 10 -u $api_key:x -d "$params""
 
 	if [ $response_status == "201" ]; then
 
 		log ' -- Device succesfully added! Applying configuration...'
-		device_key=`echo "$response" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
+		device_key=`echo "$response_body" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
 
 		save_config_value device_key "$device_key"
 
 		if [ $? == 1 ]; then
 			log " -- There was a problem saving the configuration. You probably don't have permissions to modify $base_path/config."
 		else
-			log ' -- All set.'
+			log " -- All set. Assigned key is $device_key."
 		fi
 
 	else
