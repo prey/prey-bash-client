@@ -69,7 +69,7 @@ enable_on_demand_mode(){
 		return 1
 	fi
 
-	log "\n${bold} >> Setting up on-demand mode!${bold_end}\n"
+	log "\n${bold} == Setting up on-demand mode!${bold_end}\n"
 	echo "" > "$on_demand_pipefile"
 	{ on_demand_loop & } 2> /dev/null # suppresses messages
 	local on_demand_pid=$!

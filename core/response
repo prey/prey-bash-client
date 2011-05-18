@@ -27,7 +27,7 @@ process_config(){
 	local prey_config=`echo -e "$response_body" | awk -F"[<>]" ' /<configuration>/,/<\/configuration>/' | grep -v "configuration>"`
 	[ -z "$prey_config" ] && return 1
 
-	log "\n${bold} >> Reading configuration...${bold_end}\n"
+	log "\n${bold} == Reading configuration...${bold_end}\n"
 	process_xml "$prey_config"
 
 	if [ "$offline_actions" == "true" ]; then # offline actions selected
@@ -85,7 +85,7 @@ process_module_config(){
 	local module_config=`echo -e "$response_body" | awk -F"[<>]" ' /<modules>/,/<\/modules>/' | grep -v "\/module" | sed '1d'`
 	[ -z "$module_config" ] && return 1
 
-	log "\n${bold} >> Reading module configuration...${bold_end}\n"
+	log "\n${bold} == Reading module configuration...${bold_end}\n"
 
 	STDOUT=$(echo -e "$module_config")
 

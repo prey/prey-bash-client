@@ -106,7 +106,7 @@ run_pending_actions(){
 	# -m job control enabled
 	set -bm
 
-	log "\n${bold} >> Running pending actions...${bold_end}"
+	log "\n${bold} == Running pending actions...${bold_end}"
 	for action in "${actions[@]}"; do
 
 		local current_module=`echo $action | sed 's/=.*//'`
@@ -123,7 +123,7 @@ run_pending_actions(){
 			log " -- Running action $function from $current_module module."
 			eval "$function" &
 		else # no specific action requested, we'll assume there's a run file
-			log "\n${bold} >> Running $current_module module!${bold_end}\n"
+			log "\n${bold} == Running $current_module module!${bold_end}\n"
 			. "$module_path/core/run" &
 		fi
 

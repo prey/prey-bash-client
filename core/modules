@@ -95,7 +95,7 @@ run_active_modules() {
 	for current_module in $active_modules; do
 
 		set_module_paths_for $current_module
-		log "\n${bold} >> Running $current_module module!${bold_end}\n"
+		log "\n${bold} == Running $current_module module!${bold_end}\n"
 
 		# now, go!
 		. "$module_path/core/run"

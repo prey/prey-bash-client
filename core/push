@@ -42,7 +42,7 @@ send_report(){
 	file_list=`list_files`
 	if [[ $trace_list || $file_list ]]; then
 			if [ -n "$test_mode" ]; then
-				log ' >> This is where the data gets sent. Though not in test mode!'
+				log ' ** This is where the data gets sent. Not in test mode though!'
 			else
 				trace_file="$tmpdir/prey_traces.tmp"
 				echo -e "$trace_list" > "$trace_file"

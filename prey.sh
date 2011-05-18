@@ -24,7 +24,7 @@ readonly base_path=`dirname "$0"`
 # 	exit 1
 # fi
 
-log "${cyan}$STRING_START ### $(uname -a)${color_end}\n"
+log "${cyan}$STRING_START ## $(uname -a)\n ## $(date)${color_end}\n"
 
 ####################################################################
 # lets check if we're actually connected
@@ -78,14 +78,14 @@ fi
 
 if [ -n "$check_mode" ]; then
 
-	log "\n${bold} >> Verifying Prey installation...${bold_end}\n"
+	log "\n${bold} == Verifying Prey installation...${bold_end}\n"
 	verify_installation
 
 	if [ "$post_method" == "http" ]; then
-		log "\n${bold} >> Verifying API and Device keys...${bold_end}\n"
+		log "\n${bold} == Verifying API and Device keys...${bold_end}\n"
 		verify_keys
 	elif [ "$post_method" == "email" ]; then
-		log "\n${bold} >> Verifying SMTP settings...${bold_end}\n"
+		log "\n${bold} == Verifying SMTP settings...${bold_end}\n"
 		verify_smtp_settings
 	fi
 
@@ -109,7 +109,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 	process_config
 	process_module_config
 
-	log "\n${bold} >> Verifying status...${bold_end}\n"
+	log "\n${bold} == Verifying status...${bold_end}\n"
 	log " -- Got status code $response_status!"
 
 	if [ "$response_status" == "$missing_status_code" ]; then
@@ -128,7 +128,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 		# lets send whatever we've gathered
 		####################################################################
 
-		log "\n${bold} >> Sending report!${bold_end}\n"
+		log "\n${bold} == Sending report!${bold_end}\n"
 		send_report
 
 		log "\n$STRING_DONE"
