@@ -78,9 +78,9 @@ get_os(){
 		if [ "$os" == "darwin" ]; then
 			os=mac
 		fi
-		readonly logged_user=`who | cut -d' ' -f1 | tail -1`
+		readonly logged_user=$(who | cut -d' ' -f1 | tail -1)
 		readonly root_path='/'
-		readonly home_path=`eval echo ~`
+		readonly home_path=$(eval echo ~)
 		[ -t 1 ] && set_colors # only set color if running from terminal (not Cron)
 	fi
 
@@ -116,7 +116,7 @@ set_constants(){
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
-	readonly modules_url=$control_panel_url 2> /dev/null
+	modules_url=$control_panel_url 2> /dev/null
 	updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null
 }
 

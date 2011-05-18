@@ -6,7 +6,7 @@
 ####################################################################
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:$PATH
-readonly base_path=`dirname "$0"`
+readonly base_path=$(dirname "$0")
 
 ####################################################################
 # base files inclusion
