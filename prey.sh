@@ -24,7 +24,7 @@ readonly base_path=`dirname "$0"`
 # 	exit 1
 # fi
 
-log "${cyan}$STRING_START ## $(uname -a)\n ## $(date)${color_end}\n"
+log "\n${cyan} ## $STRING_START\n ## $(uname -a)\n ## $(date)${color_end}\n"
 
 ####################################################################
 # lets check if we're actually connected
