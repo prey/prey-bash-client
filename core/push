@@ -10,7 +10,7 @@ update_device_info_with(){
 	if [ -z "$device_key" ]; then return 1; fi
 
 	log ' -- Updating device info...'
-	local response=`getter -i -X PUT -u $api_key:x $check_url/devices/$device_key.xml -d "$1"`
+	send_request "$check_url/devices/$device_key.xml" "-X PUT -u $api_key:x -d "$1""
 
 	get_status_code
 	if [ $response_status == "200" ]; then
