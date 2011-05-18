@@ -214,7 +214,7 @@ send_request(){
 
 get_status_code(){
 	# if we get a redirect response, we should capture the last http status code
-	response_status=`echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
+	response_status=$(echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2)
 }
 
 # we may eventually use a specific header for Prey

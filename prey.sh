@@ -102,40 +102,51 @@ fi
 create_tmpdir
 
 if [[ $connected == 1 && -n "$check_url" ]]; then
+
 	log "$STRING_CHECK_URL"
 
+	log "\n${bold} == Verifying status...${bold_end}\n"
 	check_device_status
 
-	process_config
-	process_module_config
+	if [ -z "$response_status" ]; then
 
-	log "\n${bold} == Verifying status...${bold_end}\n"
-	log " -- Got status code $response_status!"
-
-	if [ "$response_status" == "$missing_status_code" ]; then
-
-		log "$STRING_PROBLEM"
-
-		####################################################################
-		# initialize and fire off active modules
-		####################################################################
-
-		set +e # error mode off, just continue if a module fails
-		log " -- Running active report modules..."
-		run_active_modules # on http mode this will only be report modules
-
-		####################################################################
-		# lets send whatever we've gathered
-		####################################################################
-
-		log "\n${bold} == Sending report!${bold_end}\n"
-		send_report
-
-		log "\n$STRING_DONE"
+		log_response_error
 
 	else
-		log "$STRING_NO_PROBLEM"
+
+		log " -- Got status code $response_status!"
+		process_config
+		process_module_config
+
+		if [ "$response_status" == "$missing_status_code" ]; then
+
+			log "$STRING_PROBLEM"
+
+			####################################################################
+			# initialize and fire off active modules
+			####################################################################
+
+			set +e # error mode off, just continue if a module fails
+			log " -- Running active report modules..."
+			run_active_modules # on http mode this will only be report modules
+
+			####################################################################
+			# lets send whatever we've gathered
+			####################################################################
+
+			log "\n${bold} == Sending report!${bold_end}\n"
+			send_report
+
+			log "\n$STRING_DONE"
+
+		else
+
+			log "$STRING_NO_PROBLEM"
+
+		fi
+
 	fi
+
 fi
 
 ####################################################################

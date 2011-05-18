@@ -18,18 +18,18 @@ check_net_status(){
 	else
 		local ping_params='-q -c'
 	fi
-	connected=`ping $ping_params 1 $net_check_target &> /dev/null && echo 1 || echo 0`
+	connected=$(ping $ping_params 1 $net_check_target &> /dev/null && echo 1 || echo 0)
 
 	# if there's no connection with ping, lets try to see if curl gets through
 	# since some routers/networks block ICMP requests
 	if [ $connected == 0 ]; then
 		log ' -- Trying alternate method...'
-		connected=`getter --connect-timeout 3 $net_check_target &> /dev/null && echo 1 || echo 0`
+		connected=$(getter --connect-timeout 3 $net_check_target &> /dev/null && echo 1 || echo 0)
 	fi
 }
 
 randomize_subdomain(){
-	check_url=`echo $check_url | sed "s/\/\//\/\/$RANDOM./"`
+	check_url=$(echo $check_url | sed "s/\/\//\/\/$RANDOM./")
 }
 
 # we could eventually use a different method for status checking
@@ -57,6 +57,12 @@ check_device_status(){
 
 }
 
+log_response_error(){
+	log " !! Got empty status code! This probably means there is a connection issue."
+	log " -- Please check your firewall settings, allowing Curl to connect to ${check_url} through port 80."
+	log " -- If you use a proxy server look for the curl_options setting in the config file."
+	log " -- The response we got was: \n\n${response_headers}\n${response_body}\n"
+}
 
 check_encrypted_response(){
 
