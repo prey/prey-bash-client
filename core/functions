@@ -197,7 +197,7 @@ get_delay_for(){
 
 update_execution_delay(){
 	local full_path=`full_path "$base_path"`
-	(crontab -l | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log") | crontab -
+	(crontab -l | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
 }
 
 ####################################################################
