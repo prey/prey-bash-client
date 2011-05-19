@@ -38,8 +38,8 @@ deactivate_modules_on_panel(){
 
 send_report(){
 	log ' -- Packing all gathered traces...'
-	local trace_list=`list_traces`
-	file_list=`list_files`
+	local trace_list=$(list_traces)
+	file_list=$(list_files)
 	if [[ $trace_list || $file_list ]]; then
 			if [ -n "$test_mode" ]; then
 				log ' ** This is where the data gets sent. Not in test mode though!'
@@ -61,13 +61,13 @@ send_report(){
 
 send_via_email(){
 
-	local complete_subject="$mail_subject @ `date +"%a, %e %Y %T %z"`"
-	local decrypted_pass=`decrypt "$smtp_password"`
-	echo -e "${EMAIL_NOTICE}${EMAIL_HEADER}`urldecode "$trace_list"`${EMAIL_FOOTER}" > "$trace_file.msg"
+	local complete_subject="$mail_subject @ $(date +"%a, %e %Y %T %z")"
+	local decrypted_pass=$(decrypt "$smtp_password")
+	echo -e "${EMAIL_NOTICE}${EMAIL_HEADER}$(urldecode "$trace_list")${EMAIL_FOOTER}" > "$trace_file.msg"
 
 	# only add user/pass if set
 	[ -n "$smtp_username" ] && local auth="username=$smtp_username password=$decrypted_pass"
-	response=`mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto $auth`
+	response=$(mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto $auth)
 
 	if [ `find_in "$response" 'ERROR'` ]; then
 		log "$STRING_ERROR_EMAIL"
@@ -90,8 +90,8 @@ send_via_http(){
 		echo " -- Using SSL v3 encryption! Nice."
 		args="$args -k -3"
 	fi
-	response=`getter $args -K "$trace_file" $file_list "$post_url" \
-	-w "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec."`
+	response=$(getter $args -K "$trace_file" $file_list "$post_url" \
+	-w "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec.")
 
 	log " -- $response"
 }
@@ -99,9 +99,9 @@ send_via_http(){
 send_via_scp(){
 	if [[ -n "$scp_server" && -n "$scp_path" ]]; then
 		log " -- Uploading the stuff to $scp_path in $scp_server..."
-		local new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
+		local new_folder="prey_data_$(echo $start_time | sed 'y/ :/_-/')"
 		ssh $scp_user@$scp_server mkdir $scp_path/$new_folder
-		response=`scp $ssh_options "$trace_file" $file_list $scp_user@$scp_server:$scp_path/$new_folder`
+		response=$(scp $ssh_options "$trace_file" $file_list $scp_user@$scp_server:$scp_path/$new_folder)
 	else
 		log ' !! You need to set up a server in order to send the report via SCP!'
 	fi
@@ -110,14 +110,14 @@ send_via_scp(){
 # SFTP posting by http://github.com/birdtori
 send_via_sftp(){
 	if [[ -n "$sftp_server" && -n "$sftp_path" ]]; then
-		local new_folder="prey_data_`echo $start_time | sed 'y/ :/_-/'`"
+		local new_folder="prey_data_$(echo $start_time | sed 'y/ :/_-/')"
 		log " -- Uploading the stuff to $sftp_path/$new_folder in $sftp_server..."
 		local batch="$tmpdir/sftp.script"
 		echo "mkdir $sftp_path/$new_folder"                           >  "$batch"
 		echo "put "$trace_file" $sftp_path/$new_folder/"              >> "$batch"
 		for f in $file_list; do echo "put $f $sftp_path/$new_folder/" >> "$batch"; done
 		echo "bye"                                                    >> "$batch"
-		response=`sftp $ssh_options -b $batch $sftp_user@$sftp_server`
+		response=$(sftp $ssh_options -b $batch $sftp_user@$sftp_server)
 	else
 		log ' !! You need to set up a server in order to send the report via SFTP!'
 	fi
