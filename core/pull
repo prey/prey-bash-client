@@ -5,6 +5,8 @@
 # License: GPLv3
 ####################################################################
 
+readonly cipher_algorithm="aes-128-cbc"
+
 # returns if we have have network access, otherwise 0
 # you can check against the gateway or the net, change it if you like
 check_net_status(){
@@ -35,7 +37,7 @@ randomize_subdomain(){
 # we could eventually use a different method for status checking
 check_device_status(){
 	if [ "$post_method" == 'http' ]; then
-		local request_headers="-H X-Encrypt-Response:aes-128-cbc"
+		local request_headers="-H X-Encrypt-Response:${cipher_algorithm}"
 
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
@@ -74,7 +76,7 @@ check_encrypted_response(){
 
 		log " ++ Got encrypted response! Processing... "
 		local cipher_key=$(md5_hash_for ${api_key})
-		response_body=$(echo "$response_body" | openssl aes-128-cbc -d -a -k "$cipher_key" 2> /dev/null)
+		response_body=$(echo "$response_body" | openssl ${cipher_algorithm} -d -a -k "$cipher_key" 2> /dev/null)
 
 		[ $? == 1 ] && error_exit "Unable to decrypt response correctly! Exiting..."
 
