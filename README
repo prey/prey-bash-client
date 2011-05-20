@@ -69,7 +69,7 @@ Mac comes with everything needed to run Prey. However Linux users should make
 sure they have the following installed: (note the installer does this
 automatically!)
 
-	o curl / wget
+	o curl
 	o scrot or imagemagick (for screenshot capture)
 	o streamer (for webcam capture) --> in Fedora the xawtv package includes it
 	o Perl libs IO::Socket::SSL and NET::SSLeay
