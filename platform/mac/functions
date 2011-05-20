@@ -23,11 +23,11 @@ get_gateway_ip() {
 }
 
 get_wifi_info() {
-	wifi_info=`$airport -I | grep -v "Off"`
-	if [ -z "$wifi_info" ]; then
-		enable_airport
-		wifi_info=`$airport -I | grep -v "Off"`
-	fi
+        wifi_info=`$airport -s | grep -v "Off"`
+        if [ -z "$wifi_info" ]; then
+                enable_airport
+                wifi_info=`$airport -s | grep -v "Off"`
+        fi
 }
 
 disable_airport(){
