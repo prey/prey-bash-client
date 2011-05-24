@@ -208,8 +208,12 @@ send_request(){
 	local curl_arguments="$2"
 	local headers_file="$tmpbase/prey-curl-headers.txt"
 	response_body=$(getter $curl_arguments -L $1 --dump-header "$headers_file")
-	response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
-	get_status_code
+	if [[ $? == 0 && -f "$headers_file" ]]; then
+		response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
+		get_status_code
+	else
+		error_exit "Unable to get response from server. Exiting..."
+	fi
 }
 
 get_status_code(){
