@@ -212,7 +212,8 @@ send_request(){
 		response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
 		get_status_code
 	else
-		error_exit "Unable to get response from server. Exiting..."
+		log "Unable to get response from server!"
+		# error_exit "Exiting..."
 	fi
 }
 
