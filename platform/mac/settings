@@ -5,7 +5,7 @@
 # License: GPLv3
 ####################################################################
 
-readonly logged_pid=`ps -ax | grep loginwindow.app | grep -v grep | awk '{print $1}'`
+readonly logged_pid=`ps aux | awk -v Var=${logged_user} '/loginwindow.app/ && match(Var,$1) { print $2 }'`
 
 readonly system_path="/Library"
 readonly users_path="/Users"

@@ -78,7 +78,7 @@ get_os(){
 		if [ "$os" == "darwin" ]; then
 			os=mac
 		fi
-		readonly logged_user=$(who | cut -d' ' -f1 | tail -1)
+		readonly logged_user=$(stat /dev/console | cut -d' ' -f5)
 		readonly root_path='/'
 		readonly home_path=$(eval echo ~)
 		[ -t 1 ] && set_colors # only set color if running from terminal (not Cron)
