@@ -36,7 +36,7 @@ setup_module(){
 		return $?
 	elif [ -n "$upstream_version" ]; then # module is already there, lets see if the versions match
 
-		local installed_version=`cat "$module_path/version" 2> /dev/null`
+		local installed_version=$(cat "$module_path/version" 2> /dev/null)
 
 		if [ `is_greater_than $upstream_version $installed_version` == 1 ]; then
 			log " -- Updating $1 module to version $upstream_version!"
