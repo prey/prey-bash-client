@@ -274,10 +274,10 @@ verify_smtp_settings(){
 	if [ "$smtp_username" != "username@gmail.com" ]; then
 		log " -- SMTP username set."
 	else
-		log " -- SMTP password not set!"
+		log " -- SMTP username not set!"
 	fi
 
-	if [ "$(decrypt \"$smtp_password\")" != "" ]; then
+	if [ "$(decrypt $smtp_password)" != "" ]; then
 		log " -- Password seems to be fine as well."
 	else
 		log " -- Password not set! (Remember it should be base64 encrypted)."
