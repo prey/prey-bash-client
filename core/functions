@@ -168,6 +168,11 @@ remove_files(){
 # delay functions, mac and linux
 ####################################################################
 
+# echoes random number between 1 and $1 (first argument passed)
+get_random_number(){
+	echo $[ ( $RANDOM % $1 ) + 1 ]
+}
+
 get_current_delay(){
 	# crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
 	crontab -l | grep prey | head -1 | sed 's/ \/.*//'
