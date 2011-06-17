@@ -1,7 +1,7 @@
 #!/bin/bash
 ####################################################################
-# Prey Client - by Tomas Pollak (bootlog.org)
-# URL: http://preyproject.com
+# Prey Bash Client - (c) Fork Ltd.
+# http://preyproject.com
 # License: GPLv3
 ####################################################################
 
