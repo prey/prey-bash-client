@@ -42,15 +42,21 @@ if [ $connected == 0 ]; then
 	# ok, lets check again, after waiting a bit
 	sleep 5
 	check_net_status
+
 	if [ $connected == 0 ]; then
+
 		log "$STRING_NO_CONNECT_TO_WIFI"
 		if [ -f "$last_response" ]; then # offline actions were enabled
+
 			log ' -- Offline actions enabled!'
 			offline_mode=1
 			get_last_response
+			process_module_config
+
 		else
 			exit 1
 		fi
+
 	fi
 fi
 
@@ -91,6 +97,18 @@ if [ -n "$check_mode" ]; then
 
 	exit $?
 
+fi
+
+####################################################################
+# wait a few seconds to make sure our request doesn't get dropped
+# due to clashes with the other zillion requests to the CP
+####################################################################
+
+# only do this if we're not on test mode or immediate request was instructed
+if [[ -z "$immediate_request" && -z "$test_mode" && "$post_method" == "http" ]]; then
+	seconds_to_wait=$(get_random_number 59)
+	log " -- Pausing for ${seconds_to_wait} seconds..."
+	sleep $seconds_to_wait
 fi
 
 ####################################################################
@@ -152,10 +170,6 @@ fi
 ####################################################################
 # if we have any pending actions, run them
 ####################################################################
-
-if [ -n "$offline_mode" ]; then
-	process_module_config
-fi
 
 check_running_actions
 

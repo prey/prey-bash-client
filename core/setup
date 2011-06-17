@@ -24,6 +24,7 @@ show_usage(){
 	echo -e "\nUsage: `basename $0` [options]"
 	echo -e "Options:"
 	echo -e "  -t | --test\t\tTest mode. Runs Prey without sending any data."
+	echo -e "  -i | --immediate\t\tImmediate check. Don't pause before sending request to Control Panel."
 	echo -e "  -c | --check\t\tCheck mode. Checks if configuration is correctly set up."
 	echo -e "  -l | --log\t\tLog output to ${base_path}/prey.log (default in Windows)."
 	echo -e "  -s | --silent\t\tDon't log any output."
@@ -43,6 +44,10 @@ until [ -z "$1" ]; do
 			test_mode=1
 			. $base_path/test/include "$2" 2> /dev/null
 			shift
+		;;
+		-i | --immediate )
+			echo -e "\n -- IMMEDIATE REQUEST."
+			immediate_request=1
 		;;
 		-c | --check )
 			echo -e "\n -- CHECK MODE ON."
