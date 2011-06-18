@@ -15,18 +15,18 @@ run_as_current_user(){
 
 get_gateway_ip() {
 	if [ -z "$gateway_ip" ]; then
-		netstat=`which netstat`
+		netstat=$(which netstat)
 		if [ -n "$netstat" ]; then
-			gateway_ip=`$netstat -rn | grep default | cut -c20-35`
+			gateway_ip=$($netstat -rn | grep default | cut -c20-35)
 		fi
 	fi
 }
 
 get_wifi_info() {
-	wifi_info=`$airport -I | grep -v "Off"`
+	wifi_info=$($airport -s | grep -v "Off")
 	if [ -z "$wifi_info" ]; then
 		enable_airport
-		wifi_info=`$airport -I | grep -v "Off"`
+		wifi_info=$($airport -s | grep -v "Off")
 	fi
 }
 
@@ -51,7 +51,7 @@ try_to_connect() {
 	enable_airport
 
 	# list available access points and parse to get first SSID with security "NONE"
-	local essid=`$airport -s | grep NONE | sort -k3 -r | head -1 | cut -c1-32 | sed 's/^[ \t]*//'`
+	local essid=$($airport -s | grep NONE | sort -k3 -r | head -1 | cut -c1-32 | sed 's/^[ \t]*//')
 
 	if [ -n "$essid" ]; then
 		if [ $osx_version == "snow-leopard" ]; then
@@ -80,10 +80,10 @@ post_update_hook(){
 # Device creation parameters
 ############################################
 get_pc_info(){
-	pc_name=`system_profiler SPSoftwareDataType | grep 'Computer Name' | sed 's/.*: //g'`
+	pc_name=$(system_profiler SPSoftwareDataType | grep 'Computer Name' | sed 's/.*: //g')
 	pc_os_version=$osx_version
 
-	local is_macbook=`system_profiler SPHardwareDataType | grep -i 'macbook'`
+	local is_macbook=$(system_profiler SPHardwareDataType | grep -i 'macbook')
 	if [ -z "$is_macbook" ]; then
 		pc_type="Desktop"
 	else

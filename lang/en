@@ -6,7 +6,7 @@
 # License: GPLv3
 ####################################################################
 
-STRING_START="\n ### PREY $version spreads its wings!\n"
+STRING_START="PREY $version spreads its wings!"
 STRING_TRY_TO_CONNECT=" -- Trying to connect to first open wifi network available..."
 STRING_NO_CONNECT_TO_WIFI=" -- Couldn't find a way to connect to an open wifi network!"
 STRING_CHECK_URL=" -- Checking URL..."

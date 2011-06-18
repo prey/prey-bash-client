@@ -168,6 +168,11 @@ remove_files(){
 # delay functions, mac and linux
 ####################################################################
 
+# echoes random number between 1 and $1 (first argument passed)
+get_random_number(){
+	echo $[ ( $RANDOM % $1 ) + 1 ]
+}
+
 get_current_delay(){
 	# crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
 	crontab -l | grep prey | head -1 | sed 's/ \/.*//'
@@ -197,7 +202,7 @@ get_delay_for(){
 
 update_execution_delay(){
 	local full_path=`full_path "$base_path"`
-	(crontab -l | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log") | crontab -
+	(crontab -l | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
 }
 
 ####################################################################
@@ -208,13 +213,18 @@ send_request(){
 	local curl_arguments="$2"
 	local headers_file="$tmpbase/prey-curl-headers.txt"
 	response_body=$(getter $curl_arguments -L $1 --dump-header "$headers_file")
-	response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
-	get_status_code
+	if [[ $? == 0 && -f "$headers_file" ]]; then
+		response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
+		get_status_code
+	else
+		log " !! Unable to get response from server!"
+		# error_exit "Exiting..."
+	fi
 }
 
 get_status_code(){
 	# if we get a redirect response, we should capture the last http status code
-	response_status=`echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2`
+	response_status=$(echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2)
 }
 
 # we may eventually use a specific header for Prey

@@ -24,6 +24,7 @@ show_usage(){
 	echo -e "\nUsage: `basename $0` [options]"
 	echo -e "Options:"
 	echo -e "  -t | --test\t\tTest mode. Runs Prey without sending any data."
+	echo -e "  -i | --immediate\t\tImmediate check. Don't pause before sending request to Control Panel."
 	echo -e "  -c | --check\t\tCheck mode. Checks if configuration is correctly set up."
 	echo -e "  -l | --log\t\tLog output to ${base_path}/prey.log (default in Windows)."
 	echo -e "  -s | --silent\t\tDon't log any output."
@@ -43,6 +44,10 @@ until [ -z "$1" ]; do
 			test_mode=1
 			. $base_path/test/include "$2" 2> /dev/null
 			shift
+		;;
+		-i | --immediate )
+			echo -e "\n -- IMMEDIATE REQUEST."
+			immediate_request=1
 		;;
 		-c | --check )
 			echo -e "\n -- CHECK MODE ON."
@@ -78,9 +83,9 @@ get_os(){
 		if [ "$os" == "darwin" ]; then
 			os=mac
 		fi
-		readonly logged_user=`who | cut -d' ' -f1 | tail -1`
+		readonly logged_user=$(stat /dev/console | cut -d' ' -f5)
 		readonly root_path='/'
-		readonly home_path=`eval echo ~`
+		readonly home_path=$(eval echo ~)
 		[ -t 1 ] && set_colors # only set color if running from terminal (not Cron)
 	fi
 
@@ -116,7 +121,7 @@ set_constants(){
 	readonly logged_user
 
 	readonly control_panel_url="http://control.preyproject.com" 2> /dev/null
-	readonly modules_url=$control_panel_url 2> /dev/null
+	modules_url=$control_panel_url 2> /dev/null
 	updates_url="http://cloud.github.com/downloads/tomas/prey" 2> /dev/null
 }
 

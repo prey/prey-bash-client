@@ -1,12 +1,12 @@
 #!/bin/bash
 ####################################################################
-# Prey Client - by Tomas Pollak (bootlog.org)
-# URL: http://preyproject.com
+# Prey Bash Client - (c) Fork Ltd.
+# http://preyproject.com
 # License: GPLv3
 ####################################################################
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:$PATH
-readonly base_path=`dirname "$0"`
+readonly base_path=$(dirname "$0")
 
 ####################################################################
 # base files inclusion
@@ -24,7 +24,7 @@ readonly base_path=`dirname "$0"`
 # 	exit 1
 # fi
 
-log "${cyan}$STRING_START ### $(uname -a)${color_end}\n"
+log "\n${cyan} ## $STRING_START\n ## $(uname -a)\n ## $(date)${color_end}\n"
 
 ####################################################################
 # lets check if we're actually connected
@@ -42,15 +42,21 @@ if [ $connected == 0 ]; then
 	# ok, lets check again, after waiting a bit
 	sleep 5
 	check_net_status
+
 	if [ $connected == 0 ]; then
+
 		log "$STRING_NO_CONNECT_TO_WIFI"
 		if [ -f "$last_response" ]; then # offline actions were enabled
+
 			log ' -- Offline actions enabled!'
 			offline_mode=1
 			get_last_response
+			process_module_config
+
 		else
 			exit 1
 		fi
+
 	fi
 fi
 
@@ -78,19 +84,31 @@ fi
 
 if [ -n "$check_mode" ]; then
 
-	log "\n${bold} >> Verifying Prey installation...${bold_end}\n"
+	log "\n${bold} == Verifying Prey installation...${bold_end}\n"
 	verify_installation
 
 	if [ "$post_method" == "http" ]; then
-		log "\n${bold} >> Verifying API and Device keys...${bold_end}\n"
+		log "\n${bold} == Verifying API and Device keys...${bold_end}\n"
 		verify_keys
 	elif [ "$post_method" == "email" ]; then
-		log "\n${bold} >> Verifying SMTP settings...${bold_end}\n"
+		log "\n${bold} == Verifying SMTP settings...${bold_end}\n"
 		verify_smtp_settings
 	fi
 
 	exit $?
 
+fi
+
+####################################################################
+# wait a few seconds to make sure our request doesn't get dropped
+# due to clashes with the other zillion requests to the CP
+####################################################################
+
+# only do this if we're not on test mode or immediate request was instructed
+if [[ -z "$immediate_request" && -z "$test_mode" && "$post_method" == "http" ]]; then
+	seconds_to_wait=$(get_random_number 59)
+	log " -- Pausing for ${seconds_to_wait} seconds..."
+	sleep $seconds_to_wait
 fi
 
 ####################################################################
@@ -102,49 +120,56 @@ fi
 create_tmpdir
 
 if [[ $connected == 1 && -n "$check_url" ]]; then
+
 	log "$STRING_CHECK_URL"
 
+	log "\n${bold} == Verifying status...${bold_end}\n"
 	check_device_status
 
-	process_config
-	process_module_config
+	if [ -z "$response_status" ]; then
 
-	log "\n${bold} >> Verifying status...${bold_end}\n"
-	log " -- Got status code $response_status!"
-
-	if [ "$response_status" == "$missing_status_code" ]; then
-
-		log "$STRING_PROBLEM"
-
-		####################################################################
-		# initialize and fire off active modules
-		####################################################################
-
-		set +e # error mode off, just continue if a module fails
-		log " -- Running active report modules..."
-		run_active_modules # on http mode this will only be report modules
-
-		####################################################################
-		# lets send whatever we've gathered
-		####################################################################
-
-		log "\n${bold} >> Sending report!${bold_end}\n"
-		send_report
-
-		log "\n$STRING_DONE"
+		log_response_error
 
 	else
-		log "$STRING_NO_PROBLEM"
+
+		log " -- Got status code $response_status!"
+		process_config
+		process_module_config
+
+		if [ "$response_status" == "$missing_status_code" ]; then
+
+			log "$STRING_PROBLEM"
+
+			####################################################################
+			# initialize and fire off active modules
+			####################################################################
+
+			set +e # error mode off, just continue if a module fails
+			log " -- Running active report modules..."
+			run_active_modules # on http mode this will only be report modules
+
+			####################################################################
+			# lets send whatever we've gathered
+			####################################################################
+
+			log "\n${bold} == Sending report!${bold_end}\n"
+			send_report
+
+			log "\n$STRING_DONE"
+
+		else
+
+			log "$STRING_NO_PROBLEM"
+
+		fi
+
 	fi
+
 fi
 
 ####################################################################
 # if we have any pending actions, run them
 ####################################################################
-
-if [ -n "$offline_mode" ]; then
-	process_module_config
-fi
 
 check_running_actions
 
