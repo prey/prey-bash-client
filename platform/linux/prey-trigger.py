@@ -5,7 +5,7 @@
 # Licensed under the GPLv3
 #######################################################
 
-prey_command = "/home/tomas/code/prey/client.bash/prey.sh -i > /var/log/prey.log &2>1"
+prey_command = "/usr/share/prey/prey.sh -i > /var/log/prey.log &2>1"
 
 import os
 from datetime import datetime, timedelta
