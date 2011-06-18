@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-
 ################################################
 # Prey Configurator for Linux
 # By Tomas Pollak
