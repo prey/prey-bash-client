@@ -21,7 +21,7 @@ DIFFERENT_PATH="\nLa nuova versione usa un differente percorso per l'installazio
 REMOVE_OLD_FILES="quindi dovremo rimuovere i vecchi file visto che non verranno più usati."
 ASK_RM_OLD_FILES="Vuoi che venga fatto in automatico?"
 DELETING_OLD_FILES=" -- Cancello i vecchi file di installazione di Prey...\n"
-CONFIG_FILE_EXISTS=" -> Il file Config esiste! Vuoi saltare tutte le noiose domande?(non consigliato)[n] "
+CONFIG_FILE_EXISTS=" -> Il file Config esiste! Vuoi saltare tutte le noiose domande? (non consigliato)[n] "
 
 SKIP_INSTALL_QUESTIONS=" -- Ottimo, faccio l'update dei file!\n"
 
@@ -82,7 +82,7 @@ Se stai usando Gmail, prova a cancellare '@gmail.com' dal campo smtp_username ne
 STRING_REMOVE_EVIDENCE=" -- Rimuovo ogni traccia..."
 STRING_DONE=" -- Fatto. Buona caccia! :)\n"
 
-EMAIL_HEADER="Buone notizie, amico.. sembra che lo abbiamo trovato.\n\nEcco il rapporto del tuo computer:\n\n"
+EMAIL_HEADER="Buone notizie, amico... sembra che lo abbiamo trovato.\n\nEcco il rapporto del tuo computer:\n\n"
 EMAIL_FOOTER="\n\nOra, vai a pigliare il bastardo!\n\n--\nIl vostro umile servitore, Prey\nhttp://preyproject.com"
 
 fi
