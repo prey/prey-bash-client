@@ -133,7 +133,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 	else
 
 		log " -- Got status code $response_status!"
-		[ "$response_status" == "$missing_status_code" ] && missing=1
+		[ "$response_status" == "$missing_status_code" ] && device_missing=1
 		process_config
 		process_module_config
 

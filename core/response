@@ -37,18 +37,7 @@ process_config(){
 		rm -f "$last_response" 2> /dev/null
 	fi
 
-	# check the current delay against the instruction from the server
-
-	new_delay=$(get_delay_for $delay)
-
-	if [ "`get_current_delay`" != "$new_delay" ]; then
-		log " -- Setting frequency to $delay!"
-		update_execution_delay "$new_delay"
-	else
-		log " -- Frequency in sync ($delay)."
-	fi
-
-	# check the current version against the one gotten from the server
+	check_and_update_delay $delay
 
 	if [[ -z "$on_demand_call" && "$auto_update" == "true" && `is_greater_than $current_release $version` == 1 ]]; then
 
