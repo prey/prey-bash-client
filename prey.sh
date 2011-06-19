@@ -133,10 +133,11 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 	else
 
 		log " -- Got status code $response_status!"
+		[ "$response_status" == "$missing_status_code" ] && missing=1
 		process_config
 		process_module_config
 
-		if [ "$response_status" == "$missing_status_code" ]; then
+		if [ -n "$missing" ]; then
 
 			log "$STRING_PROBLEM"
 
@@ -146,7 +147,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 
 			set +e # error mode off, just continue if a module fails
 			log " -- Running active report modules..."
-			run_active_modules # on http mode this will only be report modules
+			run_active_modules
 
 			####################################################################
 			# lets send whatever we've gathered
