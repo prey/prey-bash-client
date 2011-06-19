@@ -42,8 +42,12 @@ until [ -z "$1" ]; do
 			echo -e "\n -- TEST MODE ON."
 			trap - INT # set off trap
 			test_mode=1
-			. $base_path/test/include "$2" 2> /dev/null
-			shift
+			# the following lets us include stuff for specific tests
+			# e.g. ./prey.sh --test reports
+			if [ -z $(find_in $2 '-') ]; then 
+				. $base_path/test/include "$2" 2> /dev/null
+				shift
+			fi
 		;;
 		-i | --immediate )
 			echo -e "\n -- IMMEDIATE REQUEST."
