@@ -12,6 +12,10 @@ run_as_current_user(){
 	fi
 }
 
+############################################
+# network-specific functions
+############################################
+
 get_gateway_ip() {
 	[ -z "$gateway_ip" ] && gateway_ip=$(ip r | grep default | cut -d ' ' -f 3)
 }
@@ -70,29 +74,18 @@ reverse_tunnel_command(){
 
 # echoes 1 if prey trigger is set
 is_trigger_loaded(){
-	find /etc/rc3.d/ | grep prey-trigger > /dev/null && echo 1
+	find /etc/rc3.d/ | grep 'prey-trigger' > /dev/null && echo 1
 }
 
 reload_trigger(){
 	log " -- Setting up network detection trigger init script..."
-	local trigger_init_script="/etc/init.d/prey-trigger"
-	if [ ! -e "$trigger_init_script" ]; then
-		ln -s "$(full_path $base_path)/${platform_path}/prey-trigger" "$trigger_init_script" 2> /dev/null
-		if [ $? != 0 ]; then
-			log " !! Couldn't copy Prey Trigger init script into /etc/init.d!"
-			return 1
-		fi
-	fi
-	update-rc.d prey-trigger defaults > /dev/null
+	linux_load_service 'prey-trigger'
 }
 
 # unloads trigger from launchd and removes plist file
 unload_trigger(){
 	log " -- Removing network detection trigger init script..."
-	rm -f /etc/init.d/prey-trigger
-	# we need to delete the init script first so that update-rc.d remove works
-	# otherwise we'd need to use the -f argument
-	update-rc.d prey-trigger remove > /dev/null
+	linux_unload_service 'prey-trigger'
 }
 
 ############################################
@@ -136,6 +129,8 @@ get_pc_info(){
 
 get_distro_name(){
 
+	[ -n "$distro_name" ] && return 1
+
 	local proc_version=$(cat /proc/version 2>&1)
 
 	# todo: make this in a more efficient way
@@ -151,8 +146,69 @@ get_distro_name(){
 		distro_name=redhat
 	elif [ -n `find_in $distro 'SuSE'` ]; then
 		distro_name=suse
+	elif [ -n `find_in $distro 'ArchLinux'` ]; then
+		distro_name=arch
 	else
 		distro_name=linux
 	fi
 
 }
+
+############################################
+# distro-specific functions
+############################################
+
+linux_load_service(){
+	get_distro_name
+	eval "${distro_name}_load_service $1"
+}
+
+linux_unload_service(){
+	get_distro_name
+	eval "${distro_name}_unload_service $1"
+}
+
+linux_copy_init_script(){
+	local full_init_script_path="$1/$2"
+	if [ ! -e "$full_init_script_path" ]; then
+		ln -s "$(full_path $base_path)/${platform_path}/${2}" "$full_init_script_path" 2> /dev/null
+		if [ $? != 0 ]; then
+			log " !! Couldn't copy init script into ${1}!"
+			return 1
+		fi
+	fi
+}
+
+linux_remove_init_script(){
+	rm -f "$1/$2"
+}
+
+debian_load_service(){
+	linux_copy_init_script '/etc/init.d' $1
+	update-rc.d $1 defaults > /dev/null
+}
+
+alias ubuntu_load_service='debian_load_service'
+
+# we need to delete the init script first so that update-rc.d remove works
+# otherwise we'd need to use the -f argument
+debian_unload_service(){
+	linux_remove_init_script '/etc/init.d' $1
+	[ $? == 0 ] && update-rc.d $1 remove > /dev/null
+}
+
+alias ubuntu_unload_service='debian_unload_service'
+
+redhat_load_service(){
+	linux_copy_init_script '/etc/rc.d/init.d' $1
+	chkconfig $1 on
+}
+
+alias fedora_load_service='redhat_load_service'
+
+redhat_unload_service(){
+	linux_remove_init_script '/etc/rc.d/init.d' $1
+	chkconfig $1 off
+}
+
+alias fedora_unload_service='redhat_unload_service'
