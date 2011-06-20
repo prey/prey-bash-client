@@ -13,21 +13,15 @@ run_as_current_user(){
 }
 
 get_gateway_ip() {
-	if [ -z "$gateway_ip" ]; then
-		gateway_ip=`ip r | grep default | cut -d ' ' -f 3`
-	fi
+	[ -z "$gateway_ip" ] && gateway_ip=$(ip r | grep default | cut -d ' ' -f 3)
 }
 
 get_wifi_device() {
-	if [ -z "$wifi_device" ]; then
-		wifi_device=`\`which iwconfig\` 2>&1 | grep -v "no wireless" | cut -f1 -d" " | grep -v "^$" | tail -1`
-	fi
+	[ -z "$wifi_device" ] && wifi_device=$(iwconfig 2>&1 | grep -v "no wireless" | cut -f1 -d" " | grep -v "^$" | tail -1)
 }
 
 get_wifi_info() {
-	if [ -z "$wifi_info" ]; then
-		wifi_info=`\`which iwconfig\` 2>&1 | grep -v "no wireless"`
-	fi
+	[ -z "$wifi_info" ] && wifi_info=$(iwconfig 2>&1 | grep -v "no wireless")
 }
 
 # attempts to connect to the first open public wifi network
@@ -37,9 +31,7 @@ try_to_connect() {
 	if [ `which nm-applet` ]; then
 
 		log ' -- Restarting NetworkManager and giving it some time to connect.'
-		# lets restart the NM applet and give it 5 seconds to connect
-		killall nm-applet &> /dev/null
-		nm-applet --sm-disable & 2> /dev/null
+		/etc/init.d/network-manager restart &> /dev/null
 		sleep 5
 
 	else
@@ -76,6 +68,10 @@ reverse_tunnel_command(){
 # updater-specific functions
 ############################################
 
+############################################
+# updater-specific functions
+############################################
+
 # here we'll eventually put whatever we need to do in linux before
 # performing a full update
 pre_update_hook(){
@@ -95,36 +91,36 @@ post_update_hook(){
 get_pc_info(){
 	pc_name=$(hostname)
 
-	`which laptop-detect`
+	$(which laptop-detect)
 	if [ $? == 1 ]; then
 		pc_type="Desktop"
 	else
 		pc_type="Laptop"
 	fi
 
-	local distro=`cat /proc/version 2>&1`
+	local distro=$(cat /proc/version 2>&1)
 
 	# todo: make this in a more efficient way
 	if [ -n `find_in $distro 'Ubuntu'` ]; then
-		pc_os_name=Ubuntu
+		pc_os_name=ubuntu
 		pc_os_version=$(lsb_release -r | sed 's/.*\t//g')
 	elif [ -n `find_in $distro 'Debian'` ]; then
-		pc_os_name=Debian
+		pc_os_name=debian
 		pc_os_version=$(cat /etc/debian_version)
-	elif [ -n `find_in $distro 'Fedora'` ]; then
-		pc_os_name=Fedora
-		pc_os_version='' # TODO
 	elif [ -n `find_in $distro 'Redhat'` ]; then
-		pc_os_name=Fedora
+		pc_os_name=redhat
+		pc_os_version='' # TODO
+	elif [ -n `find_in $distro 'Fedora'` ]; then
+		pc_os_name=fedora
 		pc_os_version='' # TODO
 	elif [ -n `find_in $distro 'CentOS'` ]; then
-		pc_os_name=Fedora
+		pc_os_name=redhat
 		pc_os_version='' # TODO
 	elif [ -n `find_in $distro 'SuSE'` ]; then
-		pc_os_name=Suse
+		pc_os_name=suse
 		pc_os_version='' # TODO
 	else
-		pc_os_name=Linux
+		pc_os_name=linux
 		pc_os_version=''
 	fi
 
