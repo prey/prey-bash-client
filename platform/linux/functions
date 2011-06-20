@@ -32,10 +32,10 @@ get_wifi_info() {
 # if we dont have NetworkManager available, we use plain iwconfig
 try_to_connect() {
 
-	if [ `which nm-applet` ]; then
+	if [ -n "$(is_process_running $network_manager_process)" ]; then
 
-		log ' -- Restarting NetworkManager and giving it some time to connect.'
-		/etc/init.d/network-manager restart &> /dev/null
+		log " -- Restarting $network_manager_process and giving it some time to connect."
+		service $network_manager_process restart &> /dev/null
 		sleep 5
 
 	else
