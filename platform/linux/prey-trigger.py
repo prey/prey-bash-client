@@ -5,14 +5,15 @@
 # Licensed under the GPLv3
 #######################################################
 
-prey_command = "/usr/share/prey/prey.sh -i > /var/log/prey.log &2>1"
-
 import os
+import subprocess
 from datetime import datetime, timedelta
 import gobject
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
 
+prey_command = "/usr/share/prey/prey.sh -i"
+prey_output = open("/var/log/prey.log", 'wb')
 min_interval = 2
 
 #######################
@@ -33,7 +34,7 @@ def run_prey():
     now = datetime.now()
     if (run_at is None) or (now - run_at > two_minutes):
         alert("Running Prey")
-        os.system(prey_command)
+        subprocess.Popen(prey_command.split(), stdout=prey_output, stderr=prey_output, shell=True)
         run_at = datetime.now()
 
 #######################
