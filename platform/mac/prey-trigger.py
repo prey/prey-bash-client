@@ -29,7 +29,8 @@ from Cocoa import \
 	NSRunLoop, \
 	kCFRunLoopCommonModes
 
-prey_command = "/usr/share/prey/prey.sh -i > /var/log/prey.log &2>1"
+prey_command = "/usr/share/prey/prey.sh -i"
+prey_output = open("/var/log/prey.log", 'wb')
 min_interval = 2
 
 # logging.basicConfig(filename='/var/log/netdetect.log',level=logging.DEBUG)
@@ -43,7 +44,9 @@ def connected(interface):
 
 # only for testing purposes
 def alert(message):
+	# subprocess.call(["/usr/bin/osascript", "-e", "say", message, "using", "Zarvox"])
 	os.popen("osascript -e 'say \"" + message + "\"' using Zarvox")
+
 
 def run_prey():
     global run_at
@@ -52,7 +55,7 @@ def run_prey():
     now = datetime.now()
     if (run_at is None) or (now - run_at > two_minutes):
         alert("Running Prey")
-        os.system(prey_command)
+        subprocess.Popen(prey_command.split(), stdout=prey_output, stderr=prey_output, shell=True)
         run_at = datetime.now()
 
 
