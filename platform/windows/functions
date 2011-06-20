@@ -118,26 +118,14 @@ on_demand_stdin(){
 # module functions
 ############################################
 
+# transforms integer into miliseconds, assuming integer is a minute
 get_delay_for(){
-	local delay_var=$(($1*1))
-	if [ "$delay_var" == "$1" ]; then # integer, minute
-		echo $(($1*60*1000))
-	else
-		case "$1" in
-		"hourly")
-			echo 3600000 # 60 * 60 * 1000
-			;;
-		"daily")
-			echo 86400000 # 24 * 60 * 60 * 1000
-			;;
-		"weekly")
-			echo 604800000 # 7 * 24 * 60 * 60 * 1000
-			;;
-		# "monthly")
-		# 	echo 18144000000 # 30 * 7 * 24 * 60 * 60 * 1000
-		# 	;;
-		esac
-	fi
+	echo $(($1*60*1000))
+}
+
+# returns 1 if delay is set to regular one-hour interval
+one_hour_interval(){
+	[ "$current_delay" == "$(get_delay_for 60)" ] && echo 1
 }
 
 get_current_delay(){
@@ -154,6 +142,24 @@ update_execution_delay(){
 
 is_module_active(){
 	cat "$base_path/modules/$1/active" 2> /dev/null
+}
+
+############################################
+# dummy trigger enabling functions
+# not needed as the trigger is bundled with Prey's CronService
+############################################
+
+# echoes 1 if it is
+is_trigger_loaded(){
+	echo 1
+}
+
+reload_trigger(){
+	return 0
+}
+
+unload_trigger(){
+	return 0
 }
 
 ############################################

@@ -173,31 +173,20 @@ get_random_number(){
 	echo $[ ( $RANDOM % $1 ) + 1 ]
 }
 
+# returns 1 if cron entry is set to one our intervals
+one_hour_interval(){
+	echo "$current_delay" | grep "/" > /dev/null || echo 1
+}
+
+# returns cron delay depending on device's state:
+# when missing, every X minutes, otherwise every hour on minute X
+get_delay_for(){
+	[ -n "$device_missing" ] && echo '*/'$1' * * * *' || echo "$1 * * * *"
+}
+
 get_current_delay(){
 	# crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
 	crontab -l 2> /dev/null | grep prey | head -1 | sed 's/ \/.*//'
-}
-
-get_delay_for(){
-	local delay_var=$(($1*1))
-	if [ "$delay_var" == "$1" ]; then # integer, minute
-		echo '*/'$1' * * * *'
-	else
-		case "$1" in
-		"hourly")
-			echo '1 * * * *' # first minute of every hour
-			;;
-		"daily")
-			echo '1 10 * * *' # at 10:01 o'clock every day
-			;;
-		"weekly")
-			echo '1 10 * * 1' # at 10:01 o'clock every monday
-			;;
-		# "monthly")
-		# 	echo '1 10 1 * *' # at 10:01 o'clock every 1st of month
-		# 	;;
-		esac
-	fi
 }
 
 update_execution_delay(){
@@ -211,16 +200,14 @@ check_and_update_delay(){
 	local requested_delay=$1
 	local current_delay=$(get_current_delay)
 	if [ -n "$device_missing" ]; then
-		local new_delay=$(get_delay_for $requested_delay)
 		if [ "$current_delay" != "$new_delay" ]; then
 			log " -- Setting frequency to $requested_delay!"
+			local new_delay=$(get_delay_for $requested_delay)
 			update_execution_delay "$new_delay"
-		else
-			log " -- Frequency in sync ($requested_delay)."
 		fi
-	elif [[ -z "$current_delay" || -n "$( find_in "$current_delay" "/")" ]]; then
+	elif [[ -z "$current_delay" || -z "$(one_hour_interval)" ]]; then
 		log " -- Setting delay to regular interval."
-		local new_delay="$(get_random_number 59) * * * *"
+		[ "$os" == "windows" ] && local new_delay=$(get_delay_for 60) || local new_delay="$(get_delay_for $(get_random_number 59))"
 		update_execution_delay "$new_delay"
 	fi
 }
