@@ -80,10 +80,7 @@ get_os(){
 	if [ "$os" == "windowsnt" ]; then
 		os=windows
 	else # linux/mac stuff
-		if [ "$os" == "darwin" ]; then
-			os=mac
-		fi
-		readonly logged_user=$(stat /dev/console | cut -d' ' -f5)
+		[ "$os" == "darwin" ] && os=mac
 		readonly root_path='/'
 		readonly home_path=$(eval echo ~)
 		[ -t 1 ] && set_colors # only set color if running from terminal (not Cron)

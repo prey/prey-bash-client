@@ -5,6 +5,7 @@
 # License: GPLv3
 ####################################################################
 
+readonly logged_user=$(who | cut -d' ' -f1 | tail -1)
 readonly system_path="/etc"
 readonly users_path="/home"
 readonly programs_path="/usr"
