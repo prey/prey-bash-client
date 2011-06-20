@@ -62,6 +62,36 @@ try_to_connect() {
 }
 
 ############################################
+# trigger enabling functions
+############################################
+
+# echoes 1 if it is
+is_trigger_loaded(){
+	launchctl list | grep "$launchd_trigger_label" > /dev/null && echo 1
+}
+
+reload_trigger(){
+	log " -- Setting up network detection trigger on LaunchDaemon..."
+	local trigger_plist_path="/Library/LaunchDaemons/${launchd_trigger_label}.plist"
+	if [ ! -e "$trigger_plist_path" ]; then
+		ln -s "${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"		
+		if [ $? != 0 ]; then
+			log " !! Couldn't copy Prey Trigger Plist into /Library/LaunchDaemons!"
+			return 1
+		fi
+	fi
+	launchctl unload "$trigger_plist_path"
+	launchctl load "$trigger_plist_path"
+}
+
+# unloads trigger from launchd and removes plist file
+unload_trigger(){
+	log " -- Removing network detection trigger from LaunchDaemon..."
+	launchctl unload "$launchd_trigger_label"
+	rm -f "/Library/LaunchDaemons/${launchd_trigger_label}"
+}
+
+############################################
 # updater-specific functions
 ############################################
 

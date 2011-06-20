@@ -185,4 +185,7 @@ if [[ -z "$on_demand_call" && "$on_demand_mode" == "true" ]]; then
 	enable_on_demand_mode
 fi
 
+# makes sure net trigger is loaded, either using launchdaemon (mac) or /init.d script (linux)
+ensure_trigger_loaded
+
 # exit 0

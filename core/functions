@@ -201,7 +201,7 @@ get_delay_for(){
 }
 
 update_execution_delay(){
-	local full_path=`full_path "$base_path"`
+	local full_path=$(full_path "$base_path")
 	(crontab -l | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
 }
 
@@ -223,6 +223,10 @@ check_and_update_delay(){
 		local new_delay="$(get_random_number 59) * * * *"
 		update_execution_delay "$new_delay"
 	fi
+}
+
+ensure_trigger_loaded(){
+	[ -z "$(is_trigger_loaded)" ] && reload_trigger
 }
 
 ####################################################################
