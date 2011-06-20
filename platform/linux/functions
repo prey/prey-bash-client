@@ -172,20 +172,21 @@ linux_copy_init_script(){
 	local full_init_script_path="$1/$2"
 	if [ ! -e "$full_init_script_path" ]; then
 		ln -s "$(full_path $base_path)/${platform_path}/${2}" "$full_init_script_path" 2> /dev/null
-		if [ $? != 0 ]; then
-			log " !! Couldn't copy init script into ${1}!"
-			return 1
-		fi
+		local retval=$?
+		[ $retval != 0 ] && log " !! Couldn't copy init script into ${1}!"
+		return $retval
 	fi
+	return 0
 }
 
 linux_remove_init_script(){
 	rm -f "$1/$2"
+	return $?
 }
 
 debian_load_service(){
 	linux_copy_init_script '/etc/init.d' $1
-	update-rc.d $1 defaults > /dev/null
+	[ $? == 0 ] && update-rc.d $1 defaults > /dev/null
 }
 
 alias ubuntu_load_service='debian_load_service'
@@ -201,14 +202,14 @@ alias ubuntu_unload_service='debian_unload_service'
 
 redhat_load_service(){
 	linux_copy_init_script '/etc/rc.d/init.d' $1
-	chkconfig $1 on
+	[ $? == 0 ] && chkconfig $1 on
 }
 
 alias fedora_load_service='redhat_load_service'
 
 redhat_unload_service(){
 	linux_remove_init_script '/etc/rc.d/init.d' $1
-	chkconfig $1 off
+	[ $? == 0 ] && chkconfig $1 off
 }
 
 alias fedora_unload_service='redhat_unload_service'
