@@ -1,0 +1,68 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:          prey-trigger
+# Required-Start:    $local_fs $remote_fs $syslog
+# Required-Stop:     $local_fs $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: starts prey network detection trigger
+# Description:       starts prey network trigger using start-stop-daemon
+### END INIT INFO
+
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+PREY_PATH=/usr/share/prey
+DAEMON="$PREY_PATH/platform/linux/prey-trigger.py"
+NAME=prey-trigger
+DESC=prey-trigger
+
+# Include defaults if available
+if [ -f /etc/default/prey-trigger ]; then
+	. /etc/default/prey-trigger
+fi
+
+test -x $DAEMON || exit 0
+
+set -e
+
+. /lib/lsb/init-functions
+
+case "$1" in
+	start)
+		echo -n "Starting $DESC: "
+		start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
+		    --exec $DAEMON -- $DAEMON_OPTS || true
+		echo "$NAME."
+		;;
+
+	stop)
+		echo -n "Stopping $DESC: "
+		start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
+		    --exec $DAEMON || true
+		echo "$NAME."
+		;;
+
+	restart|force-reload)
+		echo -n "Restarting $DESC: "
+		start-stop-daemon --stop --quiet --pidfile \
+		    /var/run/$NAME.pid --exec $DAEMON || true
+		sleep 1
+		start-stop-daemon --start --quiet --pidfile \
+		    /var/run/$NAME.pid --exec $DAEMON -- $DAEMON_OPTS || true
+		echo "$NAME."
+		;;
+
+	reload)
+		echo -n "Reloading $DESC configuration: "
+		start-stop-daemon --stop --signal HUP --quiet --pidfile /var/run/$NAME.pid \
+		    --exec $DAEMON || true
+		echo "$NAME."
+		;;
+
+	*)
+		echo "Usage: $NAME {start|stop|restart|reload|force-reload}" >&2
+		exit 1
+		;;
+esac
+
+exit 0

@@ -73,6 +73,37 @@ reverse_tunnel_command(){
 }
 
 ############################################
+# trigger enabling functions
+############################################
+
+# echoes 1 if it is
+is_trigger_loaded(){
+	find /etc/rc1.d/ | grep prey-trigger > /dev/null && echo 1
+}
+
+reload_trigger(){
+	log " -- Setting up network detection trigger init script..."
+	local trigger_init_script="/etc/init.d/prey-trigger"
+	if [ ! -e "$trigger_init_script" ]; then
+		ln -s "$(full_path $base_path)/${platform_path}/prey-trigger" "$trigger_init_script" 2> /dev/null
+		if [ $? != 0 ]; then
+			log " !! Couldn't copy Prey Trigger init script into /etc/init.d!"
+			return 1
+		fi
+	fi
+	update-rc.d prey-trigger defaults > /dev/null
+}
+
+# unloads trigger from launchd and removes plist file
+unload_trigger(){
+	log " -- Removing network detection trigger init script..."
+	rm -f /etc/init.d/prey-trigger
+	# we need to delete the init script first so that update-rc.d remove works
+	# otherwise we'd  need to use the -f argument
+	update-rc.d prey-trigger remove > /dev/null
+}
+
+############################################
 # updater-specific functions
 ############################################
 
