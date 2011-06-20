@@ -153,11 +153,6 @@ check_on_demand_status(){
 		on_demand_cleanup
 		sleep 3 # just to make sure changes are reflected as they should
 
-	else
-
-		echo -e " -- Prey On Demand is active and connected. Back to sleep...\n"
-		exit 1
-
 	fi
 
 }
