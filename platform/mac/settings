@@ -5,6 +5,7 @@
 # License: GPLv3
 ####################################################################
 
+readonly logged_user=$(stat /dev/console | cut -d' ' -f5)
 readonly logged_pid=`ps aux | awk -v Var=${logged_user} '/loginwindow.app/ && match(Var,$1) { print $2 }'`
 
 readonly system_path="/Library"
