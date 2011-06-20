@@ -1,4 +1,10 @@
 #!/bin/sh
+#
+# prey-trigger init script
+#
+# chkconfig:   2345 20 80
+# description: starts prey network detection trigger
+#
 
 ### BEGIN INIT INFO
 # Provides:          prey-trigger
@@ -31,31 +37,31 @@ case "$1" in
 	start)
 		echo -n "Starting $DESC: "
 		start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
-		    --exec $DAEMON -- $DAEMON_OPTS || true
+			--exec $DAEMON -- $DAEMON_OPTS || true
 		echo "$NAME."
 		;;
 
 	stop)
 		echo -n "Stopping $DESC: "
 		start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
-		    --exec $DAEMON || true
+			--exec $DAEMON || true
 		echo "$NAME."
 		;;
 
 	restart|force-reload)
 		echo -n "Restarting $DESC: "
 		start-stop-daemon --stop --quiet --pidfile \
-		    /var/run/$NAME.pid --exec $DAEMON || true
+			/var/run/$NAME.pid --exec $DAEMON || true
 		sleep 1
 		start-stop-daemon --start --quiet --pidfile \
-		    /var/run/$NAME.pid --exec $DAEMON -- $DAEMON_OPTS || true
+			/var/run/$NAME.pid --exec $DAEMON -- $DAEMON_OPTS || true
 		echo "$NAME."
 		;;
 
 	reload)
 		echo -n "Reloading $DESC configuration: "
 		start-stop-daemon --stop --signal HUP --quiet --pidfile /var/run/$NAME.pid \
-		    --exec $DAEMON || true
+			--exec $DAEMON || true
 		echo "$NAME."
 		;;
 
