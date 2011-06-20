@@ -175,7 +175,7 @@ get_random_number(){
 
 get_current_delay(){
 	# crontab -l | grep prey | sed "s/^..\([0-9]*\).*/\1/"
-	crontab -l | grep prey | head -1 | sed 's/ \/.*//'
+	crontab -l 2> /dev/null | grep prey | head -1 | sed 's/ \/.*//'
 }
 
 get_delay_for(){
@@ -202,10 +202,10 @@ get_delay_for(){
 
 update_execution_delay(){
 	local full_path=$(full_path "$base_path")
-	(crontab -l | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
+	(crontab -l 2> /dev/null | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
 }
 
-# if device is missing we'll make sure the current delay matches the one 
+# if device is missing we'll make sure the current delay matches the one
 # on the server. otherwise we'll make sure it is set to the regular interval.
 check_and_update_delay(){
 	local requested_delay=$1
@@ -217,8 +217,8 @@ check_and_update_delay(){
 			update_execution_delay "$new_delay"
 		else
 			log " -- Frequency in sync ($requested_delay)."
-		fi		
-	elif [ -n "$( find_in "$current_delay" "/")" ]; then
+		fi
+	elif [[ -z "$current_delay" || -n "$( find_in "$current_delay" "/")" ]]; then
 		log " -- Setting delay to regular interval."
 		local new_delay="$(get_random_number 59) * * * *"
 		update_execution_delay "$new_delay"
