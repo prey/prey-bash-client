@@ -1,0 +1,83 @@
+#!/bin/bash
+####################################################################
+# Prey Linux Service Management Functions - (c) 2011, Fork Ltd.
+# Written by Tomas Pollak <tomas@forkhq.com>
+# Licensed under the GPLv3.
+####################################################################
+
+linux_load_service(){
+	get_distro_name
+	eval "${distro_name}_load_service $1"
+}
+
+linux_unload_service(){
+	get_distro_name
+	eval "${distro_name}_unload_service $1"
+}
+
+linux_copy_init_script(){
+	local full_init_script_path="$1/$2"
+	if [ ! -e "$full_init_script_path" ]; then
+		ln -s "$(full_path $base_path)/${platform_path}/${2}" "$full_init_script_path" 2> /dev/null
+		local retval=$?
+		[ $retval != 0 ] && log " !! Couldn't copy init script into ${1}!"
+		return $retval
+	fi
+	return 0
+}
+
+linux_remove_init_script(){
+	rm -f "$1/$2"
+	return $?
+}
+
+#######################################
+# distro-specific functions
+#######################################
+
+debian_load_service(){
+	linux_copy_init_script '/etc/init.d' $1
+	[ $? == 0 ] && update-rc.d $1 defaults > /dev/null
+}
+
+# we need to delete the init script first so that update-rc.d remove works
+# otherwise we'd need to use the -f argument
+debian_unload_service(){
+	linux_remove_init_script '/etc/init.d' $1
+	[ $? == 0 ] && update-rc.d $1 remove > /dev/null
+}
+
+alias ubuntu_load_service='debian_load_service'
+alias ubuntu_unload_service='debian_unload_service'
+
+redhat_load_service(){
+	linux_copy_init_script '/etc/rc.d/init.d' $1
+	[ $? == 0 ] && chkconfig $1 on
+}
+
+redhat_unload_service(){
+	linux_remove_init_script '/etc/rc.d/init.d' $1
+	[ $? == 0 ] && chkconfig $1 off
+}
+
+alias fedora_load_service='redhat_load_service'
+alias fedora_unload_service='redhat_unload_service'
+
+suse_load_service(){
+	linux_copy_init_script '/etc/init.d' $1
+	[ $? == 0 ] && chkconfig --add $1
+}
+
+suse_load_service(){
+	linux_copy_init_script '/etc/init.d' $1
+	[ $? == 0 ] && chkconfig --del $1
+}
+
+arch_load_service(){
+	linux_copy_init_script '/etc/rc.d' $1
+	[ $? == 0 ] && log " -- Prey network trigger has been copied to /etc/rc.d/$1. Remember to add it to /etc/rc.conf!"
+}
+
+arch_unload_service(){
+	linux_copy_init_script '/etc/rc.d' $1
+}

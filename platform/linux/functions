@@ -4,6 +4,8 @@
 # (c) 2010 Fork Ltd. (usefork.com) - Licensed under the GPLv3.
 ####################################################################
 
+. "$platform_path/services"
+
 run_as_current_user(){
 	if [ "`whoami`" != "$logged_user" ]; then
 		DISPLAY=:0 sudo su $logged_user -c "$1"
@@ -73,6 +75,7 @@ reverse_tunnel_command(){
 ############################################
 
 # echoes 1 if prey trigger is set
+# TODO: check if this works in other distros beside the Debian derivatives
 is_trigger_loaded(){
 	find /etc/rc3.d/ | grep 'prey-trigger' > /dev/null && echo 1
 }
@@ -153,63 +156,3 @@ get_distro_name(){
 	fi
 
 }
-
-############################################
-# distro-specific functions
-############################################
-
-linux_load_service(){
-	get_distro_name
-	eval "${distro_name}_load_service $1"
-}
-
-linux_unload_service(){
-	get_distro_name
-	eval "${distro_name}_unload_service $1"
-}
-
-linux_copy_init_script(){
-	local full_init_script_path="$1/$2"
-	if [ ! -e "$full_init_script_path" ]; then
-		ln -s "$(full_path $base_path)/${platform_path}/${2}" "$full_init_script_path" 2> /dev/null
-		local retval=$?
-		[ $retval != 0 ] && log " !! Couldn't copy init script into ${1}!"
-		return $retval
-	fi
-	return 0
-}
-
-linux_remove_init_script(){
-	rm -f "$1/$2"
-	return $?
-}
-
-debian_load_service(){
-	linux_copy_init_script '/etc/init.d' $1
-	[ $? == 0 ] && update-rc.d $1 defaults > /dev/null
-}
-
-alias ubuntu_load_service='debian_load_service'
-
-# we need to delete the init script first so that update-rc.d remove works
-# otherwise we'd need to use the -f argument
-debian_unload_service(){
-	linux_remove_init_script '/etc/init.d' $1
-	[ $? == 0 ] && update-rc.d $1 remove > /dev/null
-}
-
-alias ubuntu_unload_service='debian_unload_service'
-
-redhat_load_service(){
-	linux_copy_init_script '/etc/rc.d/init.d' $1
-	[ $? == 0 ] && chkconfig $1 on
-}
-
-alias fedora_load_service='redhat_load_service'
-
-redhat_unload_service(){
-	linux_remove_init_script '/etc/rc.d/init.d' $1
-	[ $? == 0 ] && chkconfig $1 off
-}
-
-alias fedora_unload_service='redhat_unload_service'
