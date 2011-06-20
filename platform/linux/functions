@@ -93,32 +93,39 @@ post_update_hook(){
 ############################################
 
 get_pc_info(){
-	pc_name=`hostname`
+	pc_name=$(hostname)
 
 	`which laptop-detect`
 	if [ $? == 1 ]; then
 		pc_type="Desktop"
 	else
-		pc_type="Portable"
+		pc_type="Laptop"
 	fi
 
 	local distro=`cat /proc/version 2>&1`
 
 	# todo: make this in a more efficient way
 	if [ -n `find_in $distro 'Ubuntu'` ]; then
-		pc_os_version='ubuntu'
+		pc_os_name=Ubuntu
+		pc_os_version=$(lsb_release -r | sed 's/.*\t//g')
 	elif [ -n `find_in $distro 'Debian'` ]; then
-		pc_os_version='ubuntu' # Ian please dont kill me
+		pc_os_name=Debian
+		pc_os_version=$(cat /etc/debian_version)
 	elif [ -n `find_in $distro 'Fedora'` ]; then
-		pc_os_version='fedora'
+		pc_os_name=Fedora
+		pc_os_version='' # TODO
 	elif [ -n `find_in $distro 'Redhat'` ]; then
-		pc_os_version='fedora'
+		pc_os_name=Fedora
+		pc_os_version='' # TODO
 	elif [ -n `find_in $distro 'CentOS'` ]; then
-		pc_os_version='fedora'
+		pc_os_name=Fedora
+		pc_os_version='' # TODO
 	elif [ -n `find_in $distro 'SuSE'` ]; then
-		pc_os_version='suse'
+		pc_os_name=Suse
+		pc_os_version='' # TODO
 	else
-		pc_os_version='other'
+		pc_os_name=Linux
+		pc_os_version=''
 	fi
 
 }

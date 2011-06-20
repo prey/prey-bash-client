@@ -117,7 +117,7 @@ get_pc_info(){
 	if [ -z "$is_macbook" ]; then
 		pc_type="Desktop"
 	else
-		pc_type="Portable"
+		pc_type="Laptop"
 	fi
 
 }
