@@ -78,7 +78,7 @@ reverse_tunnel_command(){
 
 # echoes 1 if prey trigger is set
 is_trigger_loaded(){
-	find /etc/rc1.d/ | grep prey-trigger > /dev/null && echo 1
+	find /etc/rc3.d/ | grep prey-trigger > /dev/null && echo 1
 }
 
 reload_trigger(){
