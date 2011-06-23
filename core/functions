@@ -143,8 +143,7 @@ add_file(){
 
 list_files(){
 	# log " -- ${#files[*]} files gathered!"
-	for f in "${files[@]}"
-	do
+	for f in "${files[@]}"; do
 		if [ "$post_method" == 'http' ]; then
 			# echo -e "-F $f" | sed -e 's/=/=@/'
 			echo "-F $f" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=@\3/'
@@ -155,8 +154,7 @@ list_files(){
 }
 
 remove_files(){
-	for f in "${files[@]}"
-	do
+	for f in "${files[@]}"; do
 		file=`echo $f | sed 's/^.*=\(.*\)/\1/'`
 		rm -f "$file"
 		log " -- Removed $file"
@@ -278,13 +276,13 @@ verify_smtp_settings(){
 	if [ "$smtp_username" != "username@gmail.com" ]; then
 		log " -- SMTP username set."
 	else
-		log " -- SMTP username not set!"
+		log " !! SMTP username not set!"
 	fi
 
 	if [ "$(decrypt $smtp_password)" != "" ]; then
 		log " -- Password seems to be fine as well."
 	else
-		log " -- Password not set! (Remember it should be base64 encrypted)."
+		log " !! Password not set! (Remember it should be base64 encrypted)."
 	fi
 
 }
