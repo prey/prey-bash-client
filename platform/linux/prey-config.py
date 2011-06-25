@@ -74,7 +74,8 @@ class PreyConfigurator(object):
 
 	def validate_email(self, string):
 		if len(string) > 7:
-			if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,3}|[0-9]{1,3})(\\]?)$", string) != None:
+			# NOTE: domain suffix should be one of those in this list: http://en.wikipedia.org/wiki/List_of_Internet_top-level_domains
+			if re.match("^.+\\@(\\[?)[a-zA-Z0-9\\-\\.]+\\.([a-zA-Z]{2,4}|[0-9]{1,3}|travel|museum)(\\]?)$", string) != None:
 				return True
 		return False
 
