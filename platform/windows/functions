@@ -212,11 +212,11 @@ get_current_hostname(){
 
 get_pc_info(){
 
-	pc_name=`get_current_hostname`
+	pc_name=$(get_current_hostname)
 	if [ -n "$winxp" ]; then
 		pc_os_version="xp"
 	else
-		local pc_os_number=`echo 'os get caption' | wmic 2> /dev/null | grep -i 'microsoft'`
+		local pc_os_number=$(echo 'os get caption' | wmic 2> /dev/null | grep -i 'microsoft')
 
 		if [[ -n `echo "$pc_os_number" | grep -i 'vista'` ]]; then
 			pc_os_version="vista"
