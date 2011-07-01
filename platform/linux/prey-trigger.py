@@ -25,7 +25,7 @@ def connected():
 
 # only for testing purposes
 def alert(message):
-    os.system("echo '" + message + "' | espeak")
+    os.system("echo '" + message + "' | espeak 2> /dev/null")
 
 def run_prey():
     global run_at

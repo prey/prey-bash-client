@@ -68,8 +68,8 @@ suse_load_service(){
 	[ $? == 0 ] && chkconfig --add $1
 }
 
-suse_load_service(){
-	linux_copy_init_script '/etc/init.d' $1
+suse_unload_service(){
+	linux_remove_init_script '/etc/init.d' $1
 	[ $? == 0 ] && chkconfig --del $1
 }
 
@@ -79,5 +79,5 @@ arch_load_service(){
 }
 
 arch_unload_service(){
-	linux_copy_init_script '/etc/rc.d' $1
+	linux_remove_init_script '/etc/rc.d' $1
 }
