@@ -144,8 +144,7 @@ remove_traces(){
 add_file(){
 	if [ -f "$2" ]; then
 		log " ++ Adding file for $current_module: $1 -> $2"
-		local var="${current_module}__$1=$2"
-		store_var 'files' "$var"
+		store_key_value 'files' "${current_module}__$1" "$2"
 	else
 		log " ${red}!!${color_end} Couldn't find file at $2!"
 	fi
