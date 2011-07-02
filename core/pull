@@ -47,13 +47,6 @@ check_device_status(){
 		[ "$randomize_check_host" == 'y' ] && randomize_subdomain
 	fi
 
-	if [ "$extended_headers" == 'y' ]; then
-		log ' -- Requesting with extra sauce!'
-		get_internal_ip
-		get_gateway_ip
-		local request_headers="$request_headers -H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
-	fi
-
 	send_request "$check_url" "$request_headers"
 	check_encrypted_response
 

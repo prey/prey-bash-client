@@ -12,8 +12,25 @@ run_as_current_user(){
 	fi
 }
 
+
+####################################################################
+# network stuff
+####################################################################
+
+get_mac_address(){
+	ifconfig $1 2> /dev/null | grep 'HWaddr' | awk '{print $5}'
+}
+
+get_ip_address(){
+	ifconfig $1 2> /dev/null | grep "inet " | awk '{print $2}' | sed "s/addr://"
+}
+
+get_netmask(){
+	ifconfig $1 2> /dev/null | grep "Mask:" | awk '{print $4}' | sed "s/Mask://"
+}
+
 get_gateway_ip() {
-	[ -z "$gateway_ip" ] && gateway_ip=$(ip r | grep default | cut -d ' ' -f 3)
+	ip r | grep "$1" | grep default | cut -d ' ' -f 3
 }
 
 get_wifi_device() {
