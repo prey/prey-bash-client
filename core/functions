@@ -84,7 +84,7 @@ store_var(){
 }
 
 store_key_value(){
-	store_var "$1" "$2=$3"
+	store_var "$1" "$2=\"$3\""
 }
 
 # if you need to fetch a specific trace or file
@@ -103,11 +103,12 @@ get_file(){
 separator='########################################################'
 
 generate_query_string(){
-	[ -n "$2" ] && prefix="$2" || prefix=" -F "
+	local default_prefix="\n -F "
+	[ -n "$2" ] && prefix="$2" || prefix="$default_prefix"
 	for t in $(eval echo \${$1[@]}); do
 		local start=`echo ${t%%=*}`
 		local index=`echo $(( ${#start} + 1 ))`
-		if [ "$prefix" != " -F " ]; then
+		if [ "$prefix" != "$default_prefix" ]; then
 			local trace_field=`echo "$start" | sed "s/^\([^_].*\)__\(.*\)/[\1][\2]/"`
 		else
 			local trace_field=`echo "$start" | sed 's/^\([^_].*\)__\(.*\)/\1[\2]/'`
@@ -118,7 +119,7 @@ generate_query_string(){
 
 generate_list(){
 	for t in $(eval echo \${$1[@]}); do
-		local current_node=`echo $t | sed 's/__.*//'`
+		local current_node=$(echo $t | sed 's/__.*//')
 		[ "$current_node" != "$previous_node" ] && echo -e "$separator\n# $current_node\n$separator\n"
 		# removes module name and replaces _'s with whitespaces
 		echo -e "$t\n" | sed -e 's/^\([^_].*\)__/ :: /' -e 's/%20/ /g' -e 's/_/ /'
@@ -131,7 +132,7 @@ generate_list(){
 ####################################################################
 
 add_trace(){
-	local urlencoded=`urlencode "$2"`
+	local urlencoded=$(urlencode "$2")
 	log " ++ Adding trace for $current_module: $1"
 	store_key_value 'traces' "${current_module}__$1" "$urlencoded"
 }

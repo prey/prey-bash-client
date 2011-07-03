@@ -37,7 +37,7 @@ randomize_subdomain(){
 # we could eventually use a different method for status checking
 check_device_status(){
 	if [ "$post_method" == 'http' ]; then
-		local request_headers="-H X-Encrypt-Response:${cipher_algorithm}"
+		request_headers="-H X-Encrypt-Response:${cipher_algorithm}"
 
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
