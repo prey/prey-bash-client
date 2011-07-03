@@ -84,7 +84,7 @@ store_var(){
 }
 
 store_key_value(){
-	store_var "$1" "$2" "$3"
+	store_var "$1" "$2=$3"
 }
 
 # if you need to fetch a specific trace or file
