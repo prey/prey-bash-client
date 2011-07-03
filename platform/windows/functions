@@ -56,16 +56,20 @@ is_net_framework_installed() {
 # core network functions
 ############################################
 
-get_gateway_ip() {
-	if [ -z "$gateway_ip" ]; then
-		gateway_ip=`ifconfig.exe //all | awk -F ":" '/Gateway/	{print $2}'`
-	fi
+get_mac_address() {
+	ipconfig -all | grep Physical | sed 's/^.*: //g' | grep -v '^$' | head -1
 }
 
-get_internal_ip() {
-	if [ -z "$internal_ip" ]; then
-		internal_ip=`ifconfig.exe //all | grep "IP  Address" | sed "s/.*:\([0-9\.]*\) .*/\1/g" | grep -v "^$" | grep -v "0.0.0.0" | head -1`
-	fi
+get_ip_address() {
+	ifconfig.exe //all | grep "IP  Address" | sed "s/.*:\([0-9\.]*\) .*/\1/g" | grep -v "^$" | grep -v "0.0.0.0" | head -1
+}
+
+get_netmask(){
+	echo "" # TODO!
+}
+
+get_gateway_ip() {
+	ifconfig.exe //all | awk -F ":" '/Gateway/	{print $2}'
 }
 
 get_wifi_info() {
@@ -218,11 +222,11 @@ get_current_hostname(){
 
 get_pc_info(){
 
-	pc_name=`get_current_hostname`
+	pc_name=$(get_current_hostname)
 	if [ -n "$winxp" ]; then
 		pc_os_version="xp"
 	else
-		local pc_os_number=`echo 'os get caption' | wmic 2> /dev/null | grep -i 'microsoft'`
+		local pc_os_number=$(echo 'os get caption' | wmic 2> /dev/null | grep -i 'microsoft')
 
 		if [[ -n `echo "$pc_os_number" | grep -i 'vista'` ]]; then
 			pc_os_version="vista"

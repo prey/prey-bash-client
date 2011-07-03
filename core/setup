@@ -113,7 +113,7 @@ set_aliases(){
 
 set_constants(){
 	readonly lang
-	readonly start_time=`date +"%F %T"`
+	readonly start_time=$(date +"%F %T")
 
 	readonly config_file="$base_path/config"
 	readonly tmpdir="$tmpbase/p${RANDOM}"
