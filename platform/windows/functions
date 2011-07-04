@@ -56,20 +56,36 @@ is_net_framework_installed() {
 # core network functions
 ############################################
 
+# used only in network module. system module gets the MAC from wmic
 get_mac_address() {
-	ipconfig -all | grep Physical | sed 's/^.*: //g' | grep -v '^$' | head -1
+	ifconfig //all | grep MAC | sed 's/^.*: //g'
 }
 
+# gets all ip addresses or the one from NIC matching a specific MAC
 get_ip_address() {
-	ifconfig.exe //all | grep "IP  Address" | sed "s/.*:\([0-9\.]*\) .*/\1/g" | grep -v "^$" | grep -v "0.0.0.0" | head -1
+	if [ -n "$1" ]; then
+		ifconfig //all | grep "$1" -A1 | grep "IP" | sed "s/.*:\([0-9\.]*\) .*/\1/"
+	else # get all ip addresses
+		ifconfig //all | grep "IP" | sed "s/.*:\([0-9\.]*\) .*/\1/g"
+	fi
 }
 
+# gets all netmasks or the one matching a specific MAC
 get_netmask(){
-	echo "" # TODO!
+	if [ -n "$1" ]; then
+		ifconfig //all | grep "$1" -A2 | grep "Mask" | sed "s/.*:\([0-9\.]*\) .*/\1/"
+	else # get all netmasks
+		ifconfig //all | grep "Mask" | sed "s/.*:\([0-9\.]*\) .*/\1/g"
+	fi
 }
 
+# gets all netmasks or the one matching a specific MAC
 get_gateway_ip() {
-	ifconfig.exe //all | awk -F ":" '/Gateway/	{print $2}'
+	if [ -n "$1" ]; then
+		ifconfig //all | grep "$1" -A3 | grep "Gateway" | awk -F ":" '{print $2}'
+	else # get all netmasks
+		ifconfig //all | grep "Gateway" | awk -F ":" '{print $2}'
+	fi
 }
 
 get_wifi_info() {
