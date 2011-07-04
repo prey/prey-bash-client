@@ -137,7 +137,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 		process_config
 		process_module_config
 
-		if [ -n "$missing" ]; then
+		if [ -n "$device_missing" ]; then
 
 			log "$STRING_PROBLEM"
 
