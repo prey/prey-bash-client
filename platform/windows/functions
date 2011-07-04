@@ -137,7 +137,7 @@ get_current_delay(){
 }
 
 update_execution_delay(){
-	reg add "$prey_reg_key" //v "Delay" //d "$new_delay" //f > /dev/null
+	reg add "$prey_reg_key" //v "Delay" //d "$1" //f > /dev/null
 }
 
 ############################################

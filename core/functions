@@ -132,9 +132,8 @@ generate_list(){
 ####################################################################
 
 add_trace(){
-	local urlencoded=$(urlencode "$2")
 	log " ++ Adding trace for $current_module: $1"
-	store_key_value 'traces' "${current_module}__$1" "$urlencoded"
+	store_key_value 'traces' "${current_module}__$1" "$(urlencode "$2")"
 }
 
 remove_traces(){
@@ -199,18 +198,17 @@ get_current_delay(){
 
 update_execution_delay(){
 	local full_path=$(full_path "$base_path")
-	(crontab -l 2> /dev/null | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
+	(crontab -l 2> /dev/null | grep -v prey; echo "${1}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
 }
 
 # if device is missing we'll make sure the current delay matches the one
 # on the server. otherwise we'll make sure it is set to the regular interval.
 check_and_update_delay(){
-	local requested_delay=$1
 	local current_delay=$(get_current_delay)
 	if [ -n "$device_missing" ]; then
+		local new_delay=$(get_delay_for "$1")
 		if [ "$current_delay" != "$new_delay" ]; then
-			log " -- Setting frequency to $requested_delay!"
-			local new_delay=$(get_delay_for $requested_delay)
+			log " -- Setting frequency to $1!"
 			update_execution_delay "$new_delay"
 		fi
 	elif [[ -z "$current_delay" || -z "$(one_hour_interval)" ]]; then
