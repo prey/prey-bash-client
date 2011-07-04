@@ -18,7 +18,7 @@ run_as_current_user(){
 ####################################################################
 
 get_mac_address() {
-	networksetup -getmacaddress $1 2> /dev/null
+	networksetup -getmacaddress $1 2> /dev/null | sed "s/.*: \([a-f0-9:]*\) .*/\1/"
 }
 
 get_ip_address(){
