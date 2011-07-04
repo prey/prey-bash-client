@@ -28,7 +28,6 @@ show_usage(){
 	echo -e "  -c | --check\t\tCheck mode. Checks if configuration is correctly set up."
 	echo -e "  -l | --log\t\tLog output to ${base_path}/prey.log (default in Windows)."
 	echo -e "  -s | --silent\t\tDon't log any output."
-	echo -e "  -o | --on-demand\tRuns Prey without checking if on-demand mode is active.\n"
 }
 
 show_version(){
@@ -56,10 +55,6 @@ until [ -z "$1" ]; do
 		-c | --check )
 			echo -e "\n -- CHECK MODE ON."
 			check_mode=1
-		;;
-			-o | --on-demand )
-			echo -e "\n -- ON-DEMAND MODE ON."
-			on_demand_call=1
 		;;
 			-l | --log )
 			logfile="$base_path/prey.log"
@@ -137,14 +132,15 @@ set_colors(){
 
 check_on_demand_status(){
 
-	# if this is a regular call (from cron) let's check if we should run or not
-	if [[ -n "$on_demand_call" || ! -f "$on_demand_pipefile" ]]; then
-		return 1
-	fi
-
 	# we check if the pipe has been used to send pings in the last ten minutes
 	# if not, then we assume the connection has been cut off
-	if test `find "$on_demand_pipefile" -mmin +10`; then
+	# if the file doesn't exist, simply return
+
+	if [ ! -f "$on_demand_pipefile" ]; then
+
+		return 1
+
+	elif test $(find "$on_demand_pipefile" -mmin +10); then
 
 		echo " -- On Demand connection seems to have ended. Cleaning up and resetting..."
 		. "$base_path/core/on_demand"
@@ -162,4 +158,4 @@ set_vars
 set_aliases
 . "$platform_path/settings"
 set_constants
-check_on_demand_status
+[ -z "$immediate_request" ] && check_on_demand_status
