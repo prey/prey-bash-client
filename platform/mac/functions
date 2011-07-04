@@ -74,22 +74,27 @@ reload_trigger(){
 	log " -- Setting up network detection trigger on LaunchDaemon..."
 	local trigger_plist_path="/Library/LaunchDaemons/${launchd_trigger_label}.plist"
 	if [ ! -e "$trigger_plist_path" ]; then
-		ln -s "${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"		
+		# ln -s "$(full_path $base_path)/${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"		
+		cp "${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"
+		chown root: "${trigger_plist_path}"
 		if [ $? != 0 ]; then
 			log " !! Couldn't copy Prey Trigger Plist into /Library/LaunchDaemons!"
 			return 1
 		fi
 	fi
-	launchctl unload "$trigger_plist_path"
 	launchctl load "$trigger_plist_path"
+#	launchctl unload "${trigger_plist_path}"
+
 }
 
 # unloads trigger from launchd and removes plist file
 unload_trigger(){
+	local trigger_plist_path="/Library/LaunchDaemons/${launchd_trigger_label}.plist"
 	log " -- Removing network detection trigger from LaunchDaemon..."
-	launchctl unload "$launchd_trigger_label"
-	rm -f "/Library/LaunchDaemons/${launchd_trigger_label}"
+	rm -f "${trigger_plist_path}"
 }
+
+unload_trigger
 
 ############################################
 # updater-specific functions
