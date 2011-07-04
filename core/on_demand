@@ -48,7 +48,7 @@ on_demand_process_msg(){
 			if [ "$message_type" == "text" ]; then
 				local message_body=`get_json_val "$data" 'body'`
 				if [ "$message_body" == "run_once" ]; then
-					"$base_path/prey.sh" --on-demand & disown -h
+					"$base_path/prey.sh" -i & disown -h
 				else
 					log " -- Unknown message: $message_body. Please update to latest version."
 				fi

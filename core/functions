@@ -79,6 +79,14 @@ get_var(){
 	eval 'echo ${'"${2}"'}'
 }
 
+store_var(){
+	eval $1[\${#$1[*]}]="$2"
+}
+
+store_key_value(){
+	store_var "$1" "$2=\"$3\""
+}
+
 # if you need to fetch a specific trace or file
 get_trace(){
 	get_var traces ${1}__$2
@@ -89,41 +97,43 @@ get_file(){
 }
 
 ####################################################################
-# trace functions
+# list generators for report
 ####################################################################
-
-add_trace(){
-	local urlencoded=`urlencode "$2"`
-	local trace="${current_module}__$1=$urlencoded"
-	log " ++ Adding trace for $current_module: $1"
-	# we need to encode whitespaces, otherwise well get into trouble
-	traces[${#traces[*]}]="$trace"
-}
 
 separator='########################################################'
 
-list_traces(){
-	# echo " -- ${#traces[*]} traces gathered!"
-	for t in "${traces[@]}"
-	do
-		if [ "$post_method" == 'http' ]; then
-			# echo -n $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]="\3"\&/' # query string
-			# echo "-F $t" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=\3/' # form field list
-			# echo $t | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)$/<\2>\3<\/\2>/' # xml
-			local start=`echo ${t%%=*}`
-			local index=`echo $(( ${#start} + 1 ))`
-			local trace_field=`echo "-F $start" | sed 's/^\([^_].*\)__\(.*\)/\1[\2]/'`
-			echo "${trace_field}=${t:index}"
+generate_query_string(){
+	local default_prefix="\n -F "
+	[ -n "$2" ] && prefix="$2" || prefix="$default_prefix"
+	for t in $(eval echo \${$1[@]}); do
+		local start=`echo ${t%%=*}`
+		local index=`echo $(( ${#start} + 1 ))`
+		if [ "$prefix" != "$default_prefix" ]; then
+			local trace_field=`echo "$start" | sed "s/^\([^_].*\)__\(.*\)/[\1][\2]/"`
 		else
-			local current_node=`echo $t | sed 's/__.*//'`
-			if [ "$current_node" != "$previous_node" ]; then
-				echo -e "$separator\n# $current_node\n$separator\n"
-			fi
-			# removes module name and replaces _'s with whitespaces
-			echo -e "$t\n" | sed -e 's/^\([^_].*\)__/ :: /' -e 's/%20/ /g' -e 's/_/ /'
-			local previous_node=$current_node
+			local trace_field=`echo "$start" | sed 's/^\([^_].*\)__\(.*\)/\1[\2]/'`
 		fi
+		echo -n "${prefix}${trace_field}=${t:index}"
 	done
+}
+
+generate_list(){
+	for t in $(eval echo \${$1[@]}); do
+		local current_node=$(echo $t | sed 's/__.*//')
+		[ "$current_node" != "$previous_node" ] && echo -e "$separator\n# $current_node\n$separator\n"
+		# removes module name and replaces _'s with whitespaces
+		echo -e "$t\n" | sed -e 's/^\([^_].*\)__/ :: /' -e 's/%20/ /g' -e 's/_/ /'
+		local previous_node=$current_node
+	done
+}
+
+####################################################################
+# trace & file functions
+####################################################################
+
+add_trace(){
+	log " ++ Adding trace for $current_module: $1"
+	store_key_value 'traces' "${current_module}__$1" "$(urlencode "$2")"
 }
 
 remove_traces(){
@@ -131,11 +141,10 @@ remove_traces(){
 	log " -- Dropping all traces!"
 }
 
-
 add_file(){
 	if [ -f "$2" ]; then
 		log " ++ Adding file for $current_module: $1 -> $2"
-		files[${#files[*]}]=${current_module}__$1=$2
+		store_key_value 'files' "${current_module}__$1" "$2"
 	else
 		log " ${red}!!${color_end} Couldn't find file at $2!"
 	fi
@@ -143,8 +152,7 @@ add_file(){
 
 list_files(){
 	# log " -- ${#files[*]} files gathered!"
-	for f in "${files[@]}"
-	do
+	for f in "${files[@]}"; do
 		if [ "$post_method" == 'http' ]; then
 			# echo -e "-F $f" | sed -e 's/=/=@/'
 			echo "-F $f" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=@\3/'
@@ -155,8 +163,7 @@ list_files(){
 }
 
 remove_files(){
-	for f in "${files[@]}"
-	do
+	for f in "${files[@]}"; do
 		file=`echo $f | sed 's/^.*=\(.*\)/\1/'`
 		rm -f "$file"
 		log " -- Removed $file"
@@ -191,18 +198,17 @@ get_current_delay(){
 
 update_execution_delay(){
 	local full_path=$(full_path "$base_path")
-	(crontab -l 2> /dev/null | grep -v prey; echo "${new_delay}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
+	(crontab -l 2> /dev/null | grep -v prey; echo "${1}" "${full_path}/prey.sh > /var/log/prey.log 2>&1") | crontab -
 }
 
 # if device is missing we'll make sure the current delay matches the one
 # on the server. otherwise we'll make sure it is set to the regular interval.
 check_and_update_delay(){
-	local requested_delay=$1
 	local current_delay=$(get_current_delay)
 	if [ -n "$device_missing" ]; then
+		local new_delay=$(get_delay_for "$1")
 		if [ "$current_delay" != "$new_delay" ]; then
-			log " -- Setting frequency to $requested_delay!"
-			local new_delay=$(get_delay_for $requested_delay)
+			log " -- Setting frequency to $1!"
 			update_execution_delay "$new_delay"
 		fi
 	elif [[ -z "$current_delay" || -z "$(one_hour_interval)" ]]; then
@@ -249,16 +255,6 @@ get_last_response(){
 }
 
 ####################################################################
-# network core functions
-####################################################################
-
-get_internal_ip() {
-	if [ -z "$internal_ip" ]; then
-		internal_ip=`/sbin/ifconfig 2> /dev/null | grep "inet addr" | grep -v "127.0.0.1" | awk '{print $2}' | sed "s/[^0-9\.]//g" | head -1`
-	fi
-}
-
-####################################################################
 # check mode functions
 ####################################################################
 
@@ -289,13 +285,13 @@ verify_smtp_settings(){
 	if [ "$smtp_username" != "username@gmail.com" ]; then
 		log " -- SMTP username set."
 	else
-		log " -- SMTP username not set!"
+		log " !! SMTP username not set!"
 	fi
 
 	if [ "$(decrypt $smtp_password)" != "" ]; then
 		log " -- Password seems to be fine as well."
 	else
-		log " -- Password not set! (Remember it should be base64 encrypted)."
+		log " !! Password not set! (Remember it should be base64 encrypted)."
 	fi
 
 }

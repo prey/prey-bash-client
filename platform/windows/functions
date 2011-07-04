@@ -56,15 +56,35 @@ is_net_framework_installed() {
 # core network functions
 ############################################
 
-get_gateway_ip() {
-	if [ -z "$gateway_ip" ]; then
-		gateway_ip=`ifconfig.exe //all | awk -F ":" '/Gateway/	{print $2}'`
+# used only in network module. system module gets the MAC from wmic
+get_mac_address() {
+	ifconfig //all | grep MAC | sed 's/^.*: //g'
+}
+
+# gets all ip addresses or the one from NIC matching a specific MAC
+get_ip_address() {
+	if [ -n "$1" ]; then
+		ifconfig //all | grep "$1" -A1 | grep "IP" | sed "s/.*:\([0-9\.]*\) .*/\1/"
+	else # get all ip addresses
+		ifconfig //all | grep "IP" | sed "s/.*:\([0-9\.]*\) .*/\1/g"
 	fi
 }
 
-get_internal_ip() {
-	if [ -z "$internal_ip" ]; then
-		internal_ip=`ifconfig.exe //all | grep "IP  Address" | sed "s/.*:\([0-9\.]*\) .*/\1/g" | grep -v "^$" | grep -v "0.0.0.0" | head -1`
+# gets all netmasks or the one matching a specific MAC
+get_netmask(){
+	if [ -n "$1" ]; then
+		ifconfig //all | grep "$1" -A2 | grep "Mask" | sed "s/.*:\([0-9\.]*\) .*/\1/"
+	else # get all netmasks
+		ifconfig //all | grep "Mask" | sed "s/.*:\([0-9\.]*\) .*/\1/g"
+	fi
+}
+
+# gets all netmasks or the one matching a specific MAC
+get_gateway_ip() {
+	if [ -n "$1" ]; then
+		ifconfig //all | grep "$1" -A3 | grep "Gateway" | sed "s/.*:\([0-9\.]*\) .*/\1/"
+	else # get all netmasks
+		ifconfig //all | grep "Gateway" | sed "s/.*:\([0-9\.]*\) .*/\1/g"
 	fi
 }
 
@@ -133,7 +153,7 @@ get_current_delay(){
 }
 
 update_execution_delay(){
-	reg add "$prey_reg_key" //v "Delay" //d "$new_delay" //f > /dev/null
+	reg add "$prey_reg_key" //v "Delay" //d "$1" //f > /dev/null
 }
 
 ############################################
@@ -218,11 +238,11 @@ get_current_hostname(){
 
 get_pc_info(){
 
-	pc_name=`get_current_hostname`
+	pc_name=$(get_current_hostname)
 	if [ -n "$winxp" ]; then
 		pc_os_version="xp"
 	else
-		local pc_os_number=`echo 'os get caption' | wmic 2> /dev/null | grep -i 'microsoft'`
+		local pc_os_number=$(echo 'os get caption' | wmic 2> /dev/null | grep -i 'microsoft')
 
 		if [[ -n `echo "$pc_os_number" | grep -i 'vista'` ]]; then
 			pc_os_version="vista"

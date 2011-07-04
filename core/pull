@@ -37,7 +37,7 @@ randomize_subdomain(){
 # we could eventually use a different method for status checking
 check_device_status(){
 	if [ "$post_method" == 'http' ]; then
-		local request_headers="-H X-Encrypt-Response:${cipher_algorithm}"
+		request_headers="-H X-Encrypt-Response:${cipher_algorithm}"
 
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
@@ -45,13 +45,6 @@ check_device_status(){
 			error_exit "You need to enter your Device Key for querying the Control Panel!"
 		fi
 		[ "$randomize_check_host" == 'y' ] && randomize_subdomain
-	fi
-
-	if [ "$extended_headers" == 'y' ]; then
-		log ' -- Requesting with extra sauce!'
-		get_internal_ip
-		get_gateway_ip
-		local request_headers="$request_headers -H X-Local-IP:$internal_ip -H X-Gateway-IP:$gateway_ip"
 	fi
 
 	send_request "$check_url" "$request_headers"

@@ -13,13 +13,28 @@ run_as_current_user(){
 	fi
 }
 
+####################################################################
+# network stuff
+####################################################################
+
+get_mac_address() {
+	networksetup -getmacaddress $1 2> /dev/null
+}
+
+get_ip_address(){
+	ipconfig getifaddr $1 2> /dev/null
+}
+
+get_netmask(){
+	ipconfig getoption $1 subnet_mask 2> /dev/null
+}
+
 get_gateway_ip() {
-	if [ -z "$gateway_ip" ]; then
-		netstat=$(which netstat)
-		if [ -n "$netstat" ]; then
-			gateway_ip=$($netstat -rn | grep default | cut -c20-35)
-		fi
-	fi
+	ipconfig getoption $1 router 2> /dev/null
+}
+
+get_dns_ip() {
+	ipconfig getoption $1 domain_name_server 2> /dev/null
 }
 
 get_wifi_info() {
@@ -77,6 +92,7 @@ reload_trigger(){
 		# ln -s "$(full_path $base_path)/${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"		
 		cp "${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"
 		chown root: "${trigger_plist_path}"
+
 		if [ $? != 0 ]; then
 			log " !! Couldn't copy Prey Trigger Plist into /Library/LaunchDaemons!"
 			return 1
