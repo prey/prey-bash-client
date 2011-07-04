@@ -18,24 +18,23 @@ run_as_current_user(){
 ####################################################################
 
 get_mac_address() {
-	ifconfig $1 | grep ether | sed -e 's/ether //g' -e 's/^[^a-z0-9]//g'
+	networksetup -getmacaddress $1 2> /dev/null
 }
 
 get_ip_address(){
-	ifconfig $1 2> /dev/null | grep "inet " | awk '{print $2}' | sed "s/addr://"
+	ipconfig getifaddr $1 2> /dev/null
 }
 
 get_netmask(){
-	echo "" # TODO!
+	ipconfig getoption $1 subnet_mask 2> /dev/null
 }
 
 get_gateway_ip() {
-	if [ -z "$gateway_ip" ]; then
-		netstat=$(which netstat)
-		if [ -n "$netstat" ]; then
-			gateway_ip=$($netstat -rn | grep default | cut -c20-35)
-		fi
-	fi
+	ipconfig getoption $1 router 2> /dev/null
+}
+
+get_dns_ip() {
+	ipconfig getoption $1 domain_name_server 2> /dev/null
 }
 
 get_wifi_info() {
@@ -90,7 +89,7 @@ reload_trigger(){
 	log " -- Setting up network detection trigger on LaunchDaemon..."
 	local trigger_plist_path="/Library/LaunchDaemons/${launchd_trigger_label}.plist"
 	if [ ! -e "$trigger_plist_path" ]; then
-		ln -s "${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"		
+		ln -s "${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"
 		if [ $? != 0 ]; then
 			log " !! Couldn't copy Prey Trigger Plist into /Library/LaunchDaemons!"
 			return 1
