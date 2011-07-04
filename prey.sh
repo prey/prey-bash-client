@@ -104,8 +104,8 @@ fi
 # due to clashes with the other zillion requests to the CP
 ####################################################################
 
-# only do this if we're not on test mode or immediate request was instructed
-if [[ -z "$immediate_request" && -z "$test_mode" && "$post_method" == "http" ]]; then
+# only do this if Prey is being run from cron in Mac and Linux
+if [[ ! -t 1 && "$os" != "windows" && "$post_method" == "http" ]]; then
 	seconds_to_wait=$(get_random_number 59)
 	log " -- Pausing for ${seconds_to_wait} seconds..."
 	sleep $seconds_to_wait

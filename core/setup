@@ -24,7 +24,6 @@ show_usage(){
 	echo -e "\nUsage: `basename $0` [options]"
 	echo -e "Options:"
 	echo -e "  -t | --test\t\tTest mode. Runs Prey without sending any data."
-	echo -e "  -i | --immediate\t\tImmediate check. Don't pause before sending request to Control Panel."
 	echo -e "  -c | --check\t\tCheck mode. Checks if configuration is correctly set up."
 	echo -e "  -l | --log\t\tLog output to ${base_path}/prey.log (default in Windows)."
 	echo -e "  -s | --silent\t\tDon't log any output."
@@ -43,14 +42,10 @@ until [ -z "$1" ]; do
 			test_mode=1
 			# the following lets us include stuff for specific tests
 			# e.g. ./prey.sh --test reports
-			if [ -z $(find_in $2 '-') ]; then 
+			if [ -z $(find_in $2 '-') ]; then
 				. $base_path/test/include "$2" 2> /dev/null
 				shift
 			fi
-		;;
-		-i | --immediate )
-			echo -e "\n -- IMMEDIATE REQUEST."
-			immediate_request=1
 		;;
 		-c | --check )
 			echo -e "\n -- CHECK MODE ON."
@@ -74,7 +69,7 @@ until [ -z "$1" ]; do
 done
 
 get_os(){
-	os=`lowercase \`uname\``
+	os=$(lowercase $(uname))
 
 	if [ "$os" == "windowsnt" ]; then
 		os=windows
@@ -158,4 +153,4 @@ set_vars
 set_aliases
 . "$platform_path/settings"
 set_constants
-[ -z "$immediate_request" ] && check_on_demand_status
+check_on_demand_status

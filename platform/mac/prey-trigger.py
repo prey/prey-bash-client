@@ -31,7 +31,7 @@ from Cocoa import \
 
 min_interval = 2 # minutes
 log_file = "/var/log/prey.log"
-prey_command = "/usr/share/prey/prey.sh -i"
+prey_command = "/usr/share/prey/prey.sh"
 
 try:
    log_output = open(log_file, 'wb')
@@ -49,8 +49,8 @@ def connected(interface):
 # only for testing purposes
 def log(message):
 	# subprocess.call(["/usr/bin/osascript", "-e", "say", message, "using", "Zarvox"])
-	if sys.argv[1] and sys.argv[1] == '--debug':
-		os.popen("osascript -e 'say \"" + message + "\"' using Zarvox")
+	# if sys.argv[1] and sys.argv[1] == '--debug':
+		# os.popen("osascript -e 'say \"" + message + "\"' using Zarvox")
 
 def run_prey():
     global run_at
@@ -59,7 +59,7 @@ def run_prey():
     now = datetime.now()
     if (run_at is None) or (now - run_at > two_minutes):
         log("Running Prey")
-        subprocess.Popen(prey_command.split(), stdout=log_output, stderr=subprocess.STDOUT, shell=True)
+        subprocess.Popen(prey_command, stdout=log_output, stderr=subprocess.STDOUT, shell=True)
         run_at = datetime.now()
 
 
@@ -81,13 +81,13 @@ def timer_callback(*args):
 #######################
 
 if __name__ == '__main__':
-	
+
 	log("Initializing")
 	run_at = None
 	run_prey()
 
-	sc_keys = [ 
-		'State:/Network/Global/IPv4', 
+	sc_keys = [
+		'State:/Network/Global/IPv4',
 		'State:/Network/Global/IPv6'
 	]
 
@@ -96,8 +96,8 @@ if __name__ == '__main__':
 
 	CFRunLoopAddSource(
 		# NSRunLoop.currentRunLoop().getCFRunLoop(),
-		CFRunLoopGetCurrent(), 
-		SCDynamicStoreCreateRunLoopSource(None, store, 0), 
+		CFRunLoopGetCurrent(),
+		SCDynamicStoreCreateRunLoopSource(None, store, 0),
 		kCFRunLoopCommonModes
 	)
 

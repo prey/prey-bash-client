@@ -15,7 +15,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 
 min_interval = 2 # minutes
 log_file = "/var/log/prey.log"
-prey_command = "/usr/share/prey/prey.sh -i"
+prey_command = "/usr/share/prey/prey.sh"
 
 try:
    log_output = open(log_file, 'wb')
@@ -42,7 +42,7 @@ def run_prey():
     log("Should we run Prey?")
     if (run_at is None) or (now - run_at > two_minutes):
         log("Running Prey!")
-        subprocess.Popen(prey_command.split(), stdout=log_output, stderr=subprocess.STDOUT, shell=True)
+        subprocess.Popen(prey_command, stdout=log_output, stderr=subprocess.STDOUT, shell=True)
         run_at = datetime.now()
 
 #######################
