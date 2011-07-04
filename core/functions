@@ -222,6 +222,12 @@ ensure_trigger_loaded(){
 	[ -z "$(is_trigger_loaded)" ] && reload_trigger
 }
 
+running_from_cron(){
+	# [ "$TERM" == "dumb" ] && echo 1
+	tty -s
+	[ $? -eq 1 ] && echo 1
+}
+
 ####################################################################
 # http functions
 ####################################################################
