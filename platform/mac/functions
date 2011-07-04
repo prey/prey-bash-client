@@ -110,8 +110,6 @@ unload_trigger(){
 	rm -f "${trigger_plist_path}"
 }
 
-unload_trigger
-
 ############################################
 # updater-specific functions
 ############################################
