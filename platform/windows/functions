@@ -82,9 +82,9 @@ get_netmask(){
 # gets all netmasks or the one matching a specific MAC
 get_gateway_ip() {
 	if [ -n "$1" ]; then
-		ifconfig //all | grep "$1" -A3 | grep "Gateway" | awk -F ":" '{print $2}'
+		ifconfig //all | grep "$1" -A3 | grep "Gateway" | sed "s/.*:\([0-9\.]*\) .*/\1/"
 	else # get all netmasks
-		ifconfig //all | grep "Gateway" | awk -F ":" '{print $2}'
+		ifconfig //all | grep "Gateway" | sed "s/.*:\([0-9\.]*\) .*/\1/g"
 	fi
 }
 
