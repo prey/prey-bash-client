@@ -16,9 +16,9 @@ from datetime import datetime, timedelta
 from PyObjCTools import AppHelper
 
 from SystemConfiguration import \
-    SCDynamicStoreCreate, \
-    SCDynamicStoreCreateRunLoopSource, \
-    SCDynamicStoreSetNotificationKeys
+	SCDynamicStoreCreate, \
+	SCDynamicStoreCreateRunLoopSource, \
+	SCDynamicStoreSetNotificationKeys
 
 from Cocoa import \
 	CFAbsoluteTimeGetCurrent, \
@@ -34,10 +34,10 @@ log_file = "/var/log/prey.log"
 prey_command = "/usr/share/prey/prey.sh"
 
 try:
-   log_output = open(log_file, 'wb')
+	log_output = open(log_file, 'wb')
 except IOError:
-   print "No write access to log file: " + log_file + ". Prey log will go to /dev/null!"
-   log_output = open('/dev/null', 'w')
+	print "No write access to log file: " + log_file + ". Prey log will go to /dev/null!"
+	log_output = open('/dev/null', 'w')
 
 #######################
 # helpers
@@ -46,22 +46,31 @@ except IOError:
 def connected(interface):
 	return subprocess.call(["ipconfig", "getifaddr", interface]) == 0
 
-# only for testing purposes
 def log(message):
-	# subprocess.call(["/usr/bin/osascript", "-e", "say", message, "using", "Zarvox"])
-	# if sys.argv[1] and sys.argv[1] == '--debug':
-		# os.popen("osascript -e 'say \"" + message + "\"' using Zarvox")
+	try:
+		if sys.argv[1] == '--debug':
+			shout(message)
+	except IndexError, e:
+		pass
+
+# only for testing purposes
+def shout(message):
+	os.popen("osascript -e 'say \"" + message + "\"' using Zarvox")
 
 def run_prey():
-    global run_at
-    log("Should we run Prey?")
-    two_minutes = timedelta(minutes=min_interval)
-    now = datetime.now()
-    if (run_at is None) or (now - run_at > two_minutes):
-        log("Running Prey")
-        subprocess.Popen(prey_command, stdout=log_output, stderr=subprocess.STDOUT, shell=True)
-        run_at = datetime.now()
-
+	global run_at
+	two_minutes = timedelta(minutes=min_interval)
+	now = datetime.now()
+	log("Should we run Prey?")
+	if (run_at is None) or (now - run_at > two_minutes):
+		log("Running Prey!")
+		try:
+			subprocess.Popen(prey_command, stdout=log_output, stderr=subprocess.STDOUT)
+			run_at = datetime.now()
+		except OSError, e:
+			print "\nWait a second! Seems we couldn't find Prey at " + prey_command
+			print e
+			sys.exit(1)
 
 #######################
 # event handlers
@@ -101,21 +110,20 @@ if __name__ == '__main__':
 		kCFRunLoopCommonModes
 	)
 
-	# signal.signal(signal.SIGINT, stop_loop)
 	# signal.signal(signal.SIGHUP, partial(quit, "SIGHUP received"))
 
 	# NOTE: This timer is basically a kludge around the fact that we can't reliably get
 	#       signals or Control-C inside a runloop. This wakes us up often enough to
 	#       appear tolerably responsive:
 	CFRunLoopAddTimer(
-	    NSRunLoop.currentRunLoop().getCFRunLoop(),
-	    CFRunLoopTimerCreate(None, CFAbsoluteTimeGetCurrent(), 2.0, 0, 0, timer_callback, None),
-	    kCFRunLoopCommonModes
+		NSRunLoop.currentRunLoop().getCFRunLoop(),
+		CFRunLoopTimerCreate(None, CFAbsoluteTimeGetCurrent(), 2.0, 0, 0, timer_callback, None),
+		kCFRunLoopCommonModes
 	)
 
 	try:
-	    AppHelper.runConsoleEventLoop(installInterrupt=True)
+		AppHelper.runConsoleEventLoop(installInterrupt=True)
 	except KeyboardInterrupt:
-	    print "KeyboardInterrupt received, exiting"
+		print "KeyboardInterrupt received, exiting"
 
 	sys.exit(0)
