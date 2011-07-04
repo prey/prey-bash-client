@@ -64,7 +64,7 @@ remove_pidfile(){
 
 check_running_actions(){
 
-	for pidfile in `ls $tmpbase/prey-action-*.pid 2> /dev/null`; do
+	for pidfile in $(ls $tmpbase/prey-action-*.pid 2> /dev/null); do
 
 		if [ ! -f $pidfile ]; then
 			continue # just to make sure
@@ -73,8 +73,8 @@ check_running_actions(){
 		local action_name=`basename $pidfile | sed -e 's/prey-action-//' -e 's/\.pid//'`
 		log " -- Found PID for running action: $action_name"
 
-		local pid=`cat $pidfile`
-		local actually_running=`ps ax | grep $pid | grep -v grep > /dev/null && echo 1`
+		local pid=$(cat $pidfile)
+		local actually_running=$(ps ax | grep $pid | grep -v grep > /dev/null && echo 1)
 
 		if [ -z `get_action $action_name` ]; then # action was removed from options
 			# log " -- Removing $action_name which was untoggled by user..."
@@ -91,10 +91,10 @@ check_running_actions(){
 }
 
 action_finished(){
-	if [[ -n "$2" && `get_running_action $2` == $1 ]]; then
+	if [[ -n "$2" && $(get_running_action $2) == $1 ]]; then
 		wait $1
 		return_status=$?
-		log " -- Action $2 exited with status $return_status."
+		log " -- Action $2 returned with status $return_status."
 		remove_pidfile $2
 	fi
 }
@@ -109,10 +109,10 @@ run_pending_actions(){
 	log "\n${bold} == Running pending actions...${bold_end}"
 	for action in "${actions[@]}"; do
 
-		local current_module=`echo $action | sed 's/=.*//'`
-		local function=`echo $action | sed 's/.*=\(.*\)/\1/'`
+		local current_module=$(echo $action | sed 's/=.*//')
+		local function=$(echo $action | sed 's/.*=\(.*\)/\1/')
 
-		if [ ! -z `get_running_action $current_module` ]; then
+		if [ -n "$(get_running_action $current_module)" ]; then
 			log " -- $current_module is already running! Skipping..."
 			continue
 		fi
