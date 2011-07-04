@@ -29,11 +29,15 @@ from Cocoa import \
 	NSRunLoop, \
 	kCFRunLoopCommonModes
 
+min_interval = 2 # minutes
+log_file = "/var/log/prey.log"
 prey_command = "/usr/share/prey/prey.sh -i"
-prey_output = open("/var/log/prey.log", 'wb')
-min_interval = 2
 
-# logging.basicConfig(filename='/var/log/netdetect.log',level=logging.DEBUG)
+try:
+   log_output = open(log_file, 'wb')
+except IOError:
+   print "No write access to log file: " + log_file + ". Prey log will go to /dev/null!"
+   log_output = open('/dev/null', 'w')
 
 #######################
 # helpers
@@ -43,19 +47,19 @@ def connected(interface):
 	return subprocess.call(["ipconfig", "getifaddr", interface]) == 0
 
 # only for testing purposes
-def alert(message):
+def log(message):
 	# subprocess.call(["/usr/bin/osascript", "-e", "say", message, "using", "Zarvox"])
-	os.popen("osascript -e 'say \"" + message + "\"' using Zarvox")
-
+	if sys.argv[1] and sys.argv[1] == '--debug':
+		os.popen("osascript -e 'say \"" + message + "\"' using Zarvox")
 
 def run_prey():
     global run_at
-    alert("Should we run Prey?")
+    log("Should we run Prey?")
     two_minutes = timedelta(minutes=min_interval)
     now = datetime.now()
     if (run_at is None) or (now - run_at > two_minutes):
-        alert("Running Prey")
-        subprocess.Popen(prey_command.split(), stdout=prey_output, stderr=prey_output, shell=True)
+        log("Running Prey")
+        subprocess.Popen(prey_command.split(), stdout=log_output, stderr=subprocess.STDOUT, shell=True)
         run_at = datetime.now()
 
 
@@ -64,7 +68,7 @@ def run_prey():
 #######################
 
 def network_state_changed(*args):
-	alert("Network change detected")
+	log("Network change detected")
 	if connected('en0') or connected('en1'):
 		run_prey()
 
@@ -78,7 +82,7 @@ def timer_callback(*args):
 
 if __name__ == '__main__':
 	
-	alert("Initializing")
+	log("Initializing")
 	run_at = None
 	run_prey()
 
