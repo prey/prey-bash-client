@@ -51,6 +51,7 @@ def run_prey():
 		try:
 			subprocess.Popen(prey_command, stdout=log_output, stderr=subprocess.STDOUT)
 			run_at = datetime.now()
+			os.wait()
 		except OSError, e:
 			print "\nWait a second! Seems we couldn't find Prey at " + prey_command
 			print e
