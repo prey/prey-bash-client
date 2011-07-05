@@ -58,8 +58,12 @@ case "$1" in
 		echo "$NAME."
 		;;
 
+	status)
+		status_of_proc -p /var/run/$NAME.pid "$DAEMON" "$NAME" && exit 0 || exit $?
+		;;
+
 	*)
-		echo "Usage: $NAME {start|stop|restart|force-reload}" >&2
+		echo "Usage: $NAME {start|stop|restart|force-reload|status}" >&2
 		exit 1
 		;;
 esac
