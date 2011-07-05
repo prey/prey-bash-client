@@ -15,7 +15,7 @@ process_xml(){
 		local value=$(get_value "$line")
 
 		# write config value to file
-		[ `find_in "$line" 'save="true"'` ] && save_config_value "$key" "$value"
+		[ -n "$(find_in "$line" 'save="true"')" ] && save_config_value "$key" "$value"
 
 		set_config "$key" "$value"
 

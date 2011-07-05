@@ -56,7 +56,8 @@ save_config_value(){
 		local val='n'
 	fi
 
-	sed -i.backup -e "s/^$key=.*/$key='$val'/" "$config_file" 2> /dev/null
+	# use % as delimiter instead of / so URLs get set correctly
+	sed -i.backup -e "s%^$key=.*%$key='$val'%" "$config_file" 2> /dev/null
 	local rs=$?
 	if [ -f "$config_file" ]; then
 		rm -f "$config_file.backup" 2> /dev/null
