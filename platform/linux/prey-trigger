@@ -33,28 +33,34 @@ set -e
 
 . /lib/lsb/init-functions
 
+start(){
+	start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
+		--exec $DAEMON --background --make-pidfile -- $DAEMON_OPTS || true
+}
+
+stop(){
+	start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
+		--exec $DAEMON || true
+}
+
 case "$1" in
 	start)
 		echo -n "Starting $DESC: "
-		start-stop-daemon --start --quiet --pidfile /var/run/$NAME.pid \
-			--exec $DAEMON -- $DAEMON_OPTS || true
+		start
 		echo "$NAME."
 		;;
 
 	stop)
 		echo -n "Stopping $DESC: "
-		start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
-			--exec $DAEMON || true
+		stop
 		echo "$NAME."
 		;;
 
 	restart|force-reload)
 		echo -n "Restarting $DESC: "
-		start-stop-daemon --stop --quiet --pidfile \
-			/var/run/$NAME.pid --exec $DAEMON || true
+		stop
 		sleep 1
-		start-stop-daemon --start --quiet --pidfile \
-			/var/run/$NAME.pid --exec $DAEMON -- $DAEMON_OPTS || true
+		start
 		echo "$NAME."
 		;;
 
