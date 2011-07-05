@@ -224,9 +224,9 @@ ensure_trigger_loaded(){
 }
 
 running_from_cron(){
-	# [ "$TERM" == "dumb" ] && echo 1
-	tty -s
-	[ $? -eq 1 ] && echo 1
+	# tty -s
+	# [ $? -eq 1 ] && echo 1
+	[ "$TERM" == "dumb" ] && echo 1
 }
 
 ####################################################################
