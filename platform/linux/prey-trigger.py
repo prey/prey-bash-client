@@ -78,7 +78,6 @@ if __name__ == '__main__':
 
 	log("Initializing")
 	run_at = None
-	run_prey()
 
 	# Setup message bus.
 	bus = dbus.SystemBus(mainloop=DBusGMainLoop())
@@ -91,6 +90,9 @@ if __name__ == '__main__':
 	except dbus.exceptions.DBusException:
 		print "NetworkManager DBus interface not found! Please make sure NM is installed."
 		sys.exit(1)
+
+	if connected():
+		run_prey()
 
 	# upower = bus.get_object('org.freedesktop.UPower', '/org/freedesktop/UPower')
 	# if upower.CanSuspend:

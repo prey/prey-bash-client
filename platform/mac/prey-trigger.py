@@ -43,7 +43,10 @@ except IOError:
 # helpers
 #######################
 
-def connected(interface):
+def connected():
+	return interface_connected('en0') or interface_connected('en1')
+
+def interface_connected(interface):
 	return subprocess.call(["ipconfig", "getifaddr", interface]) == 0
 
 def log(message):
@@ -79,7 +82,7 @@ def run_prey():
 
 def network_state_changed(*args):
 	log("Network change detected")
-	if connected('en0') or connected('en1'):
+	if connected():
 		run_prey()
 
 def timer_callback(*args):
@@ -94,7 +97,8 @@ if __name__ == '__main__':
 
 	log("Initializing")
 	run_at = None
-	run_prey()
+	if connected():
+		run_prey()
 
 	sc_keys = [
 		'State:/Network/Global/IPv4',
