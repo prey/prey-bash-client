@@ -39,8 +39,7 @@ start(){
 }
 
 stop(){
-	start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid \
-		--exec $DAEMON || true
+	start-stop-daemon --stop --quiet --pidfile /var/run/$NAME.pid || true
 }
 
 case "$1" in
