@@ -19,6 +19,7 @@ import os
 # from xml.dom.minidom import parseString
 import re
 import urllib
+import base64
 
 app_name = 'prey-config'
 lang_path = 'lang'
@@ -41,7 +42,8 @@ _ = gettext.gettext
 ################################################
 
 PREY_PATH = '/usr/share/prey'
-CONFIG_FILE = PREY_PATH + '/config'
+PREY_CONFIG_FILE = PREY_PATH + '/config'
+PREY_COMMAND = PREY_PATH + '/prey.sh > /var/log/prey.log 2>&1'
 CONTROL_PANEL_URL = 'http://control.preyproject.com'
 CONTROL_PANEL_URL_SSL = 'https://control.preyproject.com'
 GUEST_ACCOUNT_NAME = 'guest_account'
@@ -246,7 +248,7 @@ class PreyConfigurator(object):
 			else:
 				button_apply.grab_default()
 
-	def ensure_visible(self,widget,event): #ensure the widget focused is visible in the scroll window
+	def ensure_visible(self,widget,event): # ensure the widget focused is visible in the scroll window
 		self.get('delay').set_name('delay')
 		self.get('extended_headers').set_name('extended_headers')
 		widget_name = widget.get_name()
@@ -275,8 +277,8 @@ class PreyConfigurator(object):
 	def key_pressed(self, widget, event):
 		# show about dialog on F1 keypress
 		if (event.keyval == gtk.keysyms.F1) \
-		   and (event.state & gtk.gdk.CONTROL_MASK) == 0 \
-		   and (event.state & gtk.gdk.SHIFT_MASK) == 0:
+		and (event.state & gtk.gdk.CONTROL_MASK) == 0 \
+		and (event.state & gtk.gdk.SHIFT_MASK) == 0:
 			self.show_about()
 			return True
 
@@ -293,21 +295,28 @@ class PreyConfigurator(object):
 			return True
 
 	def is_config_writable(self):
-		command = 'if [ ! -w "'+PREY_PATH+'/config" ]; then echo 1; fi'
-		no_access = os.popen(command).read().strip()
-		if no_access == '1':
+		if not os.access(PREY_CONFIG_FILE, os.W_OK):
 			self.show_alert(_("Unauthorized"), _("You don't have access to manage Prey's configuration. Sorry."), True)
 		else:
 			return True
 
+	def update_delay(self, new_delay):
+		return os.system('(crontab -l | grep -v prey; echo "*/' + str(new_delay) + ' * * * * ' + PREY_COMMAND + '") | crontab -')
+
+	def get_delay(self):
+		delay = os.popen("crontab -l | grep prey | awk '{print $1}'").read()
+		if not delay or delay == '' or delay.rfind('*') == -1:
+			return 20
+		else:
+			return delay.replace('*/', '')
+
 	def get_setting(self, var):
-		command = 'grep \''+var+'=\' '+CONFIG_FILE+' | sed "s/'+var+'=\'\(.*\)\'/\\1/"'
+		command = 'grep \''+var+'=\' '+PREY_CONFIG_FILE+' | sed "s/'+var+'=\'\(.*\)\'/\\1/"'
 		return os.popen(command).read().strip()
 
 	def get_current_settings(self):
 
-		self.current_delay = os.popen("crontab -l | grep prey | cut -c 3-4").read()
-		if not self.current_delay: self.current_delay = 20
+		self.current_delay = self.get_delay()
 
 		self.current_auto_connect = self.get_setting('auto_connect')
 		self.current_extended_headers = self.get_setting('extended_headers')
@@ -370,9 +379,9 @@ class PreyConfigurator(object):
 	# setting settings
 	################################################
 
-	def save(self, param, value):
+	def save_setting(self, param, value):
 		if param == 'check_url': value = value.replace('/', '\/')
-		command = 'sed -i -e "s/'+param+'=\'.*\'/'+param+'=\''+value+'\'/" '+ CONFIG_FILE
+		command = 'sed -i -e "s/'+param+'=\'.*\'/'+param+'=\''+value+'\'/" '+ PREY_CONFIG_FILE
 		os.system(command)
 
 	def apply_settings(self, button):
@@ -396,8 +405,8 @@ class PreyConfigurator(object):
 
 	def apply_main_settings(self):
 		# save('lang', text('lang'))
-		self.save('auto_connect', self.checkbox('auto_connect'))
-		self.save('extended_headers', self.checkbox('extended_headers'))
+		self.save_setting('auto_connect', self.checkbox('auto_connect'))
+		self.save_setting('extended_headers', self.checkbox('extended_headers'))
 
 		if((self.checkbox('guest_account') == 'y') != self.current_guest_account):
 			self.toggle_guest_account(self.checkbox('guest_account') == 'y')
@@ -405,8 +414,7 @@ class PreyConfigurator(object):
 		# check and change the crontab interval
 		new_delay = self.get('delay').get_value_as_int()
 		if new_delay != int(self.current_delay):
-			# print 'Updating delay in crontab...'
-			os.system('(crontab -l | grep -v prey; echo "*/'+str(new_delay)+' * * * * /usr/share/prey/prey.sh > /var/log/prey.log") | crontab -')
+			self.update_delay(new_delay)
 
 		if self.check_if_configured == False:
 			self.show_alert(_("All good."), _("Configuration saved. Remember you still need to set up your posting method, otherwise Prey won't work!"))
@@ -416,34 +424,34 @@ class PreyConfigurator(object):
 	def apply_control_panel_settings(self):
 
 		if self.current_post_method != 'http':
-			self.save('post_method', 'http')
+			self.save_setting('post_method', 'http')
 
 		if self.current_check_url != CONTROL_PANEL_URL:
-			self.save('check_url', CONTROL_PANEL_URL)
+			self.save_setting('check_url', CONTROL_PANEL_URL)
 
 		# we could eventually use the email as a checking method to remove prey
 		# i.e. "under which email was this account set up?"
-		# self.save('mail_to', self.email)
-		self.save('api_key', self.api_key)
+		self.save_setting('mail_to', self.email)
+		self.save_setting('api_key', self.api_key)
 
 		if self.device_key != "":
-			self.save('device_key', self.device_key)
+			self.save_setting('device_key', self.device_key)
 
 	def apply_standalone_settings(self):
 
 		if self.current_post_method != 'email':
-			self.save('post_method', 'email')
+			self.save_setting('post_method', 'email')
 
-		self.save('check_url', self.text('check_url'))
-		self.save('mail_to', self.text('mail_to'))
-		self.save('smtp_server', self.text('smtp_server'))
-		self.save('smtp_username', self.text('smtp_username'))
+		self.save_setting('check_url', self.text('check_url'))
+		self.save_setting('mail_to', self.text('mail_to'))
+		self.save_setting('smtp_server', self.text('smtp_server'))
+		self.save_setting('smtp_username', self.text('smtp_username'))
 
 		smtp_password = self.text('smtp_password')
 
 		if smtp_password != '':
-			encoded_pass = os.popen('echo -n "'+ smtp_password +'" | openssl enc -base64').read().strip()
-			self.save('smtp_password', encoded_pass)
+			encoded_pass = base64.b64encode(smtp_password)
+			self.save_setting('smtp_password', encoded_pass)
 
 		self.exit_configurator()
 
@@ -452,7 +460,7 @@ class PreyConfigurator(object):
 		self.show_alert(_("Success"), _("Configuration saved! Your device is now setup and being tracked by Prey. Happy hunting!"), True)
 
 	def run_prey(self):
-		os.system(PREY_PATH + '/prey.sh > /var/log/prey.log &')
+		os.system(PREY_COMMAND + ' &')
 
 	################################################
 	# control panel api
@@ -520,6 +528,7 @@ class PreyConfigurator(object):
 			return
 
 		self.apply_control_panel_settings()
+		self.save_setting('device_key', '') # make sure no devuce key is set in the config file, so Prey calls self_setup
 		self.run_prey()
 		self.show_alert(_("Account created!"), _("Your account has been succesfully created and configured in Prey's Control Panel.\n\nPlease check your inbox now, you should have received a verification email."), True)
 
@@ -545,10 +554,10 @@ class PreyConfigurator(object):
 
 		if show_devices:
 			result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/devices.xml -u '+self.email+":'"+password+"'").read().strip()
-			if result.find("</devices>") != -1:
-				return self.get_device_keys(result,has_available_slots)
+			if result.find("<key>") != -1:
+				return self.get_device_keys(result, has_available_slots)
 			else:
-				self.report_connection_issue()
+				self.report_connection_issue(result)
 				return False
 		else:
 			self.device_key = ""
