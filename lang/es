@@ -8,7 +8,7 @@
 
 STRING_START="PREY $version despliega sus alas!"
 STRING_TRY_TO_CONNECT=" -- Intentando conectarnos a la primera red abierta disponible..."
-STRING_NO_CONNECT_TO_WIFI=" -- No encontramos la forma de conectarnos a una red Wifi abierta!"
+STRING_NO_CONNECT_TO_WIFI=" -- No encontramos la forma de conectarnos a una red Wi-Fi abierta!"
 STRING_CHECK_URL=" -- Revisando URL..."
 STRING_NO_PROBLEM=" -- Nada de que preocuparse. :)\n"
 STRING_PROBLEM=" -- OUCH!!"
@@ -19,5 +19,5 @@ STRING_ERROR_EMAIL="\n\033[1m !! Hubo un problema enviando el correo electronico
 STRING_REMOVE_EVIDENCE=" -- Eliminando la evidencia..."
 STRING_DONE=" -- Todo listo! Suerte con la caceria! :)"
 
-EMAIL_HEADER="Buenas noticias amigo mio, al parecer lo encontramos!\n\nAqui va el reporte de tu computador:\n\n"
+EMAIL_HEADER="Buenas noticias, amigo mio, al parecer lo encontramos!\n\nAqui va el reporte de tu computador:\n\n"
 EMAIL_FOOTER="\n\nSuerte con la caceria!\n\n--\nTu fiel servidor, Prey\nhttp://preyproject.com"
