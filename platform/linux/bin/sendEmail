@@ -1875,7 +1875,7 @@ printmsg("DEBUG => My IP address is: $conf{'ip'}", 1);
 ## This doesn't interfere with the socket creation or config for TLS
 if ($opt{'ssl'} =~ /^(yes)$/ and $conf{'ssl_available'} == 1) {
     if(! IO::Socket::SSL->start_SSL($SERVER)) {
-        quit("ERROR => SSL requested and available but socket setup failed: " . IO::Socket::SSL::errsrt(), 1);
+        quit("ERROR => SSL requested and available but socket setup failed: " . IO::Socket::SSL::errstr(), 1);
     }
 }
 
