@@ -121,7 +121,7 @@ my ${colorWhite}  = "\033[37;1m";
 my ${colorNormal} = "\033[m";
 my ${colorBold}   = "\033[1m";
 my ${colorNoBold} = "\033[0m";
-/
+
 ## Don't use shell escape codes on Windows systems
 if ($^O =~ /win/i) {
     ${colorRed} = ${colorGreen} = ${colorCyan} = ${colorWhite} = ${colorNormal} = ${colorBold} = ${colorNoBold} = "";
