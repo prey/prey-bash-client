@@ -62,7 +62,7 @@ the following in a terminal:
 For Ubuntu based distro's:
 $ (sudo crontab -l | grep -v prey; echo "*/20 * * * * /usr/share/prey/prey.sh > /var/log/prey.log") | sudo crontab -
 
-For other distro's try (as root):
+For other Linux distro's try (as root):
 (crontab -l | grep -v prey; echo "*/20 * * * * /usr/share/prey/prey.sh > /var/log/prey.log") | crontab -
 
 ##############################################
@@ -113,14 +113,14 @@ platform\windows\bin\bash.exe prey.sh --check
 cd c:\Prey\ (or use your custom Prey install path)
 platform\windows\bin\bash.exe prey.sh
 
- > Check Mode - Linux & Mac
+ > Check Mode - Ubuntu based Linux & Mac
 For Ubuntu based Linux, and Mac, type the following in a terminal:
 $ sudo /usr/share/prey/prey.sh --check
 
 For other Linux distro's type (as root):
 /usr/share/prey/prey.sh --check
 
- > Full run - Linux & Mac
+ > Full run - Ubuntu based Linux & Mac
 For Ubuntu based Linux, and Mac, type the following in a terminal:
 $ sudo /usr/share/prey/prey.sh
 
