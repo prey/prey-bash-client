@@ -6,7 +6,7 @@
 ################################################
 
 # if having trouble with the GTK theme as root, do this:
-# sudo ln -s ~/.themes/ /root/.themes
+# ln -s /home/<your_username>/.themes/ /root/.themes
 
 ################################################
 # base includes

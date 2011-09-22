@@ -63,8 +63,8 @@ COPYING_FILES="\n -- Copio i file necessari in $INSTALLPATH e imposto i permessi
 ADDING_CRONTAB=" -- Aggiungo la entry su crontab..."
 INSTALL_OK="\033[1m\n -- Tutto a posto! Prey è installato ed avviato. Ora puoi cancellare questa directory in sicurezza.
 -- Semmai volessi disinstallare Prey, ti basta cancellare la directory $INSTALLPATH
-e rimuovere la riga di Prey in crontab: \n
-\t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
+e rimuovere la riga di Prey in crontab(come root): \ n
+\ T $ rm-Rf $ InstallPath \ n \ t $ crontab-l | grep-v Prey | crontab - \ n
 -- Per gli aggiornamenti ricordati di controllare il sito http://preyproject.com!\033[0m\n\n"
 
 else # prey status messages

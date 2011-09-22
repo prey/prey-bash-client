@@ -59,7 +59,11 @@ Device keys; otherwise you need to set up your SMTP server settings.
 Finally, you need to add a crontab entry for root. You can do this by typing
 the following in a terminal:
 
+For Ubuntu based distro's:
 $ (sudo crontab -l | grep -v prey; echo "*/20 * * * * /usr/share/prey/prey.sh > /var/log/prey.log") | sudo crontab -
+
+For other distro's try (as root):
+(crontab -l | grep -v prey; echo "*/20 * * * * /usr/share/prey/prey.sh > /var/log/prey.log") | crontab -
 
 ##############################################
 3. Requisites for Linux
@@ -110,12 +114,18 @@ cd c:\Prey\ (or use your custom Prey install path)
 platform\windows\bin\bash.exe prey.sh
 
  > Check Mode - Linux & Mac
-Type the following in a terminal:
+For Ubuntu based Linux, and Mac, type the following in a terminal:
 $ sudo /usr/share/prey/prey.sh --check
 
+For other Linux distro's type (as root):
+/usr/share/prey/prey.sh --check
+
  > Full run - Linux & Mac
-Type the following in a terminal:
+For Ubuntu based Linux, and Mac, type the following in a terminal:
 $ sudo /usr/share/prey/prey.sh
+
+For other Linux distro's type (as root):
+/usr/share/prey/prey.sh 
 
 Additional support & troubleshooting information can be found at: 
 
