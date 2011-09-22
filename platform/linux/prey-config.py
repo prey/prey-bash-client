@@ -8,6 +8,7 @@
 # if having trouble with the GTK theme as root, do this:
 # ln -s /home/<your_username>/.themes/ /root/.themes
 
+
 ################################################
 # base includes
 ################################################
