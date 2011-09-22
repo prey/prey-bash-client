@@ -65,7 +65,7 @@ INSTALL_OK="\033[1m\n -- Tutto a posto! Prey è installato ed avviato. Ora puoi 
 -- Semmai volessi disinstallare Prey, ti basta cancellare la directory $INSTALLPATH
 e rimuovere la riga di Prey in crontab(come root): \ n
 \ T $ rm-Rf $ InstallPath \ n \ t $ crontab-l | grep-v Prey | crontab - \ n
--- Per gli aggiornamenti ricordati di controllare il sito http://preyproject.com!\033[0m\n\n"
+-- Per gli aggiornamenti ricordati di controllare il sito http://preyproject.com\033[0m\n\n"
 
 else # prey status messages
 
