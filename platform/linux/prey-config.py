@@ -528,7 +528,7 @@ class PreyConfigurator(object):
 			return
 
 		self.apply_control_panel_settings()
-		self.save_setting('device_key', '') # make sure no devuce key is set in the config file, so Prey calls self_setup
+		self.save_setting('device_key', '') # make sure no device key is set in the config file, so Prey calls self_setup
 		self.run_prey()
 		self.show_alert(_("Account created!"), _("Your account has been succesfully created and configured in Prey's Control Panel.\n\nPlease check your inbox now, you should have received a verification email."), True)
 
