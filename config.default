@@ -59,7 +59,7 @@ mail_subject='[Prey] Status Report'
 # if you're having trouble getting requests across your firewall or proxy,
 # you can try adding '-0' to make curl perform HTTP 1.0 requests
 # to connect through a proxy use: -x/--proxy <host[:port]>
-curl_options='--compress'
+curl_options='--compress --connect-timeout 60'
 
 # this option prepends a random number as a subdomain to the check URL on http mode
 # makes it harder for other programs to block Prey so its a good idea to be on
