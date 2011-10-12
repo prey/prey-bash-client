@@ -48,6 +48,7 @@ CONTROL_PANEL_URL = 'http://control.preyproject.com'
 CONTROL_PANEL_URL_SSL = 'https://control.preyproject.com'
 GUEST_ACCOUNT_NAME = 'guest_account'
 VERSION = os.popen("cat " + PREY_PATH + "/version 2> /dev/null").read().strip().replace('version=', '').replace("'",'')
+USER_AGENT = "Prey Configurator/" + VERSION + " (Linux)"
 
 PAGES = ['report_options', 'control_panel_options', 'new_user', 'existing_user', 'existing_device', 'standalone_options']
 
@@ -466,6 +467,21 @@ class PreyConfigurator(object):
 	# control panel api
 	################################################
 
+	def make_request(self, path, query, user, password):
+		if query != None:
+			data = ' -d \"'+query+'\"'
+		else:
+			data = ''
+
+		if user and password:
+			data += ' -u "' + user + ':' + password + '"'
+
+		command = '/usr/bin/curl -A "' + USER_AGENT + '" -i -s -k --connect-timeout 5 ' + CONTROL_PANEL_URL_SSL + '/' + path + data
+		# print(command)
+		result = os.popen(command).read().strip()
+		# print(result)
+		return result
+
 	def report_connection_issue(self, result):
 		print("Connection error. Response from server: " + result)
 		self.show_alert(_("Problem connecting"), _("We seem to be having a problem connecting to the Prey Control Panel. This is likely a temporary issue. Please try again in a few moments."))
@@ -490,6 +506,7 @@ class PreyConfigurator(object):
 		liststore = gtk.ListStore(str,str)
 		devices.clear()
 		matches = re.findall(r"<device>\s*<key>(\w*)</key>.*?<title>([\s\w]*)</title>\s*</device>", string, re.DOTALL)
+
 		for match in matches:
 			index += 1
 			key = match[0]
@@ -515,7 +532,7 @@ class PreyConfigurator(object):
 		self.email = self.text('email')
 		params = urllib.urlencode({'user[name]': self.text('user_name'), 'user[email]': self.email, 'user[password]': self.text('password'), 'user[password_confirmation]' : self.text('password_confirm')})
 		# params = 'user[name]='+self.text('user_name')+'&user[email]='+self.email+'&user[password]='+self.text('password')+'&user[password_confirmation]='+self.text('password_confirm')
-		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/users.xml -d \"'+params+'\"').read().strip()
+		result = self.make_request('users.xml', params, None, None)
 
 		if result.find("<key>") != -1:
 			self.get_api_key(result)
@@ -530,15 +547,16 @@ class PreyConfigurator(object):
 		self.apply_control_panel_settings()
 		self.save_setting('device_key', '') # make sure no device key is set in the config file, so Prey calls self_setup
 		self.run_prey()
-		self.show_alert(_("Account created!"), _("Your account has been succesfully created and configured in Prey's Control Panel.\n\nPlease check your inbox now, you should have received a verification email."), True)
+		self.show_alert(_("Account created!"), _("Congratulations! Your account has been succesfully created and configured in Prey's Control Panel.\n\nPlease check your inbox now, you should have received a verification email (or will in a few minutes)."), True)
 
 	def get_existing_user(self, show_devices):
 		self.email = self.text('existing_email')
 		password = self.text('existing_password')
-		result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/profile.xml -u '+self.email+":'"+password+"'").read().strip()
+
+		result = self.make_request('profile.xml', None, self.email, password)
 
 		if result.find('401 Unauthorized') != -1:
-			self.show_alert(_("User does not exist"), _("Couldn't log you in. Remember you need to activate your account opening the link we emailed you.\n\nIf you forgot your password please visit preyproject.com."))
+			self.show_alert(_("User does not exist"), _("Couldn't log you in. Remember you need to activate your account opening the link we emailed you.\n\nIf you forgot your password please visit http://preyproject.com/forgot."))
 			return
 
 		if result.find("<user>") != -1:
@@ -553,12 +571,14 @@ class PreyConfigurator(object):
 			return False
 
 		if show_devices:
-			result = os.popen('curl -i -s -k --connect-timeout 5 '+ CONTROL_PANEL_URL_SSL + '/devices.xml -u '+self.email+":'"+password+"'").read().strip()
+			result = self.make_request('devices.xml', None, self.email, password)
+
 			if result.find("<key>") != -1:
 				return self.get_device_keys(result, has_available_slots)
 			else:
 				self.report_connection_issue(result)
 				return False
+
 		else:
 			self.device_key = ""
 			self.apply_control_panel_settings()
@@ -594,6 +614,7 @@ class PreyConfigurator(object):
 			"key_pressed" : self.key_pressed,
 			"close_about" : self.close_about
 		})
+
 		self.window = builder.get_object("window")
 		self.window.set_title(self.window.get_title() + " (v" + VERSION + ")")
 		# self.window.get_settings().set_string_property('gtk-font-name', 'sans normal 11','');

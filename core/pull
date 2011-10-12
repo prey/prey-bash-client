@@ -16,11 +16,11 @@ check_net_status(){
 
 	local net_check_target="www.google.com"
 	if [ "$os" == "windows" ]; then
-		local ping_params='-n'
+		local ping_cmd="$SYSTEMROOT/system32/ping -n"
 	else
-		local ping_params='-q -c'
+		local ping_cmd="ping -q -c"
 	fi
-	connected=$(ping $ping_params 1 $net_check_target &> /dev/null && echo 1 || echo 0)
+	connected=$($ping_cmd 1 $net_check_target &> /dev/null && echo 1 || echo 0)
 
 	# if there's no connection with ping, lets try to see if curl gets through
 	# since some routers/networks block ICMP requests
