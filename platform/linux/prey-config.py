@@ -368,7 +368,7 @@ class PreyConfigurator(object):
 		self.get('smtp_server').set_text(self.current_smtp_server)
 		self.get('smtp_username').set_text(self.current_smtp_username)
 
-		if self.current_post_method == 'email':
+		if 'email' in self.current_post_method and 'http' not in self.current_post_method:
 			self.get('reporting_mode_standalone').set_active(True)
 
 	def check_if_configured(self):
@@ -423,8 +423,8 @@ class PreyConfigurator(object):
 
 	def apply_control_panel_settings(self):
 
-		if self.current_post_method != 'http':
-			self.save_setting('post_method', 'http')
+		if 'http' not in self.current_post_method:
+			self.save_setting('post_method', (post_method + ' http').strip())
 
 		if self.current_check_url != CONTROL_PANEL_URL:
 			self.save_setting('check_url', CONTROL_PANEL_URL)
@@ -439,8 +439,8 @@ class PreyConfigurator(object):
 
 	def apply_standalone_settings(self):
 
-		if self.current_post_method != 'email':
-			self.save_setting('post_method', 'email')
+		if 'email' not in self.current_post_method:
+			self.save_setting('post_method', (post_method + ' email').strip())
 
 		self.save_setting('check_url', self.text('check_url'))
 		self.save_setting('mail_to', self.text('mail_to'))

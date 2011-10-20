@@ -23,7 +23,8 @@ check_url='http://control.preyproject.com'
 missing_status_code='404'
 
 # you can use send the report via email or to the web service
-# valid values: http, email, scp or sftp
+# valid values: http, email, scp or sftp or a combination of those
+# separated by spaces, e.g. 'http email'
 post_method='http'
 
 ####################################################################
