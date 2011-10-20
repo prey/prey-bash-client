@@ -62,7 +62,7 @@ send_report(){
 send_via_email(){
 
 	local complete_subject="$mail_subject @ $(date +"%a, %e %B %Y %T %z")"
-	local decrypted_pass=$(decrypt "$smtp_password")
+	local decrypted_pass="$(decrypt $smtp_password)"
 	echo -e "${EMAIL_NOTICE}${EMAIL_HEADER}$(urldecode "$trace_list")${EMAIL_FOOTER}" > "$trace_file.msg"
 
 	# only add user/pass if set
