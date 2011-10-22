@@ -5,7 +5,13 @@
 # License: GPLv3
 ####################################################################
 
-readonly logged_user=$(who | cut -d' ' -f1 | tail -1)
+logged_user=$(who | cut -d' ' -f1 | tail -1)
+
+if [ -z "$logged_user" ]; then # i've seen this on laptops running Fedora
+	logged_user=$(ps aux | grep ssh-agent | head -1 | awk '{print $1}')
+fi
+readonly logged_user
+
 readonly system_path="/etc"
 readonly users_path="/home"
 readonly programs_path="/usr"
