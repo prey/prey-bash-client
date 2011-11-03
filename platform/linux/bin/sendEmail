@@ -71,6 +71,7 @@ my %conf = (
     "delimiter"            => "----MIME delimiter for sendEmail-"  ## MIME Delimiter
                               . rand(1000000),                     ## Add some randomness to the delimiter
     "Message-ID"           => rand(1000000) . "-sendEmail",        ## Message-ID for email header
+    "ssl_available"        => 0,                                   ## If IO::Socket::SSL is available
     
 );
 
@@ -95,6 +96,7 @@ my %opt = (
     "username"             => '',                                  ## Username used in SMTP Auth
     "password"             => '',                                  ## Password used in SMTP Auth
     "tls"                  => 'auto',                              ## Enable or disable TLS support.  Options: auto, yes, no
+    "ssl"                  => 'no',                                ## Enable or disable SSL connection support. Options: yes, no
     
 );
 
@@ -128,7 +130,7 @@ if ($^O =~ /win/i) {
 ## Load IO::Socket::SSL if it's available
 eval    { require IO::Socket::SSL; };
 if ($@) { $conf{'tls_client'} = 0; }
-else    { $conf{'tls_client'} = 1; }
+else    { $conf{'tls_client'} = 1; $conf{'ssl_available'} = 1; }
 
 
 
@@ -1868,6 +1870,13 @@ printmsg("DEBUG => My IP address is: $conf{'ip'}", 1);
 #########################
 ##  Do the SMTP Dance  ##
 #########################
+## If we're connecting to an SSL server, we need to start SSL on the socket before we do any SMTP
+## This doesn't interfere with the socket creation or config for TLS
+if ($opt{'ssl'} =~ /^(yes)$/ and $conf{'ssl_available'} == 1) {
+    if(! IO::Socket::SSL->start_SSL($SERVER)) {
+        quit("ERROR => SSL requested and available but socket setup failed: " . IO::Socket::SSL::errstr(), 1);
+    }
+}
 
 ## Read initial greeting to make sure we're talking to a live SMTP server
 if (SMTPchat()) { quit($conf{'error'}, 1); }
