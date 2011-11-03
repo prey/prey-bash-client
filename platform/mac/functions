@@ -45,20 +45,28 @@ get_wifi_info() {
 	fi
 }
 
-disable_airport(){
-	if [ $osx_version == "snow-leopard" ]; then
-		local airportstring="Airport"
+get_airport_strings(){
+	network_service_string="AirPort"
+
+	if [ "$osx_version" == "lion" ]; then
+		network_service_string="Wi-Fi"
+		airport_name=$(networksetup -listallhardwareports | grep -A 1 "${network_service_string}" | grep Device | cut -c 9-12)
+	elif [ "$osx_version" == "snow-leopard" ]; then
+		airport_name="AirPort"
 	fi
-	networksetup -setnetworkserviceenabled AirPort off 2>/dev/null
-	networksetup -setairportpower $airportstring off 2>/dev/null
+
+}
+
+disable_airport(){
+	[ -z "$airport_name" ] && get_airport_strings
+	networksetup -setnetworkserviceenabled $network_service_string off 2>/dev/null
+	networksetup -setairportpower $airport_name off 2>/dev/null
 }
 
 enable_airport(){
-	if [ $osx_version == "snow-leopard" ]; then
-		local airportstring="Airport"
-	fi
-	networksetup -setnetworkserviceenabled AirPort on 2>/dev/null
-	networksetup -setairportpower $airportstring on 2>/dev/null
+	[ -z "$airport_name" ] && get_airport_strings
+	networksetup -setnetworkserviceenabled $network_service_string on 2>/dev/null
+	networksetup -setairportpower $airport_name on 2>/dev/null
 }
 
 try_to_connect() {
@@ -69,10 +77,8 @@ try_to_connect() {
 	local essid=$($airport -s | grep NONE | sort -k3 -r | head -1 | cut -c1-32 | sed 's/^[ \t]*//')
 
 	if [ -n "$essid" ]; then
-		if [ $osx_version == "snow-leopard" ]; then
-			local airportstring="Airport"
-		fi
-		networksetup -setairportnetwork $airportstring "$essid" 2>/dev/null
+		[ -z "$airport_name" ] && get_airport_strings
+		networksetup -setairportnetwork $airport_name "$essid" 2>/dev/null
 	fi
 }
 
@@ -89,7 +95,7 @@ reload_trigger(){
 	log " -- Setting up network detection trigger on LaunchDaemon..."
 	local trigger_plist_path="/Library/LaunchDaemons/${launchd_trigger_label}.plist"
 	if [ ! -e "$trigger_plist_path" ]; then
-		# ln -s "$(full_path $base_path)/${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"		
+		# ln -s "$(full_path $base_path)/${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"
 		cp "${platform_path}/${launchd_trigger_label}.plist" "$trigger_plist_path"
 		chown root: "${trigger_plist_path}"
 
