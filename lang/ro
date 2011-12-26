@@ -1,0 +1,23 @@
+#!/bin/bash
+####################################################################
+# Prey - by Tomas Pollak (http://bootlog.org)
+# Romanian lang file v 0.1 - by Kulldox (http://kulldox.info)
+# URL : http://preyproject.com
+# License: GPLv3
+####################################################################
+
+STRING_START="PREY $version îşi desface aripile!"
+STRING_TRY_TO_CONNECT=" -- Încerc să mă conectez la prima reţea wifi gratuită..."
+STRING_NO_CONNECT_TO_WIFI=" -- N-am reuşit să mă conectez la o reţea wifi gratuită!"
+STRING_CHECK_URL=" -- Verific URL..."
+STRING_NO_PROBLEM=" -- Nu-ţi face griji. :)\n"
+STRING_PROBLEM=" -- Sfinte GUACAMOLE!!"
+STRING_WRITE_EMAIL=" -- Compun email-ul tău..."
+STRING_SENDING_EMAIL=" -- Trimit raportul..."
+STRING_ERROR_EMAIL="\n\033[1m !! N-am reuşit să trimit email-ul. Eşti sigur că a fost configurat corect?
+Dacă foloseşti Gmail, încearcă să scoţi '@gmail.com' din câmpul smtp_username în fişierul de configuraţie a lui Prey.\033[0m\n"
+STRING_REMOVE_EVIDENCE=" -- Ştergem urmele..."
+STRING_DONE=" -- Gata! Vânătoare plăcută! :)"
+EMAIL_NOTICE=""
+EMAIL_HEADER="Am veşti bune pritene, se pare că l-am găsit.\n\nIată raportul din calculatorul tău:\n\n"
+EMAIL_FOOTER="\n\nVânătoare plăcută!\n\n--\nAl tău umil servitor, Prey\nhttp://preyproject.com"
