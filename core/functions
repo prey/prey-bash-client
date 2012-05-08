@@ -233,19 +233,34 @@ running_from_cron(){
 # http functions
 ####################################################################
 
+
 send_request(){
+	local url="$1"
 	local curl_arguments="$2"
+	local proxy_server="$3"
+
+	[ -n "$proxy_server" ] && curl_arguments="$curl_arguments -x $proxy_server"
 	local headers_file="$tmpbase/prey-curl-headers.txt"
-	response_body=$(getter $curl_arguments -L $1 --dump-header "$headers_file")
+	response_body=$(getter $curl_arguments -L $url --dump-header "$headers_file")
+
 	if [[ $? == 0 && -f "$headers_file" ]]; then
+
 		response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
 		get_status_code
+
+	elif [ -z "$proxy_server" ] && [ -n "$try_proxy" ]; then
+
+		log " -- Unable to get response. Trying via proxy..."
+		send_request "$url" "$curl_arguments" "$try_proxy"
+
 	else
+
 		log " !! Unable to get response from server!"
 		# error_exit "Exiting..."
-	fi
-}
 
+	fi
+
+}
 get_status_code(){
 	# if we get a redirect response, we should capture the last http status code
 	response_status=$(echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2)

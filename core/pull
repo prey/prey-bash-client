@@ -27,6 +27,14 @@ check_net_status(){
 	if [ $connected == 0 ]; then
 		log ' -- Trying alternate method...'
 		connected=$(getter --connect-timeout 3 $net_check_target &> /dev/null && echo 1 || echo 0)
+
+			if [ "$connected" == 0 ] && [ -n "$try_proxy" ]; then
+
+				log ' -- Trying via proxy...'
+				connected=$(getter --connect-timeout 3 $net_check_target -x "$try_proxy" &> /dev/null && echo 1 || echo 0)
+
+			fi
+
 	fi
 }
 
