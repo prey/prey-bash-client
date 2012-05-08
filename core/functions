@@ -34,10 +34,10 @@ get_attribute(){
 
 # key, value
 set_config(){
-	if [ -n "$2" ]; then
-		# filter $() or backticks to prevent unwanted command execution
-		local clean_val=$(echo "$2" | sed "s/[\`|\$(].*[\`|)]//g")
-		eval "${1}=\"$clean_val\""
+	if [ -n "$1" ] && [ -n "$2" ]; then
+		local clean_key=$(echo "$1" | sed "s/[^a-zA-Z0-9_]/_/g")
+		local clean_val=$(printf "%q" "$2")
+		eval "${clean_key}=${clean_val}"
 	fi
 }
 
