@@ -8,7 +8,7 @@
 
 run_as_current_user(){
 	if [ "`whoami`" != "$logged_user" ]; then
-		DISPLAY=:0 sudo su $logged_user -c "$1"
+		DISPLAY=:0 su $logged_user -c "$1" #removed sudo
 	else
 		eval $1
 	fi

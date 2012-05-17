@@ -285,7 +285,7 @@ verify_installation(){
 	if [ -n `is_process_running 'cron'` ]; then
 		log " -- Cron daemon found."
 	else
-		log " !! Cron daemon not found! Try running it with 'sudo /etc/init.d/cron start'."
+		log " !! Cron daemon not found! Try running as root: '/etc/init.d/cron start' or '/etc.init.d/crond start'.."
 	fi
 	log " -- Checking for crontab entry..."
 	local result=`crontab -l | grep 'prey.sh' | wc -l 2> /dev/null`
