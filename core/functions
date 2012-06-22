@@ -104,18 +104,25 @@ get_file(){
 separator='########################################################'
 
 generate_query_string(){
+
 	local default_prefix="\n -F "
 	[ -n "$2" ] && prefix="$2" || prefix="$default_prefix"
+
 	for t in $(eval echo \${$1[@]}); do
-		local start=`echo ${t%%=*}`
-		local index=`echo $(( ${#start} + 1 ))`
+
+		local start=$(echo ${t%%=*})
+		local index=$(echo $(( ${#start} + 1 )))
+
 		if [ "$prefix" != "$default_prefix" ]; then
 			local trace_field=`echo "$start" | sed "s/^\([^_].*\)__\(.*\)/[\1][\2]/"`
 		else
 			local trace_field=`echo "$start" | sed 's/^\([^_].*\)__\(.*\)/\1[\2]/'`
 		fi
+
 		echo -n "${prefix}${trace_field}=${t:index}"
+
 	done
+
 }
 
 generate_list(){
@@ -206,17 +213,23 @@ update_execution_delay(){
 # on the server. otherwise we'll make sure it is set to the regular interval.
 check_and_update_delay(){
 	local current_delay=$(get_current_delay)
+
 	if [ -n "$device_missing" ]; then
 		local new_delay=$(get_delay_for "$1")
+
 		if [ "$current_delay" != "$new_delay" ]; then
 			log " -- Setting frequency to $1!"
 			update_execution_delay "$new_delay"
 		fi
+
 	elif [[ -z "$current_delay" || -z "$(one_hour_interval)" ]]; then
+
 		log " -- Setting delay to regular interval."
 		[ "$os" == "windows" ] && local new_delay=$(get_delay_for 60) || local new_delay="$(get_delay_for $(get_random_number 59))"
 		update_execution_delay "$new_delay"
+
 	fi
+
 }
 
 ensure_trigger_loaded(){
@@ -235,6 +248,7 @@ running_from_cron(){
 
 
 send_request(){
+
 	local url="$1"
 	local curl_arguments="$2"
 	local proxy_server="$3"
@@ -282,13 +296,13 @@ get_last_response(){
 
 verify_installation(){
 	log " -- Checking if cron daemon is running..."
-	if [ -n `is_process_running 'cron'` ]; then
+	if [ -n $(is_process_running 'cron') ]; then
 		log " -- Cron daemon found."
 	else
 		log " !! Cron daemon not found! Try running it with 'sudo /etc/init.d/cron start'."
 	fi
 	log " -- Checking for crontab entry..."
-	local result=`crontab -l | grep 'prey.sh' | wc -l 2> /dev/null`
+	local result=$(crontab -l | grep 'prey.sh' | wc -l 2> /dev/null)
 	if [ "$result" -gt 0 ]; then
 		log " -- Found!"
 	else
@@ -339,13 +353,13 @@ self_setup(){
 	[ "$os" == "linux" ] && local os_name=$distro_name || local os_name=$os
 	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=$(capitalize $os_name)${pc_hardware_params}"
 
-	send_request "$control_panel_url/devices.xml" "--connect-timeout 10 -u $api_key:x -d "$params""
+	send_request "$control_panel_url/devices.xml" "--connect-timeout 20 -u $api_key:x -d "$params""
 	log " -- Got response status ${response_status}."
 
 	if [ "$response_status" == "201" ]; then
 
 		log ' -- Device succesfully added! Applying configuration...'
-		device_key=`echo "$response_body" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
+		device_key=$(echo "$response_body" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/')
 
 		save_config_value device_key "$device_key"
 
