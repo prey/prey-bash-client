@@ -20,13 +20,13 @@ error_exit(){
 }
 
 show_usage(){
-	echo "Prey ${version} ( http://preyproject.com )"
-	echo -e "\nUsage: `basename $0` [options]"
+	echo -e "Usage: `basename $0` [options]\n"
 	echo -e "Options:"
 	echo -e "  -t | --test\t\tTest mode. Runs Prey without sending any data."
 	echo -e "  -c | --check\t\tCheck mode. Checks if configuration is correctly set up."
 	echo -e "  -l | --log\t\tLog output to ${base_path}/prey.log (default in Windows)."
 	echo -e "  -s | --silent\t\tDon't log any output."
+	echo -e "\nFor more information and customization options, please check http://preyproject.com.\n"
 }
 
 show_version(){
