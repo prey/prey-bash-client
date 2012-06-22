@@ -87,9 +87,9 @@ send_via_http(){
 	else
 		local args="-u $api_key:x"
 	fi
-	if [ `find_in "$post_url" 'https'` ]; then
-		echo " -- Using SSL v3 encryption! Nice."
-		args="$args -3"
+	if [ $(find_in "$post_url" "https:") ]; then
+		log " -- Using SSL encryption."
+		[ $(find_in "$post_url" "$control_panel_url") ] || args="$args -k"
 	fi
 	response=$(getter $args -K "$trace_file" $file_list "$post_url" \
 	-w "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec.")
