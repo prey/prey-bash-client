@@ -339,7 +339,7 @@ verify_smtp_settings(){
 get_hardware_info(){
 	initialize_module "system"
 	scan_system_hardware
-	[ $? == 0 ] && echo "$(full_hardware_params)"
+	full_hardware_params
 }
 
 self_setup(){
@@ -356,11 +356,11 @@ self_setup(){
 	send_request "$control_panel_url/devices.xml" "--connect-timeout 20 -u $api_key:x -d "$params""
 	log " -- Got response status ${response_status}."
 
-	if [ "$response_status" == "201" ]; then
+	device_key=$(echo "$response_body" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/')
 
-		log ' -- Device succesfully added! Applying configuration...'
-		device_key=$(echo "$response_body" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/')
+	if [ -n "$device_key" ]; then
 
+		log ' -- Device succesfully registered! Applying configuration...'
 		save_config_value device_key "$device_key"
 
 		if [ $? == 1 ]; then
