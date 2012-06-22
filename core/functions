@@ -322,19 +322,27 @@ verify_smtp_settings(){
 # self setup functions
 ####################################################################
 
+get_hardware_info(){
+	initialize_module "system"
+	scan_system_hardware
+	[ $? == 0 ] && echo get_hardware_scan_params
+}
+
 self_setup(){
 
-	log ' -- Gathering PC info...'
+	log ' -- Gathering system and hardware information...'
 	get_pc_info
+	local pc_hardware_params="$(get_hardware_info)"
 
 	log ' -- Sending request to Control Panel...'
 
 	[ "$os" == "linux" ] && local os_name=$distro_name || local os_name=$os
-	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=$(capitalize $os_name)"
+	local params="device[title]=$pc_name&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=$(capitalize $os_name)${pc_hardware_params}"
 
-	send_request "$check_url/devices.xml" "--connect-timeout 10 -u $api_key:x -d "$params""
+	send_request "$control_panel_url/devices.xml" "--connect-timeout 10 -u $api_key:x -d "$params""
+	log " -- Got response status ${response_status}."
 
-	if [ $response_status == "201" ]; then
+	if [ "$response_status" == "201" ]; then
 
 		log ' -- Device succesfully added! Applying configuration...'
 		device_key=`echo "$response_body" | grep "<key>" | sed 's/.*<key>\(.*\)<\/key>.*/\1/'`
