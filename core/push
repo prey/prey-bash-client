@@ -7,23 +7,24 @@
 
 update_device_info_with(){
 
-	if [ -z "$device_key" ]; then return 1; fi
+	[ -z "$device_key" ] && return 1
 
 	log ' -- Updating device info...'
-	send_request "$check_url/devices/$device_key.xml" "-X PUT -u $api_key:x -d "$1""
+	send_request "$control_panel_url/devices/$device_key.xml" "--connect-timeout 10 -X PUT -u $api_key:x -d "$1""
 
-	get_status_code
 	if [ "$response_status" == "200" ]; then
 		log " -- Device updated."
+	elif [ "$response_status" == "422" ]; then
+		log " -- Couldn't update your device. Seems some data was missing or incorrectly sent."
 	else
-		log " -- Couldn't update your device. Maybe the Control Panel is taking a bath."
+		log " -- Couldn't update your device. Got status code ${response_status}."
 	fi
 
 }
 
 deactivate_modules_on_panel(){
 
-	if [ -z "$device_key" ]; then return 1; fi
+	[ -z "$device_key" ] && return 1
 
 	log " -- Deactivating module(s) ${1} on Control Panel..."
 
