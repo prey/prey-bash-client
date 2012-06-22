@@ -325,7 +325,7 @@ verify_smtp_settings(){
 get_hardware_info(){
 	initialize_module "system"
 	scan_system_hardware
-	[ $? == 0 ] && echo get_hardware_scan_params
+	[ $? == 0 ] && echo "$(full_hardware_params)"
 }
 
 self_setup(){
