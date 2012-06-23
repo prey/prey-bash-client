@@ -7,15 +7,18 @@
 
 import os
 import sys
-import subprocess
 import gobject
 import dbus
+from subprocess import Popen, call, PIPE, STDOUT
 from datetime import datetime, timedelta
 from dbus.mainloop.glib import DBusGMainLoop
+from getpass import getuser
 
+debug = False
 min_interval = 2 # minutes
 log_file = "/var/log/prey.log"
 prey_command = "/usr/share/prey/prey.sh"
+command_env = {'TERM':'xterm', 'TRIGGER': 'true', 'USER': getuser()}
 
 try:
 	log_output = open(log_file, 'wb')
@@ -31,11 +34,9 @@ def connected():
 	return nm_interface.state() == 3
 
 def log(message):
-	try:
-		if sys.argv[1] == '--debug':
-			shout(message)
-	except IndexError, e:
-		pass
+	print(message)
+	if debug:
+		shout(message)
 
 # only for testing purposes
 def shout(message):
@@ -49,9 +50,9 @@ def run_prey():
 	if (run_at is None) or (now - run_at > two_minutes):
 		log("Running Prey!")
 		try:
-			subprocess.Popen(prey_command, stdout=log_output, stderr=subprocess.STDOUT)
+			p = Popen(prey_command, stdout=log_output, stderr=STDOUT)
 			run_at = datetime.now()
-			os.wait()
+			p.wait()
 		except OSError, e:
 			print "\nWait a second! Seems we couldn't find Prey at " + prey_command
 			print e
@@ -62,7 +63,7 @@ def run_prey():
 #######################
 
 def network_state_changed(*args):
-	log("Network change detected")
+	# log("Network change detected")
 	if connected():
 		run_prey()
 
@@ -76,7 +77,7 @@ def network_state_changed(*args):
 
 if __name__ == '__main__':
 
-	log("Initializing")
+	# log("Initializing")
 	run_at = None
 
 	# Setup message bus.
