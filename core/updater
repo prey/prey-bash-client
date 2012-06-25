@@ -348,8 +348,8 @@ restore_config(){
 ####################################################################
 
 get_module(){
-	rm "$module_file" 2> /dev/null
-	getter -u $api_key:x "$modules_url/modules/$1.zip" -o "$module_file" 2> /dev/null
+	rm -f "$module_file" 2> /dev/null
+	getter "${modules_url}/$1.zip" -o "$module_file" 2> /dev/null
 }
 
 install_or_update_module(){

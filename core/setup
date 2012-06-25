@@ -113,7 +113,7 @@ set_constants(){
 	readonly logged_user
 
 	readonly control_panel_url="https://control.preyproject.com" 2> /dev/null
-	modules_url=$control_panel_url 2> /dev/null
+	modules_url="http://cloud.github.com/downloads/prey/prey-bash-client-modules" 2> /dev/null
 	updates_url="http://cloud.github.com/downloads/prey/prey-bash-client" 2> /dev/null
 }
 
