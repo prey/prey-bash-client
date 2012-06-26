@@ -7,7 +7,7 @@
 . "$platform_path/services"
 
 run_as_current_user(){
-	if [ "`whoami`" != "$logged_user" ]; then
+	if [ "$(whoami)" != "$logged_user" ]; then
 		DISPLAY=:0 sudo su $logged_user -c "$1"
 	else
 		eval $1
@@ -30,16 +30,24 @@ get_netmask(){
 	ifconfig $1 2> /dev/null | grep "Mask:" | awk '{print $4}' | sed "s/Mask://"
 }
 
-get_gateway_ip() {
+get_gateway_ip(){
 	ip r | grep "$1" | grep default | cut -d ' ' -f 3
 }
 
-get_wifi_device() {
+get_wifi_device(){
 	[ -z "$wifi_device" ] && wifi_device=$(iwconfig 2>&1 | grep -v "no wireless" | cut -f1 -d" " | grep -v "^$" | tail -1)
 }
 
-get_wifi_info() {
+get_wifi_info(){
 	[ -z "$wifi_info" ] && wifi_info=$(iwconfig 2>&1 | grep -v "no wireless")
+}
+
+get_open_ssid(){
+	local iwlist=$(which iwlist)
+
+	# access_points=`iwlist $wifi_device | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr`
+
+	$iwlist $wifi_device scan | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr | grep "off" | head -1 | cut -d ' ' -f1 | sed 's/"//g'
 }
 
 # attempts to connect to the first open public wifi network
@@ -55,24 +63,22 @@ try_to_connect() {
 	else
 
 		get_wifi_device
-		if [ -n "$wifi_device" ]; then
 
-			# access_points=`iwlist $wifi_device | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr`
-			local open_essid=`\`which iwlist\` $wifi_device scan | awk -F '[ :=]+' '/(ESS|Freq|Qual)/{ printf $3" " } /Encr/{ print $4 }' | sort -k4 -k3nr | grep "off" | head -1 | cut -d ' ' -f1 | sed 's/"//g'`
-
-			if [ -n $open_essid ]; then
-				log " -- SSID found! Attempting to connect to ${open_essid}..."
-				`which iwconfig` $wifi_device essid $open_essid
-				`which dhclient3` $wifi_device
-			else
-				log ' -- No open SSIDs found.'
-			fi
-
-		else
-
+		if [ -z "$wifi_device" ]; then
 			log ' !! No wifi device found!'
-
+			return 1
 		fi
+
+		local open_ssid=$(get_open_ssid)
+
+		if [ -z "$open_ssid" ]; then
+			log ' -- No open SSIDs found.'
+			return 1
+		fi
+
+		log " -- SSID found! Attempting to connect to ${open_ssid}..."
+		$(which iwconfig) $wifi_device essid $open_ssid
+		$(which dhclient3) $wifi_device
 
 	fi
 
@@ -127,15 +133,11 @@ get_pc_info(){
 	pc_name=$(hostname)
 
 	$(which laptop-detect)
-	if [ $? == 1 ]; then
-		pc_type="Desktop"
-	else
-		pc_type="Laptop"
-	fi
+	[ $? == 1 ] && pc_type="Desktop" || pc_type="Laptop"
 
 	get_distro_name
 	if [ "$distro_name" == "ubuntu" ]; then
-		pc_os_version=$(lsb_release -r | sed 's/.*\t//g')
+		pc_os_version=$(lsb_release -r -s)
 	elif [ "$distro_name" == "debian" ]; then
 		pc_os_version=$(cat /etc/debian_version)
 	fi
@@ -144,7 +146,7 @@ get_pc_info(){
 
 get_distro_name(){
 
-	[ -n "$distro_name" ] && return 1
+	[ -n "$distro_name" ] && return
 
 	local proc_version=$(cat /proc/version 2>&1)
 

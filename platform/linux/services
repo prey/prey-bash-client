@@ -7,11 +7,13 @@
 
 linux_load_service(){
 	get_distro_name
+	[ -z "$distro_name" ] && return 1
 	eval "${distro_name}_load_service $1"
 }
 
 linux_unload_service(){
 	get_distro_name
+	[ -z "$distro_name" ] && return 1
 	eval "${distro_name}_unload_service $1"
 }
 
@@ -20,14 +22,16 @@ linux_copy_init_script(){
 	if [ ! -e "$full_init_script_path" ]; then
 		ln -s "$(full_path $base_path)/${platform_path}/${2}" "$full_init_script_path" 2> /dev/null
 		local retval=$?
-		[ $retval != 0 ] && log " !! Couldn't copy init script into ${1}!"
+		[ $retval -ne 0 ] && log " !! Couldn't copy init script into ${1}!"
 		return $retval
 	fi
 	return 0
 }
 
 linux_remove_init_script(){
-	rm -f "$1/$2"
+	local script_path="${1}/${2}"
+	[ ! -f "$script_path" ] && return 1
+	rm -f "$script_path"
 	return $?
 }
 
