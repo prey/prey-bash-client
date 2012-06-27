@@ -1,7 +1,7 @@
 ##############################################
 # Prey - Track down your stolen laptop
 # http://preyproject.com
-# A project by Tomas Pollak
+# A project originally by Tomas Pollak
 ##############################################
 
 Prey is a lightweight application for tracking your stolen laptop.
@@ -125,15 +125,8 @@ http://support.preyproject.com/
 6. Acknowledgements
 ##############################################
 
-Prey is a collaborative project which has kept alive thanks to the help of
-diverse contributors, specially these amazing people:
-
-	o Diego Torres - http://warorface.com
-	o Juan Carlos Mardones - http://juanmardones.com
-	o Newstart/MKHCB
-	o Rodrigo Linfati - http://linfati.cl
-	o Michael Smith
-	o Pablo Poo
+Prey is a collaborative project built by many people. Code contributors for this
+client can be seen at https://github.com/prey/prey-bash-client/graphs/contributors.
 
 Prey also works thanks to Brandon Zehm's excellent command-line SMTP client
 and Axel Bauer's iSightCapture program for capturing pictures on the
