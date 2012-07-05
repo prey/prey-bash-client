@@ -45,7 +45,7 @@ urlencode(){
 }
 
 urldecode(){
-	echo "$1" | sed "s/%0A/\n/g;s/%22/\"/g;s/%28/\(/g;s/%29/\)/g;s/%26/\&/g;s/%3D/\=/g"
+	echo "$1" | sed "s/%0A/\n/g;s/%20/ /g;s/%3F/\?/g;s/%22/\"/g;s/%28/\(/g;s/%29/\)/g;s/%26/\&/g;s/%3D/\=/g"
 }
 
 # returns the md5 hash for a string, expects string as $1
