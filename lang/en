@@ -21,4 +21,4 @@ STRING_DONE=" -- Done! Happy hunting! :)"
 
 EMAIL_NOTICE=""
 EMAIL_HEADER="Good news my friend, it seems we found it.\n\nHere's the report from your computer:\n\n"
-EMAIL_FOOTER="\n\nHappy hunting!\n\n--\nYour humble servant, Prey\nhttp://preyproject.com"
+EMAIL_FOOTER="\n\nChecked URL: ${check_url}\n\nHappy hunting!\n\n--\nYour humble servant, Prey\nhttp://preyproject.com"
