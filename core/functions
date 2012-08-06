@@ -214,7 +214,9 @@ update_execution_delay(){
 check_and_update_delay(){
 	local current_delay=$(get_current_delay)
 
-	if [ -n "$device_missing" ]; then
+	# if device is missing, or trigger is not loaded, set delay
+	if [[ -n "$device_missing" || -z "$(is_trigger_loaded)" ]]; then
+
 		local new_delay=$(get_delay_for "$1")
 
 		if [ "$current_delay" != "$new_delay" ]; then
@@ -225,16 +227,22 @@ check_and_update_delay(){
 	elif [[ -z "$current_delay" || -z "$(one_hour_interval)" ]]; then
 
 		log " -- Setting delay to regular interval."
-		[ "$os" == "windows" ] && local new_delay=$(get_delay_for 60) || local new_delay="$(get_delay_for $(get_random_number 59))"
+
+		if [ "$os" == "windows" ]; then
+			local new_delay=$(get_delay_for 60)
+		else
+			local new_delay="$(get_delay_for $(get_random_number 59))"
+		fi
+
 		update_execution_delay "$new_delay"
 
 	fi
 
 }
 
-ensure_trigger_loaded(){
-	[ -z "$(is_trigger_loaded)" ] && reload_trigger
-}
+#ensure_trigger_loaded(){
+#	[ -z "$(is_trigger_loaded)" ] && reload_trigger
+#}
 
 running_from_cron(){
 	# tty -s
