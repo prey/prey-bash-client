@@ -14,7 +14,7 @@ auto_connect='n'
 
 # verification URL, if left empty Prey will always activate and run,
 # which is certainly *not* recommended.
-check_url='http://control.preyproject.com'
+check_url='https://control.preyproject.com'
 
 # IMPORTANT: on what HTTP response code will Prey be activated (200 or 404)
 # control panel users don't touch this! standalone users may want to
