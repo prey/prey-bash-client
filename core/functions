@@ -277,12 +277,13 @@ send_request(){
 
 	else
 
-		log " !! Unable to get response from server!"
+		log_response_error "$url"
 		# error_exit "Exiting..."
 
 	fi
 
 }
+
 get_status_code(){
 	# if we get a redirect response, we should capture the last http status code
 	response_status=$(echo -e "$response_headers" | grep 'HTTP/' | tail -1 | cut -d" " -f2)
@@ -296,6 +297,14 @@ get_header_value(){
 # fetches last response if online actions were enabled for the device
 get_last_response(){
 	response_body=$(cat "$last_response")
+}
+
+log_response_error(){
+	local url="$1"
+	log " !! Got invalid response! This probably means there is a connection issue."
+	log " -- Please check your firewall settings, allowing Curl to connect to ${url} through port 80."
+	log " -- If you use a proxy server look for the curl_options setting in the config file."
+	log " -- The response we got was: \n\n${response_headers}\n${response_body}\n"
 }
 
 ####################################################################

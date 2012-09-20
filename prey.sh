@@ -128,7 +128,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 
 	if [ -z "$response_status" ]; then
 
-		log_response_error
+		log_response_error "$check_url"
 
 	else
 

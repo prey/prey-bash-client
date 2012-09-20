@@ -60,13 +60,6 @@ check_device_status(){
 
 }
 
-log_response_error(){
-	log " !! Got empty status code! This probably means there is a connection issue."
-	log " -- Please check your firewall settings, allowing Curl to connect to ${check_url} through port 80."
-	log " -- If you use a proxy server look for the curl_options setting in the config file."
-	log " -- The response we got was: \n\n${response_headers}\n${response_body}\n"
-}
-
 check_encrypted_response(){
 
 	[[ "$response_status" != "200" && "$response_status" != "404" ]] && return 1
