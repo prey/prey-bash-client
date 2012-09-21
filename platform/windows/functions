@@ -107,19 +107,6 @@ try_to_connect() {
 	fi
 }
 
-reverse_tunnel_command(){
-	"$platform_path/bin/plink.exe" -ssh -C -N \
-	-R ${remote_tunnel_port}:localhost:${local_tunnel_port} \
-	-l ${remote_tunnel_user} -pw ${remote_tunnel_pass} \
-	${remote_tunnel_host} > /dev/null &
-	local rs=$?
-	local tunnel_pid=$!
-	if [ "$rs" -eq 0 ]; then
-		echo "$tunnel_pid" > "prey-tunnel.pid"
-	fi
-	return $rs
-}
-
 on_demand_stdin(){
 	local sleep_interval=2
 	local last_msg=""
@@ -140,6 +127,10 @@ on_demand_stdin(){
 # transforms integer into miliseconds, assuming integer is a minute
 get_delay_for(){
 	echo $(($1*60*1000))
+}
+
+get_random_minute_delay(){
+	get_delay_for 60
 }
 
 # returns 1 if delay is set to regular one-hour interval
