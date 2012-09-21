@@ -233,7 +233,7 @@ check_and_update_delay(){
 		local new_delay=$(get_delay_for "$1")
 
 		# if interval hasn't changed, return
-		if [ "$current_delay" == "$new_delay" ] && return 0
+		[ "$current_delay" == "$new_delay" ] && return 0
 		log " -- Setting frequency to $1!"
 
 	fi
