@@ -196,7 +196,12 @@ one_hour_interval(){
 # returns cron delay depending on device's state:
 # when missing, every X minutes, otherwise every hour on minute X
 get_delay_for(){
-	[ -n "$device_missing" ] && echo '*/'$1' * * * *' || echo "$1 * * * *"
+	echo '*/'$1' * * * *'
+}
+
+get_random_minute_delay(){
+	local min=$(get_random_number 59)
+	echo "${min} * * * *"
 }
 
 get_current_delay(){
@@ -214,29 +219,26 @@ update_execution_delay(){
 check_and_update_delay(){
 	local current_delay=$(get_current_delay)
 
-	# if device is missing, or trigger is not loaded, set delay
-	if [[ -n "$device_missing" || -z "$(is_trigger_loaded)" ]]; then
+	# if trigger is loaded and device not missing, set to one hour intervals
+	if [[ -n "$(is_trigger_loaded)" && -z "$device_missing" ]]; then
+
+		# if already set to one hour interval, return
+		[ -n "$(one_hour_interval)" ] && return 0
+
+		local new_delay=$(get_random_minute_delay)
+		log " -- Setting delay to regular interval."
+
+	else
 
 		local new_delay=$(get_delay_for "$1")
 
-		if [ "$current_delay" != "$new_delay" ]; then
-			log " -- Setting frequency to $1!"
-			update_execution_delay "$new_delay"
-		fi
-
-	elif [[ -z "$current_delay" || -z "$(one_hour_interval)" ]]; then
-
-		log " -- Setting delay to regular interval."
-
-		if [ "$os" == "windows" ]; then
-			local new_delay=$(get_delay_for 60)
-		else
-			local new_delay="$(get_delay_for $(get_random_number 59))"
-		fi
-
-		update_execution_delay "$new_delay"
+		# if interval hasn't changed, return
+		if [ "$current_delay" == "$new_delay" ] && return 0
+		log " -- Setting frequency to $1!"
 
 	fi
+
+	update_execution_delay "$new_delay"
 
 }
 
