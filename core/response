@@ -37,7 +37,7 @@ process_config(){
 		rm -f "$last_response" 2> /dev/null
 	fi
 
-	check_and_update_delay $delay
+	[ -n "$delay" ] && check_and_update_delay $delay
 
 	if [[ -z "$on_demand_call" && "$auto_update" == "true" && `is_greater_than $current_release $version` == 1 ]]; then
 
