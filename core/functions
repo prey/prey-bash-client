@@ -274,13 +274,16 @@ send_request(){
 
 	elif [ -z "$proxy_server" ] && [ -n "$try_proxy" ]; then
 
+		# if try_proxy does not contain a dot (e.g. 'true' or something else)
+		# then lets make sure we use a valid proxy.
+		[ -z "$(find_in $try_proxy '.')" ] && try_proxy="$(get_system_proxy)"
+
 		log " -- Unable to get response. Trying via proxy..."
 		send_request "$url" "$curl_arguments" "$try_proxy"
 
 	else
 
 		log_response_error "$url"
-		# error_exit "Exiting..."
 
 	fi
 
