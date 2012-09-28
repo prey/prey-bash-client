@@ -42,6 +42,28 @@ get_wifi_info(){
 	[ -z "$wifi_info" ] && wifi_info=$(iwconfig 2>&1 | grep -v "no wireless")
 }
 
+####################################################################
+# get proxy functions
+####################################################################
+
+get_system_proxy(){
+  [ -n "$http_proxy" ] echo "$http_proxy" && return
+  [ -n "$https_proxy" ] echo "$https_proxy" && return
+  [ -n "$(which gsettings)" ] get_proxy_from_gsettings && return
+}
+
+get_proxy_from_gsettings(){
+  local proxy_host=$(gsettings get org.gnome.system.proxy.http host)
+  if [ -n "$proxy_host" ]; then
+    local proxy_port=$(gsettings get org.gnome.system.proxy.http port)
+    echo "$proxy_host:${proxy_port}"
+  fi
+}
+
+####################################################################
+# auto connect
+####################################################################
+
 get_open_ssid(){
 	local iwlist=$(which iwlist)
 

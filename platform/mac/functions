@@ -45,6 +45,36 @@ get_wifi_info() {
 	fi
 }
 
+####################################################################
+# get proxy functions
+####################################################################
+
+get_system_proxy(){
+  [ -z "$network_service_string" ] && get_airport_strings
+  local system_proxy=$(get_proxy_for_service "$network_service_string")
+
+  #  if no system proxy is found for Wi-Fi / Airport, check Ethernet's settings
+  [ -z "$system_proxy" ] && system_proxy=$(get_proxy_for_service Ethernet)
+  echo "$system_proxy"
+}
+
+get_proxy_for_service(){
+  local network_service="$1"
+  local out=$(get_proxy_by_type "$network_service" webproxy)
+  [ -z "$out" ] && out=$(get_proxy_by_type "$network_service" securewebproxy)
+  [ -n "$out" ] && echo "$out"
+}
+
+get_proxy_by_type(){
+  local network_service="$1"
+  local proxy_type="$2"
+  networksetup -get${proxy_type} "$network_service" | grep -e "Enabled.*Yes" -A2 | awk {'print $2'} | awk {'getline l1; getline l2; print "http://"l1":"l2'}
+}
+
+####################################################################
+# auto connect
+####################################################################
+
 get_airport_strings(){
 	network_service_string="AirPort"
 
@@ -54,7 +84,6 @@ get_airport_strings(){
 	elif [ "$osx_version" == "snow-leopard" ]; then
 		airport_name="AirPort"
 	fi
-
 }
 
 disable_airport(){

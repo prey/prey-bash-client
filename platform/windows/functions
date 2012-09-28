@@ -87,6 +87,10 @@ get_gateway_ip() {
 	fi
 }
 
+get_system_proxy(){
+  # TODO
+}
+
 get_wifi_info() {
 	if [ -n "$winxp" ]; then
 		wifi_info=`autowcxp.exe -list`
