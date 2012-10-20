@@ -8,10 +8,7 @@
 readonly cipher_algorithm="aes-128-cbc"
 
 # returns if we have have network access, otherwise 0
-# you can check against the gateway or the net, change it if you like
 check_net_status(){
-	# get_gateway_ip
-	# net_check_target=$gateway_ip
 	log ' -- Looking for connection...'
 
 	local net_check_target="www.google.com"
@@ -20,20 +17,16 @@ check_net_status(){
 	else
 		local ping_cmd="ping -q -c"
 	fi
+
 	connected=$($ping_cmd 1 $net_check_target &> /dev/null && echo 1 || echo 0)
 
 	# if there's no connection with ping, lets try to see if curl gets through
 	# since some routers/networks block ICMP requests
 	if [ $connected == 0 ]; then
+
 		log ' -- Trying alternate method...'
-		connected=$(getter --connect-timeout 3 $net_check_target &> /dev/null && echo 1 || echo 0)
-
-			if [ "$connected" == 0 ] && [ -n "$try_proxy" ]; then
-
-				log ' -- Trying via proxy...'
-				connected=$(getter --connect-timeout 3 $net_check_target -x "$try_proxy" &> /dev/null && echo 1 || echo 0)
-
-			fi
+		send_request "$net_check_target" "--connect-timeout 3"
+		[ -n "$response_status" ] && connected=1
 
 	fi
 }
@@ -66,7 +59,7 @@ check_encrypted_response(){
 
 	local content_type=$(get_header_value 'Content-Type')
 
-	if [[ -n "`find_in "$content_type" 'xml'`" && -z "`find_in "$response_body" '<config'`" ]]; then
+	if [[ -n "$(find_in "$content_type" 'xml')" && -z "$(find_in "$response_body" '<config')" ]]; then
 
 		log " ++ Got encrypted response! Processing... "
 		local cipher_key=$(md5_hash_for ${api_key})
