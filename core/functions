@@ -256,6 +256,18 @@ running_from_cron(){
 # http functions
 ####################################################################
 
+# if try_proxy does not contain a dot (e.g. 'true' or something else)
+# then lets make sure we use a valid proxy.
+get_proxy_server(){
+	[ -z "$try_proxy" ] && return 1
+
+	if [ -n "$(find_in $try_proxy '\.')" ]; then
+		echo "$try_proxy"
+	else
+		get_system_proxy
+	fi
+
+}
 
 send_request(){
 
@@ -265,7 +277,8 @@ send_request(){
 
 	[ -n "$proxy_server" ] && curl_arguments="$curl_arguments -x $proxy_server"
 	local headers_file="$tmpbase/prey-curl-headers.txt"
-	response_body=$(getter $curl_arguments -L $url --dump-header "$headers_file")
+
+	response_body=$(getter $curl_arguments -L $url --dump-header "$headers_file" -S --stderr -)
 
 	if [[ $? == 0 && -f "$headers_file" ]]; then
 
@@ -274,12 +287,9 @@ send_request(){
 
 	elif [ -z "$proxy_server" ] && [ -n "$try_proxy" ]; then
 
-		# if try_proxy does not contain a dot (e.g. 'true' or something else)
-		# then lets make sure we use a valid proxy.
-		[ -z "$(find_in $try_proxy '.')" ] && try_proxy="$(get_system_proxy)"
-
-		log " -- Unable to get response. Trying via proxy..."
-		send_request "$url" "$curl_arguments" "$try_proxy"
+		local proxy_to_use=$(get_proxy_server)
+		log " -- Unable to get response. Trying via proxy (${proxy_to_use})"
+		send_request "$url" "$curl_arguments" "$proxy_to_use"
 
 	else
 
@@ -308,7 +318,7 @@ log_response_error(){
 	local url="$1"
 	log " !! Got invalid response! This probably means there is a connection issue."
 	log " -- Please check your firewall settings, allowing Curl to connect to ${url} through port 80."
-	log " -- If you use a proxy server look for the curl_options setting in the config file."
+	log " -- If you use a proxy server please check the try_proxy setting in the config file."
 	log " -- The response we got was: \n\n${response_headers}\n${response_body}\n"
 }
 
