@@ -70,7 +70,7 @@ send_via_email(){
 	[ -n "$smtp_username" ] && local auth="username=$smtp_username password=$decrypted_pass"
 	response=$(mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto $auth)
 
-	if [ `find_in "$response" 'ERROR'` ]; then
+	if [ -n $(find_in "$response" 'ERROR') ]; then
 		log "$STRING_ERROR_EMAIL"
 		log "\n This is the complete error message: \n $response\n"
 	else
@@ -87,14 +87,12 @@ send_via_http(){
 	else
 		local args="-u $api_key:x"
 	fi
-	if [ $(find_in "$post_url" "https:") ]; then
+	if [ -n $(find_in "$post_url" "https:") ]; then
 		log " -- Using SSL encryption."
-		[ $(find_in "$post_url" "$control_panel_url") ] || args="$args -k"
+		[ -z $(find_in "$post_url" "$control_panel_url") ] && args="$args -k"
 	fi
-	response=$(getter $args -K "$trace_file" $file_list "$post_url" \
-	-w "\n -- %{size_upload} bytes uploaded in %{time_total} seconds, at %{speed_upload} bytes/sec.")
-
-	log " -- $response"
+	send_request "$post_url" "$args -K "$trace_file" $file_list"
+	log " -- $response_body"
 }
 
 send_via_scp(){
