@@ -53,7 +53,7 @@ get_system_proxy(){
   [ -z "$network_service_string" ] && get_airport_strings
   local system_proxy=$(get_proxy_for_service "$network_service_string")
 
-  #  if no system proxy is found for Wi-Fi / Airport, check Ethernet's settings
+  # if no system proxy is found for Wi-Fi / Airport, check Ethernet's settings
   [ -z "$system_proxy" ] && system_proxy=$(get_proxy_for_service Ethernet)
   echo "$system_proxy"
 }
@@ -68,7 +68,7 @@ get_proxy_for_service(){
 get_proxy_by_type(){
   local network_service="$1"
   local proxy_type="$2"
-  networksetup -get${proxy_type} "$network_service" | grep -e "Enabled.*Yes" -A2 | awk {'print $2'} | awk {'getline l1; getline l2; print "http://"l1":"l2'}
+  networksetup -get${proxy_type} "$network_service" | grep -e "^Enabled:" -A2 | awk {'print $2'} | awk {'getline l1; getline l2; print "http://"l1":"l2'}
 }
 
 ####################################################################
@@ -78,12 +78,17 @@ get_proxy_by_type(){
 get_airport_strings(){
 	network_service_string="AirPort"
 
-	if [ "$osx_version" == "lion" ]; then
+  if [[ "$osx_version" == 'tiger' || "$osx_version" == 'leopard' ]]; then
+    network_service_string='AirPort'
+		airport_name=''
+  elif [ "$osx_version" == 'snow-leopard' ]; then
+    network_service_string='AirPort'
+		airport_name='AirPort'
+  else # lion and up
 		network_service_string="Wi-Fi"
-		airport_name=$(networksetup -listallhardwareports | grep -A 1 "${network_service_string}" | grep Device | cut -c 9-12)
-	elif [ "$osx_version" == "snow-leopard" ]; then
-		airport_name="AirPort"
-	fi
+		airport_name="$(networksetup -listallhardwareports | grep -A 1 "${network_service_string}" | grep Device | cut -c 9-12)"
+  fi
+
 }
 
 disable_airport(){
