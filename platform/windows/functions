@@ -88,7 +88,8 @@ get_gateway_ip() {
 }
 
 get_system_proxy(){
-	proxycfg | grep "Proxy Server" | sed "s/.*: *//g"
+	# remove everything before the http:
+	proxycfg | grep "Proxy Server" | sed "s/.*http/http/g"
 }
 
 get_wifi_info() {
