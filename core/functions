@@ -220,7 +220,7 @@ check_and_update_delay(){
 	local current_delay=$(get_current_delay)
 
 	# if trigger is loaded and device not missing, set to one hour intervals
-	if [[ -n "$(is_trigger_loaded)" && -z "$device_missing" ]]; then
+	if [[ -n "$current_delay" && -n "$(is_trigger_loaded)" && -z "$device_missing" ]]; then
 
 		# if already set to one hour interval, return
 		[ -n "$(one_hour_interval)" ] && return 0
