@@ -55,7 +55,7 @@ get_system_proxy(){
 
   # if no system proxy is found for Wi-Fi / Airport, check Ethernet's settings
   [ -z "$system_proxy" ] && system_proxy=$(get_proxy_for_service Ethernet)
-  echo "$system_proxy"
+  [ -n "$system_proxy" ] && echo "$system_proxy"
 }
 
 get_proxy_for_service(){
@@ -68,7 +68,7 @@ get_proxy_for_service(){
 get_proxy_by_type(){
   local network_service="$1"
   local proxy_type="$2"
-  networksetup -get${proxy_type} "$network_service" | grep -e "^Enabled:" -A2 | awk {'print $2'} | awk {'getline l1; getline l2; print "http://"l1":"l2'}
+  networksetup -get${proxy_type} "$network_service" | grep -e "^Server: \(.\+\)" -B1 -A1 | awk {'print $2'} | awk {'getline l1; getline l2; print "http://"l1":"l2'}
 }
 
 ####################################################################
