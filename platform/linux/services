@@ -85,3 +85,13 @@ arch_load_service(){
 arch_unload_service(){
 	linux_remove_init_script '/etc/rc.d' $1
 }
+
+gentoo_load_service(){
+	linux_copy_init_script '/etc/init.d' $1
+	rc-update add prey-trigger default
+}
+
+gentoo_unload_service(){
+	rc-update delete prey-trigger
+	linux_remove_init_script '/etc/init.d' $1
+}
