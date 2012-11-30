@@ -23,6 +23,7 @@ linux_copy_init_script(){
 		ln -s "$(full_path $base_path)/${platform_path}/${2}" "$full_init_script_path" 2> /dev/null
 		local retval=$?
 		[ $retval -ne 0 ] && log " !! Couldn't copy init script into ${1}!"
+		chmod +x "${platform_path}/${2}"
 		return $retval
 	fi
 	return 0
