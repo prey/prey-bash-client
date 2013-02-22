@@ -5,6 +5,17 @@
 # License: GPLv3
 ####################################################################
 
+
+####################################################################
+# Prey should always be run as root. If not, it messes up logging to
+# /var/log/prey.log and crontabs
+####################################################################
+
+if [ "$(id -u)" != "0" ]; then
+   echo "ERROR: Prey.sh must be run as root (sudo ./prey.sh)" 1>&2
+   exit 1
+fi
+
 PATH=/bin:/sbin:/usr/bin:/usr/sbin:$PATH
 readonly base_path=$(dirname "$0")
 
