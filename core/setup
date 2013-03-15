@@ -118,10 +118,10 @@ set_constants(){
 }
 
 set_colors(){
-	cyan='\E[36m'
-	green='\E[32m'
-	red='\E[31m'
-	color_end='\E[0m'
+	cyan='\033[36m'
+	green='\033[32m'
+	red='\033[31m'
+	color_end='\033[0m'
 	bold='\033[1m'
 	bold_end='\033[0m'
 }
