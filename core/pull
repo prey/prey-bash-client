@@ -37,7 +37,7 @@ randomize_subdomain(){
 
 # we could eventually use a different method for status checking
 check_device_status(){
-	if [ "$post_method" == 'http' ]; then
+	#if [[ "$post_method" == *http* ]]; then
 		request_headers="-H X-Encrypt-Response:${cipher_algorithm}"
 
 		if [ -n "$device_key" ]; then
@@ -46,7 +46,7 @@ check_device_status(){
 			error_exit "You need to enter your Device Key for querying the Control Panel!"
 		fi
 		[ "$randomize_check_host" == 'y' ] && randomize_subdomain
-	fi
+	#fi
 
 	send_request "$check_url" "$request_headers"
 	check_encrypted_response

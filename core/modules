@@ -88,7 +88,7 @@ set_module_paths_for(){
 
 run_active_modules() {
 
-	if [[ -z $active_modules && "$post_method" != 'http' ]]; then
+	if [[ -z $active_modules && "$post_method" != *http* ]]; then
 		get_active_modules_from_filesystem
 	fi
 

@@ -39,7 +39,7 @@ deactivate_modules_on_panel(){
 
 send_report(){
 	log ' -- Packing all gathered traces...'
-	[ "$post_method" == "http" ] && trace_list=$(generate_query_string 'traces') || trace_list=$(generate_list 'traces')
+	[[ "$post_method" == *http* ]] && trace_list=$(generate_query_string 'traces') || trace_list=$(generate_list 'traces')
 	file_list=$(list_files)
 	if [[ $trace_list || $file_list ]]; then
 			if [ -n "$test_mode" ]; then
@@ -47,8 +47,10 @@ send_report(){
 			else
 				trace_file="$tmpdir/prey_traces.tmp"
 				echo -e "$trace_list" > "$trace_file"
-				log " -- Posting data via $post_method..."
-				eval 'send_via_'"${post_method}"''
+				for i in $post_method; do
+					log " -- Posting data via $i..."
+					eval 'send_via_'"${i}"''
+				done
 				local rs=$?
 				rm -f "$trace_file" 2> /dev/null
 			fi
@@ -63,7 +65,7 @@ send_report(){
 send_via_email(){
 
 	local complete_subject="$mail_subject @ $(date +"%a, %e %B %Y %T %z")"
-	local decrypted_pass=$(decrypt "$smtp_password")
+	local decrypted_pass="$(decrypt $smtp_password)"
 	echo -e "${EMAIL_NOTICE}${EMAIL_HEADER}$(urldecode "$trace_list")${EMAIL_FOOTER}" > "$trace_file.msg"
 
 	# only add user/pass if set

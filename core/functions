@@ -161,7 +161,7 @@ add_file(){
 list_files(){
 	# log " -- ${#files[*]} files gathered!"
 	for f in "${files[@]}"; do
-		if [ "$post_method" == 'http' ]; then
+		if [[ "$post_method" == *http* ]]; then
 			# echo -e "-F $f" | sed -e 's/=/=@/'
 			echo "-F $f" | sed 's/^\([^_].*\)__\([^=].*\)=\(.*\)/\1[\2]=@\3/'
 		else # just list the file paths

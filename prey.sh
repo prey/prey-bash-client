@@ -87,10 +87,11 @@ if [ -n "$check_mode" ]; then
 	log "\n${bold} == Verifying Prey installation...${bold_end}\n"
 	verify_installation
 
-	if [ "$post_method" == "http" ]; then
+	if [[ "$post_method" == *http* ]]; then
 		log "\n${bold} == Verifying API and Device keys...${bold_end}\n"
 		verify_keys
-	elif [ "$post_method" == "email" ]; then
+	fi
+	if [[ "$post_method" == *email* ]]; then
 		log "\n${bold} == Verifying SMTP settings...${bold_end}\n"
 		verify_smtp_settings
 	fi
@@ -105,7 +106,7 @@ fi
 ####################################################################
 
 # only do this if Prey is being run from cron in Mac and Linux
-if [[ "$os" != "windows" && -n "$(running_from_cron)" && "$post_method" == "http" ]]; then
+if [[ "$os" != "windows" && -n "$(running_from_cron)" && "$post_method" == *http* ]]; then
 	seconds_to_wait=$(get_random_number 59)
 	log " -- Pausing for ${seconds_to_wait} seconds..."
 	sleep $seconds_to_wait
