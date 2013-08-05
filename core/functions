@@ -317,7 +317,7 @@ get_status_code(){
 
 # we may eventually use a specific header for Prey
 get_header_value(){
-	echo "$response_headers" | grep "$1" | tail -1 | sed 's/.*: \([a-z\/-]*\).*/\1/'
+	echo "$response_headers" | grep -i "$1" | tail -1 | sed 's/.*: \([a-z\/-]*\).*/\1/'
 }
 
 # fetches last response if online actions were enabled for the device
