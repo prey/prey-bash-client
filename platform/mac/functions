@@ -78,10 +78,10 @@ get_proxy_by_type(){
 get_airport_strings(){
 	network_service_string="AirPort"
 
-  if [[ "$osx_version" == 'tiger' || "$osx_version" == 'leopard' ]]; then
+  if [[ "$osx_version_name" == 'tiger' || "$osx_version_name" == 'leopard' ]]; then
     network_service_string='AirPort'
 		airport_name=''
-  elif [ "$osx_version" == 'snow-leopard' ]; then
+  elif [ "$osx_version_name" == 'snow-leopard' ]; then
     network_service_string='AirPort'
 		airport_name='AirPort'
   else # lion and up
@@ -170,7 +170,7 @@ post_update_hook(){
 ############################################
 get_pc_info(){
 	pc_name=$(system_profiler SPSoftwareDataType | grep 'Computer Name' | sed 's/.*: //g')
-	pc_os_version=$osx_version
+	pc_os_version="$osx_version"
 
 	local is_macbook=$(system_profiler SPHardwareDataType | grep -i 'macbook')
 	if [ -z "$is_macbook" ]; then
