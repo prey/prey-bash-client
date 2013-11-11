@@ -18,20 +18,20 @@ readonly airport='/System/Library/PrivateFrameworks/Apple80211.framework/Version
 
 get_osx_version(){
 
-	local pc_os_number=$(sw_vers -productVersion | cut -c1-4)
+	local pc_os_number=$(sw_vers -productVersion)
 	osx_version="$pc_os_number"
 
-	if [[ $pc_os_number == "10.9" || `is_greater_than "$pc_os_number" 10.9` == 1 ]]; then
+	if [[ `is_greater_than "$pc_os_number" 10.9` == 1 ]]; then
 		osx_version_name="mavericks"
-	if [[ $pc_os_number == "10.8" || `is_greater_than "$pc_os_number" 10.8` == 1 ]]; then
+	elif [[ `is_greater_than "$pc_os_number" 10.8` == 1 ]]; then
 		osx_version_name="mountain-lion"
-	elif [[ $pc_os_number == "10.7" || `is_greater_than "$pc_os_number" 10.7` == 1 ]]; then
+	elif [[ `is_greater_than "$pc_os_number" 10.7` == 1 ]]; then
 		osx_version_name="lion"
-	elif [[ $pc_os_number == "10.6" || `is_greater_than "$pc_os_number" 10.6` == 1 ]]; then
+	elif [[ `is_greater_than "$pc_os_number" 10.6` == 1 ]]; then
 		osx_version_name="snow-leopard"
-	elif [[ $pc_os_number == "10.5" || `is_greater_than "$pc_os_number" 10.5` == 1 ]]; then
+	elif [[ `is_greater_than "$pc_os_number" 10.5` == 1 ]]; then
 		osx_version_name="leopard"
-	elif [[ $pc_os_number == "10.4" || `is_greater_than "$pc_os_number" 10.4` == 1 ]]; then
+	elif [[ `is_greater_than "$pc_os_number" 10.4` == 1 ]]; then
 		osx_version_name="tiger"
 	else
 		osx_version_name="unknown"
