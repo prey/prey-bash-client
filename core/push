@@ -67,10 +67,13 @@ send_via_email(){
 	echo -e "${EMAIL_NOTICE}${EMAIL_HEADER}$(urldecode "$trace_list")${EMAIL_FOOTER}" > "$trace_file.msg"
 
 	# only add user/pass if set
-	[ -n "$smtp_username" ] && local auth="username=$smtp_username password=$decrypted_pass"
-	response=$(mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto $auth)
+	if [ -n "$smtp_username" ]; then
+		response=$(mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto username="$smtp_username" password="$decrypted_pass")
+	else
+		response=$(mailsender -f "$mail_from" -t "$mail_to" -u "$complete_subject" -s $smtp_server -a $file_list -o message-file="$trace_file.msg" tls=auto)
+	fi
 
-	if [ -n $(find_in "$response" 'ERROR') ]; then
+	if [ -n "$(find_in "$response" 'ERROR')" ]; then
 		log "$STRING_ERROR_EMAIL"
 		log "\n This is the complete error message: \n $response\n"
 	else
