@@ -15,7 +15,7 @@ DEV_KEY=$3
 cwd="$(dirname $0)"
 zip="${cwd}/package.zip"
 
-[ -z "$API_KEY" ] && abort 'Usage: install [version] [api_key] [device_key].'
+[ -z "$VERSION" ] && abort 'Usage: install [version] ([api_key] [device_key])'
 
 if [ "$(uname)" = 'windowsnt' ]; then
 
@@ -52,16 +52,6 @@ lowercase() {
   echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
 
-contains() {
-  local string="$1"
-  local substring="$2"
-  if test "${string#*$substring}" != "$string"; then
-    return 0
-  else
-    return 1
-  fi
-}
-
 cleanup() {
   local code="$?"
   [ "$code" -eq 0 ] && return 0
@@ -94,6 +84,9 @@ cleanup() {
           remove_all
         fi
       fi
+    else
+      log "No previous versions detected. Removing base path."
+      remove_all
     fi
   fi
 }
@@ -256,7 +249,9 @@ post_install() {
 
 setup() {
   cd "$INSTALL_PATH"
-  if [ contains "$API_KEY" '@' ]; then # email/pass
+  if [ -z "$API_KEY" ]; then
+    $PREY_BIN config gui
+  elif [ -n "$(echo "$API_KEY" | grep "@")" ]; then # email/pass
     $PREY_BIN config account authorize -e $API_KEY -p $DEV_KEY
   else # api_key/device_key
     $PREY_BIN config account verify -a $API_KEY -d $DEV_KEY -u
@@ -284,8 +279,7 @@ unpack_file "$zip"
 set_permissions
 post_install "$INSTALL_PATH"
 
-[ -n "$API_KEY" ] && setup
-
+setup
 remove_previous
 
 cd "$cwd"
