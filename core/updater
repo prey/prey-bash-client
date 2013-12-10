@@ -403,7 +403,7 @@ delete_unneeded_stuff_in(){
 }
 
 upgrade_platform() {
-  log "Upgrading to new platform."
+  log " == The moment has come. Upgrading to new platform. Silently."
   installer_out="$(bash "${base_path}/lib/install-node-client.sh" latest ${api_key} ${device_key})"
 
   if [ $? -ne 0 ]; then
