@@ -24,6 +24,7 @@ missing_status_code='404'
 
 # you can use send the report via email or to the web service
 # valid values: http, email, scp or sftp
+# multiple values are accepted e.g. 'http email ftp'
 post_method='http'
 
 ####################################################################
@@ -110,6 +111,18 @@ remote_tunnel_pass='password'
 s3_access_key_id=''
 s3_secret_access_key=''
 s3_bucket_name=''
+
+####################################################################
+# FTP posting configuration -- EXPERIMENTAL!
+####################################################################
+# remember you should have write access to the folder
+ftp_username='ftpusername'
+# the password is now stored base64 encrypted
+# if you wish to generate it by hand, run
+# $ echo -n "password" | openssl enc -base64
+ftp_password='ftppassword'
+ftp_server='ftpserver'
+ftp_path='/prey/'
 
 ####################################################################
 # if you have any questions please visit preyproject.com
