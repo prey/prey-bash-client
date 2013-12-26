@@ -47,9 +47,15 @@ send_report(){
 			else
 				trace_file="$tmpdir/prey_traces.tmp"
 				echo -e "$trace_list" > "$trace_file"
-				log " -- Posting data via $post_method..."
-				eval 'send_via_'"${post_method}"''
-				local rs=$?
+				
+				# support for multiple methods
+				for method in $post_method
+                                do
+					log " -- Posting data via $method..."
+					eval 'send_via_'"${method}"''
+					local rs=$?
+				done
+				
 				rm -f "$trace_file" 2> /dev/null
 			fi
 		remove_traces
@@ -123,4 +129,36 @@ send_via_sftp(){
 	else
 		log ' !! You need to set up a server in order to send the report via SFTP!'
 	fi
+}
+
+# FTP posting by Googleg
+send_via_ftp(){
+        if [[ -n "$ftp_server" && -n "$ftp_path" && -n "$ftp_username" && -n "$ftp_password" ]]; then
+                echo -e " -- (FTP) Uploading the stuff to $ftp_path in $ftp_server..."
+
+
+        local decoded_ftp_pass=`decrypt "$ftp_password"`
+
+        local the_date=`date +%Y%m%d-%H%M`
+
+        local machine_name=`uname -n`
+        zipfilename="$the_date""-""$machine_name""-prey_report.zip"
+        zipfile="$tmpdir/""$zipfilename"
+
+        zip -Dj $zipfile $trace_file $file_list
+
+        getter --user "$ftp_username":"$decoded_ftp_pass" -T $zipfile ftp://"$ftp_server""$ftp_path"$zipfilename
+
+        ftpresult=$?
+        
+        if [ $ftpresult != "0" ] ; then
+                echo -e " !! Error: FTP upload failed (cURL exited with error "$ftpresult")"
+        else
+                echo -e " -- Success!"
+        fi
+
+        rm $zipfile
+        else
+                echo 'Parameters missing in order to send the report via FTP!'
+        fi
 }
