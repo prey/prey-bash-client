@@ -114,7 +114,7 @@ set_constants(){
 
 	readonly control_panel_url="https://control.preyproject.com" 2> /dev/null
 	modules_url="https://prey-bash-client-modules.s3.amazonaws.com" 2> /dev/null
-	updates_url="https://s3.amasonaws.com/prey-releases/bash-client/patches" 2> /dev/null
+	updates_url="https://s3.amazonaws.com/prey-releases/bash-client/patches" 2> /dev/null
 }
 
 set_colors(){
