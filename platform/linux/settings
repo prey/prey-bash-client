@@ -16,10 +16,37 @@ readonly system_path="/etc"
 readonly users_path="/home"
 readonly programs_path="/usr"
 
-if [ -f "/etc/debian-version" ]; then
+if [ -f "/etc/debian_version" ]; then
 	network_manager_process="network-manager"
 else
 	network_manager_process="NetworkManager"
 fi
 
 # readonly config_program="$platform_path/prey-config.py"
+
+get_os_version() {
+  os_version="$(lsb_release -r 2> /dev/null | awk '{print $2}')"
+
+  if [ -z "$os_version" ]; then
+    if [ -f "/etc/debian_version" ]; then
+      os_version="$(cat /etc/debian_version)"
+      if [ -z "$os_version" ]; then
+        os_version="$(cat /etc/redhat-release)"
+
+        if [ -z "$os_version" ]; then
+          os_version="$(uname -r)"
+        fi
+      fi
+    fi
+  fi
+  
+  readonly os_version
+}
+
+get_distro_name() {
+  [ -n "$distro_name" ] && return
+  distro_name="$(lsb_release -i | awk '{print $3}' | lowercase)"
+}
+
+get_os_version
+get_distro_name # needed for self-setup (os_name is really distro name) and service-related functions

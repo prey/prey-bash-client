@@ -161,26 +161,4 @@ get_pc_info(){
 
 	$(which laptop-detect)
 	[ $? == 1 ] && pc_type="Desktop" || pc_type="Laptop"
-
-  get_distro_name
-  pc_os_version="$(lsb_release -r 2> /dev/null | awk '{print $2}')"
-
-  if [ -z "$pc_os_version" ]; then
-    if [ -f "/etc/debian_version" ]; then
-      pc_os_version="$(cat /etc/debian_version)"
-      if [ -z "$pc_os_version" ]; then
-        pc_os_version="$(cat /etc/redhat_version)"
-        
-        if [ -z "$pc_os_version" ]; then
-          pc_os_version="Kernel $(uname -i)"
-        fi
-      fi
-    fi
-  fi
-
-}
-
-get_distro_name(){
-  [ -n "$distro_name" ] && return
-  distro_name="$(lsb_release -i | awk '{print $3}' | lowercase)"
 }
