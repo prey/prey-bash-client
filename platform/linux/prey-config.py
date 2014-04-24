@@ -476,7 +476,7 @@ class PreyConfigurator(object):
 		if user and password:
 			data += ' -u "' + user + ':' + password + '"'
 
-		command = '/usr/bin/curl -A "' + USER_AGENT + '" -i -s --connect-timeout 5 ' + CONTROL_PANEL_URL_SSL + '/' + path + data
+		command = '/usr/bin/curl -A "' + USER_AGENT + '" -i -s --connect-timeout 30 ' + CONTROL_PANEL_URL_SSL + '/' + path + data
 		# print(command)
 		result = os.popen(command).read().strip()
 		# print(result)
