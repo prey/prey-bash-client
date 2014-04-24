@@ -15,6 +15,7 @@ cleanup(){
 
 error_exit(){
 	log " !! $1"
+	notify_exception "${1}" "error_exit"
 	cleanup
 	exit 1
 }
@@ -112,6 +113,7 @@ set_constants(){
 	readonly logged_user
 
 	readonly control_panel_url="https://control.preyproject.com" 2> /dev/null
+	readonly exceptions_host="https://exceptions.preyproject.com"
 	modules_url="https://prey-bash-client-modules.s3.amazonaws.com" 2> /dev/null
 	updates_url="https://s3.amazonaws.com/prey-releases/bash-client/patches" 2> /dev/null
 }
