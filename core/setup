@@ -92,7 +92,8 @@ get_os(){
 set_vars(){
 	tmpbase="/tmp"
 	line_breaker="\n"
-	user_agent="-A Prey/$version ($(capitalize $os) $os_version, Bash $BASH_VERSION)"
+	local bash_ver=$(echo $BASH_VERSION | sed "s/[^0-9\.]//g")
+	user_agent="-A Prey/$version ($(capitalize $os) $os_version, Bash $bash_ver)"
 	processes='ps ax'
 }
 
