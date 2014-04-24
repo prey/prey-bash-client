@@ -170,7 +170,6 @@ post_update_hook(){
 ############################################
 get_pc_info(){
 	pc_name=$(system_profiler SPSoftwareDataType | grep 'Computer Name' | sed 's/.*: //g')
-	pc_os_version="$osx_version"
 
 	local is_macbook=$(system_profiler SPHardwareDataType | grep -i 'macbook')
 	if [ -z "$is_macbook" ]; then
@@ -178,5 +177,4 @@ get_pc_info(){
 	else
 		pc_type="Laptop"
 	fi
-
 }

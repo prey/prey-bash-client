@@ -5,6 +5,8 @@
 # License: GPLv3
 ####################################################################
 
+readonly os_version=$(echo 'os get version' | wmic 2> /dev/null | grep -i version -A1 | tail -1 | sed 's/[^0-9\.]//g')
+
 readonly logged_user=`echo "ComputerSystem Get Username" | wmic 2> /dev/null | grep -v 'wmic:' | grep -v "^$" | tail -1 | sed 's/.*\\\//'`
 
 tmpbase="$WINDIR\Temp"
