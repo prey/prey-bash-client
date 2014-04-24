@@ -390,13 +390,13 @@ get_hardware_info(){
 self_setup(){
 
 	log ' -- Gathering system and hardware information...'
-	get_pc_info
+	get_pc_info # sets pc_name and pc_type
 	local pc_hardware_params="$(get_hardware_info)"
 
 	log ' -- Sending request to Control Panel...'
 
 	[ "$os" == "linux" ] && local os_name=$distro_name || local os_name=$os
-	local params="device[title]=$(urlencode "$pc_name")&device[device_type]=$pc_type&device[os_version]=$pc_os_version&device[os]=$(capitalize $os_name)${pc_hardware_params}"
+	local params="device[title]=$(urlencode "$pc_name")&device[device_type]=$pc_type&device[os_version]=$os_version&device[os]=$(capitalize $os_name)${pc_hardware_params}"
 
 	send_request "$control_panel_url/devices.xml" "--connect-timeout 20 -u $api_key:x -d "$params""
 	log " -- Got response status ${response_status}."

@@ -161,41 +161,4 @@ get_pc_info(){
 
 	$(which laptop-detect)
 	[ $? == 1 ] && pc_type="Desktop" || pc_type="Laptop"
-
-	get_distro_name
-	if [ "$distro_name" == "ubuntu" ]; then
-		pc_os_version=$(lsb_release -r -s)
-	elif [ "$distro_name" == "debian" ]; then
-		pc_os_version=$(cat /etc/debian_version)
-	fi
-
-}
-
-get_distro_name(){
-
-	[ -n "$distro_name" ] && return
-
-	local proc_version=$(cat /proc/version 2>&1)
-
-	# todo: make this in a more efficient way
-	if [[ "$proc_version" == *Ubuntu* ]]; then
-		distro_name=ubuntu
-	elif [[ "$proc_version" == *Debian* ]]; then
-		distro_name=debian
-	elif [[ "$proc_version" == *Redhat* ]]; then
-		distro_name=redhat
-	elif [[ "$proc_version" == *Fedora* ]]; then
-		distro_name=fedora
-	elif [[ "$proc_version" == *CentOS* ]]; then
-		distro_name=redhat
-	elif [[ "$proc_version" == *SuSE* ]]; then
-		distro_name=suse
-	elif [[ "$proc_version" == *ArchLinux* ]]; then
-		distro_name=arch
-	elif [[ "$proc_version" == *Gentoo* ]]; then
-		distro_name=gentoo
-	else
-		distro_name=linux
-	fi
-
 }

@@ -84,7 +84,6 @@ get_os(){
 	readonly os
 	readonly platform_path="$base_path/platform/$os"
 	PATH=$PATH:$platform_path/bin
-
 }
 
 # here we put the vars that are shared by two os, but a third one has
@@ -92,7 +91,7 @@ get_os(){
 set_vars(){
 	tmpbase="/tmp"
 	line_breaker="\n"
-	user_agent="-A Prey/$version ($os)"
+	user_agent="-A Prey/$version ($(capitalize $os) $os_version, Bash $BASH_VERSION)"
 	processes='ps ax'
 }
 
@@ -114,7 +113,7 @@ set_constants(){
 
 	readonly control_panel_url="https://control.preyproject.com" 2> /dev/null
 	modules_url="https://prey-bash-client-modules.s3.amazonaws.com" 2> /dev/null
-	updates_url="https://s3.amasonaws.com/prey-releases/bash-client/patches" 2> /dev/null
+	updates_url="https://s3.amazonaws.com/prey-releases/bash-client/patches" 2> /dev/null
 }
 
 set_colors(){
@@ -150,8 +149,8 @@ check_on_demand_status(){
 }
 
 get_os
+. "$platform_path/settings"
 set_vars
 set_aliases
-. "$platform_path/settings"
 set_constants
 check_on_demand_status
