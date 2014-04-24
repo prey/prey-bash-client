@@ -30,7 +30,7 @@ update_device_info_with(){
 	[ -z "$device_key" ] && return 1
 
 	log ' -- Updating device info...'
-	send_request "$check_url/devices/$device_key.xml" "--connect-timeout 20 -X PUT -u $api_key:x -d "$1""
+	send_request "$check_url/devices/$device_key.xml" "--connect-timeout 30 -X PUT -u $api_key:x -d "$1""
 
 	if [ "$response_status" == "200" ]; then
 		log " -- Device updated."
