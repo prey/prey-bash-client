@@ -43,7 +43,7 @@ check_device_status(){
 		if [ -n "$device_key" ]; then
 			local check_url="$check_url/devices/$device_key.xml"
 		else
-			error_exit "You need to enter your Device Key for querying the Control Panel!"
+			error_exit "Device Key is missing, cannot continue."
 		fi
 		[ "$randomize_check_host" == 'y' ] && randomize_subdomain
 	fi
@@ -83,7 +83,7 @@ verify_keys(){
 			log " ** Device key is valid. Good. Current status is ${bold}${device_state}${bold_end}.\n"
 			return 0
 		else
-			log " !! Device key not valid!\n -> We couldn't find this device on your Control Panel account. Please reconfigure your settings, or reinstall if necessary.\n"
+			log " !! Device key not valid!\n -> We couldn't find this device on your Prey account. Please reconfigure your settings, or reinstall if necessary.\n"
 		fi
 
 	elif [ "$response_status" == "401" ]; then
@@ -92,7 +92,7 @@ verify_keys(){
 
 	else
 		log " !! Got unexpected response status: ${response_status}.\n"
-		[ -z "$response_headers" ] && log "It seems your PC is unable to reach the Control Panel. Please check your firewall settings so that Curl can connect to $control_panel_url over port 80 (HTTP).\n"
+		[ -z "$response_headers" ] && log "It seems your PC is unable to reach the Prey servers. Please check your firewall settings so that Curl can connect to $control_panel_url over port 80 (HTTP).\n"
 	fi
 
 	return 1
