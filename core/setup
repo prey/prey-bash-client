@@ -90,7 +90,7 @@ get_os(){
 # here we put the vars that are shared by two os, but a third one has
 # different values
 set_vars(){
-	tmpbase="/tmp"
+	[ -z "$tmpbase" ] && tmpbase="/tmp"
 	line_breaker="\n"
 	local bash_ver=$(echo $BASH_VERSION | sed "s/[^0-9\.]//g")
 	user_agent="-A Prey/$version ($(capitalize $os) $os_version, Bash $bash_ver)"
