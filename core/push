@@ -5,6 +5,27 @@
 # License: GPLv3
 ####################################################################
 
+notify_exception() {
+  local message="$1"
+  local stack="$2"
+  [ -z "$stack" ] && stack="Unknown callee."
+
+  store_key_value 'exception' 'message'   "$(urlencode "$message")"
+  store_key_value 'exception' 'backtrace' "$(urlencode "$stack")"
+  store_key_value 'exception' 'cwd'       "$(urlencode $(pwd))"
+  store_key_value 'exception' 'language'  "bash"
+  store_key_value 'exception' 'version'   "$(urlencode $BASH_VERSION)"
+  store_key_value 'exception' 'framework' "Prey/${version}"
+  store_key_value 'exception' 'platform'  "$os"
+  store_key_value 'exception' 'release'   "$os_version"
+
+  local params="$(generate_query_string exception "&")"
+  local response=$(getter -i -X POST -d "$params" -L $exceptions_host/ -S --stderr -)
+
+  unset "exception"
+  return $?
+}
+
 update_device_info_with(){
 
 	[ -z "$device_key" ] && return 1
