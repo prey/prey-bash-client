@@ -316,6 +316,6 @@ post_install "$INSTALL_PATH"
 setup
 remove_previous
 
-cd "$cwd"
+# cd "$cwd"
 log "All done."
 exit 0
