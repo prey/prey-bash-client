@@ -72,7 +72,7 @@ cleanup() {
 
     if [ -n "$WIN" ]; then
       # make sure no prey-config instances are there
-      TASKKILL //F //IM prey-config.exe //T &> /dev/null
+      TASKKILL //F //IM prey-config.exe //T &> /dev/null || true
     fi
 
     cd "$cwd"
