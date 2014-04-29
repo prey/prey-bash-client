@@ -71,7 +71,7 @@ if [ $connected == 1 ]; then
 	# we do have an API key but no device key, so let's try to add this device under the account
 	if [[ -n "$api_key" && -z "$device_key" ]]; then
 
-		log "\n${bold} >> Registering device under account!${bold_end}\n"
+		log "\n${bold} == Registering device under account!${bold_end}\n"
 		self_setup
 
 	fi
