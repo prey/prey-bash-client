@@ -17,13 +17,14 @@ zip="${cwd}/package.zip"
 
 [ -z "$VERSION" ] && abort 'Usage: install [version] ([api_key] [device_key])'
 
-if [ "$(uname)" = 'windowsnt' ]; then
+if [ "$(uname)" = 'WindowsNT' ]; then
 
   WIN=1
   BASE_PATH="${WINDIR}\Prey"
   CONFIG_DIR="$BASE_PATH"
   LOG_FILE="$BASE_PATH\prey.log"
-  OLD_CLIENT="C:\Prey"
+  OLD_CLIENT="/c/Prey"
+  OLD_CLIENT_TWO="/c/Windows/Prey"
 
 else
 
@@ -62,11 +63,17 @@ cleanup() {
     remove_all
   else
     cd "$INSTALL_PATH"
+    log "Reverting installation!"
 
     # if a previous installation exited, this will remove the daemon scripts
     # so we should later run post_install on the previous version's path
     log "Running uninstallation hooks..."
     $PREY_BIN config hooks pre_uninstall 2> /dev/null
+
+    if [ -n "$WIN" ]; then
+      # make sure no prey-config instances are there
+      TASKKILL //F //IM prey-config.exe //T &> /dev/null
+    fi
 
     cd "$cwd"
 
@@ -129,17 +136,9 @@ remove_previous() {
   if [ -n "$WIN" ]; then
 
     if [ -d "$OLD_CLIENT" ]; then
-      log "Old Prey client found! Removing..."
-
-      taskkill /im cronsvc.exe /f
-
-      if [ -f "${OLD_CLIENT}\\Uninstall.exe" ]; then
-        "${OLD_CLIENT}\\Uninstall.exe" /S _?="$OLD_CLIENT"
-      elif [ -f "${OLD_CLIENT}\\platform\\windows\\Uninstall.exe" ]; then
-        "${OLD_CLIENT}\\platform\\windows\\Uninstall.exe" /S _?="$OLD_CLIENT"
-      fi
-
-      rm -Rf "$OLD_CLIENT"
+      run_windows_uninstaller "$OLD_CLIENT"
+    elif [ -d "$OLD_CLIENT_TWO" ]; then
+      run_windows_uninstaller "$OLD_CLIENT_TWO"
     fi
 
   else
@@ -147,10 +146,39 @@ remove_previous() {
     if [ -d "$OLD_CLIENT" ]; then
       log "Previous installation found. Removing..."
       rm -Rf "$OLD_CLIENT"
-      (sudo crontab -l | grep -v prey) | sudo crontab -
+
+      # make sure that no crontabs remain for sudo or the prey user (linux)
+      (sudo crontab -l | grep -v prey.sh) | sudo crontab -
+      (sudo crontab -u prey -l | grep -v prey.sh) | sudo crontab -
     fi
 
   fi
+
+}
+
+run_windows_uninstaller() {
+
+  local path="$1"
+  log "Old Prey client found in ${path}! Removing..."
+
+  # even if run in silent mode, the NSIS uninstall will show the prompt screen
+  # so we just need to clean up the registry keys and remove the files.
+
+  # if the new install was successful, the old CronService should have been
+  # replaced with the new one (the one that calls node.exe and the new client)
+  # there's nothing else to do there
+
+  # TASKKILL //F //IM cronsvc.exe //T &> /dev/null
+
+  # if [ -f "${path}/Uninstall.exe" ]; then
+  #   "${path}/Uninstall.exe" /S _?="$path"
+  # elif [ -f "${path}/platform/windows/Uninstall.exe" ]; then
+  #   "${path}/platform/windows/Uninstall.exe" /S _?="$path"
+  # fi
+
+  # reg delete "HKLM\Software\Prey" //f
+
+  rm -Rf "$OLD_CLIENT" || true
 
 }
 
@@ -168,8 +196,14 @@ get_latest_version() {
 
 determine_file() {
   local ver="$1"
-  local os=$(lowercase $(uname))
-  local cpu=$(uname -p)
+
+  if [ -n "$WIN" ]; then
+    local os="windows"
+    local cpu=$(uname -m)
+  else
+    local os=$(lowercase $(uname))
+    local cpu=$(uname -p)
+  fi
 
   if [ "$cpu" = "x86_64" ]; then
     local arch="x64"
