@@ -117,8 +117,8 @@ check_installed() {
     existing_base_path=1
 
     if [ -d "$INSTALL_PATH" ]; then
-      log "Matching version found! Exiting."
-      exit 1
+      log "Matching version found in ${INSTALL_PATH}! Nothing to do."
+      exit 0
     else
       if [ -e "${BASE_PATH}/current" ]; then
         previous_active_version="$(readlink "${BASE_PATH}/current")"
@@ -249,7 +249,9 @@ create_user() {
   local script="$INSTALL_PATH/scripts/create_user.sh"
 
   if [ -f "$script" ]; then
-    user_created=1 # for checking on cleanup
+    id $PREY_USER &> /dev/null
+    [ $? -ne 0 ] && user_created=1 # for checking on cleanup
+
     log "Creating local '${PREY_USER}' user..."
     "$script" $PREY_USER || true
   fi
@@ -295,7 +297,7 @@ setup() {
 ############################################################
 # the main course
 
-trap cleanup EXIT
+trap cleanup EXIT # INT
 
 [ "$VERSION" = 'latest' ] && get_latest_version
 
