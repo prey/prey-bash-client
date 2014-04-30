@@ -39,13 +39,13 @@ get_os_version() {
       fi
     fi
   fi
-  
+
   readonly os_version
 }
 
 get_distro_name() {
   [ -n "$distro_name" ] && return
-  distro_name="$(lsb_release -i | awk '{print $3}' | lowercase)"
+  distro_name="$(lsb_release -i | awk '{print $3}')"
 }
 
 get_os_version

@@ -5,16 +5,16 @@
 # Licensed under the GPLv3.
 ####################################################################
 
-linux_load_service(){
-	get_distro_name
-	[ -z "$distro_name" ] && return 1
-	eval "${distro_name}_load_service $1"
+linux_load_service() {
+  local downcased="$(echo "$distro_name" | lowercase)"
+	[ -z "$downcased" ] && return 1
+	eval "${downcased}_load_service $1"
 }
 
-linux_unload_service(){
-	get_distro_name
-	[ -z "$distro_name" ] && return 1
-	eval "${distro_name}_unload_service $1"
+linux_unload_service() {
+  local downcased="$(echo "$distro_name" | lowercase)"
+	[ -z "$downcased" ] && return 1
+	eval "${downcased}_unload_service $1"
 }
 
 linux_copy_init_script(){
