@@ -342,7 +342,7 @@ log_response_error(){
   if [ -n "$proxy_used" ]; then
     exception_message="$exception_message (Using Proxy)"
   fi
-    
+
   notify_exception "$exception_message" "$exception_trace"
 }
 
@@ -406,7 +406,8 @@ self_setup(){
 
 	log ' -- Sending request to Prey Control Panel...'
 
-	[ "$os" == "linux" ] && local os_name=$distro_name || local os_name=$os
+	local os_name="$os"
+	[ "$os" == "linux" ] && [ -n "$distro_name" ] && os_name="$distro_name"
 	local params="device[title]=$(urlencode "$pc_name")&device[device_type]=$pc_type&device[os_version]=$os_version&device[os]=$(capitalize $os_name)${pc_hardware_params}"
 
 	send_request "$control_panel_url/devices.xml" "--connect-timeout 30 -u $api_key:x -d "$params""
@@ -427,6 +428,7 @@ self_setup(){
 
 	else
 
+		notify_exception "self-setup failed with code: ${response_status}" "${params}"
 		log " -- Couldn't add this device to your account. Make sure you have available slots!\n"
 		exit 1
 
