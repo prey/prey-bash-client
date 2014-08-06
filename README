@@ -40,8 +40,8 @@ Download the package/installer and run it.
 Once all files are in place you'll need to configure Prey, where you'll
 be able to choose between both operation modes. In case you want to use
 Prey along with the control panel (recommended), you'll have to register
-and add your device to obtain your API and Device keys. Prey needs them
-both so make sure you add them correctly.
+and add your device to obtain your API key. Prey needs it so make sure
+you add it correctly.
 
 If you want to use Prey in an independent way, you'll have to set up your
 mail server (SMTP) settings. Sometimes email sending doesn't work at once,
@@ -53,8 +53,8 @@ that's how the problem generally gets fixed.
 Once you've downloaded the package, unzip it and move all the contents to a
 folder of your choice (we use /usr/share/prey). Then you need to open up the
 config file and change your settings according to your configuration. If
-you're using the Control Panel, then you only need to insert your API and
-Device keys; otherwise you need to set up your SMTP server settings.
+you're using the Control Panel, then you only need to insert your API key;
+otherwise you need to set up your SMTP server settings.
 
 Finally, you need to add a crontab entry for root. You can do this by typing
 the following in a terminal:
