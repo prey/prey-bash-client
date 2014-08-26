@@ -120,9 +120,12 @@ check_installed() {
       log "Matching version found in ${INSTALL_PATH}! Nothing to do."
       exit 0
     else
-      if [ -e "${BASE_PATH}/current" ]; then
-        previous_active_version="$(readlink "${BASE_PATH}/current")"
-        log "Previous active version found: ${previous_active_version}"
+      if [ -f "${BASE_PATH}/current/package.json" ]; then
+        local ver=$(grep version "${BASE_PATH}/current/package.json" | sed "s/[^0-9\.]//g")
+        if [ -d "${BASE_PATH}/versions/${ver}" ]; then
+          previous_active_version="${BASE_PATH}/versions/${ver}"
+          log "Previous active version found: ${previous_active_version}"
+        fi
       fi
       log "Installing new version."
     fi
@@ -301,10 +304,6 @@ setup() {
 
 ############################################################
 # the main course
-
-if [ -d "$BASE_PATH" ]; then
-  abort "$BASE_PATH already exists! Stopping here."
-fi
 
 trap cleanup EXIT # INT
 
