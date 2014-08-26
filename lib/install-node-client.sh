@@ -178,7 +178,7 @@ run_windows_uninstaller() {
 
   # reg delete "HKLM\Software\Prey" //f
 
-  rm -Rf "$OLD_CLIENT" || true
+  rm -Rf "$path" || true
 
 }
 
@@ -186,6 +186,7 @@ run_windows_uninstaller() {
 # download, unpack
 
 get_latest_version() {
+  log "Determining latest version..."
   local ver=$(curl "${RELEASES_URL}/latest.txt" 2> /dev/null)
   [ $? -ne 0 ] && return 1
 
@@ -202,6 +203,7 @@ determine_file() {
     local cpu=$(uname -m)
   else
     local os=$(lowercase $(uname))
+    [ "$os" = "darwin" ] && os="mac" 
     local cpu=$(uname -p)
   fi
 
@@ -286,10 +288,13 @@ post_install() {
 setup() {
   cd "$INSTALL_PATH"
   if [ -z "$API_KEY" ]; then
+    log "Firing up GUI..."
     $PREY_BIN config gui
   elif [ -n "$(echo "$API_KEY" | grep "@")" ]; then # email/pass
+    log "Authorizing user credentials..."
     $PREY_BIN config account authorize -e $API_KEY -p $DEV_KEY
   else # api_key/device_key
+    log "Validating keys..."
     $PREY_BIN config account verify -a $API_KEY -d $DEV_KEY -u
   fi
 }
@@ -299,14 +304,19 @@ setup() {
 
 trap cleanup EXIT # INT
 
-[ "$VERSION" = 'latest' ] && get_latest_version
+if [ ! -f "$zip" ]; then
 
-check_installed
+  [ "$VERSION" = 'latest' ] && get_latest_version
+  [ $? -ne 0 ] && abort "Unable to determine latest version."
 
-log "Installing version ${VERSION} to ${BASE_PATH}"
+  check_installed
 
-download_zip "$VERSION" "$zip"
-[ $? -ne 0 ] && abort 'Unable to download file.'
+  log "Installing version ${VERSION} to ${BASE_PATH}"
+
+  download_zip "$VERSION" "$zip"
+  [ $? -ne 0 ] && abort 'Unable to download file.'
+
+fi
 
 unpack_file "$zip"
 
