@@ -5,7 +5,7 @@
 # (c) 2013 Fork, Ltd.
 ############################################################
 
-set -e
+set -e # abort if any errors occur
 abort() { echo $1 && exit 1; }
 
 VERSION=$1
@@ -301,6 +301,10 @@ setup() {
 
 ############################################################
 # the main course
+
+if [ -d "$BASE_PATH" ]; then
+  abort "$BASE_PATH already exists! Stopping here."
+fi
 
 trap cleanup EXIT # INT
 
