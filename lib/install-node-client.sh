@@ -151,8 +151,15 @@ remove_previous() {
       rm -Rf "$OLD_CLIENT"
 
       # make sure that no crontabs remain for sudo or the prey user (linux)
-      (sudo crontab -l | grep -v prey.sh) | sudo crontab -
-      (sudo crontab -u prey -l | grep -v prey.sh) | sudo crontab -
+      (sudo crontab -l | grep -v prey.sh || true) | sudo crontab -
+      (sudo crontab -u prey -l | grep -v prey.sh || true) | sudo -u prey crontab -
+    fi
+
+    # check if network trigger script exists
+    if [ -f "/etc/init.d/prey-trigger" ]; then
+      "/etc/init.d/prey-trigger" stop || true
+      update-rc.d -f prey-trigger remove > /dev/null || true
+      rm -f "/etc/init.d/prey-trigger" || true
     fi
 
   fi
@@ -206,7 +213,7 @@ determine_file() {
     local cpu=$(uname -m)
   else
     local os=$(lowercase $(uname))
-    [ "$os" = "darwin" ] && os="mac" 
+    [ "$os" = "darwin" ] && os="mac"
     local cpu=$(uname -p)
   fi
 
