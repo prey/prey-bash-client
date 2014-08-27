@@ -207,14 +207,13 @@ get_latest_version() {
 
 determine_file() {
   local ver="$1"
-
+  local cpu="$(uname -m)"
+  
   if [ -n "$WIN" ]; then
     local os="windows"
-    local cpu=$(uname -m)
   else
     local os=$(lowercase $(uname))
     [ "$os" = "darwin" ] && os="mac"
-    local cpu=$(uname -p)
   fi
 
   if [ "$cpu" = "x86_64" ]; then
