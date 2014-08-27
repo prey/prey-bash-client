@@ -412,14 +412,18 @@ upgrade_platform() {
   # 9    if the download file is not a zip
 
   log " -- Upgrade script returned with code: ${rs}"
+  log " -- Log output: \n---\n${installer_out}\n---\n"
+
   update_device_info_with "device[update_failed]=${rs}"
 
   if [ $rs -ne 0 ]; then
+    log " -- Upgrade failed! Notifying servers."
     notify_exception "Platform upgrade failed with code $rs" "$installer_out"
     if [ $rs -ne 2 ] && [ $rs -ne 9 ]; then
       echo -e "Failed with code: $rs\n${installer_out}" > "${base_path}/install_failed.lock"
     fi
   else
+    log " -- Upgrade successful! Exiting..."
     cleanup
     exit 0
   fi
