@@ -6,7 +6,7 @@
 ############################################################
 
 set -e # abort if any errors occur
-abort() { echo $1 && exit 1; }
+abort() { echo $1 && exit 2; }
 
 VERSION=$1
 API_KEY=$2
@@ -53,14 +53,27 @@ lowercase() {
   echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
 }
 
+# echoes 1 if true
+is_process_running() {
+  'ps ax' | grep -v grep | grep "$1" > /dev/null && echo 1
+}
+
+############################################################
+# cleanup logic
+
 cleanup() {
   local code="$?"
   [ "$code" -eq 0 ] && return 0
 
-  log "Cleaning up! Exit code is ${code}."
+  log "Upgrade failed! Exit code is ${code}. Cleaning up..."
 
-  if [ ! -d "$INSTALL_PATH" ]; then
-    remove_all
+  if [ ! -d "$INSTALL_PATH" ]; then # couldn't event put files into place
+
+    # only remove base path if it wasn't previously there
+    if [ -z "$existing_base_path" ]; then
+      remove_all
+    fi
+
   else
     cd "$INSTALL_PATH"
     log "Reverting installation!"
@@ -96,6 +109,10 @@ cleanup() {
       remove_all
     fi
   fi
+
+  # remove trap, and exit again
+  # trap - EXIT
+  # exit $code
 }
 
 remove_all() {
@@ -118,7 +135,7 @@ check_installed() {
 
     if [ -d "$INSTALL_PATH" ]; then
       log "Matching version found in ${INSTALL_PATH}! Nothing to do."
-      exit 0
+      exit 0 # exit with code 0 so no directories are removed.
     else
       if [ -f "${BASE_PATH}/current/package.json" ]; then
         local ver=$(grep version "${BASE_PATH}/current/package.json" | sed "s/[^0-9\.]//g")
@@ -189,7 +206,6 @@ run_windows_uninstaller() {
   # reg delete "HKLM\Software\Prey" //f
 
   rm -Rf "$path" || true
-
 }
 
 ############################################################
@@ -197,7 +213,7 @@ run_windows_uninstaller() {
 
 get_latest_version() {
   log "Determining latest version..."
-  local ver=$(curl "${RELEASES_URL}/latest.txt" 2> /dev/null)
+  local ver="$(curl "${RELEASES_URL}/latest.txt" 2> /dev/null)"
   [ $? -ne 0 ] && return 1
 
   # rewrite variables
@@ -208,7 +224,7 @@ get_latest_version() {
 determine_file() {
   local ver="$1"
   local cpu="$(uname -m)"
-  
+
   if [ -n "$WIN" ]; then
     local os="windows"
   else
@@ -278,7 +294,7 @@ set_permissions() {
   fi
 }
 
-post_install() {
+activate() {
   local path="$1"
   cd "$path"
   installation_activated=1 # for cleanup
@@ -287,15 +303,44 @@ post_install() {
     # as user, symlinks and generates prey.conf
     su $PREY_USER -c "$PREY_BIN config activate"
   else
-    $PREY_BIN config activate
+    log "Activating installation..."
+    local activate_out=$($PREY_BIN config activate)
+    log "Activation returned with code $?"
+  fi
+}
+
+start_service() {
+  local path="$1"
+  cd "$path"
+
+  if [ -n "$WIN" ]; then
+    # now make sure mmc.exe and taskmgr.exe are not running
+    # otherwise the existing service won't be removed
+    TASKKILL //F //IM mmc.exe //T &> /dev/null || true
+    TASKKILL //F //IM taskmgr.exe //T &> /dev/null || true
   fi
 
   # as root, admin, sets up launch/init/service
-  $PREY_BIN config hooks post_install
+  log "Running post-install tasks..."
+  local postinst_out=$($PREY_BIN config hooks post_install)
+  log "Post install tasks returned with code $?"
 }
 
-setup() {
+post_install() {
+  activate "$1"
+  start_service "$1"
+}
+
+update_registry_keys() {
+  log "Updating registry keys..."
+  reg add "HKLM\Software\Prey" //v "INSTALLDIR" //d "$BASE_PATH" //f &> /dev/null || true
+  reg delete "HKLM\Software\Prey" //v "Path" //f &> /dev/null || true
+  reg delete "HKLM\Software\Prey" //v "Delay" //f &> /dev/null || true
+}
+
+setup_account() {
   cd "$INSTALL_PATH"
+
   if [ -z "$API_KEY" ]; then
     log "Firing up GUI..."
     $PREY_BIN config gui
@@ -306,6 +351,8 @@ setup() {
     log "Validating keys..."
     $PREY_BIN config account verify -a $API_KEY -d $DEV_KEY -u
   fi
+
+  log "Account setup returned with code $?"
 }
 
 ############################################################
@@ -319,7 +366,6 @@ if [ ! -f "$zip" ]; then
   [ $? -ne 0 ] && abort "Unable to determine latest version."
 
   check_installed
-
   log "Installing version ${VERSION} to ${BASE_PATH}"
 
   download_zip "$VERSION" "$zip"
@@ -333,8 +379,17 @@ unpack_file "$zip"
 
 set_permissions
 post_install "$INSTALL_PATH"
+setup_account
 
-setup
+if [ -n "$WIN" ]; then
+  update_registry_keys
+
+  if [ -z "$(is_process_running 'node.exe')" ]; then
+    log "Looks like the process failed to start."
+    start_service "$INSTALL_PATH"
+  fi
+fi
+
 remove_previous
 
 # cd "$cwd"
