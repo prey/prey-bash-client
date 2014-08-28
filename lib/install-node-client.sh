@@ -58,6 +58,11 @@ is_process_running() {
   'ps ax' | grep -v grep | grep "$1" > /dev/null && echo 1
 }
 
+# returns 1 if int/float is greater than the second one, expects int/float at $1 and $2
+is_greater_than() {
+  echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
+}
+
 ############################################################
 # cleanup logic
 
@@ -99,6 +104,7 @@ cleanup() {
           log "Reverting to previous active version..."
 
           # symlink and put daemon scripts back in place
+          activate "$previous_active_version"
           post_install "$previous_active_version"
         else
           remove_all
@@ -223,7 +229,7 @@ get_latest_version() {
 
 determine_file() {
   local ver="$1"
-  local cpu="$(uname -m)"
+  local arch="x86" # by default
 
   if [ -n "$WIN" ]; then
     local os="windows"
@@ -232,10 +238,9 @@ determine_file() {
     [ "$os" = "darwin" ] && os="mac"
   fi
 
+  local cpu="$(uname -m)"
   if [ "$cpu" = "x86_64" ]; then
     local arch="x64"
-  else
-    local arch="x86"
   fi
 
   echo "prey-${os}-${ver}-${arch}.zip"
@@ -262,7 +267,6 @@ unpack_file() {
   [ $? -ne 0 ] && return 1
 
   rm -f "$file"
-
   cd "$VERSIONS_PATH"
   mv prey-${VERSION} $VERSION
 }
@@ -270,8 +274,20 @@ unpack_file() {
 ############################################################
 # when files are in place
 
+setup_installation() {
+  # from 1.2.x, post_install handles permissions, user creation and activation
+  if [ -n "$(is_greater_than '1.2.0' $VERSION)" ]; then
+    [ -z "$WIN" ] && create_user
+    set_permissions
+    activate "$INSTALL_PATH"
+  fi
+
+  post_install "$INSTALL_PATH"
+}
+
 create_user() {
   [ -z "$PREY_USER" ] && return 1
+  [ ! -f "$INSTALL_PATH/scripts/create_user.sh" ] && return 1
 
   local script="$INSTALL_PATH/scripts/create_user.sh"
 
@@ -298,18 +314,18 @@ activate() {
   local path="$1"
   cd "$path"
   installation_activated=1 # for cleanup
+  log "Activating installation..."
 
   if [ -z "$WIN" ]; then
     # as user, symlinks and generates prey.conf
     su $PREY_USER -c "$PREY_BIN config activate"
   else
-    log "Activating installation..."
     local activate_out=$($PREY_BIN config activate)
-    log "Activation returned with code $?"
   fi
+  log "Activation returned with code $?"
 }
 
-start_service() {
+post_install() {
   local path="$1"
   cd "$path"
 
@@ -324,11 +340,6 @@ start_service() {
   log "Running post-install tasks..."
   local postinst_out=$($PREY_BIN config hooks post_install)
   log "Post install tasks returned with code $?"
-}
-
-post_install() {
-  activate "$1"
-  start_service "$1"
 }
 
 update_registry_keys() {
@@ -360,25 +371,22 @@ setup_account() {
 
 trap cleanup EXIT # INT
 
-if [ ! -f "$zip" ]; then
-
-  [ "$VERSION" = 'latest' ] && get_latest_version
-  [ $? -ne 0 ] && abort "Unable to determine latest version."
-
-  check_installed
-  log "Installing version ${VERSION} to ${BASE_PATH}"
-
-  download_zip "$VERSION" "$zip"
-  [ $? -ne 0 ] && abort 'Unable to download file.'
-
+if [ -f "$zip" ]; then
+  log "Found existing zip file in path. Cleaning up..."
+  rm -Rf "$zip"
 fi
 
+[ "$VERSION" = 'latest' ] && get_latest_version
+[ $? -ne 0 ] && abort "Unable to determine latest version."
+
+check_installed
+log "Installing version ${VERSION} to ${BASE_PATH}"
+
+download_zip "$VERSION" "$zip"
+[ $? -ne 0 ] && abort 'Unable to download file.'
+
 unpack_file "$zip"
-
-[ -z "$WIN" ] && create_user
-
-set_permissions
-post_install "$INSTALL_PATH"
+setup_installation
 setup_account
 
 if [ -n "$WIN" ]; then
@@ -386,7 +394,7 @@ if [ -n "$WIN" ]; then
 
   if [ -z "$(is_process_running 'node.exe')" ]; then
     log "Looks like the process failed to start."
-    start_service "$INSTALL_PATH"
+    post_install "$INSTALL_PATH"
   fi
 fi
 
