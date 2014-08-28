@@ -274,6 +274,9 @@ send_request(){
 		curl_arguments="$curl_arguments -x $proxy_to_use"
 	fi
 
+	response_body=""
+	response_headers=""
+
 	response_body=$(getter $curl_arguments -L $url --dump-header "$headers_file" -S --stderr -)
 	local rs=$?
 
@@ -281,6 +284,10 @@ send_request(){
 
 		response_headers=$(cat "$headers_file" && rm -f "$headers_file" 2> /dev/null)
 		get_status_code
+
+	elif [ $rs -eq 127 ]; then
+
+		log " -- Hold on. The curl binary is no longer in place!"
 
 	elif [ -z "$proxy_to_use" ]; then
 
