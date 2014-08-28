@@ -224,6 +224,11 @@ remove_previous() {
       rm -f "/etc/init.d/prey-trigger" || true
     fi
 
+    if [ -f "/Library/LaunchDaemons/com.prey.trigger.plist" ]; then
+      launchctl unload /Library/LaunchDaemons/com.prey.trigger.plist || true
+      rm -f /Library/LaunchDaemons/com.prey.trigger.plist || true
+    fi
+
   fi
 
 }
