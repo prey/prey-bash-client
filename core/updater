@@ -404,6 +404,7 @@ delete_unneeded_stuff_in(){
 
 upgrade_platform() {
   log " == The moment has come. Upgrading to new platform..."
+
   local installer_out="$(bash "${base_path}/lib/install-node-client.sh" latest ${api_key} ${device_key})"
   local rs=$?
 
@@ -416,15 +417,16 @@ upgrade_platform() {
 
   update_device_info_with "device[update_failed]=${rs}"
 
-  if [ $rs -ne 0 ]; then
+  if [ $rs -ne 0 ] || [ -n "$(find_in "$installer_out" 'Upgrade failed')" ]; then
     log " -- Upgrade failed! Notifying servers."
     notify_exception "Platform upgrade failed with code $rs" "$installer_out"
     if [ $rs -ne 2 ] && [ $rs -ne 9 ]; then
       echo -e "Failed with code: $rs\n${installer_out}" > "${base_path}/install_failed.lock"
     fi
   else
-    log " -- Upgrade successful! Exiting..."
-    cleanup
+    # rm -Rf "${base_path}"
+    # log " -- Upgrade successful! Exiting..."
+    # cleanup
     exit 0
   fi
 }
