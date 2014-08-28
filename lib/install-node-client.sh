@@ -96,7 +96,7 @@ cleanup() {
 
         log "Running uninstallation tasks..."
         cd "$INSTALL_PATH"
-        $PREY_BIN config hooks pre_uninstall 2> /dev/null || true
+        $PREY_BIN config hooks pre_uninstall &> /dev/null || true
 
         # ok, at this point there shouldn't be any daemon installed.
         # so, unless there was a previous active version we should make
@@ -436,10 +436,11 @@ setup_account
 if [ -n "$WIN" ]; then
   update_registry_keys
 
-  if [ -z "$(is_process_running 'node.exe')" ]; then
-    log "Looks like the process failed to start."
+  # if [ -z "$(is_process_running 'node.exe')" ]; then
+    # log "Looks like the process failed to start."
+    log "Ensuring service was correctly installed..."
     post_install "$INSTALL_PATH"
-  fi
+  # fi
 fi
 
 remove_previous
