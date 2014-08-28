@@ -37,10 +37,9 @@ else
 
 fi
 
+PREY_BIN="bin/prey"
 RELEASES_URL="https://s3.amazonaws.com/prey-releases/node-client"
 VERSIONS_PATH="${BASE_PATH}/versions"
-INSTALL_PATH="${BASE_PATH}/versions/${VERSION}"
-PREY_BIN="bin/prey"
 
 ############################################################
 # helpers
@@ -60,7 +59,7 @@ is_process_running() {
 
 # returns 1 if int/float is greater than the second one, expects int/float at $1 and $2
 is_greater_than() {
-  echo "$1 $2" | awk '{if ($1 > $2) print 1; else print 0}'
+  echo "$1 $2" | awk '{if ($1 > $2) print 1}'
 }
 
 ############################################################
@@ -70,7 +69,7 @@ cleanup() {
   local code="$?"
   [ "$code" -eq 0 ] && return 0
 
-  log "Upgrade failed! Exit code is ${code}. Cleaning up..."
+  log "Upgrade failed! Cleaning up..."
 
   if [ ! -d "$INSTALL_PATH" ]; then # couldn't event put files into place
 
@@ -79,46 +78,65 @@ cleanup() {
       remove_all
     fi
 
-  else
-    cd "$INSTALL_PATH"
+  else # ok, we were able to put files into place
+
     log "Reverting installation!"
 
-    # if a previous installation exited, this will remove the daemon scripts
-    # so we should later run post_install on the previous version's path
-    log "Running uninstallation hooks..."
-    $PREY_BIN config hooks pre_uninstall 2> /dev/null
+    # if we did call 'config activate' we should revert those changes
+    if [ -n "$activate_called" ]; then
 
-    if [ -n "$WIN" ]; then
-      # make sure no prey-config instances are there
-      TASKKILL //F //IM prey-config.exe //T &> /dev/null || true
+      # before checking whether a previous active version existed, let's
+      # undo the post_install() call, if we made it
+      if [ -n "$post_install_called" ]; then
+
+        log "Running uninstallation tasks..."
+        cd "$INSTALL_PATH"
+        $PREY_BIN config hooks pre_uninstall 2> /dev/null || true
+
+        # ok, at this point there shouldn't be any daemon installed.
+        # so, unless there was a previous active version we should make
+        # sure to revert to the previous daemon script that was used
+        revert_daemon=1
+
+      fi
+
+      # now, regardless of the post_install/uninstall task, if there was
+      # a previous active version, we should set that version back as the active one
+      if [ -d "$previous_active_version" ]; then
+
+        log "Reverting to previous active version..."
+
+        # symlink and put daemon scripts back in place
+        activate "$previous_active_version"
+        post_install "$previous_active_version"
+
+        # no need to revert to the previous daemon at this point. we just did.
+        revert_daemon=0
+
+      fi
+
+      if [ "$revert_daemon" = "1" ]; then
+        reinstall_daemon
+      fi
+
     fi
 
-    cd "$cwd"
+    # ok, now that everything was reverted, let's wipe out the files. wipe out XL, of course.
+    if [ -z "$existing_base_path" ]; then
 
-    if [ -n "$existing_base_path" ]; then
+      log "No previous versions detected. Removing base path."
+      remove_all
+
+    else
+
       log "Removing version path: ${INSTALL_PATH}"
       rm -Rf "$INSTALL_PATH"
 
-      if [ -n "$installation_activated" ]; then
-        if [ -d "$previous_active_version" ]; then
-          log "Reverting to previous active version..."
-
-          # symlink and put daemon scripts back in place
-          activate "$previous_active_version"
-          post_install "$previous_active_version"
-        else
-          remove_all
-        fi
-      fi
-    else
-      log "No previous versions detected. Removing base path."
-      remove_all
     fi
+
   fi
 
-  # remove trap, and exit again
-  # trap - EXIT
-  # exit $code
+  log "Failed. Exit code: ${code}"
 }
 
 remove_all() {
@@ -127,8 +145,24 @@ remove_all() {
     userdel "$PREY_USER"
   fi
 
-  log "Removing path: ${BASE_PATH}"
-  rm -Rf "$BASE_PATH"
+  if [ -d "$BASE_PATH" ]; then
+    log "Removing path: ${BASE_PATH}"
+    rm -Rf "$BASE_PATH"
+  fi
+}
+
+reinstall_daemon() {
+
+  log "Reinstalling daemon."
+
+  # holy maccaroni. we need to restore the original daemon that was running!
+  if [ -n "$WIN" ]; then
+    cd "$cwd\\.."
+    local bin_path="$(pwd)\\platform\\windows\\bin\\cronsvc.exe"
+    sc create CronService binpath= "$bin_path" &> /dev/null || true
+    cd "$cwd"
+  fi
+
 }
 
 ############################################################
@@ -142,16 +176,16 @@ check_installed() {
     if [ -d "$INSTALL_PATH" ]; then
       log "Matching version found in ${INSTALL_PATH}! Nothing to do."
       exit 0 # exit with code 0 so no directories are removed.
-    else
-      if [ -f "${BASE_PATH}/current/package.json" ]; then
-        local ver=$(grep version "${BASE_PATH}/current/package.json" | sed "s/[^0-9\.]//g")
-        if [ -d "${BASE_PATH}/versions/${ver}" ]; then
-          previous_active_version="${BASE_PATH}/versions/${ver}"
-          log "Previous active version found: ${previous_active_version}"
-        fi
-      fi
-      log "Installing new version."
     fi
+
+    if [ -f "${BASE_PATH}/current/package.json" ]; then
+      local ver=$(grep version "${BASE_PATH}/current/package.json" | sed "s/[^0-9\.]//g")
+      if [ -d "${BASE_PATH}/versions/${ver}" ]; then
+        previous_active_version="${BASE_PATH}/versions/${ver}"
+        log "Previous active version found: ${previous_active_version}"
+      fi
+    fi
+
   fi
 }
 
@@ -277,11 +311,15 @@ unpack_file() {
 setup_installation() {
   # from 1.2.x, post_install handles permissions, user creation and activation
   if [ -n "$(is_greater_than '1.2.0' $VERSION)" ]; then
+    log "Pre 1.2.x version detected."
     [ -z "$WIN" ] && create_user
     set_permissions
     activate "$INSTALL_PATH"
   fi
 
+  # make sure the flag is 1, even if we didn't call it.
+  # this ensures that the cleanup logic proceeds as expected.
+  activate_called=1
   post_install "$INSTALL_PATH"
 }
 
@@ -313,7 +351,7 @@ set_permissions() {
 activate() {
   local path="$1"
   cd "$path"
-  installation_activated=1 # for cleanup
+  activate_called=1 # for cleanup
   log "Activating installation..."
 
   if [ -z "$WIN" ]; then
@@ -328,6 +366,7 @@ activate() {
 post_install() {
   local path="$1"
   cd "$path"
+  post_install_called=1 # for cleanup
 
   if [ -n "$WIN" ]; then
     # now make sure mmc.exe and taskmgr.exe are not running
@@ -372,18 +411,25 @@ setup_account() {
 trap cleanup EXIT # INT
 
 if [ -f "$zip" ]; then
-  log "Found existing zip file in path. Cleaning up..."
-  rm -Rf "$zip"
+
+  log "Found existing zip file in path."
+  VERSION="1.2.1"
+  check_installed
+
+else
+
+  [ "$VERSION" = 'latest' ] && get_latest_version
+  [ $? -ne 0 ] && abort "Unable to determine latest version."
+
+  check_installed
+
+  download_zip "$VERSION" "$zip"
+  [ $? -ne 0 ] && abort 'Unable to download file.'
+
 fi
 
-[ "$VERSION" = 'latest' ] && get_latest_version
-[ $? -ne 0 ] && abort "Unable to determine latest version."
-
-check_installed
 log "Installing version ${VERSION} to ${BASE_PATH}"
-
-download_zip "$VERSION" "$zip"
-[ $? -ne 0 ] && abort 'Unable to download file.'
+INSTALL_PATH="${BASE_PATH}/versions/${VERSION}"
 
 unpack_file "$zip"
 setup_installation
@@ -401,5 +447,5 @@ fi
 remove_previous
 
 # cd "$cwd"
-log "All done."
+log "Success. Exit code: 0"
 exit 0
