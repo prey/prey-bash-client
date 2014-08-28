@@ -418,25 +418,13 @@ setup_account() {
 
 trap cleanup EXIT # INT
 
-if [ -f "$zip" ]; then
+[ "$VERSION" = 'latest' ] && get_latest_version
+[ $? -ne 0 ] && abort "Unable to determine latest version."
 
-  log "Found existing zip file in path."
-  VERSION="1.2.2"
-  # ver=$(echo "$file" | sed "s/.*\(.\..\..\).*/\1/g")
-  # zip="$file"
-  check_installed
+check_installed
 
-else
-
-  [ "$VERSION" = 'latest' ] && get_latest_version
-  [ $? -ne 0 ] && abort "Unable to determine latest version."
-
-  check_installed
-
-  download_zip "$VERSION" "$zip"
-  [ $? -ne 0 ] && abort 'Unable to download file.'
-
-fi
+download_zip "$VERSION" "$zip"
+[ $? -ne 0 ] && abort 'Unable to download file.'
 
 log "Installing version ${VERSION} to ${BASE_PATH}"
 INSTALL_PATH="${BASE_PATH}/versions/${VERSION}"
