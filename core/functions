@@ -267,7 +267,7 @@ send_request(){
 	local url="$1"
 	local curl_arguments="$2"
 	local proxy_to_use="$3"
-	local headers_file="$tmpbase/prey-curl-headers.txt"
+	local headers_file="$tmpbase/prey-curl-headers-${RANDOM}.txt"
 
 	if [ -n "$proxy_to_use" ]; then
 		log " -- Trying via proxy: ${proxy_to_use}..."
