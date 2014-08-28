@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 ############################################################
 # Prey Unattended Installer
 # Written by Tomas Pollak (tomas@forkhq.com)
@@ -12,7 +12,7 @@ VERSION=$1
 API_KEY=$2
 DEV_KEY=$3
 
-cwd="$(dirname $0)"
+cwd=$(dirname "$0")
 zip="${cwd}/package.zip"
 
 [ -z "$VERSION" ] && abort 'Usage: install [version] ([api_key] [device_key])'
@@ -23,8 +23,10 @@ if [ "$(uname)" = 'WindowsNT' ]; then
   BASE_PATH="${WINDIR}\Prey"
   CONFIG_DIR="$BASE_PATH"
   LOG_FILE="$BASE_PATH\prey.log"
+  # default install path of the bash client
   OLD_CLIENT="/c/Prey"
-  OLD_CLIENT_TWO="/c/Windows/Prey"
+  # make sure we don't remove the new client by accident
+  OLD_CLIENT_TWO="/c/Windows/Prey/platform/windows"
 
 else
 
@@ -54,7 +56,10 @@ lowercase() {
 
 # echoes 1 if true
 is_process_running() {
-  'ps ax' | grep -v grep | grep "$1" > /dev/null && echo 1
+  local command="ps ax"
+  [ -n "$WIN" ] && local command="tasklist"
+
+  $command | grep -v grep | grep "$1" > /dev/null && echo 1
 }
 
 # returns 1 if int/float is greater than the second one, expects int/float at $1 and $2
@@ -372,6 +377,10 @@ post_install() {
     # otherwise the existing service won't be removed
     TASKKILL //F //IM mmc.exe //T &> /dev/null || true
     TASKKILL //F //IM taskmgr.exe //T &> /dev/null || true
+
+    # also make sure process explorer isn't running.
+    TASKKILL //F //IM procexp.exe //T &> /dev/null || true
+    # TASKKILL //F //IM procexp64.exe //T &> /dev/null || true
   fi
 
   # as root, admin, sets up launch/init/service
@@ -412,7 +421,9 @@ trap cleanup EXIT # INT
 if [ -f "$zip" ]; then
 
   log "Found existing zip file in path."
-  VERSION="1.2.1"
+  VERSION="1.2.2"
+  # ver=$(echo "$file" | sed "s/.*\(.\..\..\).*/\1/g")
+  # zip="$file"
   check_installed
 
 else
