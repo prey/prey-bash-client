@@ -137,11 +137,7 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 		process_config
 		process_module_config
 
-		if [ -n "$FORCE_UPGRADE" ] || [ -n "$perform_upgrade" ] && [ ! -f "${base_path}/install_failed.lock" ]; then
-
-			upgrade_platform &
-
-		elif [ -n "$device_missing" ]; then
+		if [ -n "$device_missing" ]; then
 
 			log "$STRING_PROBLEM"
 
@@ -161,6 +157,11 @@ if [[ $connected == 1 && -n "$check_url" ]]; then
 			send_report
 
 			log "\n$STRING_DONE"
+
+		elif [ -n "$FORCE_UPGRADE" ] || [ -n "$perform_upgrade" ] && [ ! -f "${base_path}/install_failed.lock" ]; then
+
+			upgrade_platform &
+			exit 0 # we don't want any actions to get in the middle.
 
 		else
 
