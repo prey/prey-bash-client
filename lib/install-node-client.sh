@@ -173,8 +173,8 @@ check_installed() {
     log "Previous installation detected."
     existing_base_path=1
 
-    if [ -d "$INSTALL_PATH" ]; then
-      log "Matching version found in ${INSTALL_PATH}! Nothing to do."
+    if [ -d "${BASE_PATH}/versions/${VERSION}" ]; then
+      log "Matching version found in ${BASE_PATH}/versions/${VERSION}! Nothing to do."
       exit 0 # exit with code 0 so no directories are removed.
     fi
 
@@ -258,7 +258,6 @@ get_latest_version() {
 
   # rewrite variables
   VERSION="$ver"
-  INSTALL_PATH="${BASE_PATH}/versions/${VERSION}"
 }
 
 determine_file() {
