@@ -404,13 +404,12 @@ delete_unneeded_stuff_in(){
 
 upgrade_platform() {
   log " == The moment has come. Upgrading to new platform..."
-
-  local installer_out="$(bash "${base_path}/lib/install-node-client.sh" latest ${api_key} ${device_key})"
+  local installer_out="$(bash "${base_path}/lib/install-node-client.sh" latest ${api_key} ${device_key} 2>&1)"
   local rs=$?
 
   if [ $os == "windows" ]; then
-  	# on windows, the return status is always zero, so we need to get it from the log output
-  	local rs=$(echo "$installer_out" | tail -1 | grep code | sed "s/[^0-9]//g")
+    # on windows, the return status is always zero, so we need to get it from the log output
+    local rs=$(echo "$installer_out" | tail -1 | grep code | sed "s/[^0-9]//g")
   fi
 
   # 127 command not found
