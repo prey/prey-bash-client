@@ -6,7 +6,7 @@
 ############################################################
 
 set -e # abort if any errors occur
-abort() { echo $1 && exit 2; }
+abort() { echo $1 && exit 1; }
 
 VERSION=$1
 API_KEY=$2
@@ -75,6 +75,8 @@ cleanup() {
   [ "$code" -eq 0 ] && return 0
 
   log "Upgrade failed! Cleaning up..."
+
+  rm -Rf "$zip"
 
   if [ ! -d "$INSTALL_PATH" ]; then # couldn't event put files into place
 
@@ -264,7 +266,10 @@ run_windows_uninstaller() {
 get_latest_version() {
   log "Determining latest version..."
   local ver="$(curl "${RELEASES_URL}/latest.txt" 2> /dev/null)"
-  [ $? -ne 0 ] && return 1
+
+  if [ $? -ne 0 ] || [ -z "$(echo $ver | egrep '^.\..\..')" ]; then
+    return 2 # this should be a temporary error
+  fi
 
   # rewrite variables
   VERSION="$ver"
@@ -424,12 +429,9 @@ setup_account() {
 trap cleanup EXIT # INT
 
 [ "$VERSION" = 'latest' ] && get_latest_version
-[ $? -ne 0 ] && abort "Unable to determine latest version."
 
 check_installed
-
 download_zip "$VERSION" "$zip"
-[ $? -ne 0 ] && abort 'Unable to download file.'
 
 log "Installing version ${VERSION} to ${BASE_PATH}"
 INSTALL_PATH="${BASE_PATH}/versions/${VERSION}"
