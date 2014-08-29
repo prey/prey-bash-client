@@ -25,8 +25,6 @@ if [ "$(uname)" = 'WindowsNT' ]; then
   LOG_FILE="$BASE_PATH\prey.log"
   # default install path of the bash client
   OLD_CLIENT="/c/Prey"
-  # make sure we don't remove the new client by accident
-  OLD_CLIENT_TWO="/c/Windows/Prey/platform/windows"
 
 else
 
@@ -203,9 +201,9 @@ remove_previous() {
   if [ -n "$WIN" ]; then
 
     if [ -d "$OLD_CLIENT" ]; then
-      run_windows_uninstaller "$OLD_CLIENT"
-    elif [ -d "$OLD_CLIENT_TWO" ]; then
-      run_windows_uninstaller "$OLD_CLIENT_TWO"
+      rm -Rf "$OLD_CLIENT" || true
+    elif [ -d "/c/Windows/Prey" ]; then
+      remove_old_client_files "/c/Windows/Prey"
     fi
 
   else
@@ -235,29 +233,14 @@ remove_previous() {
 
 }
 
-run_windows_uninstaller() {
-
+remove_old_client_files() {
   local path="$1"
-  log "Old Prey client found in ${path}! Removing..."
 
-  # even if run in silent mode, the NSIS uninstall will show the prompt screen
-  # so we just need to clean up the registry keys and remove the files.
-
-  # if the new install was successful, the old CronService should have been
-  # replaced with the new one (the one that calls node.exe and the new client)
-  # there's nothing else to do there
-
-  # TASKKILL //F //IM cronsvc.exe //T &> /dev/null
-
-  # if [ -f "${path}/Uninstall.exe" ]; then
-  #   "${path}/Uninstall.exe" /S _?="$path"
-  # elif [ -f "${path}/platform/windows/Uninstall.exe" ]; then
-  #   "${path}/platform/windows/Uninstall.exe" /S _?="$path"
-  # fi
-
-  # reg delete "HKLM\Software\Prey" //f
-
-  rm -Rf "$path" || true
+  log "Removing old client files in ${path}..."
+  rm -Rf "$path/core" || true
+  rm -Rf "$path/modules" || true
+  rm -Rf "$path/pixmaps" || true
+  rm -Rf "$path/platform" || true
 }
 
 ############################################################
