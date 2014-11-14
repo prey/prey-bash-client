@@ -1,63 +1,26 @@
 #!/bin/bash
 ####################################################################
 # Prey - by Tomas Pollak (http://bootlog.org)
-# Swedish lang file v 0.1 - by Dan Sellberg (dan@dkcp.com)
+# Swedish lang file v 0.2 - by Mikael Hiort af OrnÃ¤s (mikael.hafo@hotmail.com)
+# Latest review: 2014-11-14
+# Contributors: Dan Sellberg (v 0.1)
 # URL : http://preyproject.com
 # License: GPLv3
 ####################################################################
 
-if [ -n "$DEFAULT_INSTALLPATH" ]; then # we're running the installer
+STRING_START="PREY $version vecklar ut sina vingar!"
+STRING_TRY_TO_CONNECT=" -- FÃ¶rsÃ¶ker ansluta till fÃ¶rsta tillgÃ¤ngliga trÃ¥dlÃ¶sa nÃ¤tverk â€¦"
+STRING_NO_CONNECT_TO_WIFI=" -- Det gick inte att ansluta till nÃ¥got trÃ¥dlÃ¶st nÃ¤tverk!"
+STRING_CHECK_URL=" -- Kontrollerar URL â€¦"
+STRING_NO_PROBLEM=" -- Inget att oroa sig Ã¶ver. :)\n"
+STRING_PROBLEM=" -- Ojsan!!"
+STRING_WRITE_EMAIL=" -- Skriver vÃ¥rt e-postmeddelande â€¦"
+STRING_SENDING_EMAIL=" -- Skickar rapporten â€¦"
+STRING_ERROR_EMAIL="\n\033[1m !! Det uppstod ett problem nÃ¤r e-postmeddelandet skulle skickas. Ã„r du sÃ¤ker pÃ¥ att du angav korrekta e-postuppgifter?
+Om du anvÃ¤nder Gmail kan du testa att ta bort '@gmail.com' frÃ¥n fÃ¤ltet 'smtp_username' i Preys konfigurationsfil.\033[0m\n"
+STRING_REMOVE_EVIDENCE=" -- Tar bort alla spÃ¥r av installationsprocessen â€¦"
+STRING_DONE=" -- Klart! God jaktlycka! :)"
 
-#	HELLO_IN_LANGUAGE=" -- Prey kommer att köras på svenska!"
-	WHERE_TO_INSTALL_PREY=" -> Var vill du installera Prey? [$DEFAULT_INSTALLPATH] "
-	USING_DEFAULT_INSTALL_PATH=" -- Bra, använder standardsökvägen..."
-	INVALID_INSTALL_PATH=" !! Ogiltig installationssökväg. Huvudmappen existerar inte!\n"
-	SETTING_INSTALL_PATH=" -- Ok, använder $INSTALLPATH som installationssökväg."
-
-	DELETING_OLD_FILES=" -- Raderar gamla installationsfiler för Prey...\n"
-	CONFIG_FILE_EXISTS=" -> Konfigurationsfil existerar! Vill du hoppa över alla tråkiga frågor? (Ej rekommenderat) [n] "
-
-	SKIP_INSTALL_QUESTIONS=" -- Ok, vi uppdaterar bara nödvändiga filer!\n"
-
-	ENTER_EMAIL_ADDRESS=" -> Vilken epostadress vill du att Prey ska skicka epost till? (t.ex. dittnamn@dindoman.se) [] "
-	INVALID_EMAIL_ADDRESS=" !! Du måste ange en epostadress. Avslutar...\n"
-
-	ENTER_SMTP_SERVER=" -> Vilken SMTP-server ska Prey använda? (inkl. port) [smtp.gmail.com:587] "
-	DEFAULT_SMTP_SERVER=" -- Då använder vi Gmail! "
-	ENTER_SMTP_USER=" -> Skriv in ditt SMTP användarnamn: (t.ex. dittnamn@gmail.com)"
-	DEFAULT_SMTP_USER=" -- Ok, vårt SMTP användarnamn kommer att vara" # the installer appends the email var
-	ENTER_SMTP_PASS=" -> Skriv in ditt SMTP lösenord: (Det kommer inte att visas i klartext) [] "
-	INVALID_SMTP_PASS=" !! Du måste skriva in ett giltigt lösenord. Avslutar...\n"
-	YES_NO="y/n"
-	YES="y"
-	CHECK_URL_OR_NOT=" -- Vill du att Prey ska kontrollera en URL? (Nej, innebär att en rapport skickas var gång datorn startas) [n] "
-	ENTER_URL=" -- Ok, vilket URL ska vi kontrollera? [t.ex. http://minserver.se/prey_check_url] "
-	INVALID_URL=" !! Du måste ange en URL. Exiting...\n"
-	SET_TIMING=" -- Ok, sista frågan. Hur ofta (i minuter) vill du att Prey ska köras? [$TIMING] "
-
-	INSTALLING_SOFTWARE=" -- Ok, installerar nödvändig mjukvara...\n"
-	COPYING_ISIGHTCAPTURE=" -- Kopierar iSightCapture till $INSTALLPATH..."
-	COPYING_FILES="\n -- Kopierar nödvändaiga filer till $INSTALLPATH och sätter rättigheter..."
-	ADDING_CRONTAB=" -- Lägger till crontab..."
-	INSTALL_OK="\033[1m\n -- Allt OK! Prey är uppe och kör nu. Du kan nu radera denna mapp.
- -- Om du vill avinstallera Prey, radera $INSTALLPATH denna mapp
-    och ta bort Prey i root's crontab: \n
-\t $ sudo rm -Rf $INSTALLPATH\n \t $ sudo crontab -l | grep -v prey | sudo crontab -\n
- -- Kom ihåg att besöka http://prey.bootlog.org för uppdateringar!\033[0m\n\n"
-
-else # prey status messages
-
-	STRING_START="\n ### PREY $version sprider ut sina vingar!\n"
-	STRING_TRY_TO_CONNECT=" -- Försöker ansluta till öppna trådlösa nätverk..."
-	STRING_NO_CONNECT_TO_WIFI=" -- Kunde inte ansluta till ett öppet trådlöst nät!"
-	STRING_CHECK_URL=" -- Kontrollerar URL..."
-	STRING_NO_PROBLEM=" -- Inget att oroa sig över. :)\n"
-	STRING_PROBLEM=" -- Hoppla!!"
-	STRING_WRITE_EMAIL=" -- Skapar epostmeddelande..."
-	STRING_SENDING_EMAIL=" -- Skickar report..."
-	STRING_ERROR_EMAIL="\n\033[1m !! Det gick inte att skicka epost. Är du säker på att inställningarna är korrekta?
-		Om du använder Gmail, testa att ta bort '@gmail.com' i användarnamnet för SMTP i Preys konfigurationsfil.\033[0m\n"
-	STRING_REMOVE_EVIDENCE=" -- Tar bort alla spår av bevis..."
-	STRING_DONE=" -- Klar! Lycka till med jakten! :)\n"
-
-fi
+EMAIL_NOTICE=""
+EMAIL_HEADER="Goda nyheter, det verkar som att vi har hittat den.\n\nHÃ¤r Ã¤r rapporten frÃ¥n din dator:\n\n"
+EMAIL_FOOTER="\n\nKontroll av URL: ${check_url}\n\nGod jaktlycka!\n\n--\nDin Ã¶dmjuka tjÃ¤nare, Prey\nhttp://preyproject.com"
